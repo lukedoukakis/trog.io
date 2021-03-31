@@ -19,11 +19,22 @@ public class UIEvents : MonoBehaviour
     }
 
     public void OnUnitMouseOver(ObjectSelectionManager osm){
-        if(mouseDown){
-            GlobalSelectionController.current.AddToSelecting(osm);
+
+        // handle tooltip
+        if(!osm.tooltip){
+            osm.ShowTooltip();
         }
-        else{
-            // show tooltip for pcb
+
+        // handle selecting
+        if(mouseDown){
+            if(!osm.selected || !osm.selecting){
+                GlobalSelectionController.current.AddToSelecting(osm);
+            }
+        }
+        if(Input.GetMouseButtonUp(0)){
+            if(osm.selected){
+                GlobalSelectionController.current.RemoveFromSelected(osm);
+            }
         }
     }
 

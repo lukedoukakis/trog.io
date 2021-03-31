@@ -5,12 +5,17 @@ using UnityEngine;
 public class ObjectSelectionManager : MonoBehaviour
 {
 
-
+    ObjectStats stats;
     public MeshRenderer renderer;
     public Material mat_none, mat_selecting, mat_selected;
 
     public bool selecting;
     public bool selected;
+    public bool tooltip;
+
+    public void Awake(){
+        stats = GetComponent<ObjectStats>();
+    }
 
 
     public void SetSelecting(bool b){
@@ -29,6 +34,12 @@ public class ObjectSelectionManager : MonoBehaviour
         }
     }
 
+    public void ShowTooltip(){
+        tooltip = true;
+        TooltipController.current.SetText(stats.CreateStatsList());
+        TooltipController.current.Show(-1);
+    }
+
 
     void OnMouseOver(){
         //Debug.Log("mo");
@@ -36,6 +47,11 @@ public class ObjectSelectionManager : MonoBehaviour
         UIEvents.current.OnUnitMouseOver(this);
 
 
+    }
+
+    void OnMouseExit(){
+        tooltip = false;
+        TooltipController.current.Hide();
     }
 
 
