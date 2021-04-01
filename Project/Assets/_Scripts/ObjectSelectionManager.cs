@@ -37,21 +37,20 @@ public class ObjectSelectionManager : MonoBehaviour
     public void ShowTooltip(){
         tooltip = true;
         TooltipController.current.SetText(stats.CreateStatsList());
-        TooltipController.current.Show(-1);
+        TooltipController.current.Show(TooltipController.DefaultDelay);
+    }
+    public void HideTooltip(){
+        tooltip = false;
+        TooltipController.current.Hide();
     }
 
 
     void OnMouseOver(){
-        //Debug.Log("mo");
-
         UIEvents.current.OnUnitMouseOver(this);
-
-
     }
 
     void OnMouseExit(){
-        tooltip = false;
-        TooltipController.current.Hide();
+        UIEvents.current.OnUnitMouseExit(this);
     }
 
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class SelectionMenuController : MonoBehaviour
 {
     public bool visible;
-    public ButtonDropdownController buttonDropdownController;
+    public ButtonDropdownController unitBDC;
 
 
     public static SelectionMenuController current;
@@ -15,14 +15,14 @@ public class SelectionMenuController : MonoBehaviour
     }
 
     public void UpdateSelectionMenu(){
-        buttonDropdownController.ClearButtons();
+        unitBDC.ClearButtons();
         foreach(ObjectSelectionManager osm in GlobalSelectionController.current.SelectedOSMs.ToArray()){
-            buttonDropdownController.AddButton(osm);
+            unitBDC.AddButton(osm);
         }
     }
 
     public void ClearSelectionMenu(){
-        buttonDropdownController.ClearButtons();
+        unitBDC.ClearButtons();
 
     }
 

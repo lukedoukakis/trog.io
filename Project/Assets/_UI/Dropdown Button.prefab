@@ -36,8 +36,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -10, y: -0.000017643}
-  m_SizeDelta: {x: 20.008577, y: 4.495759}
+  m_AnchoredPosition: {x: -18.16, y: 0.000014782}
+  m_SizeDelta: {x: 36.331146, y: 36.27171}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6132702678501500976
 CanvasRenderer:
@@ -221,8 +221,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 6
-  m_fontSizeBase: 6
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -354,8 +354,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 6
-  m_fontSizeBase: 6
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -409,6 +409,7 @@ GameObject:
   - component: {fileID: 1643294366928460981}
   - component: {fileID: 6588190834254300097}
   - component: {fileID: 9068114696929181876}
+  - component: {fileID: 6511427593037371308}
   m_Layer: 0
   m_Name: Dropdown Button
   m_TagString: Untagged
@@ -434,8 +435,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 12.75}
-  m_SizeDelta: {x: 300, y: 4.4957275}
+  m_AnchoredPosition: {x: 0, y: -3.14}
+  m_SizeDelta: {x: 300, y: 36.271713}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7813852965088419532
 CanvasRenderer:
@@ -531,3 +532,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bdc: {fileID: 0}
   referencedOSM: {fileID: 0}
+  referencedObject: {fileID: 0}
+  referencedObjectStats: {fileID: 0}
+  button: {fileID: 0}
+  tmp: {fileID: 0}
+--- !u!114 &6511427593037371308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3074914628719334862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 9068114696929181876}
+          m_MethodName: OnButtonPointerEnter
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 9068114696929181876}
+          m_MethodName: OnButtonPointerExit
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2

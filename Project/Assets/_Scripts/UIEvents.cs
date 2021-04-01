@@ -18,67 +18,91 @@ public class UIEvents : MonoBehaviour
         current = this;
     }
 
-    public void OnUnitMouseOver(ObjectSelectionManager osm){
-
-        // handle tooltip
-        if(!osm.tooltip){
-            osm.ShowTooltip();
-        }
-
-        // handle selecting
-        if(mouseDown){
-            if(!osm.selected || !osm.selecting){
-                GlobalSelectionController.current.AddToSelecting(osm);
+    public void OnUnitMouseOver(ObjectSelectionManager osm)
+    {
+        if (!hoveringUI)
+        {
+            // handle tooltip
+            if (!osm.tooltip)
+            {
+                osm.ShowTooltip();
             }
-        }
-        if(Input.GetMouseButtonUp(0)){
-            if(osm.selected){
-                GlobalSelectionController.current.RemoveFromSelected(osm);
+
+            // handle selecting
+            if (mouseDown)
+            {
+                if (!osm.selected || !osm.selecting)
+                {
+                    GlobalSelectionController.current.AddToSelecting(osm);
+                }
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                if (osm.selected)
+                {
+                    GlobalSelectionController.current.RemoveFromSelected(osm);
+                }
             }
         }
     }
 
-    public void OnUIPointerEnter(){
+
+    public void OnUnitMouseExit(ObjectSelectionManager osm)
+    {
+        osm.HideTooltip();
+    }
+
+    public void OnUIPointerEnter()
+    {
         hoveringUI = true;
         //Debug.Log("UI Pointer Enter");
     }
-    public void OnUIPointerExit(){
+    public void OnUIPointerExit()
+    {
         hoveringUI = false;
         //Debug.Log("UI Pointer Exit");
     }
 
-    void OnMouseUp(){
+    void OnMouseUp()
+    {
 
     }
 
 
     void Update()
     {
-        if(!hoveringUI){
-            if(Input.GetKey(KeyCode.Mouse0)){
-                if(!mouseDown){
+        if (!hoveringUI)
+        {
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                if (!mouseDown)
+                {
                     mouseDown = true;
-                    if(!Input.GetKey(KeyCode.LeftControl)){
+                    if (!Input.GetKey(KeyCode.LeftControl))
+                    {
                         GlobalSelectionController.current.ClearSelected();
 
                         SelectionMenuController.current.ClearSelectionMenu();
-                        SelectionMenuController.current.SetVisible(false);
+                        //SelectionMenuController.current.SetVisible(false);
                     }
                 }
             }
-            else{
-                if(mouseDown){
+            else
+            {
+                if (mouseDown)
+                {
                     mouseDown = false;
                     GlobalSelectionController.current.Select();
 
                     SelectionMenuController.current.UpdateSelectionMenu();
-                    if(!GlobalSelectionController.current.SelectionIsEmpty()){
-                        SelectionMenuController.current.SetVisible(true);
+                    if (!GlobalSelectionController.current.SelectionIsEmpty())
+                    {
+                        //SelectionMenuController.current.SetVisible(true);
                     }
                 }
             }
         }
-        
+
     }
 
 }

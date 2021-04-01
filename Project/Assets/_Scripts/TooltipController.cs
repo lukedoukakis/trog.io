@@ -14,8 +14,9 @@ public class TooltipController : MonoBehaviour
 	RectTransform canvasRectTransform;
 	[SerializeField] Vector2 padding;
 
-
 	public static TooltipController current;
+	public static float DefaultDelay = .3f;
+	bool enabled;
 	
 	public void Awake(){
 		current = this;
@@ -33,20 +34,22 @@ public class TooltipController : MonoBehaviour
 		backgroundImageT.sizeDelta = textSize + padding;
 	}
 	
-	public void Show(float time){
-		text.enabled = true;
-		backgroundImage.enabled = true;
-		if(time > -1f){
-			StartCoroutine(hideAfterDelay(time));
+	public void Show(float delay){
+		enabled = true;
+		StartCoroutine(ShowAfterDelay(delay));
+	}
+	IEnumerator ShowAfterDelay(float delay){
+		yield return new WaitForSeconds(delay);
+		if(enabled){
+			text.enabled = true;
+			backgroundImage.enabled = true;
 		}
 	}
+
 	public void Hide(){
+		enabled = false;
 		text.enabled = false;
 		backgroundImage.enabled = false;
-	}
-	IEnumerator hideAfterDelay(float time){
-		yield return new WaitForSeconds(time);
-		Hide();
 	}
 	
 	

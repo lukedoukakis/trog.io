@@ -37,7 +37,7 @@ public class DropdownButtonController : MonoBehaviour
         referencedOSM = refOSM;
         referencedObject = referencedOSM.gameObject;
         referencedObjectStats = referencedObject.GetComponent<ObjectStats>();
-        if(referencedObjectStats.name == null){
+        if(referencedObjectStats.name == ""){
             label = referencedObjectStats.type;
         }
         else{
@@ -58,6 +58,15 @@ public class DropdownButtonController : MonoBehaviour
         else{
             Debug.Log("DropdownButtonController: No referenced ButtonDropdownController!");
         }
+    }
+
+    public void OnButtonPointerEnter(){
+        if(!referencedOSM.tooltip){
+            referencedOSM.ShowTooltip();
+        }
+    }
+    public void OnButtonPointerExit(){
+        referencedOSM.HideTooltip();
     }
 
 
