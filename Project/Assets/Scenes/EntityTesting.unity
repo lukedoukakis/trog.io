@@ -738,9 +738,14 @@ GameObject:
   - component: {fileID: 658721194}
   - component: {fileID: 658721193}
   - component: {fileID: 658721192}
+  - component: {fileID: 658721197}
+  - component: {fileID: 658721198}
   - component: {fileID: 658721191}
   - component: {fileID: 658721190}
   - component: {fileID: 658721188}
+  - component: {fileID: 658721196}
+  - component: {fileID: 658721195}
+  - component: {fileID: 658721189}
   m_Layer: 0
   m_Name: TestHuman (1)
   m_TagString: Untagged
@@ -767,6 +772,19 @@ MonoBehaviour:
   selecting: 0
   selected: 0
   tooltip: 0
+--- !u!114 &658721189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658721187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14aa3a31da04fe94e99e03ea0714adbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GROUNDTOUCH: 0
 --- !u!114 &658721190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -849,12 +867,74 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 658721187}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.37, y: 0.43, z: 0.77}
+  m_LocalPosition: {x: 1.37, y: 1.8599999, z: 0.77}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &658721195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658721187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9380b21a003efd646a5be01db99e99e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeAction: {fileID: 0}
+  senseDistance: 0
+  maxJumpFromDistance: 0
+  maxJumpableObstacleHeight: 0
+  movementSpeed: 0
+  rotationSpeed: 0
+  running: 0
+  actions: []
+--- !u!114 &658721196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658721187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91981f8c4ec30a34c8c47c1db62c44fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!54 &658721197
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658721187}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!136 &658721198
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658721187}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!224 &728595568 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
@@ -884,9 +964,14 @@ GameObject:
   - component: {fileID: 902200835}
   - component: {fileID: 902200834}
   - component: {fileID: 902200833}
+  - component: {fileID: 902200838}
+  - component: {fileID: 902200839}
   - component: {fileID: 902200832}
   - component: {fileID: 902200831}
   - component: {fileID: 902200829}
+  - component: {fileID: 902200837}
+  - component: {fileID: 902200836}
+  - component: {fileID: 902200830}
   m_Layer: 0
   m_Name: TestHuman (2)
   m_TagString: Untagged
@@ -913,6 +998,19 @@ MonoBehaviour:
   selecting: 0
   selected: 0
   tooltip: 0
+--- !u!114 &902200830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 902200828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14aa3a31da04fe94e99e03ea0714adbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GROUNDTOUCH: 0
 --- !u!114 &902200831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -995,12 +1093,74 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 902200828}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.75, y: 0.79, z: 0}
+  m_LocalPosition: {x: -1.75, y: 2.22, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &902200836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 902200828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9380b21a003efd646a5be01db99e99e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeAction: {fileID: 0}
+  senseDistance: 0
+  maxJumpFromDistance: 0
+  maxJumpableObstacleHeight: 0
+  movementSpeed: 0
+  rotationSpeed: 0
+  running: 0
+  actions: []
+--- !u!114 &902200837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 902200828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91981f8c4ec30a34c8c47c1db62c44fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!54 &902200838
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 902200828}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!136 &902200839
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 902200828}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &908828670
 GameObject:
   m_ObjectHideFlags: 0
@@ -1012,9 +1172,14 @@ GameObject:
   - component: {fileID: 908828677}
   - component: {fileID: 908828676}
   - component: {fileID: 908828675}
+  - component: {fileID: 908828680}
+  - component: {fileID: 908828681}
   - component: {fileID: 908828674}
   - component: {fileID: 908828673}
   - component: {fileID: 908828671}
+  - component: {fileID: 908828679}
+  - component: {fileID: 908828678}
+  - component: {fileID: 908828672}
   m_Layer: 0
   m_Name: TestHuman (4)
   m_TagString: Untagged
@@ -1041,6 +1206,19 @@ MonoBehaviour:
   selecting: 0
   selected: 0
   tooltip: 0
+--- !u!114 &908828672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908828670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14aa3a31da04fe94e99e03ea0714adbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GROUNDTOUCH: 0
 --- !u!114 &908828673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1123,12 +1301,74 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 908828670}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.09, y: 0.501, z: -1.291}
+  m_LocalPosition: {x: -1.09, y: 1.931, z: -1.291}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &908828678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908828670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9380b21a003efd646a5be01db99e99e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeAction: {fileID: 0}
+  senseDistance: 0
+  maxJumpFromDistance: 0
+  maxJumpableObstacleHeight: 0
+  movementSpeed: 0
+  rotationSpeed: 0
+  running: 0
+  actions: []
+--- !u!114 &908828679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908828670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91981f8c4ec30a34c8c47c1db62c44fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!54 &908828680
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908828670}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!136 &908828681
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908828670}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1195579105
 GameObject:
   m_ObjectHideFlags: 0
@@ -2173,9 +2413,14 @@ GameObject:
   - component: {fileID: 1956531251}
   - component: {fileID: 1956531250}
   - component: {fileID: 1956531249}
+  - component: {fileID: 1956531254}
+  - component: {fileID: 1956531255}
   - component: {fileID: 1956531248}
   - component: {fileID: 1956531247}
   - component: {fileID: 1956531245}
+  - component: {fileID: 1956531253}
+  - component: {fileID: 1956531252}
+  - component: {fileID: 1956531246}
   m_Layer: 0
   m_Name: TestHuman (3)
   m_TagString: Untagged
@@ -2202,6 +2447,19 @@ MonoBehaviour:
   selecting: 0
   selected: 0
   tooltip: 0
+--- !u!114 &1956531246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956531244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14aa3a31da04fe94e99e03ea0714adbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GROUNDTOUCH: 0
 --- !u!114 &1956531247
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2284,12 +2542,74 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1956531244}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.4, y: 0, z: -2.074}
+  m_LocalPosition: {x: 0.4, y: 1.43, z: -2.074}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1956531252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956531244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9380b21a003efd646a5be01db99e99e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeAction: {fileID: 0}
+  senseDistance: 0
+  maxJumpFromDistance: 0
+  maxJumpableObstacleHeight: 0
+  movementSpeed: 0
+  rotationSpeed: 0
+  running: 0
+  actions: []
+--- !u!114 &1956531253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956531244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91981f8c4ec30a34c8c47c1db62c44fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!54 &1956531254
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956531244}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!136 &1956531255
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956531244}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1963094822
 GameObject:
   m_ObjectHideFlags: 0
@@ -2344,9 +2664,14 @@ GameObject:
   - component: {fileID: 2087964457}
   - component: {fileID: 2087964456}
   - component: {fileID: 2087964455}
+  - component: {fileID: 2087964462}
+  - component: {fileID: 2087964463}
   - component: {fileID: 2087964454}
   - component: {fileID: 2087964453}
   - component: {fileID: 2087964459}
+  - component: {fileID: 2087964461}
+  - component: {fileID: 2087964460}
+  - component: {fileID: 2087964458}
   m_Layer: 0
   m_Name: TestHuman
   m_TagString: Untagged
@@ -2436,12 +2761,25 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2087964452}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.43, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2087964458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2087964452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14aa3a31da04fe94e99e03ea0714adbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GROUNDTOUCH: 0
 --- !u!114 &2087964459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2461,6 +2799,68 @@ MonoBehaviour:
   selecting: 0
   selected: 0
   tooltip: 0
+--- !u!114 &2087964460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2087964452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9380b21a003efd646a5be01db99e99e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeAction: {fileID: 0}
+  senseDistance: 0
+  maxJumpFromDistance: 0
+  maxJumpableObstacleHeight: 0
+  movementSpeed: 0
+  rotationSpeed: 0
+  running: 0
+  actions: []
+--- !u!114 &2087964461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2087964452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91981f8c4ec30a34c8c47c1db62c44fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!54 &2087964462
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2087964452}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!136 &2087964463
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2087964452}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &2105211574
 PrefabInstance:
   m_ObjectHideFlags: 0
