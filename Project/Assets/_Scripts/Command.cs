@@ -8,7 +8,7 @@ public class Command : MonoBehaviour
     public static Command current;
 
 
-    public Action command;
+    public int command;
 
 
     void Awake(){
@@ -16,35 +16,29 @@ public class Command : MonoBehaviour
     }
 
 
-    public void SetCommand(Action action){
-        command = action;
+    public void SetCommand(int c){
+        command = c;
     }
 
-    public void SendCommand(){
+    public void SendCommand(int c){
+        Debug.Log("Sending command to selected");
         ObjectBehavior behavior;
-        foreach(ObjectSelectionManager osm in GlobalSelectionController.current.SelectedOSMs){
+        foreach(ObjectSelectionManager osm in GlobalSelectionController.current.SelectedOSMs.ToArray()){
             behavior = osm.behavior;
-            behavior.QueueAction(command, (int)ObjectBehavior.Priority.FrontImmediate);
+            behavior.ProcessCommand(c, (int)ObjectBehavior.Priority.FrontImmediate);
         }
+        Debug.Log("Commands sent!");
     }
 
 
-
-
-
-
-
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()
     {
+        // if(Input.GetKeyUp(KeyCode.Mouse1)){
+        //     SendCommand((int)ObjectBehavior.Command.Go_home);
+        // }
+
         
     }
 }

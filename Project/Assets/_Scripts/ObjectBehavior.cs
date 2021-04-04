@@ -9,17 +9,22 @@ public class ObjectBehavior : MonoBehaviour
 
     public Action activeAction;
     public Transform home;
-    static float homeDistanceThreshhold = 1f;
+    static float homeDistanceThreshhold = 3f;
 
-    public float senseDistance;
-    public float maxJumpFromDistance;
-    public float maxJumpableObstacleHeight;
-    public float movementSpeed; //[0, 1]
-    public float rotationSpeed; //[0, 1]
+    public static float senseDistance = 3f;
+    public static float maxJumpFromDistance = 2f;
+    public static float maxJumpableObstacleHeight = 1f;
+    public static float movementSpeed = .001f;
+    public static float rotationSpeed = 1f;
     public bool running;
 
 
     public List<Action> actions;
+
+
+    public enum Command{
+        Idle, Go_home, Follow_player
+    }
 
     public enum Priority{
         Back, Front, FrontImmediate
@@ -28,12 +33,14 @@ public class ObjectBehavior : MonoBehaviour
 
     public void Awake(){
         physics = GetComponent<ObjectPhysics>();
+        home = GameObject.FindGameObjectWithTag("Home").transform;
     }
 
 
 
     // primary method to be used for queueing actions
-    public void QueueAction(Action a, int priority){
+    public void ProcessCommand(int command, int priority){
+        Action a = CreateAction(command);
         switch(priority){
             case (int)Priority.Back :
                 AddAction(a);
@@ -45,6 +52,29 @@ public class ObjectBehavior : MonoBehaviour
                 InsertActionImmediate(a, true);
                 break;
         }
+        //Debug.Log("ProcessCommand() done");
+    }
+
+    public Action CreateAction(int command){
+        Action a = new Action(-1, null, -1, -1, -1);
+        switch(command){
+            case (int)Command.Idle :
+                a.type = (int)Action.ActionTypes.Idle;
+                break;
+            case (int)Command.Go_home :
+                a.type = (int)Action.ActionTypes.GoTo;
+                a.obj = home.gameObject;
+                break;
+            case (int)Command.Follow_player :
+                a.type = (int)Action.ActionTypes.Follow;
+                a.obj = Player.current.gameObject;
+                break;
+            default :
+            //Debug.Log("ObjectBehavior: no action for command specified");
+                break;
+        }
+        //Debug.Log("CreateAction() done");
+        return a;    
     }
 
     // add an action to the end of the queue
@@ -54,44 +84,44 @@ public class ObjectBehavior : MonoBehaviour
 
     // insert an action to the front of the queue, to be executed when the current action is finished
     void InsertAction(Action a){
-        actions.Insert(0, a);
+        if(actions.Count > 0){
+            actions.Insert(0, a);
+        }
+        else{
+            actions.Add(a);
+        }
     }
 
     // insert an action to the front of the queue and immediately execute
     void InsertActionImmediate(Action a, bool clear){
         if(clear){
-            actions.Clear();
+            if(actions.Count > 0){
+                actions.Clear();
+            }
         }
         InsertAction(a);
         OnActionInterrupt();
         NextAction();
+        //Debug.Log("InsertActionImmediate() done");
     }
 
-    public void QueueAction_GoHome(int priority){
-        Action a = new Action((int)Action.ActionTypes.GoTo, home.gameObject, -1, -1, -1);
-        QueueAction(a, priority);
-    }
-
-    public void QueueAction_Idle(int priority){
-        Action a = new Action((int)Action.ActionTypes.Idle, null, -1, -1, -1);
-        QueueAction(a, priority);
-    }
 
 
     // select and execute the next action in the queue... if list is empty, insert "go home" or "idle" action
     public Action NextAction(){
         if(actions.Count == 0){
             if(IsAtHome()){
-                QueueAction_Idle((int)Priority.Front);
+                ProcessCommand((int)Command.Idle, (int)Priority.Front);
             }
             else{
-                QueueAction_GoHome((int)Priority.Front);
+                ProcessCommand((int)Command.Go_home, (int)Priority.Front);
             }
         }
         Action next = actions[0];
         actions.RemoveAt(0);
         activeAction = next;
         ExecuteAction(activeAction);
+        //Debug.Log("NextAction() done");
         return next;
     }
     public void OnActionInterrupt(){
@@ -125,27 +155,25 @@ public class ObjectBehavior : MonoBehaviour
                 Debug.Log("ObjectBehavior: called action not a defined action (" + a.type + ")... idling.");
                 break;
         }
-        NextAction();
+        //NextAction();
     }
 
 
 
-    void NavigateTowards(Transform t){
+    void NavigateTowards(Transform targetT){
 		
-        bool playerSensed = false;
         float leftDistance, centerDistance, rightDistance;
         RaycastHit leftHitInfo, centerHitInfo, rightHitInfo;
-		Vector3 path = transform.position - t.position;
+		Vector3 path = transform.position - targetT.position;
 		path.y = 0;
 
 			
 		// if obstacle in front and it's not the player object
-		if(SenseObstacle() && !playerSensed){
+		if(SenseObstacle()){
 				
 			// if obstacle can't be jumped over, navigate around it
 			if(!CanClearObstacle()){
 				TurnTowardsMostOpenPath();
-				RotateToward(t.position, .05f);
 			}
 			else{	
 				
@@ -155,14 +183,13 @@ public class ObjectBehavior : MonoBehaviour
 						physics.Jump();
 					}
 				}
-				RotateToward(t.position, .5f);
 			}
 		}
+        RotateToward(targetT.position, .05f);
 		
 		// move forward
-		running = true;
-		physics.Move(Vector3.forward, 1f);
-
+        Debug.Log("moving");
+		physics.Move(Vector3.forward, movementSpeed);
 
 
 
@@ -175,47 +202,21 @@ public class ObjectBehavior : MonoBehaviour
             bool centerCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), transform.TransformDirection(Vector3.forward).normalized * 1f, out centerHitInfo, castDistance);
             bool rightCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.right)).normalized, out rightHitInfo, castDistance);
 
-            // set leftDistance, centerDistance, rightDistance, and playerSensed;
-            if (leftCast)
-            {
-                leftDistance = (leftHitInfo.point - transform.position).magnitude;
-                if (leftHitInfo.collider.gameObject.tag == "Player")
-                {
-                    playerSensed = true;
-                }
-            }
-            else
-            {
-                leftDistance = int.MaxValue;
-            }
-            if (centerCast)
-            {
-                centerDistance = (centerHitInfo.point - transform.position).magnitude;
-                if (centerHitInfo.collider.gameObject.tag == "Player")
-                {
-                    playerSensed = true;
-                }
-            }
-            else
-            {
-                centerDistance = int.MaxValue;
-            }
-            if (rightCast)
-            {
-                rightDistance = (rightHitInfo.point - transform.position).magnitude;
-                if (rightHitInfo.collider.gameObject.tag == "Player")
-                {
-                    playerSensed = true;
-                }
-            }
-            else
-            {
-                rightDistance = int.MaxValue;
-            }
+            List<RaycastHit> hitInfos = new List<RaycastHit>();
 
-            if ((leftCast || centerCast || rightCast))
-            {
-                return true;
+            // set leftDistance, centerDistance, rightDistance
+            if (leftCast){ leftDistance = (leftHitInfo.point - transform.position).magnitude; hitInfos.Add(leftHitInfo); }
+            else{ leftDistance = int.MaxValue; }
+            if (centerCast){ centerDistance = (centerHitInfo.point - transform.position).magnitude; hitInfos.Add(centerHitInfo); }
+            else{ centerDistance = int.MaxValue; }
+            if (rightCast){ rightDistance = (rightHitInfo.point - transform.position).magnitude; hitInfos.Add(rightHitInfo); }
+            else{ rightDistance = int.MaxValue; }
+
+            // return true if any of the raycasts hit something besides a tribe member
+            foreach(RaycastHit hitInfo in hitInfos){
+                if(hitInfo.collider.gameObject.tag != "TribeMember"){
+                    return true;
+                }
             }
             return false;
 
@@ -237,14 +238,18 @@ public class ObjectBehavior : MonoBehaviour
 
             Quaternion leftRot = Quaternion.LookRotation(transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.left) * 1f, Vector3.up);
             Quaternion rightRot = Quaternion.LookRotation(transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.right) * 1f, Vector3.up);
-            if (leftDistance < rightDistance){ transform.rotation = Quaternion.Slerp(transform.rotation, rightRot, rotationSpeed); }
-            else{ transform.rotation = Quaternion.Slerp(transform.rotation, leftRot, rotationSpeed); }
+            if (leftDistance < rightDistance){
+                physics.RotateTowards(rightRot, rotationSpeed);
+            }
+            else{
+                physics.RotateTowards(leftRot, rotationSpeed);
+            }
         }
 
         void RotateToward(Vector3 targetPos, float magnitude){
             Vector3 p = transform.position - targetPos;
             p.y = 0;
-            Quaternion targetRot = Quaternion.LookRotation(path * -1, Vector3.up);
+            Quaternion targetRot = Quaternion.LookRotation(p * -1, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, magnitude);
         }
 	}
@@ -301,12 +306,13 @@ public class ObjectBehavior : MonoBehaviour
             newGameObject.transform.position = a.obj.transform.position;
             targetT = newGameObject.transform;
         }
-        while (Vector3.Distance(t.position, targetT.position) > (homeDistanceThreshhold / 2f))
+        while((Vector3.Distance(t.position, targetT.position) > (homeDistanceThreshhold)) || follow)
         {
             NavigateTowards(targetT);
             yield return null;
         }
-        if(follow){ GameObject.Destroy(newGameObject); }
+        Debug.Log("Destination reached");
+        if(!follow){ GameObject.Destroy(newGameObject); }
     }
 
 

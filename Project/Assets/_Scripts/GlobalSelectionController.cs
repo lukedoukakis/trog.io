@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class GlobalSelectionController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public Transform cameraT;
-
 
     public static GlobalSelectionController current;
     void Awake()

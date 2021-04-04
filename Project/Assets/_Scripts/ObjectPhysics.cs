@@ -26,15 +26,15 @@ public class ObjectPhysics : MonoBehaviour
         rigidbody = GetComponent<Rigidbody>();
     }
 
-    void FixedUpdate(){
-
-    }
-
 
     public void Move(Vector3 direction, float speed){
         float movementSpeed = speed * stats.GetStat("speed");
         Vector3 move = transform.TransformDirection(direction) * movementSpeed;
-		rigidbody.AddForce(move, ForceMode.VelocityChange);
+        transform.position += move;
+    }
+
+    public void RotateTowards(Quaternion targetRot, float rotSpeed){
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotSpeed);
     }
 
     public void Jump(){
