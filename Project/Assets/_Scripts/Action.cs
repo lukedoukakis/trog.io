@@ -20,6 +20,14 @@ public class Action : MonoBehaviour
     // maximum time to be spent executing the action
     public int maxSeconds;
 
+    public Action(int _type, GameObject _obj, int _number, int _item, int _maxSeconds){
+        type = _type;
+        obj = _obj;
+        number = _number;
+        item = _item;
+        maxSeconds = _maxSeconds;
+    }
+
 
 
     public enum ActionTypes{

@@ -5,7 +5,8 @@ using UnityEngine;
 public class ObjectSelectionManager : MonoBehaviour
 {
 
-    ObjectStats stats;
+    public ObjectStats stats;
+    public ObjectBehavior behavior;
     public MeshRenderer renderer;
     public Material mat_none, mat_selecting, mat_selected;
 
@@ -15,6 +16,7 @@ public class ObjectSelectionManager : MonoBehaviour
 
     public void Awake(){
         stats = GetComponent<ObjectStats>();
+        behavior = GetComponent<ObjectBehavior>();
     }
 
 

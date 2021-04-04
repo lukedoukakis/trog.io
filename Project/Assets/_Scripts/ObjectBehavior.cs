@@ -7,8 +7,10 @@ public class ObjectBehavior : MonoBehaviour
 
     ObjectPhysics physics;
 
-
     public Action activeAction;
+    public Transform home;
+    static float homeDistanceThreshhold = 1f;
+
     public float senseDistance;
     public float maxJumpFromDistance;
     public float maxJumpableObstacleHeight;
@@ -19,6 +21,10 @@ public class ObjectBehavior : MonoBehaviour
 
     public List<Action> actions;
 
+    public enum Priority{
+        Back, Front, FrontImmediate
+    }
+
 
     public void Awake(){
         physics = GetComponent<ObjectPhysics>();
@@ -26,15 +32,33 @@ public class ObjectBehavior : MonoBehaviour
 
 
 
+    // primary method to be used for queueing actions
+    public void QueueAction(Action a, int priority){
+        switch(priority){
+            case (int)Priority.Back :
+                AddAction(a);
+                break;
+            case (int)Priority.Front :
+                InsertAction(a);
+                break;
+            case (int)Priority.FrontImmediate :
+                InsertActionImmediate(a, true);
+                break;
+        }
+    }
 
-
-    public void QueueAction(Action a){
+    // add an action to the end of the queue
+    void AddAction(Action a){
         actions.Add(a);
     }
-    public void InsertAction(Action a){
+
+    // insert an action to the front of the queue, to be executed when the current action is finished
+    void InsertAction(Action a){
         actions.Insert(0, a);
     }
-    public void InsertActionImmediate(Action a, bool clear){
+
+    // insert an action to the front of the queue and immediately execute
+    void InsertActionImmediate(Action a, bool clear){
         if(clear){
             actions.Clear();
         }
@@ -42,7 +66,28 @@ public class ObjectBehavior : MonoBehaviour
         OnActionInterrupt();
         NextAction();
     }
+
+    public void QueueAction_GoHome(int priority){
+        Action a = new Action((int)Action.ActionTypes.GoTo, home.gameObject, -1, -1, -1);
+        QueueAction(a, priority);
+    }
+
+    public void QueueAction_Idle(int priority){
+        Action a = new Action((int)Action.ActionTypes.Idle, null, -1, -1, -1);
+        QueueAction(a, priority);
+    }
+
+
+    // select and execute the next action in the queue... if list is empty, insert "go home" or "idle" action
     public Action NextAction(){
+        if(actions.Count == 0){
+            if(IsAtHome()){
+                QueueAction_Idle((int)Priority.Front);
+            }
+            else{
+                QueueAction_GoHome((int)Priority.Front);
+            }
+        }
         Action next = actions[0];
         actions.RemoveAt(0);
         activeAction = next;
@@ -211,19 +256,11 @@ public class ObjectBehavior : MonoBehaviour
     }
 
     public void GoTo(Action a){
-        StartCoroutine(_GoTo(a));
-        IEnumerator _GoTo(Action _a){
-            Transform targetT = _a.obj.transform;
-            Transform t = gameObject.transform;
-            while(Vector3.Distance(t.position, targetT.position) > 1f){
-
-                yield return null;
-            }
-        }
+        StartCoroutine(_GoTo(a, false));
     }
 
     public void Follow(Action a){
-
+        StartCoroutine(_GoTo(a, true));
     }
 
     public void Collect(Action a){
@@ -242,6 +279,35 @@ public class ObjectBehavior : MonoBehaviour
 
     }
 
+
+
+
+    public bool IsAtHome(){
+        return Vector3.Distance(transform.position, home.position) < homeDistanceThreshhold;
+    }
+
+
+
+
+
+    IEnumerator _GoTo(Action a, bool follow){
+        Transform t = gameObject.transform;
+        Transform targetT;
+        GameObject newGameObject = new GameObject();
+        if (follow) { targetT = a.obj.transform; }
+        else
+        {
+            newGameObject = new GameObject();
+            newGameObject.transform.position = a.obj.transform.position;
+            targetT = newGameObject.transform;
+        }
+        while (Vector3.Distance(t.position, targetT.position) > (homeDistanceThreshhold / 2f))
+        {
+            NavigateTowards(targetT);
+            yield return null;
+        }
+        if(follow){ GameObject.Destroy(newGameObject); }
+    }
 
 
 

@@ -743,7 +743,6 @@ GameObject:
   - component: {fileID: 658721191}
   - component: {fileID: 658721190}
   - component: {fileID: 658721188}
-  - component: {fileID: 658721196}
   - component: {fileID: 658721195}
   - component: {fileID: 658721189}
   m_Layer: 0
@@ -765,6 +764,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3458523cf906a4d4b98dacd1af454cb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats: {fileID: 0}
+  behavior: {fileID: 0}
   renderer: {fileID: 658721192}
   mat_none: {fileID: 2100000, guid: 2a31f5a722335cf4a86f6af8d55905de, type: 2}
   mat_selecting: {fileID: 2100000, guid: 1b2bfe78579238b4da1d06500f1f002a, type: 2}
@@ -886,6 +887,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeAction: {fileID: 0}
+  home: {fileID: 0}
   senseDistance: 0
   maxJumpFromDistance: 0
   maxJumpableObstacleHeight: 0
@@ -893,18 +895,6 @@ MonoBehaviour:
   rotationSpeed: 0
   running: 0
   actions: []
---- !u!114 &658721196
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 658721187}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91981f8c4ec30a34c8c47c1db62c44fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!54 &658721197
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -969,7 +959,6 @@ GameObject:
   - component: {fileID: 902200832}
   - component: {fileID: 902200831}
   - component: {fileID: 902200829}
-  - component: {fileID: 902200837}
   - component: {fileID: 902200836}
   - component: {fileID: 902200830}
   m_Layer: 0
@@ -991,6 +980,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3458523cf906a4d4b98dacd1af454cb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats: {fileID: 0}
+  behavior: {fileID: 0}
   renderer: {fileID: 902200833}
   mat_none: {fileID: 2100000, guid: 2a31f5a722335cf4a86f6af8d55905de, type: 2}
   mat_selecting: {fileID: 2100000, guid: 1b2bfe78579238b4da1d06500f1f002a, type: 2}
@@ -1112,6 +1103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeAction: {fileID: 0}
+  home: {fileID: 0}
   senseDistance: 0
   maxJumpFromDistance: 0
   maxJumpableObstacleHeight: 0
@@ -1119,18 +1111,6 @@ MonoBehaviour:
   rotationSpeed: 0
   running: 0
   actions: []
---- !u!114 &902200837
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 902200828}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91981f8c4ec30a34c8c47c1db62c44fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!54 &902200838
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1177,7 +1157,6 @@ GameObject:
   - component: {fileID: 908828674}
   - component: {fileID: 908828673}
   - component: {fileID: 908828671}
-  - component: {fileID: 908828679}
   - component: {fileID: 908828678}
   - component: {fileID: 908828672}
   m_Layer: 0
@@ -1199,6 +1178,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3458523cf906a4d4b98dacd1af454cb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats: {fileID: 0}
+  behavior: {fileID: 0}
   renderer: {fileID: 908828675}
   mat_none: {fileID: 2100000, guid: 2a31f5a722335cf4a86f6af8d55905de, type: 2}
   mat_selecting: {fileID: 2100000, guid: 1b2bfe78579238b4da1d06500f1f002a, type: 2}
@@ -1320,6 +1301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeAction: {fileID: 0}
+  home: {fileID: 0}
   senseDistance: 0
   maxJumpFromDistance: 0
   maxJumpableObstacleHeight: 0
@@ -1327,18 +1309,6 @@ MonoBehaviour:
   rotationSpeed: 0
   running: 0
   actions: []
---- !u!114 &908828679
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 908828670}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91981f8c4ec30a34c8c47c1db62c44fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!54 &908828680
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2202,7 +2172,7 @@ PrefabInstance:
     - target: {fileID: 5868777176578800873, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1758.7731
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5868777176578800873, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
@@ -2212,7 +2182,7 @@ PrefabInstance:
     - target: {fileID: 5868777176578800873, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 879.38654
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5868777176578800873, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
@@ -2257,7 +2227,7 @@ PrefabInstance:
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1758.7731
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
@@ -2302,7 +2272,7 @@ PrefabInstance:
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 879.38654
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
@@ -2418,7 +2388,6 @@ GameObject:
   - component: {fileID: 1956531248}
   - component: {fileID: 1956531247}
   - component: {fileID: 1956531245}
-  - component: {fileID: 1956531253}
   - component: {fileID: 1956531252}
   - component: {fileID: 1956531246}
   m_Layer: 0
@@ -2440,6 +2409,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3458523cf906a4d4b98dacd1af454cb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats: {fileID: 0}
+  behavior: {fileID: 0}
   renderer: {fileID: 1956531249}
   mat_none: {fileID: 2100000, guid: 2a31f5a722335cf4a86f6af8d55905de, type: 2}
   mat_selecting: {fileID: 2100000, guid: 1b2bfe78579238b4da1d06500f1f002a, type: 2}
@@ -2561,6 +2532,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeAction: {fileID: 0}
+  home: {fileID: 0}
   senseDistance: 0
   maxJumpFromDistance: 0
   maxJumpableObstacleHeight: 0
@@ -2568,18 +2540,6 @@ MonoBehaviour:
   rotationSpeed: 0
   running: 0
   actions: []
---- !u!114 &1956531253
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1956531244}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91981f8c4ec30a34c8c47c1db62c44fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!54 &1956531254
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2620,6 +2580,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1963094824}
   - component: {fileID: 1963094823}
+  - component: {fileID: 1963094825}
   m_Layer: 0
   m_Name: Global Object
   m_TagString: Untagged
@@ -2653,6 +2614,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1963094825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1963094822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac9ee8eb3abae18499aba0f742563539, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  command: {fileID: 0}
 --- !u!1 &2087964452
 GameObject:
   m_ObjectHideFlags: 0
@@ -2669,7 +2643,6 @@ GameObject:
   - component: {fileID: 2087964454}
   - component: {fileID: 2087964453}
   - component: {fileID: 2087964459}
-  - component: {fileID: 2087964461}
   - component: {fileID: 2087964460}
   - component: {fileID: 2087964458}
   m_Layer: 0
@@ -2792,6 +2765,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3458523cf906a4d4b98dacd1af454cb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats: {fileID: 0}
+  behavior: {fileID: 0}
   renderer: {fileID: 2087964455}
   mat_none: {fileID: 2100000, guid: 2a31f5a722335cf4a86f6af8d55905de, type: 2}
   mat_selecting: {fileID: 2100000, guid: 1b2bfe78579238b4da1d06500f1f002a, type: 2}
@@ -2812,6 +2787,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeAction: {fileID: 0}
+  home: {fileID: 0}
   senseDistance: 0
   maxJumpFromDistance: 0
   maxJumpableObstacleHeight: 0
@@ -2819,18 +2795,6 @@ MonoBehaviour:
   rotationSpeed: 0
   running: 0
   actions: []
---- !u!114 &2087964461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2087964452}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91981f8c4ec30a34c8c47c1db62c44fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!54 &2087964462
 Rigidbody:
   m_ObjectHideFlags: 0
