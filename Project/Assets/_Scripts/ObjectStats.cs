@@ -7,6 +7,7 @@ public class ObjectStats : MonoBehaviour
 
     public string type;
     public string name;
+    public int id;
 
     Dictionary<string, int> stats;
 
@@ -18,6 +19,7 @@ public class ObjectStats : MonoBehaviour
     public void InitStats(string type){
         //Debug.Log("Getting stats for type: " + type);
         stats = new Dictionary<string, int>(ObjectStatsDefs.current.GetStats(type));
+        id = Random.Range(0, int.MaxValue);
     }
 
     public Dictionary<string, int> GetStats(){

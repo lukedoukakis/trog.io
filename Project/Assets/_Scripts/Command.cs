@@ -27,7 +27,7 @@ public class Command : MonoBehaviour
             behavior = osm.behavior;
             behavior.ProcessCommand(c, (int)ObjectBehavior.Priority.FrontImmediate);
         }
-        Debug.Log("Commands sent!");
+        //Debug.Log("Commands sent!");
     }
 
 

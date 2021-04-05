@@ -6,11 +6,15 @@ public class ObjectBehavior : MonoBehaviour
 {
 
     ObjectPhysics physics;
+    ObjectStats stats;
 
-    public Action activeAction;
+
     public Transform home;
-    static float homeDistanceThreshhold = 3f;
+    static float distanceThreshhold_home = 10f;
+    static float distanceThreshhold_spot = 2f;
 
+
+    // sensing and movement parameters
     public static float senseDistance = 3f;
     public static float maxJumpFromDistance = 2f;
     public static float maxJumpableObstacleHeight = 1f;
@@ -19,20 +23,28 @@ public class ObjectBehavior : MonoBehaviour
     public bool running;
 
 
+    public Action activeAction;
     public List<Action> actions;
-
-
-    public enum Command{
-        Idle, Go_home, Follow_player
-    }
-
     public enum Priority{
         Back, Front, FrontImmediate
     }
 
+    public enum Command{
+        Idle, Go_home, Follow_player
+    }
+    IEnumerator coroutine_movement;
+    IEnumerator coroutine_hands;
+
+
+    // temp
+    GameObject tempObject;
+
+
+
 
     public void Awake(){
         physics = GetComponent<ObjectPhysics>();
+        stats = GetComponent<ObjectStats>();
         home = GameObject.FindGameObjectWithTag("Home").transform;
     }
 
@@ -110,7 +122,7 @@ public class ObjectBehavior : MonoBehaviour
     // select and execute the next action in the queue... if list is empty, insert "go home" or "idle" action
     public Action NextAction(){
         if(actions.Count == 0){
-            if(IsAtHome()){
+            if(IsAtPosition(home.position, distanceThreshhold_spot)){
                 ProcessCommand((int)Command.Idle, (int)Priority.Front);
             }
             else{
@@ -188,7 +200,6 @@ public class ObjectBehavior : MonoBehaviour
         RotateToward(targetT.position, .05f);
 		
 		// move forward
-        Debug.Log("moving");
 		physics.Move(Vector3.forward, movementSpeed);
 
 
@@ -261,11 +272,15 @@ public class ObjectBehavior : MonoBehaviour
     }
 
     public void GoTo(Action a){
-        StartCoroutine(_GoTo(a, false));
+        TerminateMovement();
+        coroutine_movement = _GoTo(a, false);
+        StartCoroutine(coroutine_movement);
     }
 
     public void Follow(Action a){
-        StartCoroutine(_GoTo(a, true));
+        TerminateMovement();
+        coroutine_movement = _GoTo(a, true);
+        StartCoroutine(coroutine_movement);
     }
 
     public void Collect(Action a){
@@ -285,10 +300,20 @@ public class ObjectBehavior : MonoBehaviour
     }
 
 
+    void TerminateMovement(){
+        if(coroutine_movement != null){
+            StopCoroutine(coroutine_movement);
+            coroutine_movement = null;
+        }
+        if(tempObject != null){
+            GameObject.Destroy(GameObject.Find("temp_" + stats.id));
+        }
+    }
 
 
-    public bool IsAtHome(){
-        return Vector3.Distance(transform.position, home.position) < homeDistanceThreshhold;
+
+    public bool IsAtPosition(Vector3 position, float distanceThreshhold){
+        return Vector3.Distance(transform.position, position) < distanceThreshhold;
     }
 
 
@@ -298,21 +323,26 @@ public class ObjectBehavior : MonoBehaviour
     IEnumerator _GoTo(Action a, bool follow){
         Transform t = gameObject.transform;
         Transform targetT;
-        GameObject newGameObject = new GameObject();
         if (follow) { targetT = a.obj.transform; }
         else
         {
-            newGameObject = new GameObject();
-            newGameObject.transform.position = a.obj.transform.position;
-            targetT = newGameObject.transform;
+            tempObject = new GameObject("temp_" + stats.id);
+            tempObject.transform.position = a.obj.transform.position;
+            targetT = tempObject.transform;
         }
-        while((Vector3.Distance(t.position, targetT.position) > (homeDistanceThreshhold)) || follow)
+        while(true)
         {
-            NavigateTowards(targetT);
+            if(Vector3.Distance(t.position, targetT.position) > (distanceThreshhold_spot)){
+                NavigateTowards(targetT);
+            }
+            else{
+                if(!follow){
+                    //Debug.Log("Destination reached");
+                    TerminateMovement();
+                }
+            }
             yield return null;
         }
-        Debug.Log("Destination reached");
-        if(!follow){ GameObject.Destroy(newGameObject); }
     }
 
 
