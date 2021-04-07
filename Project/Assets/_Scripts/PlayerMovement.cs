@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
         physics = GetComponent<ObjectPhysics>();
         rigidbody = GetComponent<Rigidbody>();
     }
-    void FixedUpdate()
+    void Update()
     {
 
         Vector3 moveDir = Vector3.zero;
@@ -37,12 +37,12 @@ public class PlayerMovement : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.Space))
         {
-            if(physics.GROUNDTOUCH){
+            if(physics.CanJump()){
                 physics.Jump();
             }
         }
         moveDir = moveDir.normalized;
-        physics.Move(moveDir, ObjectBehavior.movementSpeed*5f);
+        physics.Move(moveDir, ObjectBehavior.acceleration);
         
        
 

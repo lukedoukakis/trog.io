@@ -16,9 +16,8 @@ public class ObjectBehavior : MonoBehaviour
 
     // sensing and movement parameters
     public static float senseDistance = 3f;
-    public static float maxJumpFromDistance = 2f;
-    public static float maxJumpableObstacleHeight = 1f;
-    public static float movementSpeed = .001f;
+    public static float maxJumpFromDistance = 3f;
+    public static float acceleration = .1f;
     public static float rotationSpeed = 1f;
     public bool running;
 
@@ -200,7 +199,7 @@ public class ObjectBehavior : MonoBehaviour
         RotateToward(targetT.position, .05f);
 		
 		// move forward
-		physics.Move(Vector3.forward, movementSpeed);
+		physics.Move(Vector3.forward, acceleration);
 
 
 
@@ -209,6 +208,7 @@ public class ObjectBehavior : MonoBehaviour
             float castDistance = senseDistance;
 
             // set raycasts to reach castDistance units away
+            Transform gs = physics.groundSense;
             bool leftCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.left)).normalized, out leftHitInfo, castDistance);
             bool centerCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), transform.TransformDirection(Vector3.forward).normalized * 1f, out centerHitInfo, castDistance);
             bool rightCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.right)).normalized, out rightHitInfo, castDistance);
@@ -225,7 +225,8 @@ public class ObjectBehavior : MonoBehaviour
 
             // return true if any of the raycasts hit something besides a tribe member
             foreach(RaycastHit hitInfo in hitInfos){
-                if(hitInfo.collider.gameObject.tag != "TribeMember"){
+                string tag = hitInfo.collider.gameObject.tag;
+                if(tag != "TribeMember" && tag != "Player"){
                     return true;
                 }
             }
@@ -234,10 +235,11 @@ public class ObjectBehavior : MonoBehaviour
         }
 
         bool CanClearObstacle(){
+            Transform ohs = physics.obstacleHeightSense;
             if (
-                !Physics.Raycast(transform.position + new Vector3(0, .1f, 0) + Vector3.up * maxJumpableObstacleHeight, (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.left)).normalized * 1f, out leftHitInfo, senseDistance / 2)
-                && !Physics.Raycast(transform.position + new Vector3(0, .1f, 0) + Vector3.up * maxJumpableObstacleHeight, transform.TransformDirection(Vector3.forward).normalized * 1f, out leftHitInfo, senseDistance * 2)
-                && !Physics.Raycast(transform.position + new Vector3(0, .1f, 0) + Vector3.up * maxJumpableObstacleHeight, (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.right)).normalized * 1f, out rightHitInfo, senseDistance / 2)
+                !Physics.Raycast(ohs.position, (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.left)).normalized * 1f, out leftHitInfo, senseDistance / 2)
+                && !Physics.Raycast(ohs.position, transform.TransformDirection(Vector3.forward).normalized * 1f, out leftHitInfo, senseDistance * 2)
+                && !Physics.Raycast(ohs.position, (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.right)).normalized * 1f, out rightHitInfo, senseDistance / 2)
             )
             {
                 return true;
