@@ -2206,8 +2206,8 @@ GameObject:
   - component: {fileID: 1326718101}
   - component: {fileID: 1326718100}
   m_Layer: 0
-  m_Name: Plane
-  m_TagString: Terrain
+  m_Name: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2940,12 +2940,12 @@ PrefabInstance:
     - target: {fileID: 5868777176578800873, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5868777176578800873, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5868777176578800873, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
@@ -2965,7 +2965,7 @@ PrefabInstance:
     - target: {fileID: 5868777176578800873, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -280.74796
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
@@ -2990,7 +2990,7 @@ PrefabInstance:
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
@@ -3000,7 +3000,7 @@ PrefabInstance:
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
@@ -3055,7 +3055,7 @@ PrefabInstance:
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -140.37398
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}

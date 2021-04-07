@@ -12,6 +12,8 @@ public class ObjectBehavior : MonoBehaviour
     public Transform home;
     static float distanceThreshhold_home = 10f;
     static float distanceThreshhold_spot = 2f;
+    public static float randomOffsetRange = 1f;
+    Vector3 randomOffset;
 
 
     // sensing and movement parameters
@@ -45,6 +47,7 @@ public class ObjectBehavior : MonoBehaviour
         physics = GetComponent<ObjectPhysics>();
         stats = GetComponent<ObjectStats>();
         home = GameObject.FindGameObjectWithTag("Home").transform;
+        randomOffset = new Vector3(Random.Range(randomOffsetRange*-1f, randomOffsetRange), 0f, Random.Range(randomOffsetRange*-1f, randomOffsetRange));
     }
 
 
@@ -196,7 +199,7 @@ public class ObjectBehavior : MonoBehaviour
 				}
 			}
 		}
-        RotateToward(targetT.position, .05f);
+        RotateToward(targetT.position + randomOffset, .05f);
 		
 		// move forward
 		physics.Move(Vector3.forward, acceleration);
