@@ -6,6 +6,7 @@ public class ObjectPhysics : MonoBehaviour
 {
 
     ObjectStats stats;
+    ObjectAnimation anim;
 
     public Transform groundSense;
     RaycastHit groundInfo;
@@ -31,6 +32,7 @@ public class ObjectPhysics : MonoBehaviour
 
     void Awake(){
         stats = GetComponent<ObjectStats>();
+        anim = GetComponent<ObjectAnimation>();
         rb = GetComponent<Rigidbody>();
         groundSense = transform.Find("GroundSense");
         obstacleHeightSense = transform.Find("ObstacleHeightSense");
