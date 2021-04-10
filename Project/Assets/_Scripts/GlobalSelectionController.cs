@@ -11,39 +11,39 @@ public class GlobalSelectionController : MonoBehaviour
         current = this;
     }
 
-    public List<ObjectSelectionManager> SelectingOSMs;
-    public List<ObjectSelectionManager> SelectedOSMs;
+    public List<EntityHandle> SelectingHandles;
+    public List<EntityHandle> SelectedHandles;
 
    
-    public void AddToSelecting(ObjectSelectionManager osm){
+    public void AddToSelecting(EntityHandle osm){
         if(!osm.selecting && !osm.selected){
             osm.SetSelecting(true);
-            SelectingOSMs.Add(osm);
+            SelectingHandles.Add(osm);
         }
     }
 
     public void Select(){
-        foreach(ObjectSelectionManager osm in SelectingOSMs){
+        foreach(EntityHandle osm in SelectingHandles){
             osm.SetSelecting(false);
             osm.SetSelected(true);
-            SelectedOSMs.Add(osm);
+            SelectedHandles.Add(osm);
         }
-        SelectingOSMs.Clear();
+        SelectingHandles.Clear();
     }
 
-    public void RemoveFromSelected(ObjectSelectionManager osm){
-        SelectedOSMs.Remove(osm);
+    public void RemoveFromSelected(EntityHandle osm){
+        SelectedHandles.Remove(osm);
         osm.SetSelected(false);
     }
 
     public void ClearSelected(){
-        foreach(ObjectSelectionManager osm in SelectedOSMs){
+        foreach(EntityHandle osm in SelectedHandles){
             osm.SetSelected(false);
         }
-        SelectedOSMs.Clear();
+        SelectedHandles.Clear();
     }
 
     public bool SelectionIsEmpty(){
-        return SelectedOSMs.Count == 0;
+        return SelectedHandles.Count == 0;
     }
 }

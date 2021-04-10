@@ -18,38 +18,41 @@ public class UIEvents : MonoBehaviour
         current = this;
     }
 
-    public void OnUnitMouseOver(ObjectSelectionManager osm)
+    public void OnUnitMouseOver(EntityHandle handle)
     {
+
+        if(handle.tag == "Player"){ return; }
+
         if (!hoveringUI)
         {
             // handle tooltip
-            if (!osm.tooltip)
+            if (!handle.tooltip)
             {
-                osm.ShowTooltip();
+                handle.ShowTooltip();
             }
 
             // handle selecting
             if (mouseDown)
             {
-                if (!osm.selected || !osm.selecting)
+                if (!handle.selected || !handle.selecting)
                 {
-                    GlobalSelectionController.current.AddToSelecting(osm);
+                    GlobalSelectionController.current.AddToSelecting(handle);
                 }
             }
             if (Input.GetMouseButtonUp(0))
             {
-                if (osm.selected)
+                if (handle.selected)
                 {
-                    GlobalSelectionController.current.RemoveFromSelected(osm);
+                    GlobalSelectionController.current.RemoveFromSelected(handle);
                 }
             }
         }
     }
 
 
-    public void OnUnitMouseExit(ObjectSelectionManager osm)
+    public void OnUnitMouseExit(EntityHandle handle)
     {
-        osm.HideTooltip();
+        handle.HideTooltip();
     }
 
     public void OnUIPointerEnter()

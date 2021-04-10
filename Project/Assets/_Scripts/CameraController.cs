@@ -6,24 +6,20 @@ public class CameraController : MonoBehaviour
 {
 
     public Camera MainCamera;
+    public Transform playerT;
+    public Transform focusT;
 
     public static CameraController current;
 
-    Rigidbody rb;
-    [SerializeField] float moveSpeed;
     [SerializeField] float sensitivity;
     [SerializeField] float featureCullDistance;
     [SerializeField] float smallFeatureCullDistance;
     float acceleration;
 
-    float hor;
-    float ver;
-
-    static Vector3 flat = new Vector3(1f, 0f, 1f);
-
 
     void Awake(){
         current = this;
+        playerT = GameObject.FindGameObjectWithTag("Player").transform;
     }
     // Start is called before the first frame update
     void Start()
@@ -34,13 +30,7 @@ public class CameraController : MonoBehaviour
         float[] cullDistances = new float[32];
         cullDistances[10] = featureCullDistance;
         cullDistances[11] = smallFeatureCullDistance;
-
         MainCamera.layerCullDistances = cullDistances;
-
-        rb = GetComponent<Rigidbody>();
-
-
-        acceleration = moveSpeed / 4f;
 
         //RandomSpawn();
     }
@@ -65,65 +55,17 @@ public class CameraController : MonoBehaviour
     }
 
     void Update(){
-        float h = Input.GetAxis("Mouse X") * 60f * Time.deltaTime;
-        float v = Input.GetAxis("Mouse Y") * -60f * Time.deltaTime;
-        MainCamera.transform.Rotate(v, h, 0);
-
-        Vector3 eulers = transform.rotation.eulerAngles;
-        Vector3 pos = MainCamera.transform.position;
-        //mainCamera.transform.rotation = Quaternion.Euler(30f, eulers.y, 0f);
-        MainCamera.transform.rotation = Quaternion.Euler(eulers.x, eulers.y, 0f);
-        MainCamera.transform.position = new Vector3(pos.x, pos.y, pos.z);
-
-        float maxSpeed = moveSpeed;
-        if (rb.velocity.magnitude > maxSpeed)
-        {
-            rb.velocity = rb.velocity.normalized * maxSpeed;
-        }
+        Vector3 targetPos = playerT.position + playerT.TransformDirection((Vector3.forward*-6.75f) + (Vector3.up*4.75f));
+        Quaternion targetRot = playerT.rotation * Quaternion.Euler(new Vector3(25f, 0f, 0f));
 
 
-        if (Input.GetKeyUp(KeyCode.P))
-        {
-            moveSpeed += 5;
-            acceleration = moveSpeed / 4f;
-        }
-        if (Input.GetKeyUp(KeyCode.O))
-        {
-            moveSpeed -= 5;
-            acceleration = moveSpeed / 4f;
-        }
-        acceleration = Mathf.Clamp(acceleration, 0f, 200f);
+        transform.position = Vector3.Lerp(transform.position, targetPos, 100f * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 100f * Time.deltaTime);
 
     }
 
     void FixedUpdate()
     {
-
-
-        if (Input.GetKey(KeyCode.W))
-        {
-            rb.AddForce(Vector3.Scale(transform.forward, flat).normalized * acceleration, ForceMode.Acceleration);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            rb.AddForce(Vector3.Scale(transform.forward, flat).normalized * acceleration * -1f, ForceMode.Acceleration);
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            rb.AddForce(transform.right * -1f * acceleration*.6f, ForceMode.Acceleration);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            rb.AddForce(transform.right * acceleration*.6f, ForceMode.Acceleration);
-        }
-        if (Input.GetKey(KeyCode.Space))
-        {
-            rb.AddForce(Vector3.up * acceleration*.2f, ForceMode.Acceleration);
-        }
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            rb.AddForce(Vector3.up * -1f * acceleration*.2f, ForceMode.Acceleration);
-        }
 
 
     }

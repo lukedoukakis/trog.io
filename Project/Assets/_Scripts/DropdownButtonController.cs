@@ -8,9 +8,10 @@ public class DropdownButtonController : MonoBehaviour
 {
 
     public ButtonDropdownController bdc;
-    public ObjectSelectionManager referencedOSM;
+    public EntityHandle handle;
     public GameObject referencedObject;
-    public ObjectStats referencedObjectStats;
+    public EntityStats referencedObjectStats;
+    public EntityInfo referencedObjectInfo;
     public Button button;
     public TextMeshProUGUI tmp;
 
@@ -33,15 +34,15 @@ public class DropdownButtonController : MonoBehaviour
 
 
 
-    public void SetFromObject(ObjectSelectionManager refOSM){
-        referencedOSM = refOSM;
-        referencedObject = referencedOSM.gameObject;
-        referencedObjectStats = referencedObject.GetComponent<ObjectStats>();
-        if(referencedObjectStats.name == ""){
-            label = referencedObjectStats.type;
+    public void SetFromObject(EntityHandle handle){
+        this.handle = handle;
+        referencedObject = this.handle.gameObject;
+        referencedObjectInfo = referencedObject.GetComponent<EntityInfo>();
+        if(referencedObjectInfo.NAME == ""){
+            label = referencedObjectInfo.TYPE;
         }
         else{
-            label = referencedObjectStats.name;
+            label = referencedObjectInfo.NAME;
         }
         UpdateLook();
     }
@@ -53,7 +54,7 @@ public class DropdownButtonController : MonoBehaviour
     public void OnXButtonPress(){
         if(bdc != null){
             bdc.RemoveButton(this.gameObject);
-            GlobalSelectionController.current.RemoveFromSelected(referencedOSM);
+            GlobalSelectionController.current.RemoveFromSelected(handle);
         }
         else{
             Debug.Log("DropdownButtonController: No referenced ButtonDropdownController!");
@@ -61,12 +62,12 @@ public class DropdownButtonController : MonoBehaviour
     }
 
     public void OnButtonPointerEnter(){
-        if(!referencedOSM.tooltip){
-            referencedOSM.ShowTooltip();
+        if(!handle.tooltip){
+            handle.ShowTooltip();
         }
     }
     public void OnButtonPointerExit(){
-        referencedOSM.HideTooltip();
+        handle.HideTooltip();
     }
 
 

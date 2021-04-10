@@ -16,7 +16,7 @@ public class TooltipController : MonoBehaviour
 
 	public static TooltipController current;
 	public static float DefaultDelay = .3f;
-	bool enabled;
+	bool isEnabled;
 	
 	public void Awake(){
 		current = this;
@@ -35,19 +35,19 @@ public class TooltipController : MonoBehaviour
 	}
 	
 	public void Show(float delay){
-		enabled = true;
+		isEnabled = true;
 		StartCoroutine(ShowAfterDelay(delay));
 	}
 	IEnumerator ShowAfterDelay(float delay){
 		yield return new WaitForSeconds(delay);
-		if(enabled){
+		if(isEnabled){
 			text.enabled = true;
 			backgroundImage.enabled = true;
 		}
 	}
 
 	public void Hide(){
-		enabled = false;
+		isEnabled = false;
 		text.enabled = false;
 		backgroundImage.enabled = false;
 	}

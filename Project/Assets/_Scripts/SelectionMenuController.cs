@@ -16,8 +16,8 @@ public class SelectionMenuController : MonoBehaviour
 
     public void UpdateSelectionMenu(){
         unitBDC.ClearButtons();
-        foreach(ObjectSelectionManager osm in GlobalSelectionController.current.SelectedOSMs.ToArray()){
-            unitBDC.AddButton(osm);
+        foreach(EntityHandle handle in GlobalSelectionController.current.SelectedHandles.ToArray()){
+            unitBDC.AddButton(handle);
         }
     }
 

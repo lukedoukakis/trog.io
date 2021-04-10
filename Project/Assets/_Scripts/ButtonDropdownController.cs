@@ -15,10 +15,10 @@ public class ButtonDropdownController : MonoBehaviour
         buttons = new List<GameObject>();
     }
 
-    public void AddButton(ObjectSelectionManager referencedOSM){
+    public void AddButton(EntityHandle handle){
         GameObject newButton = Instantiate(buttonPrefab, this.gameObject.transform);
         DropdownButtonController dbc = newButton.GetComponent<DropdownButtonController>();
-        dbc.SetFromObject(referencedOSM);
+        dbc.SetFromObject(handle);
         dbc.bdc = this;
         buttons.Add(newButton);
     }
