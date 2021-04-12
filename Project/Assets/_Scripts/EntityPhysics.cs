@@ -15,13 +15,19 @@ public class EntityPhysics : EntityComponent
     public static float JumpForce = 500f;
     public static float AccelerationScale = 20f;
     public static float MaxSpeedScale = 20f;
-    public static float JumpCoolDown = .25f;
+    public static float JumpCoolDown = .5f;
 
 
     public float jumpTime;
+    public float airTime;
+    public float groundTime;
     public float acceleration;
     public float maxSpeed;
 
+
+    public static float landScrunch_recoverySpeed = .8f;
+    public static float landScrunch_airTimeThreshhold = 2.4f;
+    public float landScrunch;
 
 
     public float ROTATION_Y_THIS;
@@ -75,23 +81,46 @@ public class EntityPhysics : EntityComponent
 
 
     void CheckGround(){
+        Vector3 vel = rb.velocity;
         // directly underneath
-        GROUNDTOUCH = false;
         if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, castDistance_ground)){
             if(Vector3.Distance(groundInfo.point, transform.position) < .2f){
-                GROUNDTOUCH = true;
+                if(!GROUNDTOUCH){
+                    GROUNDTOUCH = true;
+                    vel.y = 0f;
+                    rb.velocity = vel;
+                }
+                groundTime += Time.deltaTime;
+            }
+            else{
+                if(GROUNDTOUCH){
+                    GROUNDTOUCH = false;
+                    groundTime = 0f;
+                    airTime = 0f;
+                }
+                airTime += Time.deltaTime;
             }
         }
     }
 
+    void CheckScrunch(){
+        if(groundTime < 1f - landScrunch_recoverySpeed){
+            landScrunch = Mathf.Sin(Mathf.InverseLerp(0f, 1f - landScrunch_recoverySpeed, groundTime) * Mathf.PI);
+            float at = Mathf.Lerp(0f, 1f, airTime / landScrunch_airTimeThreshhold);
+            landScrunch = Mathf.Lerp(0f, at, landScrunch);
+        }else{
+            landScrunch = 0f;
+        }
+    }
+
     void LimitSpeed(){
-        Vector3 vel = rb.velocity;
-        float ySpeed = vel.y;
-        vel.y = 0f;
-        if(vel.magnitude > maxSpeed){
-            vel = vel.normalized * maxSpeed;
-            vel.y = ySpeed;
-            rb.velocity = vel;
+        Vector3 horvel = rb.velocity;
+        float ySpeed = horvel.y;
+        horvel.y = 0f;
+        if(horvel.magnitude > maxSpeed){
+            horvel = horvel.normalized * maxSpeed;
+            horvel.y = ySpeed;
+            rb.velocity = horvel;
         }
     }
 
@@ -106,6 +135,7 @@ public class EntityPhysics : EntityComponent
         jumpTime += Time.deltaTime;
 
         CheckGround();
+        CheckScrunch();
         LimitSpeed();
 
 

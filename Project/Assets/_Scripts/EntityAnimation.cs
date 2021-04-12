@@ -10,9 +10,14 @@ public class EntityAnimation : EntityComponent
     public Transform bodyT;
     public Animator animator;
 
-    public static float bodyRotationSpeed_player = .2f;
-    public static float bodyRotationSpeed_ai = .01f;
+    public static float bodyRotationSpeed_player = 10f;
+    public static float bodyRotationSpeed_ai = 10f;
+
     float bodyRotationSpeed;
+    Quaternion bodyRotation;
+    Quaternion bodyRotationLast;
+
+
 
 
 
@@ -21,12 +26,8 @@ public class EntityAnimation : EntityComponent
         {"Stand",   false},
         {"Run",     false},
         {"Limp",    false},
-    };
-
-    // stay set according to 'layers' in Animator
-    public static Dictionary<string, int> AnimationLayers = new Dictionary<string, int>{
-        {"Legs_full", 1},
-        {"Legs_shuffle", 2},
+        {"Jump",    false},
+        {"Land",    false},
     };
 
 
@@ -52,42 +53,75 @@ public class EntityAnimation : EntityComponent
     }
 
 
-    public void SetAnimation(string movement, bool value){
+    public void SetMovement(string movement, bool value){
         if(movements[movement] != value){
             movements[movement] = value;
             animator.SetBool(movement, value);
         }
     }
 
-    void UpdateBodyRotation(){
-        Vector3 vel = rb.velocity;
-        vel.y = 0f;
-        Vector3 direction = Vector3.RotateTowards(bodyT.transform.forward, vel, 5f * Time.deltaTime, 0f);
-        bodyT.rotation = Quaternion.LookRotation(direction);
+    public void SetPositionWeight(string position, float value){
+        animator.SetLayerWeight(animator.GetLayerIndex(position), value);
     }
-    void UpdateMovementAnimation(){
+
+    void UpdateBodyRotation(){
+        Vector3 velRaw = rb.velocity;
+        Vector3 velHoriz = velRaw; velHoriz.y = 0;
+        Vector3 direction = Vector3.RotateTowards(bodyT.transform.forward, velHoriz, bodyRotationSpeed * Time.deltaTime, 0f);    
+        
+        Quaternion rot = Quaternion.LookRotation(direction);
+        //bodyT.rotation = Quaternion.LookRotation(direction);
+
+
+        Vector3 angularVelocity = rot.eulerAngles - bodyRotationLast.eulerAngles;
+        if(tag == "Player"){
+            Debug.Log(angularVelocity);
+        }
+        bodyT.rotation = rot * Quaternion.Euler(Vector3.forward*angularVelocity.y*-2f);
+        //bodyT.Rotate(Vector3.forward*angularVelocity.y*10f);
+        
+        
+        
+        
+
+
+
+    }
+    void UpdateMovement(){
         Vector3 velRaw = rb.velocity;
         Vector3 velHoriz = velRaw; velHoriz.y = 0;
 
-        if(velHoriz.magnitude > .5f){
+        if(velHoriz.magnitude > .001f){
             if(handle.entityPhysics.GROUNDTOUCH){
-                SetAnimation("Run", true);
-                SetAnimation("Stand", false);
+                SetMovement("Run", true);
+                SetMovement("Stand", false);
             }
         }
         else{
             if(handle.entityPhysics.GROUNDTOUCH){
-                SetAnimation("Stand", true);
-                SetAnimation("Run", false);
+                SetMovement("Run", false);
+                SetMovement("Stand", true);
             }
         }
 
+
+
+
         float bodySkew = Mathf.InverseLerp(0f, 180f, Vector3.Angle(velHoriz, bodyT.forward));
         float slowness = 1f - Mathf.InverseLerp(0f, handle.entityPhysics.maxSpeed, velHoriz.magnitude);
-        float shuffleMagnitude = Mathf.Max(bodySkew, slowness);
-        animator.SetLayerWeight(AnimationLayers["Legs_full"], 1f - shuffleMagnitude);
-        animator.SetLayerWeight(AnimationLayers["Legs_shuffle"], shuffleMagnitude);
+        float runMagnitude = 1f - Mathf.Max(bodySkew, slowness);
+        SetPositionWeight("Legs_full", runMagnitude);
+
+        float backMagnitude = (1f - runMagnitude) * Mathf.Lerp(0f, .5f, bodySkew);
+        SetPositionWeight("Legs_backpedal", backMagnitude);
+        SetPositionWeight("Legs_shuffle", 1f - backMagnitude - runMagnitude);
+        SetPositionWeight("Squat", handle.entityPhysics.landScrunch);
+
+        
+        
+
     }
+
 
     void FixedUpdate(){
 
@@ -95,7 +129,9 @@ public class EntityAnimation : EntityComponent
 
     void Update(){
         UpdateBodyRotation();
-        UpdateMovementAnimation();
+        UpdateMovement();
+
+        bodyRotationLast = bodyT.rotation;
     }
 
 

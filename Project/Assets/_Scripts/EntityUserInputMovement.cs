@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class EntityUserInputMovement : EntityComponent
 {
-    bool jumpInput;
-    float jumpInput_time;
-    static float jumpInput_time_threshhold = .2f;
 
 
     void Awake(){
@@ -50,13 +47,8 @@ public class EntityUserInputMovement : EntityComponent
         }
         if (Input.GetKey(KeyCode.Space))
         {
-            jumpInput = true;
-        }
-
-        if(jumpInput){
             if(handle.entityPhysics.CanJump()){
                 handle.entityPhysics.Jump();
-                jumpInput_time = 0f;
             }
         }
 
@@ -67,14 +59,7 @@ public class EntityUserInputMovement : EntityComponent
         moveDir = moveDir.normalized;
         handle.entityPhysics.Move(moveDir, handle.entityPhysics.acceleration);
         
-       
-
-
-        jumpInput_time += Time.deltaTime;
-        if(jumpInput_time > jumpInput_time_threshhold){
-            jumpInput = false;
-        }
-
+    
     }
 
 

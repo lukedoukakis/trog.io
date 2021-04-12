@@ -1008,6 +1008,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 866545080}
     m_Modifications:
+    - target: {fileID: 1457632763442450880, guid: 521eeae15aa0e7d4e8e3db9805cdddd8,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1b2bfe78579238b4da1d06500f1f002a, type: 2}
     - target: {fileID: 1865195148134338098, guid: 521eeae15aa0e7d4e8e3db9805cdddd8,
         type: 3}
       propertyPath: m_Name
@@ -1098,6 +1103,7 @@ GameObject:
   - component: {fileID: 866545077}
   - component: {fileID: 866545076}
   - component: {fileID: 866545075}
+  - component: {fileID: 866545084}
   - component: {fileID: 866545074}
   - component: {fileID: 866545073}
   m_Layer: 12
@@ -1116,8 +1122,8 @@ Rigidbody:
   m_GameObject: {fileID: 866545071}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0
+  m_Drag: 1
+  m_AngularDrag: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
@@ -1135,7 +1141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 728d9af2f6600d84793f54db102301fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 0}
+  handle: {fileID: 0}
 --- !u!114 &866545074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1179,6 +1185,11 @@ MonoBehaviour:
   obstacleHeightSense: {fileID: 0}
   rb: {fileID: 0}
   jumpTime: 0
+  airTime: 0
+  groundTime: 0
+  acceleration: 0
+  maxSpeed: 0
+  landScrunch: 0
   ROTATION_Y_THIS: 0
   ROTATION_Y_LAST: 0
   GROUNDTOUCH: 0
@@ -1237,7 +1248,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 866545071}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.03, y: 3.99, z: -5.81}
+  m_LocalPosition: {x: -10.03, y: 0.5, z: -5.81}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 682933585}
@@ -1294,6 +1305,8 @@ MonoBehaviour:
   entityAnimation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
+  entityInventory: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
   rdr: {fileID: 0}
   mat_none: {fileID: 0}
   mat_selecting: {fileID: 0}
@@ -1301,6 +1314,19 @@ MonoBehaviour:
   selecting: 0
   selected: 0
   tooltip: 0
+--- !u!114 &866545084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866545071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49d3bb185f9f56d4b9d6ba90186f3602, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handle: {fileID: 0}
 --- !u!1 &875106037
 GameObject:
   m_ObjectHideFlags: 0
@@ -2404,7 +2430,7 @@ PrefabInstance:
     - target: {fileID: 5868777176578800873, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1758.7731
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5868777176578800873, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
@@ -2414,7 +2440,7 @@ PrefabInstance:
     - target: {fileID: 5868777176578800873, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 879.38654
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5868777176578800873, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
@@ -2459,7 +2485,7 @@ PrefabInstance:
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1758.7731
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
@@ -2504,7 +2530,7 @@ PrefabInstance:
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 879.38654
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6310057845890814164, guid: dbd4dcb1489fdad4fae1835d29c378a0,
         type: 3}
@@ -2576,6 +2602,7 @@ GameObject:
   - component: {fileID: 1829362135}
   - component: {fileID: 1829362134}
   - component: {fileID: 1829362133}
+  - component: {fileID: 1829362131}
   m_Layer: 12
   m_Name: TestTribeMember
   m_TagString: TribeMember
@@ -2583,6 +2610,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1829362131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1829362130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49d3bb185f9f56d4b9d6ba90186f3602, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handle: {fileID: 0}
 --- !u!114 &1829362133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2614,6 +2654,11 @@ MonoBehaviour:
   obstacleHeightSense: {fileID: 0}
   rb: {fileID: 0}
   jumpTime: 0
+  airTime: 0
+  groundTime: 0
+  acceleration: 0
+  maxSpeed: 0
+  landScrunch: 0
   ROTATION_Y_THIS: 0
   ROTATION_Y_LAST: 0
   GROUNDTOUCH: 0
@@ -2698,6 +2743,8 @@ MonoBehaviour:
   entityAnimation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
+  entityInventory: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
   rdr: {fileID: 0}
   mat_none: {fileID: 2100000, guid: 2a31f5a722335cf4a86f6af8d55905de, type: 2}
   mat_selecting: {fileID: 2100000, guid: 1b2bfe78579238b4da1d06500f1f002a, type: 2}
@@ -2728,8 +2775,8 @@ Rigidbody:
   m_GameObject: {fileID: 1829362130}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0
+  m_Drag: 1
+  m_AngularDrag: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
