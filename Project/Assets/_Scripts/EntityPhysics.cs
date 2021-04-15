@@ -15,10 +15,10 @@ public class EntityPhysics : EntityComponent
     public static float JumpForce = 500f;
     public static float AccelerationScale = 20f;
     public static float MaxSpeedScale = 20f;
-    public static float JumpCoolDown = .5f;
+    public static float JumpCoolDown = .15f;
 
 
-    public float jumpTime;
+    public float jumpTime; bool jumping;
     public float airTime;
     public float groundTime;
     public float acceleration;
@@ -65,15 +65,36 @@ public class EntityPhysics : EntityComponent
     }
 
     public void Jump(){
+        if(!jumping){
+            StartCoroutine(_Jump());
+        }
+        
+        // Vector3 vel = rb.velocity;
+        // vel.y = 0f;
+        // rb.velocity = vel;
+        // rb.AddForce(Vector3.up * JumpForce, ForceMode.Force);
+        // jumpTime = 0;
+        // groundTime = 0;
+    }
+    IEnumerator _Jump(){
+        jumping = true;
+        if(groundTime <= JumpCoolDown){
+            float t = JumpCoolDown - groundTime;
+            yield return new WaitForSecondsRealtime(t);
+        }
         Vector3 vel = rb.velocity;
         vel.y = 0f;
         rb.velocity = vel;
         rb.AddForce(Vector3.up * JumpForce, ForceMode.Force);
         jumpTime = 0;
+        groundTime = 0;
+        yield return new WaitForSecondsRealtime(.1f);
+        jumping = false;
+        yield return null;
     }
 
     public bool CanJump(){
-        return GROUNDTOUCH && jumpTime > JumpCoolDown;
+        return GROUNDTOUCH;
     }
 
 

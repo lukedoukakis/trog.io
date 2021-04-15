@@ -16,6 +16,10 @@ public class EntityAnimation : EntityComponent
     float bodyRotationSpeed;
     Quaternion bodyRotation;
     Quaternion bodyRotationLast;
+    Vector3 bodyAngularVelocity;
+    float angularVelocityY;
+    float angularVelocityY_last;
+    public static float angularVelocityY_maxDelta = .1f;
 
 
 
@@ -59,7 +63,6 @@ public class EntityAnimation : EntityComponent
             animator.SetBool(movement, value);
         }
     }
-
     public void SetPositionWeight(string position, float value){
         animator.SetLayerWeight(animator.GetLayerIndex(position), value);
     }
@@ -72,17 +75,21 @@ public class EntityAnimation : EntityComponent
         Quaternion rot = Quaternion.LookRotation(direction);
         //bodyT.rotation = Quaternion.LookRotation(direction);
 
+        Vector3 v = (rot.eulerAngles) - (bodyRotationLast.eulerAngles);
+        angularVelocityY = Mathf.Lerp(bodyAngularVelocity.y, v.y, .5f);
+        angularVelocityY = Mathf.Clamp(angularVelocityY, -10, 10);
 
-        Vector3 angularVelocity = rot.eulerAngles - bodyRotationLast.eulerAngles;
-        if(tag == "Player"){
-            Debug.Log(angularVelocity);
+        float dif = angularVelocityY - angularVelocityY_last;
+        if(Math.Abs(dif) > angularVelocityY_maxDelta){
+            angularVelocityY = angularVelocityY_last + (angularVelocityY_maxDelta * Mathf.Sign(dif));
         }
-        bodyT.rotation = rot * Quaternion.Euler(Vector3.forward*angularVelocity.y*-2f);
-        //bodyT.Rotate(Vector3.forward*angularVelocity.y*10f);
+        bodyT.rotation = rot * Quaternion.Euler(Vector3.forward*angularVelocityY*-5f);
         
         
         
-        
+        // if(tag == "Player"){
+        //     Debug.Log(angularVelocityY);
+        // }
 
 
 
@@ -91,18 +98,31 @@ public class EntityAnimation : EntityComponent
         Vector3 velRaw = rb.velocity;
         Vector3 velHoriz = velRaw; velHoriz.y = 0;
 
-        if(velHoriz.magnitude > .001f){
-            if(handle.entityPhysics.GROUNDTOUCH){
+
+
+        if(handle.entityPhysics.GROUNDTOUCH){
+            if(velHoriz.magnitude > .001f){
                 SetMovement("Run", true);
                 SetMovement("Stand", false);
             }
-        }
-        else{
-            if(handle.entityPhysics.GROUNDTOUCH){
+            else{
                 SetMovement("Run", false);
                 SetMovement("Stand", true);
             }
+            SetMovement("Jump", false);
         }
+        else{
+            
+            if(handle.entityPhysics.jumpTime < .1f){
+                SetMovement("Jump", true);
+            }
+            else{
+                SetMovement("Jump", false);
+            }
+            SetMovement("Run", false);
+            SetMovement("Stand", false);
+        }
+
 
 
 
@@ -124,14 +144,15 @@ public class EntityAnimation : EntityComponent
 
 
     void FixedUpdate(){
-
+        UpdateBodyRotation();
     }
 
     void Update(){
-        UpdateBodyRotation();
+        //UpdateBodyRotation();
         UpdateMovement();
 
         bodyRotationLast = bodyT.rotation;
+        angularVelocityY_last = angularVelocityY;
     }
 
 
