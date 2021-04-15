@@ -164,9 +164,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0
+  m_TransitionDuration: 0.1
   m_TransitionOffset: 0
-  m_ExitTime: 0.75
+  m_ExitTime: 0.01
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -589,7 +589,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Jump_takeoff
-  m_Speed: 1
+  m_Speed: 0.6
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -3153158737652443401}
@@ -715,7 +715,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Legs_full
     m_StateMachine: {fileID: 7166963962817665445}
-    m_Mask: {fileID: 0}
+    m_Mask: {fileID: 31900000, guid: 6bd4ba7dcf5bfc341a9f7a662aa545c1, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
@@ -727,7 +727,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Legs_shuffle
     m_StateMachine: {fileID: -1798717906716097190}
-    m_Mask: {fileID: 0}
+    m_Mask: {fileID: 31900000, guid: 6bd4ba7dcf5bfc341a9f7a662aa545c1, type: 2}
     m_Motions:
     - serializedVersion: 2
       m_State: {fileID: 804108232811629379}
@@ -751,7 +751,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Legs_backpedal
     m_StateMachine: {fileID: -3417725965936765089}
-    m_Mask: {fileID: 0}
+    m_Mask: {fileID: 31900000, guid: 6bd4ba7dcf5bfc341a9f7a662aa545c1, type: 2}
     m_Motions:
     - serializedVersion: 2
       m_State: {fileID: 804108232811629379}

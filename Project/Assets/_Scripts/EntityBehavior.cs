@@ -208,6 +208,7 @@ public class EntityBehavior : EntityComponent
             offsetMultipler = (Mathf.InverseLerp(0f, handle.entityPhysics.maxSpeed, targetT.GetComponent<Rigidbody>().velocity.magnitude) + 1f) * 5f;
         }
         Vector3 tp = targetT.position;
+        offsetMultipler = 1f;
         tp += targetT.TransformDirection(randomOffset * offsetMultipler);
         RotateToward(tp, .05f);
 		
