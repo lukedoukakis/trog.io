@@ -13,10 +13,15 @@ public class EntityBehavior : EntityComponent
 
 
     // sensing and movement parameters
-    public static float senseDistance = 1f;
+    public static float senseDistance_obstacle = 1f;
+    public static float senseDistance_immediate = .25f;
+    public static float senseDistance_search = .25f;
+    public static float senseDistance_earshot = 50f;
     public static float maxJumpFromDistance = 3f;
     public static float rotationSpeed = 1f;
     public bool running;
+
+    public List<Item> surroundingItems;
 
 
     public Action activeAction;
@@ -26,7 +31,7 @@ public class EntityBehavior : EntityComponent
     }
 
     public enum Command{
-        Idle, Go_home, Follow_player
+        Idle, Go_home, Follow_player, Collect_item
     }
     IEnumerator coroutine_movement;
     IEnumerator coroutine_hands;
@@ -69,7 +74,7 @@ public class EntityBehavior : EntityComponent
     }
 
     public Action CreateAction(int command){
-        Action a = new Action(-1, null, -1, -1, -1);
+        Action a = new Action();
         switch(command){
             case (int)Command.Idle :
                 a.type = (int)Action.ActionTypes.Idle;
@@ -81,6 +86,10 @@ public class EntityBehavior : EntityComponent
             case (int)Command.Follow_player :
                 a.type = (int)Action.ActionTypes.Follow;
                 a.obj = Player.current.gameObject;
+                break;
+            case (int)Command.Collect_item :
+                a.type = (int)Action.ActionTypes.Collect;
+                //a.item = 
                 break;
             default :
             //Debug.Log("ObjectBehavior: no action for command specified");
@@ -173,6 +182,53 @@ public class EntityBehavior : EntityComponent
 
 
 
+    
+
+
+    public void Idle(Action a){
+
+    }
+
+    public void GoTo(Action a){
+        TerminateMovement();
+        coroutine_movement = _GoTo(a, false);
+        StartCoroutine(coroutine_movement);
+    }
+
+    public void Follow(Action a){
+        TerminateMovement();
+        coroutine_movement = _GoTo(a, true);
+        StartCoroutine(coroutine_movement);
+    }
+
+    public void Collect(Action a){
+        
+    }
+
+    public void Attack(Action a){
+
+    }
+
+    public void Build(Action a){
+
+    }
+
+    public void Hunt(Action a){
+
+    }
+
+
+    void TerminateMovement(){
+        if(coroutine_movement != null){
+            StopCoroutine(coroutine_movement);
+            coroutine_movement = null;
+        }
+        if(tempObject != null){
+            GameObject.Destroy(GameObject.Find("temp_" + handle.entityInfo.ID));
+        }
+    }
+
+
     void NavigateTowards(Transform targetT){
 		
         float leftDistance, centerDistance, rightDistance;
@@ -221,9 +277,9 @@ public class EntityBehavior : EntityComponent
 
             // set raycasts to reach castDistance units away
             Transform gs = handle.entityPhysics.groundSense;
-            bool leftCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.left)).normalized, out leftHitInfo, senseDistance);
-            bool centerCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), transform.TransformDirection(Vector3.forward).normalized * 1f, out centerHitInfo, senseDistance);
-            bool rightCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.right)).normalized, out rightHitInfo, senseDistance);
+            bool leftCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.left)).normalized, out leftHitInfo, senseDistance_obstacle);
+            bool centerCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), transform.TransformDirection(Vector3.forward).normalized * 1f, out centerHitInfo, senseDistance_obstacle);
+            bool rightCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.right)).normalized, out rightHitInfo, senseDistance_obstacle);
 
             List<RaycastHit> hitInfos = new List<RaycastHit>();
 
@@ -282,49 +338,36 @@ public class EntityBehavior : EntityComponent
         }
 	}
 
-
-
-    public void Idle(Action a){
-
+    public void ItemInteract(Item item){
+        switch(item.type){
+            case (int)Item.Type.Misc:
+                handle.entityInventory.PickupItem(item);
+                break;
+            case (int)Item.Type.Weapon:
+                handle.entityInventory.PickupWeapon(item);
+                break;
+            case (int)Item.Type.Container:
+                handle.entityInventory.PickupItem(item);
+                break;
+            case (int)Item.Type.Pocket:
+                handle.entityInventory.PocketItem(item);
+                break;
+        }
     }
 
-    public void GoTo(Action a){
-        TerminateMovement();
-        coroutine_movement = _GoTo(a, false);
-        StartCoroutine(coroutine_movement);
-    }
-
-    public void Follow(Action a){
-        TerminateMovement();
-        coroutine_movement = _GoTo(a, true);
-        StartCoroutine(coroutine_movement);
-    }
-
-    public void Collect(Action a){
+    public void SenseSurroundingItems(float distance){
+        Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Item"));
+       
         
-    }
-
-    public void Attack(Action a){
-
-    }
-
-    public void Build(Action a){
-
-    }
-
-    public void Hunt(Action a){
-
-    }
-
-
-    void TerminateMovement(){
-        if(coroutine_movement != null){
-            StopCoroutine(coroutine_movement);
-            coroutine_movement = null;
-        }
-        if(tempObject != null){
-            GameObject.Destroy(GameObject.Find("temp_" + handle.entityInfo.ID));
-        }
+        
+        
+        
+        // string sur = "";
+        // foreach(Collider col in colliders){
+        //     sur += col.gameObject.name + ", ";
+        // }
+        // Debug.Log("Surroundings: " + sur);
+        
     }
 
 
@@ -367,7 +410,12 @@ public class EntityBehavior : EntityComponent
 
     // Update is called once per frame
     void Update()
-    {
+    {   
+        if(tag == "Player"){
+            if(Input.GetKey(KeyCode.K)){
+                SenseSurroundingItems(senseDistance_earshot);
+            }
+        }
         
     }
 }

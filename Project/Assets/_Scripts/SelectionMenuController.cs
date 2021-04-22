@@ -5,7 +5,6 @@ using UnityEngine;
 public class SelectionMenuController : MonoBehaviour
 {
     public bool visible;
-    public ButtonDropdownController unitBDC;
 
 
     public static SelectionMenuController current;
@@ -15,14 +14,14 @@ public class SelectionMenuController : MonoBehaviour
     }
 
     public void UpdateSelectionMenu(){
-        unitBDC.ClearButtons();
+        UnitMenuController.current.ClearButtons();
         foreach(EntityHandle handle in GlobalSelectionController.current.SelectedHandles.ToArray()){
-            unitBDC.AddButton(handle);
+            UnitMenuController.current.AddButton(handle);
         }
     }
 
     public void ClearSelectionMenu(){
-        unitBDC.ClearButtons();
+        UnitMenuController.current.ClearButtons();
 
     }
 

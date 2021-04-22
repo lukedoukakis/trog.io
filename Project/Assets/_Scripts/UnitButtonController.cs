@@ -4,10 +4,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DropdownButtonController : MonoBehaviour
+public class UnitButtonController : MonoBehaviour
 {
 
-    public ButtonDropdownController bdc;
     public EntityHandle handle;
     public GameObject referencedObject;
     public EntityStats referencedObjectStats;
@@ -35,6 +34,8 @@ public class DropdownButtonController : MonoBehaviour
 
 
     public void SetFromObject(EntityHandle handle){
+
+        // set entity handle and info
         this.handle = handle;
         referencedObject = this.handle.gameObject;
         referencedObjectInfo = referencedObject.GetComponent<EntityInfo>();
@@ -44,21 +45,25 @@ public class DropdownButtonController : MonoBehaviour
         else{
             label = referencedObjectInfo.NAME;
         }
-        UpdateLook();
+
+        // set buttons contained within
+        foreach(ActionButtonController abc in transform.GetComponentsInChildren<ActionButtonController>()){
+            //Debug.Log("found abc");
+            abc.ubc = this;
+
+        }
+
+
+        UpdateAppearance();
     }
 
-    void UpdateLook(){
+    void UpdateAppearance(){
         tmp.text = label;
     }
 
     public void OnXButtonPress(){
-        if(bdc != null){
-            bdc.RemoveButton(this.gameObject);
-            GlobalSelectionController.current.RemoveFromSelected(handle);
-        }
-        else{
-            Debug.Log("DropdownButtonController: No referenced ButtonDropdownController!");
-        }
+        UnitMenuController.current.RemoveButton(this.gameObject);
+        GlobalSelectionController.current.RemoveFromSelected(handle);
     }
 
     public void OnButtonPointerEnter(){

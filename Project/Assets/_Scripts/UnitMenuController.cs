@@ -2,24 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ButtonDropdownController : MonoBehaviour
+public class UnitMenuController : MonoBehaviour
 {
+
+    public static UnitMenuController current;
 
     public bool open;
     public GameObject buttonPrefab;
     List<GameObject> buttons;
 
+    
+
 
 
     void Awake(){
+        current = this;
         buttons = new List<GameObject>();
     }
 
     public void AddButton(EntityHandle handle){
         GameObject newButton = Instantiate(buttonPrefab, this.gameObject.transform);
-        DropdownButtonController dbc = newButton.GetComponent<DropdownButtonController>();
-        dbc.SetFromObject(handle);
-        dbc.bdc = this;
+        UnitButtonController ubc = newButton.GetComponent<UnitButtonController>();
+        ubc.SetFromObject(handle);
         buttons.Add(newButton);
     }
 

@@ -56,6 +56,7 @@ public class EntityPhysics : EntityComponent
     public void Move(Vector3 direction, float speed){
         float spd = speed * handle.entityStats.GetStat("speed");
         Vector3 move = transform.TransformDirection(direction) * spd;
+        //if(!GROUNDTOUCH){ spd *= .5f; }
         rb.AddForce(move * spd * (100f*Time.deltaTime), ForceMode.Force);
         //transform.position += move;
     }

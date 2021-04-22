@@ -10,42 +10,49 @@ public class Item : MonoBehaviour
 
 
 
+    // Item defs
+    public static Item stone = new Item("Stone", (int)Type.Misc, .1f, (int)HoldStyle.Hug, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject"), Resources.Load<Image>("Items/Stone/Image"));
+    public static Item spear = new Item("Spear", (int)Type.Misc, .1f, (int)HoldStyle.Spear, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject"), Resources.Load<Image>("Items/Spear/Image"));
+
+
     public static Dictionary<string, Item> Items = new Dictionary<string, Item>
     {
-        {
-            "Stone",
-            new Item("Stone", (int)Type.Misc, .1f, (int)HoldStyle.Hug, true, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject"), Resources.Load<Image>("Items/Stone/Image"))
-        },
-        {
-            "Spear",
-            new Item("Spear", (int)Type.Misc, .1f, (int)HoldStyle.Hug, false, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject"), Resources.Load<Image>("Items/Spear/Image"))
-        },
+        { "Stone", stone },
+        { "Spear", spear },
     };
+    public static Item GetItem(string _nme){
+        return Items[_nme];
+    }
+
+
+
 
     public string nme;
     public int type;
     public float weight;
     public int holdStyle;
-    public bool pocketable;
     public ItemCollection contents;
     public ItemCollection components;
     public GameObject gameobject;
+    public Image image;
 
-    enum Type{
-        Misc, Weapon, Tool, Container
+    public enum Type{
+        Misc, Weapon, Pocket, Container
     }
 
     enum HoldStyle{
         Hug, UnderArm, Spear, Axe, OverShoulder, Backpack
     }
 
-    public Item(string _nme, int _type, float _weight, int _holdStyle, bool _pocketable, ItemCollection _contents, ItemCollection _components, GameObject _gameobject, Image image){
+    public Item(string _nme, int _type, float _weight, int _holdStyle, ItemCollection _contents, ItemCollection _components, GameObject _gameobject, Image _image){
         nme = _nme;
         type = _type;
         weight = _weight;
         holdStyle = _holdStyle;
+        contents = _contents;
         components = _components;
         gameobject = _gameobject;
+        image = _image;
     }
 
 
@@ -60,7 +67,7 @@ public class Item : MonoBehaviour
 
 
 
-    public static ItemCollection EmptyItemCollection = new ItemCollection(new Dictionary<string, int>());
+    public static ItemCollection EmptyItemCollection = new ItemCollection(new Dictionary<Item, int>());
 
 }
 

@@ -7,19 +7,19 @@ public class ItemCollection
     
 
 
-    public Dictionary<string, int> items; // <name, number>
-    public ItemCollection(Dictionary<string, int> _items){
+    public Dictionary<Item, int> items;
+
+    public ItemCollection(Dictionary<Item, int> _items){
         items = _items;
     }
 
 
     public void AddItem(Item i){
-        string nme = i.nme;
-        if(items.ContainsKey(nme)){
-            items[nme]++;
+        if(items.ContainsKey(i)){
+            items[i]++;
         }
         else{
-            items.Add(nme, 1);
+            items.Add(i, 1);
         }
     }
 
@@ -27,8 +27,8 @@ public class ItemCollection
     // returns in format... iron:1_wood:4_leather:4
     public override string ToString(){
         string s = "";
-        foreach(KeyValuePair<string, int> kvp in items){
-            s += kvp.Key + ":" + kvp.Value + "_" ;
+        foreach(KeyValuePair<Item, int> kvp in items){
+            s += kvp.Key.nme + ":" + kvp.Value + "_" ;
         }
         return s;
     }

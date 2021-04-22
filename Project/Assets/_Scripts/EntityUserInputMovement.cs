@@ -16,11 +16,18 @@ public class EntityUserInputMovement : EntityComponent
     }
 
     void ApplyMouseInput(){
-        float y = Input.GetAxis("Mouse X") * 700f * Time.deltaTime;
-        float x = 0f;
-        float z = 0f;
-        Quaternion targetRot = transform.rotation * Quaternion.Euler(new Vector3(x, y, z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 1f);
+
+        if(GameManager.current.cameraMode == 0){
+            
+        }
+        else if(GameManager.current.cameraMode == 1){
+            float y = Input.GetAxis("Mouse X") * 700f * Time.deltaTime;
+            float x = 0f;
+            float z = 0f;
+            Quaternion targetRot = transform.rotation * Quaternion.Euler(new Vector3(x, y, z));
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 1f);
+        }
+        
     }
 
     void Update()

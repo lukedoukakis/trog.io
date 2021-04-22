@@ -8,7 +8,7 @@ public class CameraController : MonoBehaviour
     public Camera MainCamera;
     public Transform playerT;
     public Transform focusT;
-
+    
     public static CameraController current;
 
     [SerializeField] float sensitivity;
@@ -36,31 +36,25 @@ public class CameraController : MonoBehaviour
     }
     
 
-    void RandomSpawn(){
-        bool landHit = false;
-        Vector3 randomPos = Vector3.zero;
-        int i = 0;
-        while(!landHit){
-            randomPos = new Vector3(Random.Range(-1000f, 1000f), 0f, Random.Range(-1000f, 1000f)) + Vector3.up * (ChunkGenerator.ElevationAmplitude*.82f);
-            landHit = Mathf.PerlinNoise((randomPos.x - ChunkGenerator.Seed + .01f) / ChunkGenerator.ElevationMapScale, (randomPos.z - ChunkGenerator.Seed + .01f) / ChunkGenerator.ElevationMapScale) >= .5f;
-            i++;
 
-            if(i > 1000){
-                Debug.Log(":(");
-                break;
-            }
-        } 
-        MainCamera.transform.position = randomPos;
-        MainCamera.transform.rotation = Quaternion.Euler(15f, 45f, 0f);
-    }
 
     void Update(){
-        Vector3 targetPos = playerT.position + playerT.TransformDirection((Vector3.forward*-6.75f) + (Vector3.up*4.75f));
-        Quaternion targetRot = playerT.rotation * Quaternion.Euler(new Vector3(25f, 0f, 0f));
 
+        // static camera
+        if(GameManager.current.cameraMode == 0){
+            Vector3 targetPos = playerT.position + (Vector3.forward*-7f) + (Vector3.up*9f);
+            transform.position = Vector3.Lerp(transform.position, targetPos, 100f * Time.deltaTime);
 
-        transform.position = Vector3.Lerp(transform.position, targetPos, 100f * Time.deltaTime);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 100f * Time.deltaTime);
+            transform.rotation = Quaternion.Euler(new Vector3(45f, 0f, 0f));
+        }
+
+        // dynamic camera
+        else if(GameManager.current.cameraMode == 1){
+            Vector3 targetPos = playerT.position + playerT.TransformDirection((Vector3.forward*-6.75f) + (Vector3.up*4.75f));
+            Quaternion targetRot = playerT.rotation * Quaternion.Euler(new Vector3(25f, 0f, 0f));
+            transform.position = Vector3.Lerp(transform.position, targetPos, 100f * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 100f * Time.deltaTime);
+        }
 
     }
 
@@ -69,4 +63,30 @@ public class CameraController : MonoBehaviour
 
 
     }
+
+
+
+
+
+
+
+
+
+    // void RandomSpawn(){
+    //     bool landHit = false;
+    //     Vector3 randomPos = Vector3.zero;
+    //     int i = 0;
+    //     while(!landHit){
+    //         randomPos = new Vector3(Random.Range(-1000f, 1000f), 0f, Random.Range(-1000f, 1000f)) + Vector3.up * (ChunkGenerator.ElevationAmplitude*.82f);
+    //         landHit = Mathf.PerlinNoise((randomPos.x - ChunkGenerator.Seed + .01f) / ChunkGenerator.ElevationMapScale, (randomPos.z - ChunkGenerator.Seed + .01f) / ChunkGenerator.ElevationMapScale) >= .5f;
+    //         i++;
+
+    //         if(i > 1000){
+    //             Debug.Log(":(");
+    //             break;
+    //         }
+    //     } 
+    //     MainCamera.transform.position = randomPos;
+    //     MainCamera.transform.rotation = Quaternion.Euler(15f, 45f, 0f);
+    // }
 }

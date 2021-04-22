@@ -11,7 +11,7 @@ public class EntityHandle : EntityComponent
     public EntityAnimation entityAnimation;
     public EntityPhysics entityPhysics;
     public EntityStatus entityStatus;
-    public EntityInventory entityInventory;
+    public EntityItems entityInventory;
     public EntityUserInputMovement entityUserInputMovement;
 
 

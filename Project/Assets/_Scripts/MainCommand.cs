@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Command : MonoBehaviour
+public class MainCommand : MonoBehaviour
 {
 
-    public static Command current;
+    public static MainCommand current;
 
 
     public int command;
@@ -13,11 +13,6 @@ public class Command : MonoBehaviour
 
     void Awake(){
         current = this;
-    }
-
-
-    public void SetCommand(int c){
-        command = c;
     }
 
     public void SendCommand(int c){
