@@ -5,6 +5,7 @@ using UnityEngine;
 public class MainCommand : MonoBehaviour
 {
 
+
     public static MainCommand current;
 
 

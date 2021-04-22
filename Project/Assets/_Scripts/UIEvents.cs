@@ -76,7 +76,7 @@ public class UIEvents : MonoBehaviour
     {
         if (!hoveringUI)
         {
-            if (Input.GetKey(KeyCode.Mouse0))
+            if (Input.GetKey(KeyCode.Mouse1))
             {
                 if (!mouseDown)
                 {
@@ -96,8 +96,6 @@ public class UIEvents : MonoBehaviour
                 {
                     mouseDown = false;
                     GlobalSelectionController.current.Select();
-
-                    SelectionMenuController.current.UpdateSelectionMenu();
                     if (!GlobalSelectionController.current.SelectionIsEmpty())
                     {
                         //SelectionMenuController.current.SetVisible(true);

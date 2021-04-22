@@ -15,35 +15,47 @@ public class GlobalSelectionController : MonoBehaviour
     public List<EntityHandle> SelectedHandles;
 
    
-    public void AddToSelecting(EntityHandle osm){
-        if(!osm.selecting && !osm.selected){
-            osm.SetSelecting(true);
-            SelectingHandles.Add(osm);
+    public void AddToSelecting(EntityHandle handle){
+        if(!handle.selecting && !handle.selected){
+            handle.SetSelecting(true);
+            SelectingHandles.Add(handle);
         }
     }
 
     public void Select(){
-        foreach(EntityHandle osm in SelectingHandles){
-            osm.SetSelecting(false);
-            osm.SetSelected(true);
-            SelectedHandles.Add(osm);
+        foreach(EntityHandle handle in SelectingHandles){
+            handle.SetSelecting(false);
+            handle.SetSelected(true);
+            SelectedHandles.Add(handle);
         }
+        SelectionMenuController.current.UpdateSelectionMenu();
         SelectingHandles.Clear();
     }
 
-    public void RemoveFromSelected(EntityHandle osm){
-        SelectedHandles.Remove(osm);
-        osm.SetSelected(false);
+    public void RemoveFromSelected(EntityHandle handle){
+        SelectedHandles.Remove(handle);
+        handle.SetSelected(false);
     }
 
     public void ClearSelected(){
-        foreach(EntityHandle osm in SelectedHandles){
-            osm.SetSelected(false);
+        foreach(EntityHandle handle in SelectedHandles){
+            handle.SetSelected(false);
         }
         SelectedHandles.Clear();
+        SelectionMenuController.current.UpdateSelectionMenu();
     }
 
     public bool SelectionIsEmpty(){
         return SelectedHandles.Count == 0;
+    }
+
+
+    // selects all entities with given tag
+    public void SelectAllEntitiesWithTag(string tag){
+        ClearSelected();
+        foreach(GameObject obj in GameObject.FindGameObjectsWithTag(tag)){
+            AddToSelecting(obj.GetComponent<EntityHandle>());
+        }
+        Select();
     }
 }
