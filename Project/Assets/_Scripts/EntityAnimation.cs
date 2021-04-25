@@ -21,17 +21,23 @@ public class EntityAnimation : EntityComponent
     float angularVelocityY_last;
     public static float angularVelocityY_maxDelta = .1f;
 
+    float squat;
 
 
 
 
     // should match 'parameters' in Animator
-    public Dictionary<string, bool> movements = new Dictionary<string, bool>{
+    public Dictionary<string, bool> animBools = new Dictionary<string, bool>{
         {"Stand",   false},
         {"Run",     false},
         {"Limp",    false},
         {"Jump",    false},
         {"Land",    false},
+        {"RightArm_weapon",    false},
+    };
+
+    public Dictionary<string, int> animInts = new Dictionary<string, int>{
+        {"LeftArm_holdStyle",   -1},
     };
 
 
@@ -57,13 +63,22 @@ public class EntityAnimation : EntityComponent
     }
 
 
-    public void SetMovement(string movement, bool value){
-        if(movements[movement] != value){
-            movements[movement] = value;
+    public void SetAnimationBool(string movement, bool value){
+        if(animBools[movement] != value){
+            animBools[movement] = value;
             animator.SetBool(movement, value);
         }
     }
-    public void SetPositionWeight(string position, float value){
+    public void SetAnimationInt(string movement, int value){
+        if(animInts[movement] != value){
+            animInts[movement] = value;
+            animator.SetInteger(movement, value);
+        }
+    }
+
+
+
+    public void SetAnimationLayerWeight(string position, float value){
         animator.SetLayerWeight(animator.GetLayerIndex(position), value);
     }
 
@@ -98,48 +113,71 @@ public class EntityAnimation : EntityComponent
         Vector3 velRaw = rb.velocity;
         Vector3 velHoriz = velRaw; velHoriz.y = 0;
 
-
-
         if(handle.entityPhysics.GROUNDTOUCH){
             if(velHoriz.magnitude > .001f){
-                SetMovement("Run", true);
-                SetMovement("Stand", false);
+                SetAnimationBool("Run", true);
+                SetAnimationBool("Stand", false);
             }
             else{
-                SetMovement("Run", false);
-                SetMovement("Stand", true);
+                SetAnimationBool("Run", false);
+                SetAnimationBool("Stand", true);
             }
-            SetMovement("Jump", false);
+            SetAnimationBool("Jump", false);
         }
         else{
             
             if(handle.entityPhysics.jumpTime < .1f){
-                SetMovement("Jump", true);
+                SetAnimationBool("Jump", true);
             }
             else{
-                SetMovement("Jump", false);
+                SetAnimationBool("Jump", false);
             }
-            SetMovement("Run", false);
-            SetMovement("Stand", false);
+            SetAnimationBool("Run", false);
+            SetAnimationBool("Stand", false);
         }
 
 
-
-
-
+        // calculate run
         float bodySkew = Mathf.InverseLerp(0f, 180f, Vector3.Angle(velHoriz, bodyT.forward));
         float slowness = 1f - Mathf.InverseLerp(0f, handle.entityPhysics.maxSpeed, velHoriz.magnitude);
         float runMagnitude = 1f - Mathf.Max(bodySkew, slowness);
-        SetPositionWeight("Legs_full", runMagnitude);
+        SetAnimationLayerWeight("Legs_full", runMagnitude);
 
+        // calculate backpedal
         float backMagnitude = (1f - runMagnitude) * Mathf.Lerp(0f, .5f, bodySkew);
-        SetPositionWeight("Legs_backpedal", backMagnitude);
-        SetPositionWeight("Legs_shuffle", 1f - backMagnitude - runMagnitude);
-        SetPositionWeight("Squat", handle.entityPhysics.landScrunch);
+        SetAnimationLayerWeight("Legs_backpedal", backMagnitude);
+        SetAnimationLayerWeight("Legs_shuffle", 1f - backMagnitude - runMagnitude);
 
-        
-        
 
+        // calculate squat
+        SetAnimationLayerWeight("Squat", squat + handle.entityPhysics.landScrunch);
+
+    }
+
+
+    // play pickup animation for an item
+    public void Pickup(Item i){
+
+        StartCoroutine(SquatAndStand());
+
+        if(i.type == (int)Item.Type.Weapon){
+            SetAnimationBool("RightArm_weapon", true);
+        }
+        else if(i.type != (int)Item.Type.Pocket){
+            SetAnimationInt("LeftArm_holdStyle", i.holdStyle);
+        }
+    }
+
+
+    IEnumerator SquatAndStand(){
+        while(squat < .7f){
+            squat = Mathf.Lerp(squat, .75f, 10f * Time.deltaTime);
+            yield return null;
+        }
+        while(squat > .05f){
+            squat = Mathf.Lerp(squat, 0f, 10f * Time.deltaTime);
+            yield return null;
+        }
     }
 
 
@@ -148,9 +186,7 @@ public class EntityAnimation : EntityComponent
     }
 
     void Update(){
-        //UpdateBodyRotation();
         UpdateMovement();
-
         bodyRotationLast = bodyT.rotation;
         angularVelocityY_last = angularVelocityY;
     }

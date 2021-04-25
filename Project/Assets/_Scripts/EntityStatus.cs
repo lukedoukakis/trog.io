@@ -6,6 +6,7 @@ public class EntityStatus : EntityComponent
 {
     
 
+    public int faction;
     public float hp;
 
 

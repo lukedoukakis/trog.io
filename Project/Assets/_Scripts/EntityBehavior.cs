@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EntityBehavior : EntityComponent
@@ -8,6 +10,7 @@ public class EntityBehavior : EntityComponent
     public Transform home;
     static float distanceThreshhold_home = 10f;
     static float distanceThreshhold_spot = 4f;
+    static float distanceThreshhold_point = 2f;
     public static float randomOffsetRange = 1f;
     Vector3 randomOffset;
 
@@ -15,8 +18,9 @@ public class EntityBehavior : EntityComponent
     // sensing and movement parameters
     public static float senseDistance_obstacle = 1f;
     public static float senseDistance_immediate = .25f;
-    public static float senseDistance_search = .25f;
+    public static float senseDistance_search = 15f;
     public static float senseDistance_earshot = 50f;
+    public static float senseDistance_infinite = 500f;
     public static float maxJumpFromDistance = 3f;
     public static float rotationSpeed = 1f;
     public bool running;
@@ -31,15 +35,11 @@ public class EntityBehavior : EntityComponent
     }
 
     public enum Command{
-        Idle, Go_home, Follow_player, Collect_item
+        Idle, Go_home, Follow_player, Collect_item, Find_weapon
     }
-    IEnumerator coroutine_movement;
-    IEnumerator coroutine_hands;
 
-
-    // temp
-    GameObject tempObject;
-
+    public Dictionary<string, Action> actionLayers;
+    public Dictionary<string, IEnumerator> coroutineLayers;
 
 
 
@@ -47,7 +47,15 @@ public class EntityBehavior : EntityComponent
         handle = GetComponent<EntityHandle>();
         handle.entityBehavior = this;
         home = GameObject.FindGameObjectWithTag("Home").transform;
-        randomOffset = new Vector3(Random.Range(randomOffsetRange*-1f, randomOffsetRange), 0f, Random.Range(randomOffsetRange*-1f, 0));
+        randomOffset = new Vector3(UnityEngine.Random.Range(randomOffsetRange*-1f, randomOffsetRange), 0f, UnityEngine.Random.Range(randomOffsetRange*-1f, 0));
+        actionLayers = new Dictionary<string, Action>{
+            {"Movement", null},
+            {"Hands", null},
+        };
+        coroutineLayers = new Dictionary<string, IEnumerator>{
+            {"Movement", null},
+            {"Hands", null},
+        };
     }
 
     void Start(){
@@ -89,8 +97,12 @@ public class EntityBehavior : EntityComponent
                 break;
             case (int)Command.Collect_item :
                 a.type = (int)Action.ActionTypes.Collect;
-                //a.item = 
                 break;
+            case 777 :
+                a.type = (int)Action.ActionTypes.Collect;
+                a.item_target = Item.Stone;
+                //Log(a.item_target.nme);
+                break;        
             default :
             //Debug.Log("ObjectBehavior: no action for command specified");
                 break;
@@ -132,18 +144,12 @@ public class EntityBehavior : EntityComponent
     // select and execute the next action in the queue... if list is empty, insert "go home" or "idle" action
     public Action NextAction(){
         if(actions.Count == 0){
-            if(IsAtPosition(home.position, distanceThreshhold_spot)){
-                ProcessCommand((int)Command.Idle, (int)Priority.Front);
-            }
-            else{
-                ProcessCommand((int)Command.Go_home, (int)Priority.Front);
-            }
+            ProcessCommand((int)Command.Follow_player, (int)Priority.Front);
         }
         Action next = actions[0];
         actions.RemoveAt(0);
         activeAction = next;
         ExecuteAction(activeAction);
-        //Debug.Log("NextAction() done");
         return next;
     }
     public void OnActionInterrupt(){
@@ -164,6 +170,9 @@ public class EntityBehavior : EntityComponent
             case (int)Action.ActionTypes.Collect :
                 Collect(a);
                 break;
+            case (int)Action.ActionTypes.Pickup :
+                Pickup(a);
+                break;
             case (int)Action.ActionTypes.Attack :
                 Attack(a);
                 break;
@@ -177,6 +186,7 @@ public class EntityBehavior : EntityComponent
                 Debug.Log("ObjectBehavior: called action not a defined action (" + a.type + ")... idling.");
                 break;
         }
+
         //NextAction();
     }
 
@@ -190,19 +200,71 @@ public class EntityBehavior : EntityComponent
     }
 
     public void GoTo(Action a){
-        TerminateMovement();
-        coroutine_movement = _GoTo(a, false);
-        StartCoroutine(coroutine_movement);
+        TerminateActionLayer("Movement");
+        BeginActionLayer("Movement", a, _GoTo());
+
+        IEnumerator _GoTo()
+        {
+
+            Transform targetT = a.obj.transform;   
+            while (true)
+            {
+                if (!IsAtPosition(targetT.position, distanceThreshhold_point)){
+                    NavigateTowards(targetT);
+                }
+                else
+                {
+                    TerminateActionLayer("Movement");
+                    NextAction();
+                }
+                yield return null;
+            }
+        }
     }
 
     public void Follow(Action a){
-        TerminateMovement();
-        coroutine_movement = _GoTo(a, true);
-        StartCoroutine(coroutine_movement);
+        TerminateActionLayer("Movement");
+        BeginActionLayer("Movement", a, _Follow());
+
+        IEnumerator _Follow()
+        {
+
+            Transform targetT = a.obj.transform;   
+            while (true)
+            {
+                if (!IsAtPosition(targetT.position, distanceThreshhold_spot))
+                {
+                    NavigateTowards(targetT);
+                }
+                yield return null;
+            }
+        }
     }
 
     public void Collect(Action a){
-        
+
+        Item i_target = a.item_target;
+        Log("target name: " + i_target.nme);
+
+        List<GameObject> foundObjects = SenseSurroundingItems(i_target.type, i_target.nme, senseDistance_infinite);
+        if(foundObjects.Count == 0){
+            // TODO: search in new area if nothing found
+            Log("Collect: nothing found");
+            NextAction();
+        }
+        else{
+            Log("Collect: picking up object");
+            GameObject target = foundObjects[0];
+            Action gotoObject = new Action((int)(Action.ActionTypes.GoTo), target, -1, Item.GetItemByName(target.name), null, 60);
+            Action pickupObject = new Action((int)(Action.ActionTypes.Pickup), target, -1, Item.GetItemByName(target.name), null, 60);
+            InsertActionImmediate(gotoObject, false);
+            InsertAction(pickupObject);
+        }
+    }
+
+    public void Pickup(Action a){
+        TakeFromGround(a.obj);
+        NextAction();
     }
 
     public void Attack(Action a){
@@ -218,14 +280,19 @@ public class EntityBehavior : EntityComponent
     }
 
 
-    void TerminateMovement(){
-        if(coroutine_movement != null){
-            StopCoroutine(coroutine_movement);
-            coroutine_movement = null;
+    void TerminateActionLayer(string layer){
+        IEnumerator current = coroutineLayers[layer];
+        if(current != null){
+            StopCoroutine(current);
         }
-        if(tempObject != null){
-            GameObject.Destroy(GameObject.Find("temp_" + handle.entityInfo.ID));
-        }
+        actionLayers[layer] = null;
+        coroutineLayers[layer] = null;
+    }
+
+    void BeginActionLayer(string layer, Action a, IEnumerator coroutine){
+        actionLayers[layer] = a;
+        coroutineLayers[layer] = coroutine;
+        StartCoroutine(coroutine);
     }
 
 
@@ -338,35 +405,50 @@ public class EntityBehavior : EntityComponent
         }
 	}
 
-    public void ItemInteract(Item item){
+    void TakeFromGround(GameObject o){
+        Log("TakeFromGround()");
+        Item item = Item.GetItemByName(o.name);
+        Tuple<Item, GameObject> pair = new Tuple<Item, GameObject>(item, o);
         switch(item.type){
             case (int)Item.Type.Misc:
-                handle.entityInventory.PickupItem(item);
+                handle.entityItems.SetHolding(pair);
                 break;
             case (int)Item.Type.Weapon:
-                handle.entityInventory.PickupWeapon(item);
+                handle.entityItems.SetWeapon(pair);
                 break;
             case (int)Item.Type.Container:
-                handle.entityInventory.PickupItem(item);
+                handle.entityItems.SetHolding(pair);
                 break;
             case (int)Item.Type.Pocket:
-                handle.entityInventory.PocketItem(item);
+                handle.entityItems.PocketItem(item);
                 break;
         }
+        handle.entityAnimation.Pickup(item);
+        //o.transform.position = o.transform.position += new Vector3(UnityEngine.Random.Range(-30f, 30f), 1f, UnityEngine.Random.Range(-30f, 30f));
     }
 
-    public void SenseSurroundingItems(float distance){
+    public List<GameObject> SenseSurroundingItems(int type, string name, float distance){
         Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Item"));
        
-        
-        
-        
-        
-        // string sur = "";
-        // foreach(Collider col in colliders){
-        //     sur += col.gameObject.name + ", ";
-        // }
-        // Debug.Log("Surroundings: " + sur);
+        string sur = "";
+        List<GameObject> foundObjects = new List<GameObject>();
+        GameObject o;
+        foreach(Collider col in colliders){
+            o = col.gameObject;
+            if(type == -1 || Item.GetItemByName(o.name).type == type){
+                if(name == null || o.name == name){
+                    foundObjects.Add(o);
+                    sur += o.name + ", ";
+                }
+            }
+        }
+        //Debug.Log("Surroundings: " + sur);
+
+        // order by proximity to entity
+        foundObjects = foundObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
+
+
+        return foundObjects;
         
     }
 
@@ -377,45 +459,26 @@ public class EntityBehavior : EntityComponent
     }
 
 
-
-
-
-    IEnumerator _GoTo(Action a, bool follow){
-        Transform t = gameObject.transform;
-        Transform targetT;
-        if (follow) { targetT = a.obj.transform; }
-        else
-        {
-            tempObject = new GameObject("temp_" + handle.entityInfo.ID);
-            tempObject.transform.position = a.obj.transform.position;
-            targetT = tempObject.transform;
-        }
-        while(true)
-        {
-            if(!IsAtPosition(targetT.position, distanceThreshhold_spot)){
-                NavigateTowards(targetT);
-            }
-            else{
-                if(!follow){
-                    if(handle.entityPhysics.GROUNDTOUCH){
-                        //Debug.Log("Destination reached");
-                        TerminateMovement();
-                    }
-                    
-                }
-            }
-            yield return null;
-        }
+    GameObject CreateTemporaryObject(Vector3 location){
+        GameObject o = new GameObject("temp_" + handle.entityInfo.ID);
+        o.transform.position = location;
+        return o;
     }
 
     // Update is called once per frame
     void Update()
     {   
         if(tag == "Player"){
-            if(Input.GetKey(KeyCode.K)){
-                SenseSurroundingItems(senseDistance_earshot);
+            if(Input.GetKeyUp(KeyCode.K)){
+                MainCommand.current.SendCommand(777);
             }
         }
+
+
         
     }
+
+
+
+
 }

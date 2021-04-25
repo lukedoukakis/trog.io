@@ -12,9 +12,9 @@ public class EntityPhysics : EntityComponent
 
     public Rigidbody rb;
 
-    public static float JumpForce = 500f;
+    public static float JumpForce = 450f;
     public static float AccelerationScale = 20f;
-    public static float MaxSpeedScale = 20f;
+    public static float MaxSpeedScale = 15f;
     public static float JumpCoolDown = .15f;
 
 

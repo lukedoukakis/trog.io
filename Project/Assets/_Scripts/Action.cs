@@ -14,21 +14,22 @@ public class Action : MonoBehaviour
     // ambiguous number of things
     public int number;
 
-    // resultant item
-    public string item_result;
-
     // target item
-    public string item_target;
+    public Item item_target;
+
+    // resultant item
+    public Item item_result;
+
 
     // maximum time to be spent executing the action
     public int maxSeconds;
 
-    public Action(int _type, GameObject _obj, int _number, string _item_result, string _item_target, int _maxSeconds){
+    public Action(int _type, GameObject _obj, int _number, Item _item_target, Item _item_result, int _maxSeconds){
         type = _type;
         obj = _obj;
         number = _number;
-        item_result = _item_result;
         item_target = _item_target;
+        item_result = _item_result;
         maxSeconds = _maxSeconds;
     }
     public Action(){
@@ -47,6 +48,7 @@ public class Action : MonoBehaviour
         GoTo,
         Follow,
         Collect,
+        Pickup,
         Attack,
         Build,
         Hunt
