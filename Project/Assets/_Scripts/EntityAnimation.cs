@@ -76,11 +76,27 @@ public class EntityAnimation : EntityComponent
         }
     }
 
+    public void SetAnimationTrigger(string movement){
+        animator.SetTrigger(movement);
+    }
+
+
+
 
 
     public void SetAnimationLayerWeight(string position, float value){
         animator.SetLayerWeight(animator.GetLayerIndex(position), value);
     }
+    public void DisableLayer(string layer, float time){
+        StartCoroutine(_DisableLayer());
+        IEnumerator _DisableLayer(){
+            SetAnimationLayerWeight(layer, 0f);
+            yield return new WaitForSecondsRealtime(time);
+            SetAnimationLayerWeight(layer, 1f);
+        }
+    }
+
+
 
     void UpdateBodyRotation(){
         Vector3 velRaw = rb.velocity;
@@ -166,6 +182,42 @@ public class EntityAnimation : EntityComponent
         else if(i.type != (int)Item.Type.Pocket){
             SetAnimationInt("LeftArm_holdStyle", i.holdStyle);
         }
+    }
+
+    public void UseWeapon(){
+
+        string trigger;
+        Item weap;
+
+        if(handle.entityItems.weapon_equipped == null){
+            trigger = "Thrust";
+        }
+        else{
+            weap = handle.entityItems.weapon_equipped.Item1;
+            if (weap == null)
+            {
+                trigger = "Thrust";
+            }
+            else
+            {
+                switch (weap.holdStyle)
+                {
+                    case (int)Item.HoldStyle.Spear:
+                        trigger = "Thrust";
+                        break;
+                    case (int)Item.HoldStyle.Axe:
+                        trigger = "Swing";
+                        break;
+                    default:
+                        trigger = "Thrust";
+                        Log("Trying to swing a weapon with no specified hold style");
+                        break;
+                }
+            }
+        }
+        
+        SetAnimationTrigger(trigger);
+        DisableLayer("LeftArm", .5f);
     }
 
 

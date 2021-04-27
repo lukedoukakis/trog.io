@@ -41,7 +41,7 @@ public class Item : MonoBehaviour
     }
 
     public enum HoldStyle{
-        Hug, UnderArm, Spear, OverShoulder
+        Hug, UnderArm, Spear, Axe, OverShoulder
     }
 
     public Item(string _nme, int _type, float _weight, int _holdStyle, ItemCollection _contents, ItemCollection _components, GameObject _gameobject, Image _image){

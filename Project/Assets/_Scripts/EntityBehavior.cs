@@ -35,7 +35,7 @@ public class EntityBehavior : EntityComponent
     }
 
     public enum Command{
-        Idle, Go_home, Follow_player, Collect_item, Find_weapon
+        Idle, Go_home, Follow_player, Collect_item, Find_weapon, Attack_entity
     }
 
     public Dictionary<string, Action> actionLayers;
@@ -97,7 +97,13 @@ public class EntityBehavior : EntityComponent
                 break;
             case (int)Command.Collect_item :
                 a.type = (int)Action.ActionTypes.Collect;
+                // TODO: finish params
                 break;
+             case (int)Command.Attack_entity :
+                a.type = (int)Action.ActionTypes.Attack;
+                // TODO: finish params
+                break;
+
             case 777 :
                 a.type = (int)Action.ActionTypes.Collect;
                 a.item_target = Item.Spear;
@@ -106,6 +112,11 @@ public class EntityBehavior : EntityComponent
             case 888 :
                 a.type = (int)Action.ActionTypes.Collect;
                 a.item_target = Item.Stone;
+                //Log(a.item_target.nme);
+                break;
+            case 999 :
+                a.type = (int)Action.ActionTypes.Attack;
+                a.obj = GameObject.FindGameObjectWithTag("Player");
                 //Log(a.item_target.nme);
                 break;         
             default :
@@ -180,6 +191,9 @@ public class EntityBehavior : EntityComponent
                 break;
             case (int)Action.ActionTypes.Attack :
                 Attack(a);
+                break;
+            case (int)Action.ActionTypes.Swing :
+                Swing(a);
                 break;
             case (int)Action.ActionTypes.Build :
                 Build(a);
@@ -260,20 +274,44 @@ public class EntityBehavior : EntityComponent
         else{
             Log("Collect: picking up object");
             GameObject target = foundObjects[0];
-            Action gotoObject = new Action((int)(Action.ActionTypes.GoTo), target, -1, Item.GetItemByName(target.name), null, 60);
+            Action goToObject = new Action((int)(Action.ActionTypes.GoTo), target, -1, Item.GetItemByName(target.name), null, 60);
             Action pickupObject = new Action((int)(Action.ActionTypes.Pickup), target, -1, Item.GetItemByName(target.name), null, 60);
-            InsertActionImmediate(gotoObject, false);
+            InsertActionImmediate(goToObject, false);
             InsertAction(pickupObject);
         }
     }
 
     public void Pickup(Action a){
-        TakeFromGround(a.obj);
-        NextAction();
+        StartCoroutine(_Pickup());
+        IEnumerator _Pickup(){
+            yield return new WaitForSecondsRealtime(.25f);
+            TakeFromGround(a.obj);
+            yield return new WaitForSecondsRealtime(.25f);
+            NextAction();
+        }
+
     }
 
     public void Attack(Action a){
+        GameObject target = a.obj;
 
+        Action goToTarget = new Action((int)(Action.ActionTypes.GoTo), target, -1, null, null, -1);
+        Action swingAtTarget = new Action((int)(Action.ActionTypes.Swing), target, -1, null, null, -1);
+        InsertActionImmediate(goToTarget, false);
+        InsertAction(swingAtTarget);
+    }
+
+    void Swing(Action a){
+        StartCoroutine(_Swing());
+
+        IEnumerator _Swing(){
+            handle.entityAnimation.UseWeapon();
+            Action repeatAttack = new Action((int)(Action.ActionTypes.Attack), a.obj, -1, null, null, -1);
+            InsertActionImmediate(repeatAttack, false);
+            yield return new WaitForSecondsRealtime(.5f);
+            NextAction();
+        }
+        
     }
 
     public void Build(Action a){
@@ -432,6 +470,7 @@ public class EntityBehavior : EntityComponent
         //o.transform.position = o.transform.position += new Vector3(UnityEngine.Random.Range(-30f, 30f), 1f, UnityEngine.Random.Range(-30f, 30f));
     }
 
+
     public List<GameObject> SenseSurroundingItems(int type, string name, float distance){
         Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Item"));
        
@@ -479,6 +518,15 @@ public class EntityBehavior : EntityComponent
             }
             if(Input.GetKeyUp(KeyCode.L)){
                 MainCommand.current.SendCommand(888);
+            }
+
+            if(Input.GetKeyUp(KeyCode.Mouse0)){
+                handle.entityAnimation.UseWeapon();
+            }
+        }
+        else{
+             if(Input.GetKeyUp(KeyCode.Q)){
+                MainCommand.current.SendCommand(999);
             }
         }
 

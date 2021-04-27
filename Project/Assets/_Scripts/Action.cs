@@ -50,6 +50,7 @@ public class Action : MonoBehaviour
         Collect,
         Pickup,
         Attack,
+        Swing,
         Build,
         Hunt
     }

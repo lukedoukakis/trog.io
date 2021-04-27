@@ -47,7 +47,7 @@ public class EntityItems : EntityComponent
         t_upperArm_left = Utility.FindDeepChild(transform, "B-forearm_L");
         t_shoulder_left = Utility.FindDeepChild(transform, "B-upper_arm_L");
         t_hand_right = Utility.FindDeepChild(transform, "B-palm_01_R");
-        t_back = Utility.FindDeepChild(transform, "B-upperChest");
+        t_back = Utility.FindDeepChild(transform, "BackT");
 
 
         //Log(t_hand_right.name);
@@ -70,7 +70,10 @@ public class EntityItems : EntityComponent
         
     }
     public void DropHolding(){
-        TogglePhysics(holding.Item2, true);
+        GameObject hold = holding.Item2;
+        hold.GetComponent<Rigidbody>().AddForce(transform.forward*900f + transform.up*900f);
+        TogglePhysics(hold, true);
+        
         holding = null;
     }
 
@@ -125,6 +128,7 @@ public class EntityItems : EntityComponent
         if(weapon_unequipped != null){
             GameObject weap_off = weapon_unequipped.Item2;
             weap_off.transform.position = t_back.position;
+            weap_off.transform.rotation = t_back.rotation;
 
         }
 
