@@ -149,7 +149,8 @@ public class EntityItems : EntityComponent
 
         if(holding != null){
             GameObject hold = holding.Item2;
-            hold.transform.position = Vector3.Lerp(hold.transform.position, t_left_current.position, objSpeed);
+            hold.transform.position = t_left_current.position;
+            //hold.transform.position = Vector3.Lerp(hold.transform.position, t_left_current.position, objSpeed);
         }
         if(weapon_equipped != null){
             GameObject weap_on = weapon_equipped.Item2;

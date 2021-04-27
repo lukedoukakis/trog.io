@@ -21,7 +21,6 @@ public class EntityInfo : EntityComponent
 
     void Init(){
 
-        bool CREATENEW = true;
         // TODO: createNew if doesnt exist in memory
 
         ID = Random.Range(0, int.MaxValue);
