@@ -67,19 +67,6 @@ public class EntityItems : EntityComponent
         }
         holding = itemObjectPair;
         TogglePhysics(holding.Item2, false);
-        switch(holding.Item1.holdStyle){
-            case (int)Item.HoldStyle.Hug :
-                t_left_current = t_hand_left;
-                break;
-            case (int)Item.HoldStyle.UnderArm :
-                t_left_current = t_hand_left;
-                break;
-            case (int)Item.HoldStyle.OverShoulder :
-                t_left_current = t_hand_left;
-                break;
-            default:
-                break;
-        }
         
     }
     public void DropHolding(){
@@ -127,7 +114,7 @@ public class EntityItems : EntityComponent
 
         if(holding != null){
             GameObject hold = holding.Item2;
-            hold.transform.position = t_left_current.position + t_left_current.forward*hold.GetComponent<BoxCollider>().size.z/4f;
+            hold.transform.position = t_hand_left.position + t_hand_left.forward*hold.GetComponent<BoxCollider>().size.z/4f;
             //hold.transform.position = Vector3.Lerp(hold.transform.position, t_left_current.position, objSpeed);
         }
         if(weapon_equipped != null){
