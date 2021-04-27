@@ -100,9 +100,14 @@ public class EntityBehavior : EntityComponent
                 break;
             case 777 :
                 a.type = (int)Action.ActionTypes.Collect;
+                a.item_target = Item.Spear;
+                //Log(a.item_target.nme);
+                break;
+            case 888 :
+                a.type = (int)Action.ActionTypes.Collect;
                 a.item_target = Item.Stone;
                 //Log(a.item_target.nme);
-                break;        
+                break;         
             default :
             //Debug.Log("ObjectBehavior: no action for command specified");
                 break;
@@ -471,6 +476,9 @@ public class EntityBehavior : EntityComponent
         if(tag == "Player"){
             if(Input.GetKeyUp(KeyCode.K)){
                 MainCommand.current.SendCommand(777);
+            }
+            if(Input.GetKeyUp(KeyCode.L)){
+                MainCommand.current.SendCommand(888);
             }
         }
 

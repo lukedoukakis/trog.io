@@ -25,7 +25,7 @@ public class EntityPhysics : EntityComponent
     public float maxSpeed;
 
 
-    public static float landScrunch_recoverySpeed = .8f;
+    public static float landScrunch_recoverySpeed = .75f;
     public static float landScrunch_airTimeThreshhold = 2.4f;
     public float landScrunch;
 
@@ -127,7 +127,7 @@ public class EntityPhysics : EntityComponent
 
     void CheckScrunch(){
         if(groundTime < 1f - landScrunch_recoverySpeed){
-            landScrunch = Mathf.Sin(Mathf.InverseLerp(0f, 1f - landScrunch_recoverySpeed, groundTime) * Mathf.PI);
+            landScrunch = Mathf.Sin(Mathf.InverseLerp(0f, 1f - landScrunch_recoverySpeed, groundTime) * Mathf.PI * 1.25f);
             float at = Mathf.Lerp(0f, 1f, airTime / landScrunch_airTimeThreshhold);
             landScrunch = Mathf.Lerp(0f, at, landScrunch);
         }else{

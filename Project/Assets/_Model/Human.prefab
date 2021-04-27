@@ -40,7 +40,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8858975181983286297}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 5917c0e93d180a842b61d1ebc62a195c, type: 3}
+  m_Avatar: {fileID: 9000000, guid: d90869f96f870ce4aaef5ad00a0d6e28, type: 3}
   m_Controller: {fileID: 9100000, guid: e1db64d72b583d540881a60ee4bc765e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
@@ -70,7 +70,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: d90869f96f870ce4aaef5ad00a0d6e28,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.106
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d90869f96f870ce4aaef5ad00a0d6e28,
         type: 3}
@@ -117,6 +117,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Human Model
       objectReference: {fileID: 0}
+    - target: {fileID: 7064602360985020552, guid: d90869f96f870ce4aaef5ad00a0d6e28,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 66eff06ca3f70944296b23a6d6e04777, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d90869f96f870ce4aaef5ad00a0d6e28, type: 3}
 --- !u!1 &8858975181983286297 stripped

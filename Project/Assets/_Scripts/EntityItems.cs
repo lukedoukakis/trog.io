@@ -18,17 +18,15 @@ public class EntityItems : EntityComponent
     public ItemCollection pockets;
 
 
-    public Transform t_left_hug;
-    public Transform t_left_underArm;
-    public Transform t_spear;
-    public Transform t_axe;
-    public Transform t_left_overShoulder;
+    public Transform t_hand_left;
+    public Transform t_upperArm_left;
+    public Transform t_shoulder_left;
     public Transform t_back;
     public Transform t_left_current;
 
 
     public Transform itemT;
-    public Transform rightHandT;
+    public Transform t_hand_right;
     
 
 
@@ -45,34 +43,14 @@ public class EntityItems : EntityComponent
         handle.entityItems = this;
 
         itemT = transform.Find("ItemT");
-        rightHandT = Utility.FindDeepChild(transform, "B-palm_01_R");
+        t_hand_left = Utility.FindDeepChild(transform, "B-palm_01_L");
+        t_upperArm_left = Utility.FindDeepChild(transform, "B-forearm_L");
+        t_shoulder_left = Utility.FindDeepChild(transform, "B-upper_arm_L");
+        t_hand_right = Utility.FindDeepChild(transform, "B-palm_01_R");
+        t_back = Utility.FindDeepChild(transform, "B-upperChest");
 
-        foreach(Transform t in itemT){
-            switch(t.gameObject.name){
-                case "Hug" :
-                    t_left_hug = t;
-                    break;
-                case "UnderArm" :
-                    t_left_underArm = t;
-                    break;
-                case "Spear" :
-                    t_spear = t;
-                    break;
-                case "Axe" :
-                    t_axe = t;
-                    break;
-                case "OverShoulder" :
-                    t_left_overShoulder = t;
-                    break;
-                case "Backpack" :
-                    t_back = t;
-                    break;
-                default:
-                    break;
-            }
-        }
 
-        Log(rightHandT.name);
+        //Log(t_hand_right.name);
 
     }
 
@@ -91,13 +69,13 @@ public class EntityItems : EntityComponent
         TogglePhysics(holding.Item2, false);
         switch(holding.Item1.holdStyle){
             case (int)Item.HoldStyle.Hug :
-                t_left_current = t_left_hug;
+                t_left_current = t_hand_left;
                 break;
             case (int)Item.HoldStyle.UnderArm :
-                t_left_current = t_left_underArm;
+                t_left_current = t_hand_left;
                 break;
             case (int)Item.HoldStyle.OverShoulder :
-                t_left_current = t_left_overShoulder;
+                t_left_current = t_hand_left;
                 break;
             default:
                 break;
@@ -149,14 +127,17 @@ public class EntityItems : EntityComponent
 
         if(holding != null){
             GameObject hold = holding.Item2;
-            hold.transform.position = t_left_current.position;
+            hold.transform.position = t_left_current.position + t_left_current.forward*hold.GetComponent<BoxCollider>().size.z/4f;
             //hold.transform.position = Vector3.Lerp(hold.transform.position, t_left_current.position, objSpeed);
         }
         if(weapon_equipped != null){
             GameObject weap_on = weapon_equipped.Item2;
+            weap_on.transform.position = t_hand_right.position;
+            weap_on.transform.rotation = t_hand_right.rotation;
         }
         if(weapon_unequipped != null){
             GameObject weap_off = weapon_unequipped.Item2;
+            weap_off.transform.position = t_back.position;
 
         }
 
