@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-public class Action : MonoBehaviour
+public class Action : ScriptableObject
 {
 
     // type of action
@@ -20,25 +21,39 @@ public class Action : MonoBehaviour
     // resultant item
     public Item item_result;
 
+    // distance at which we reached the target, if there is one
+    public float distanceThreshold;
+
+    // body rotation mode
+    public int bodyRotationMode;
+
 
     // maximum time to be spent executing the action
     public int maxSeconds;
 
-    public Action(int _type, GameObject _obj, int _number, Item _item_target, Item _item_result, int _maxSeconds){
-        type = _type;
-        obj = _obj;
-        number = _number;
-        item_target = _item_target;
-        item_result = _item_result;
-        maxSeconds = _maxSeconds;
+    public static Action GenerateAction(int _type, GameObject _obj, int _number, Item _item_target, Item _item_result, int _maxSeconds, float _distanceThreshold, int _bodyRotationMode){
+        Action a = ScriptableObject.CreateInstance<Action>();
+        a.type = _type;
+        a.obj = _obj;
+        a.number = _number;
+        a.item_target = _item_target;
+        a.item_result = _item_result;
+        a.maxSeconds = _maxSeconds;
+        a.distanceThreshold = _distanceThreshold;
+        a.bodyRotationMode = _bodyRotationMode;
+        return a;
     }
-    public Action(){
-        type = -1;
-        obj = null;
-        number = -1;
-        item_result = null;
-        item_target = null;
-        maxSeconds = -1;
+    public static Action GenerateAction(){
+        Action a = ScriptableObject.CreateInstance<Action>();
+        a.type = -1;
+        a.obj = null;
+        a.number = -1;
+        a.item_result = null;
+        a.item_target = null;
+        a.maxSeconds = -1;
+        a.distanceThreshold = -1;
+        a.bodyRotationMode = (int)EntityAnimation.BodyRotationMode.Normal;
+        return a;
     }
 
 
@@ -51,7 +66,14 @@ public class Action : MonoBehaviour
         Pickup,
         Attack,
         Swing,
+        AttackRecover,
         Build,
         Hunt
+    }
+
+
+
+    public string ToString(){
+        return Enum.GetName(typeof(ActionTypes), type);
     }
 }

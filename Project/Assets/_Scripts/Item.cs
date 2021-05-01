@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Item : MonoBehaviour
+public class Item : ScriptableObject
 {
 
 
 
 
     // Item defs
-    public static Item Stone = new Item("Stone", (int)Type.Misc, .1f, (int)HoldStyle.UnderArm, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject"), Resources.Load<Image>("Items/Stone/Image"));
-    public static Item Spear = new Item("Spear", (int)Type.Weapon, .1f, (int)HoldStyle.Spear, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject"), Resources.Load<Image>("Items/Spear/Image"));
+    public static Item Stone = GenerateItem("Stone", (int)Type.Misc, .1f, (int)HoldStyle.UnderArm, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject"), Resources.Load<Image>("Items/Stone/Image"));
+    public static Item Spear = GenerateItem("Spear", (int)Type.Weapon, .1f, (int)HoldStyle.Spear, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject"), Resources.Load<Image>("Items/Spear/Image"));
 
 
     public static Dictionary<string, Item> Items = new Dictionary<string, Item>
@@ -44,15 +44,18 @@ public class Item : MonoBehaviour
         Hug, UnderArm, Spear, Axe, OverShoulder
     }
 
-    public Item(string _nme, int _type, float _weight, int _holdStyle, ItemCollection _contents, ItemCollection _components, GameObject _gameobject, Image _image){
-        nme = _nme;
-        type = _type;
-        weight = _weight;
-        holdStyle = _holdStyle;
-        contents = _contents;
-        components = _components;
-        gameobject = _gameobject;
-        image = _image;
+
+    public static Item GenerateItem(string _nme, int _type, float _weight, int _holdStyle, ItemCollection _contents, ItemCollection _components, GameObject _gameobject, Image _image){
+        Item i = ScriptableObject.CreateInstance<Item>();
+        i.nme = _nme;
+        i.type = _type;
+        i.weight = _weight;
+        i.holdStyle = _holdStyle;
+        i.contents = _contents;
+        i.components = _components;
+        i.gameobject = _gameobject;
+        i.image = _image;
+        return i;
     }
 
 

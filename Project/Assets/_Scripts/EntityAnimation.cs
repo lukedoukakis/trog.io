@@ -8,11 +8,14 @@ public class EntityAnimation : EntityComponent
 
     public Rigidbody rb;
     public Transform bodyT;
+    public Transform headT;
     public Animator animator;
 
+    // rotation
+    int bodyRotationMode;
+    Transform bodyRotationTarget;
     public static float bodyRotationSpeed_player = 10f;
     public static float bodyRotationSpeed_ai = 10f;
-
     float bodyRotationSpeed;
     Quaternion bodyRotation;
     Quaternion bodyRotationLast;
@@ -21,7 +24,7 @@ public class EntityAnimation : EntityComponent
     float angularVelocityY_last;
     public static float angularVelocityY_maxDelta = .1f;
 
-    float squat;
+    float posture_squat, squat_activity;
 
 
 
@@ -40,12 +43,17 @@ public class EntityAnimation : EntityComponent
         {"LeftArm_holdStyle",   -1},
     };
 
+    public enum BodyRotationMode{
+        Normal, Target
+    }
+
 
     void Awake(){
         handle = GetComponent<EntityHandle>();
         handle.entityAnimation = this;
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
+        headT = Utility.FindDeepChild(transform, "B-head");
         foreach(Transform tr in transform)
         {
             if(tr.tag == "Body")
@@ -60,6 +68,7 @@ public class EntityAnimation : EntityComponent
         else{
             bodyRotationSpeed = bodyRotationSpeed_ai;
         }
+        posture_squat = .1f;
     }
 
 
@@ -79,49 +88,82 @@ public class EntityAnimation : EntityComponent
     public void SetAnimationTrigger(string movement){
         animator.SetTrigger(movement);
     }
-
-
-
-
-
     public void SetAnimationLayerWeight(string position, float value){
         animator.SetLayerWeight(animator.GetLayerIndex(position), value);
     }
-    public void DisableLayer(string layer, float time){
-        StartCoroutine(_DisableLayer());
-        IEnumerator _DisableLayer(){
-            SetAnimationLayerWeight(layer, 0f);
-            yield return new WaitForSecondsRealtime(time);
+    public void DisableAnimationLayer(string layer, float time){
+        StartCoroutine(_DisableAnimationLayer());
+        IEnumerator _DisableAnimationLayer(){
+            float w = 0f;
+            while( w < 1f){
+                SetAnimationLayerWeight(layer, w);
+                w += 1f * Time.deltaTime;
+                yield return null;
+            }
             SetAnimationLayerWeight(layer, 1f);
         }
     }
 
+    public void MaximizeAnimationLayer(string layer, float time){
+        float originalWeight = animator.GetLayerWeight(animator.GetLayerIndex(layer));
+        StartCoroutine(_MaximizeAnimationLayer());
+        IEnumerator _MaximizeAnimationLayer(){
+            float w = 1f;
+            while( w > originalWeight){
+                SetAnimationLayerWeight(layer, w);
+                w -= 1f * Time.deltaTime;
+                yield return null;
+            }
+            SetAnimationLayerWeight(layer, originalWeight);
+        }
+    }
+
+    public void SetBodyRotationMode(int mode){
+        bodyRotationMode = mode;
+    }
+    public void SetBodyRotationTarget(Transform t){
+        bodyRotationTarget = t;
+    }
 
 
     void UpdateBodyRotation(){
-        Vector3 velRaw = rb.velocity;
-        Vector3 velHoriz = velRaw; velHoriz.y = 0;
-        Vector3 direction = Vector3.RotateTowards(bodyT.transform.forward, velHoriz, bodyRotationSpeed * Time.deltaTime, 0f);    
-        
-        Quaternion rot = Quaternion.LookRotation(direction);
-        //bodyT.rotation = Quaternion.LookRotation(direction);
-
-        Vector3 v = (rot.eulerAngles) - (bodyRotationLast.eulerAngles);
-        angularVelocityY = Mathf.Lerp(bodyAngularVelocity.y, v.y, .5f);
-        angularVelocityY = Mathf.Clamp(angularVelocityY, -10, 10);
-
-        float dif = angularVelocityY - angularVelocityY_last;
-        if(Math.Abs(dif) > angularVelocityY_maxDelta){
-            angularVelocityY = angularVelocityY_last + (angularVelocityY_maxDelta * Mathf.Sign(dif));
+        if(tag != "Player"){
+            //Log("rotation mode: " + bodyRotationMode.ToString());
         }
-        bodyT.rotation = rot * Quaternion.Euler(Vector3.forward*angularVelocityY*-5f);
-        
-        
-        
-        // if(tag == "Player"){
-        //     Debug.Log(angularVelocityY);
-        // }
+        switch (bodyRotationMode){
 
+            // normal rotation
+            case (int)BodyRotationMode.Normal:
+                Vector3 velRaw = rb.velocity;
+                Vector3 velHoriz = velRaw; velHoriz.y = 0;
+                Vector3 direction = Vector3.RotateTowards(bodyT.forward, velHoriz, bodyRotationSpeed * Time.deltaTime, 0f);    
+                Quaternion rotation = Quaternion.LookRotation(direction);
+                Vector3 v = (rotation.eulerAngles) - (bodyRotationLast.eulerAngles);
+                angularVelocityY = Mathf.Lerp(bodyAngularVelocity.y, v.y, .5f);
+                angularVelocityY = Mathf.Clamp(angularVelocityY, -10, 10);
+                float dif = angularVelocityY - angularVelocityY_last;
+                if(Math.Abs(dif) > angularVelocityY_maxDelta){
+                    angularVelocityY = angularVelocityY_last + (angularVelocityY_maxDelta * Mathf.Sign(dif));
+                }
+                bodyT.rotation = rotation * Quaternion.Euler(Vector3.forward*angularVelocityY*-5f);
+                break;
+
+            // targeting rotation
+            case (int)BodyRotationMode.Target:
+                Vector3 dir = bodyRotationTarget.position - bodyT.position;
+                Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
+                bodyT.rotation = Quaternion.Slerp(bodyT.rotation, rot, .5f * Time.deltaTime);
+                break;
+
+            default:
+                Log("UpdateBodyRotation: bodyRotationMode not recognized: " + bodyRotationMode);
+                    break;
+        };
+
+
+
+        
+        
 
 
     }
@@ -165,8 +207,9 @@ public class EntityAnimation : EntityComponent
         SetAnimationLayerWeight("Legs_shuffle", 1f - backMagnitude - runMagnitude);
 
 
-        // calculate squat
-        SetAnimationLayerWeight("Squat", squat + handle.entityPhysics.landScrunch);
+        // calculate posture
+        SetAnimationLayerWeight("Squat Position", posture_squat + squat_activity + handle.entityPhysics.landScrunch);
+
 
     }
 
@@ -217,19 +260,21 @@ public class EntityAnimation : EntityComponent
         }
         
         SetAnimationTrigger(trigger);
-        DisableLayer("LeftArm", .5f);
+        DisableAnimationLayer("LeftArm", .5f);
+        MaximizeAnimationLayer("RightArm", .5f);
     }
 
 
     IEnumerator SquatAndStand(){
-        while(squat < .7f){
-            squat = Mathf.Lerp(squat, .75f, 10f * Time.deltaTime);
+        while(squat_activity < .7f){
+            squat_activity = Mathf.Lerp(squat_activity, .75f, 10f * Time.deltaTime);
             yield return null;
         }
-        while(squat > .05f){
-            squat = Mathf.Lerp(squat, 0f, 10f * Time.deltaTime);
+        while(squat_activity > .05f){
+            squat_activity = Mathf.Lerp(squat_activity, 0f, 10f * Time.deltaTime);
             yield return null;
         }
+        squat_activity = 0f;
     }
 
 
