@@ -160,7 +160,7 @@ public class EntityBehavior : EntityComponent
     // select and execute the next action in the queue... if list is empty, insert "go home" or "idle" action
     public Action NextAction(){
         if(actions.Count == 0){
-            ProcessCommand((int)Command.Follow_player, (int)Priority.Front);
+            ProcessCommand((int)Command.Idle, (int)Priority.Front);
         }
         Action next = actions[0];
         actions.RemoveAt(0);
@@ -282,7 +282,10 @@ public class EntityBehavior : EntityComponent
     }
 
     public void Pickup(Action a){
-        StartCoroutine(_Pickup());
+
+        TerminateActionLayer("Hands");
+        BeginActionLayer("Hands", a, _Pickup());
+
         IEnumerator _Pickup(){
             yield return new WaitForSecondsRealtime(.25f);
             TakeFromGround(a.obj);
@@ -302,14 +305,17 @@ public class EntityBehavior : EntityComponent
     }
 
     void Swing(Action a){
-        StartCoroutine(_Swing());
+        
+        TerminateActionLayer("Hands");
+        BeginActionLayer("Hands", a, _Swing());
 
         IEnumerator _Swing(){
             handle.entityAnimation.UseWeapon();
             Action repeatAttack = new Action((int)(Action.ActionTypes.Attack), a.obj, -1, null, null, -1);
-            InsertActionImmediate(repeatAttack, false);
-            yield return new WaitForSecondsRealtime(.5f);
-            NextAction();
+            //yield return new WaitForSecondsRealtime(.5f);
+            InsertActionImmediate(repeatAttack, true);
+            yield return null;
+            //NextAction();
         }
         
     }
