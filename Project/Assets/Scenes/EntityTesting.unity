@@ -1221,6 +1221,7 @@ MonoBehaviour:
   handle: {fileID: 0}
   faction: 0
   hp: 0
+  alive: 0
 --- !u!114 &866545076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1261,6 +1262,7 @@ MonoBehaviour:
   handle: {fileID: 0}
   rb: {fileID: 0}
   bodyT: {fileID: 0}
+  headT: {fileID: 0}
   animator: {fileID: 0}
 --- !u!114 &866545078
 MonoBehaviour:
@@ -1276,6 +1278,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handle: {fileID: 0}
   home: {fileID: 0}
+  distanceThreshold_none: -1
+  distanceThreshold_point: 0.1
+  distanceThreshold_spot: 2
+  distanceThreshold_defense: 1.5
+  distanceThresholdWindow: 0.2
   running: 0
   surroundingItems: []
   activeAction: {fileID: 0}
@@ -2695,6 +2702,7 @@ MonoBehaviour:
   handle: {fileID: 0}
   faction: 0
   hp: 0
+  alive: 0
 --- !u!114 &1829362134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2735,6 +2743,7 @@ MonoBehaviour:
   handle: {fileID: 0}
   rb: {fileID: 0}
   bodyT: {fileID: 0}
+  headT: {fileID: 0}
   animator: {fileID: 0}
 --- !u!114 &1829362136
 MonoBehaviour:
@@ -2750,6 +2759,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handle: {fileID: 0}
   home: {fileID: 0}
+  distanceThreshold_none: -1
+  distanceThreshold_point: 0.1
+  distanceThreshold_spot: 2
+  distanceThreshold_defense: 1.5
+  distanceThresholdWindow: 0.2
   running: 0
   surroundingItems: []
   activeAction: {fileID: 0}
@@ -4288,8 +4302,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 879.38654, y: 0}
-  m_SizeDelta: {x: 1758.7731, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &6310057845465744174
 RectTransform:

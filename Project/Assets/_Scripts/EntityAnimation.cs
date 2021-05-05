@@ -11,11 +11,12 @@ public class EntityAnimation : EntityComponent
     public Transform headT;
     public Animator animator;
 
+
     // rotation
     int bodyRotationMode;
     Transform bodyRotationTarget;
     public static float bodyRotationSpeed_player = 10f;
-    public static float bodyRotationSpeed_ai = 10f;
+    public static float bodyRotationSpeed_ai = 20f;
     float bodyRotationSpeed;
     Quaternion bodyRotation;
     Quaternion bodyRotationLast;
@@ -25,6 +26,9 @@ public class EntityAnimation : EntityComponent
     public static float angularVelocityY_maxDelta = .1f;
 
     float posture_squat, squat_activity;
+
+    float runMagnitude;
+    float bodySkew;
 
 
 
@@ -138,14 +142,19 @@ public class EntityAnimation : EntityComponent
                 Vector3 velHoriz = velRaw; velHoriz.y = 0;
                 Vector3 direction = Vector3.RotateTowards(bodyT.forward, velHoriz, bodyRotationSpeed * Time.deltaTime, 0f);    
                 Quaternion rotation = Quaternion.LookRotation(direction);
-                Vector3 v = (rotation.eulerAngles) - (bodyRotationLast.eulerAngles);
-                angularVelocityY = Mathf.Lerp(bodyAngularVelocity.y, v.y, .5f);
-                angularVelocityY = Mathf.Clamp(angularVelocityY, -10, 10);
-                float dif = angularVelocityY - angularVelocityY_last;
-                if(Math.Abs(dif) > angularVelocityY_maxDelta){
-                    angularVelocityY = angularVelocityY_last + (angularVelocityY_maxDelta * Mathf.Sign(dif));
+                if(handle.entityPhysics.GROUNDTOUCH){
+                    Vector3 v = (rotation.eulerAngles) - (bodyRotationLast.eulerAngles);
+                    angularVelocityY = Mathf.Lerp(bodyAngularVelocity.y, v.y, .5f);
+                    angularVelocityY = Mathf.Clamp(angularVelocityY, -5f, 5f);
+                    float dif = angularVelocityY - angularVelocityY_last;
+                    if(Math.Abs(dif) > angularVelocityY_maxDelta){
+                        angularVelocityY = angularVelocityY_last + (angularVelocityY_maxDelta * Mathf.Sign(dif));
+                    }
                 }
-                bodyT.rotation = rotation * Quaternion.Euler(Vector3.forward*angularVelocityY*-5f);
+                else{
+                    angularVelocityY = 0f;
+                }
+                bodyT.rotation = rotation * Quaternion.Euler(Vector3.forward*angularVelocityY*-1f);
                 break;
 
             // targeting rotation
@@ -194,12 +203,29 @@ public class EntityAnimation : EntityComponent
             SetAnimationBool("Stand", false);
         }
 
-
+    
+        float slowness;
         // calculate run
-        float bodySkew = Mathf.InverseLerp(0f, 180f, Vector3.Angle(velHoriz, bodyT.forward));
-        float slowness = 1f - Mathf.InverseLerp(0f, handle.entityPhysics.maxSpeed, velHoriz.magnitude);
-        float runMagnitude = 1f - Mathf.Max(bodySkew, slowness);
+        if(handle.entityPhysics.GROUNDTOUCH){
+            bodySkew = Mathf.Lerp(bodySkew, Mathf.InverseLerp(0f, 230f, Vector3.Angle(velHoriz, bodyT.forward)), 5f * Time.deltaTime);
+        }
+        else{
+            bodySkew = 0f;
+        }
+        slowness = 1f - Mathf.InverseLerp(0f, handle.entityPhysics.maxSpeed, velHoriz.magnitude);
+        runMagnitude = 1f - Mathf.Max(bodySkew, slowness);
         SetAnimationLayerWeight("Legs_full", runMagnitude);
+
+        if(angularVelocityY < 0){
+            SetAnimationLayerWeight("Turn Left Position", bodySkew/8f);
+            SetAnimationLayerWeight("Turn Right Position", 0f);
+        }
+        else{
+            SetAnimationLayerWeight("Turn Left Position", 0f);
+            SetAnimationLayerWeight("Turn Right Position", bodySkew/8f);
+        }
+    
+
 
         // calculate backpedal
         float backMagnitude = (1f - runMagnitude) * Mathf.Lerp(0f, .5f, bodySkew);
