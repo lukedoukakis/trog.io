@@ -5,7 +5,9 @@ using UnityEngine;
 public class EntityPhysics : EntityComponent
 {
 
+    public Collider hitbox;
     public Transform groundSense;
+    public Transform gyro;
     RaycastHit groundInfo;
     public static float castDistance_ground = 100f;
     public Transform obstacleHeightSense;
@@ -13,11 +15,12 @@ public class EntityPhysics : EntityComponent
     public Rigidbody rb;
 
     public static float JumpForce = 450f;
-    public static float AccelerationScale = 20f;
-    public static float MaxSpeedScale = 15f;
+    public static float AccelerationScale = 32f;
+    public static float MaxSpeedScale = 12.5f;
     public static float JumpCoolDown = .15f;
 
 
+    public Vector3 moveDir;
     public float jumpTime; bool jumping;
     public float airTime;
     public float groundTime;
@@ -26,7 +29,7 @@ public class EntityPhysics : EntityComponent
 
 
     public static float landScrunch_recoverySpeed = .75f;
-    public static float landScrunch_airTimeThreshhold = 2.4f;
+    public static float landScrunch_airTimeThreshhold = 1.2f;
     public float landScrunch;
 
 
@@ -42,7 +45,9 @@ public class EntityPhysics : EntityComponent
     void Awake(){
         handle = GetComponent<EntityHandle>();
         handle.entityPhysics = this;
+        hitbox = GetComponent<CapsuleCollider>();
         rb = GetComponent<Rigidbody>();
+        gyro = Utility.FindDeepChild(this.transform, "Gyro");
         groundSense = transform.Find("GroundSense");
         obstacleHeightSense = transform.Find("ObstacleHeightSense");
     }
@@ -54,15 +59,9 @@ public class EntityPhysics : EntityComponent
 
 
     public void Move(Vector3 direction, float speed){
-        float spd = speed * handle.entityStats.GetStat("speed");
-        Vector3 move = transform.TransformDirection(direction) * spd;
-        //if(!GROUNDTOUCH){ spd *= .5f; }
-        rb.AddForce(move * spd * (100f*Time.deltaTime), ForceMode.Force);
-        //transform.position += move;
-    }
-
-    public void RotateTowards(Quaternion targetRot, float rotSpeed){
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotSpeed);
+        float speedStat = speed * handle.entityStats.GetStat("speed");
+        Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
+        rb.AddForce(move * speedStat, ForceMode.Force);
     }
 
     public void Jump(){
@@ -112,7 +111,7 @@ public class EntityPhysics : EntityComponent
                     vel.y = 0f;
                     rb.velocity = vel;
                 }
-                groundTime += Time.deltaTime;
+                groundTime += Time.fixedDeltaTime;
             }
             else{
                 if(GROUNDTOUCH){
@@ -120,7 +119,7 @@ public class EntityPhysics : EntityComponent
                     groundTime = 0f;
                     airTime = 0f;
                 }
-                airTime += Time.deltaTime;
+                airTime += Time.fixedDeltaTime;
             }
         }
     }
@@ -147,20 +146,34 @@ public class EntityPhysics : EntityComponent
     }
 
 
+    Vector3 GetHorizVelocity(){
+        Vector3 horvel = rb.velocity;
+        float ySpeed = horvel.y;
+        horvel.y = 0f;
+        return horvel;
+    }
+
     void FixedUpdate()
     {
        ROTATION_Y_LAST = transform.rotation.y;
-    }
 
-    void Update(){
-
-        jumpTime += Time.deltaTime;
+        Move(moveDir, acceleration);
 
         CheckGround();
         CheckScrunch();
         LimitSpeed();
 
+        
+    }
 
-        //ROTATION_Y_LAST = transform.rotation.y;
+    void Update(){
+
+
+
+        jumpTime += Time.deltaTime;
+
+        
+        
+    
     }
 }

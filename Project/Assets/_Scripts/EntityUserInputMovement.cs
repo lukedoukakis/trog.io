@@ -6,6 +6,9 @@ public class EntityUserInputMovement : EntityComponent
 {
 
 
+    public bool pressForward, pressBack, pressLeft, pressRight;
+    public Vector3 move;
+
     void Awake(){
         handle = GetComponent<EntityHandle>();
         handle.entityUserInputMovement = this;
@@ -24,33 +27,39 @@ public class EntityUserInputMovement : EntityComponent
             float y = Input.GetAxis("Mouse X") * 700f * Time.deltaTime;
             float x = 0f;
             float z = 0f;
+
             Quaternion targetRot = transform.rotation * Quaternion.Euler(new Vector3(x, y, z));
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 1f);
         }
         
     }
 
-    void Update()
-    {
+    void Update(){
 
-        Vector3 moveDir = Vector3.zero;
+        ApplyMouseInput();
 
+        move = Vector3.zero;
 
-        if (Input.GetKey(KeyCode.W))
+        pressForward = Input.GetKey(KeyCode.W);
+        pressBack = Input.GetKey(KeyCode.S);
+        pressLeft = Input.GetKey(KeyCode.A);
+        pressRight = Input.GetKey(KeyCode.D);
+
+        if (pressForward)
         {
-            moveDir.z += 1;
+            move.z += 1;
         }
-        if (Input.GetKey(KeyCode.S))
+        if (pressBack)
         {
-            moveDir.z -= 1;
+            move.z -= 1;
         }
-        if (Input.GetKey(KeyCode.A))
+        if (pressLeft)
         {
-            moveDir.x -= 1;
+            move.x -= 1;
         }
-        if (Input.GetKey(KeyCode.D))
+        if (pressRight)
         {
-            moveDir.x += 1;
+            move.x += 1;
         }
         if (Input.GetKey(KeyCode.Space))
         {
@@ -59,14 +68,15 @@ public class EntityUserInputMovement : EntityComponent
             }
         }
 
-        ApplyMouseInput();
-        
-
-
-        moveDir = moveDir.normalized;
-        handle.entityPhysics.Move(moveDir, handle.entityPhysics.acceleration);
-        
     
+
+        move = move.normalized;
+
+    }
+
+    void FixedUpdate()
+    {
+        handle.entityPhysics.moveDir = move;
     }
 
 

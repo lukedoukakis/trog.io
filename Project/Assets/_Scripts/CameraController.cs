@@ -43,8 +43,7 @@ public class CameraController : MonoBehaviour
         // static camera
         if(GameManager.current.cameraMode == 0){
             Vector3 targetPos = playerT.position + (Vector3.forward*-7f) + (Vector3.up*9f);
-            transform.position = Vector3.Lerp(transform.position, targetPos, 100f * Time.deltaTime);
-
+            transform.position = Vector3.Lerp(transform.position, targetPos, 1f * Time.deltaTime);
             transform.rotation = Quaternion.Euler(new Vector3(45f, 0f, 0f));
         }
 
@@ -52,15 +51,15 @@ public class CameraController : MonoBehaviour
         else if(GameManager.current.cameraMode == 1){
             Vector3 targetPos = playerT.position + playerT.TransformDirection((Vector3.forward*-6.75f) + (Vector3.up*4.75f));
             Quaternion targetRot = playerT.rotation * Quaternion.Euler(new Vector3(25f, 0f, 0f));
-            transform.position = Vector3.Lerp(transform.position, targetPos, 100f * Time.deltaTime);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 100f * Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, targetPos, 1000f * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 1000f * Time.deltaTime);
         }
 
     }
 
     void FixedUpdate()
     {
-
+        
 
     }
 

@@ -8,27 +8,28 @@ public class EntityBehavior : EntityComponent
 {
 
     public Transform home;
+    public Vector3 move;
+
+
     public static float randomOffsetRange = 1f;
     public float distanceThreshold_none = -1f;
     public float distanceThreshold_point = .1f;
     public float distanceThreshold_spot = 2f;
-    public float distanceThreshold_defense = 1.5f;
+    public float distanceThreshold_combat = 1.5f;
     public float distanceThresholdWindow = .2f;
 
     Vector3 randomOffset;
 
 
     // sensing and movement parameters
-    public static float senseDistance_obstacle = 1f;
+    public static float senseDistance_obstacle = 3f;
     public static float senseDistance_immediate = .25f;
     public static float senseDistance_search = 15f;
     public static float senseDistance_earshot = 50f;
     public static float senseDistance_infinite = 500f;
-    public static float maxJumpFromDistance = 3f;
+    public static float maxJumpFromDistance = 2f;
     public static float rotationSpeed = 1f;
-    public bool running;
 
-    public List<Item> surroundingItems;
 
 
     public Action activeAction;
@@ -124,7 +125,17 @@ public class EntityBehavior : EntityComponent
                 break;
             case 999 :
                 a.type = (int)Action.ActionTypes.Attack;
-                a.obj = GameObject.FindGameObjectWithTag("Player");
+                // a.obj = GameObject.FindGameObjectWithTag("Player");
+
+                GameObject[] gs = GameObject.FindGameObjectsWithTag("TribeMember");
+                Log(gs.Length.ToString());
+                foreach(GameObject g in gs){
+                    if(g != this.gameObject){
+                        a.obj = g;
+                    }
+                }
+
+
                 //Log(a.item_target.nme);
                 break;         
             default :
@@ -177,9 +188,9 @@ public class EntityBehavior : EntityComponent
     }
 
     public void ExecuteAction(Action a){
-
-        handle.entityAnimation.SetBodyRotationMode(a.bodyRotationMode);
-        if(a.obj != null){ handle.entityAnimation.SetBodyRotationTarget(a.obj.transform); }
+        Transform t = null;
+        if(a.obj == null){ t = null; }else{ t = a.obj.transform; }
+        handle.entityAnimation.SetBodyRotationMode(a.bodyRotationMode, t);
 
         switch(a.type){
             case (int)Action.ActionTypes.Idle :
@@ -228,6 +239,7 @@ public class EntityBehavior : EntityComponent
         BeginActionLayer("Movement", a, _Idle());
 
         IEnumerator _Idle(){
+            move = Vector3.zero;
             while(true){
                 yield return null;
             }
@@ -246,7 +258,8 @@ public class EntityBehavior : EntityComponent
             while (true)
             {
                 if (!IsAtPosition(targetT.position, a.distanceThreshold)){
-                    Navigate(targetT, Vector3.forward);
+                    move = GetNavigationDirection(targetT);
+                    handle.entityPhysics.moveDir = move;
                 }
                 else
                 {
@@ -265,15 +278,25 @@ public class EntityBehavior : EntityComponent
         IEnumerator _Follow()
         {
 
-            Transform targetT = a.obj.transform;   
+            Transform targetT;
+            if(a.bodyRotationMode == (int)EntityAnimation.BodyRotationMode.Normal){
+                targetT = a.obj.transform;
+            }
+            else{
+                Transform directionalTs = Utility.FindDeepChild(a.obj.transform, "DirectionalTs");
+                targetT = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1));
+            }
+            
+
             while (true)
             {
 
                 if(Vector3.Distance(transform.position, targetT.position) > a.distanceThreshold){
-                    Navigate(targetT, Vector3.forward);
+                    move = GetNavigationDirection(targetT);
+                    handle.entityPhysics.moveDir = move;
                 }
                 else{
-                    RotateToward(targetT.position, .05f);
+                    handle.entityPhysics.moveDir = Vector3.zero;
                 }
                 yield return null;
 
@@ -332,8 +355,8 @@ public class EntityBehavior : EntityComponent
 
         IEnumerator _Swing(){
             handle.entityAnimation.UseWeapon();
-            Action attackRecovery = Action.GenerateAction((int)(Action.ActionTypes.AttackRecover), a.obj, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target);
-            InsertAction(attackRecovery);
+            Action attackRecover = Action.GenerateAction((int)(Action.ActionTypes.AttackRecover), a.obj, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target);
+            InsertAction(attackRecover);
             yield return null;
             NextAction();
         } 
@@ -350,12 +373,13 @@ public class EntityBehavior : EntityComponent
             EntityStatus targetStatus = target.GetComponent<EntityStatus>();
             if(true){ // TODO: if target is alive
                 
-                Action followTarget = Action.GenerateAction((int)(Action.ActionTypes.Follow), a.obj, -1, null, null, -1, distanceThreshold_defense, (int)EntityAnimation.BodyRotationMode.Target);
+                
+                Action followTarget = Action.GenerateAction((int)(Action.ActionTypes.Follow), a.obj, -1, null, null, -1, distanceThreshold_combat, (int)EntityAnimation.BodyRotationMode.Target);
                 Action repeatAttack = Action.GenerateAction((int)(Action.ActionTypes.Attack), a.obj, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target);
                 
                 InsertAction(followTarget);
                 NextAction();
-                yield return new WaitForSecondsRealtime(.25f);
+                yield return new WaitForSecondsRealtime(.3f);
                 InsertAction(repeatAttack);
                 NextAction();
 
@@ -391,7 +415,15 @@ public class EntityBehavior : EntityComponent
     }
 
 
-    void Navigate(Transform targetT, Vector3 direction){
+    Vector3 GetNavigationDirection(Transform targetT){
+
+        Vector3 targetDirection = targetT.position - transform.position;
+        Transform gyro = handle.entityPhysics.gyro;
+        gyro.LookAt(targetT);
+        Quaternion rot = gyro.rotation;
+        rot.x = 0;
+        rot.z = 0;
+        gyro.rotation = rot;
 		
         float leftDistance, centerDistance, rightDistance;
         RaycastHit leftHitInfo, centerHitInfo, rightHitInfo;
@@ -416,12 +448,12 @@ public class EntityBehavior : EntityComponent
 				}
 			}
 		}
-
+        
         Rigidbody targetRb = targetT.GetComponent<Rigidbody>();
         Vector3 tp = targetT.position;
         tp += targetT.TransformDirection(randomOffset);
-        RotateToward(tp, .05f);
-		handle.entityPhysics.Move(direction, handle.entityPhysics.acceleration);
+        //RotateToward(tp, .2f);
+        return targetDirection;
 
 
 
@@ -429,10 +461,17 @@ public class EntityBehavior : EntityComponent
 
             // set raycasts to reach castDistance units away
             Transform gs = handle.entityPhysics.groundSense;
-            bool leftCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.left)).normalized, out leftHitInfo, senseDistance_obstacle);
-            bool centerCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), transform.TransformDirection(Vector3.forward).normalized * 1f, out centerHitInfo, senseDistance_obstacle);
-            bool rightCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.right)).normalized, out rightHitInfo, senseDistance_obstacle);
+            Vector3 moveDir = handle.entityPhysics.moveDir;
 
+            bool leftCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward + gyro.right*-2f, out leftHitInfo, senseDistance_obstacle);
+            bool centerCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward, out centerHitInfo, senseDistance_obstacle);
+            bool rightCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward + gyro.right*2f, out rightHitInfo, senseDistance_obstacle);
+
+
+            Debug.DrawRay(transform.position + new Vector3(0, .1f, 0), (gyro.forward + gyro.right*-2f).normalized*senseDistance_obstacle, Color.green, Time.deltaTime);
+            Debug.DrawRay(transform.position + new Vector3(0, .1f, 0), (gyro.forward).normalized*senseDistance_obstacle, Color.green, Time.deltaTime);
+            Debug.DrawRay(transform.position + new Vector3(0, .1f, 0), (gyro.forward + gyro.right*2f).normalized*senseDistance_obstacle, Color.green, Time.deltaTime);
+            
             List<RaycastHit> hitInfos = new List<RaycastHit>();
 
             // set leftDistance, centerDistance, rightDistance
@@ -451,44 +490,32 @@ public class EntityBehavior : EntityComponent
                     hits++;
                 }
             }
-            return hits >= 1;
+            return hits >= 2;
 
         }
 
         bool CanClearObstacle(){
             Transform ohs = handle.entityPhysics.obstacleHeightSense;
-            if
-            (
-                // !Physics.Raycast(ohs.position, (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.left)).normalized * 1f, out leftHitInfo, senseDistance/2)
-                // && !Physics.Raycast(ohs.position, transform.TransformDirection(Vector3.forward).normalized * 1f, out centerHitInfo, senseDistance*2)
-                // && !Physics.Raycast(ohs.position, (transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.right)).normalized * 1f, out rightHitInfo, senseDistance/2)
-                !Physics.BoxCast(ohs.position, new Vector3(.5f, .01f, .5f), transform.forward, transform.rotation, Mathf.Max(leftDistance, centerDistance, rightDistance))
-            )
-            {
-                return true;
-            }
-            return false;
+            return !Physics.BoxCast(ohs.position, new Vector3(handle.entityPhysics.hitbox.bounds.extents.x, .01f, .1f), gyro.forward, gyro.rotation, Mathf.Max(leftDistance, centerDistance, rightDistance));
         }
 
         void TurnTowardsMostOpenPath(){
 
-            Quaternion leftRot = Quaternion.LookRotation(transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.left) * 1f, Vector3.up);
-            Quaternion rightRot = Quaternion.LookRotation(transform.TransformDirection(Vector3.forward) + transform.TransformDirection(Vector3.right) * 1f, Vector3.up);
             if (leftDistance < rightDistance){
-                handle.entityPhysics.RotateTowards(rightRot, rotationSpeed);
+                targetDirection = gyro.forward + gyro.right*3f;
             }
             else{
-                handle.entityPhysics.RotateTowards(leftRot, rotationSpeed);
+                targetDirection = gyro.forward + gyro.right*-3f;
             }
         }
 	}
 
-    void RotateToward(Vector3 targetPos, float magnitude){
-        Vector3 p = transform.position - targetPos;
-        p.y = 0;
-        Quaternion targetRot = Quaternion.LookRotation(p * -1, Vector3.up);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, magnitude);
-    }
+    // void RotateToward(Vector3 targetPos, float magnitude){
+    //     Vector3 p = transform.position - targetPos;
+    //     p.y = 0;
+    //     Quaternion targetRot = Quaternion.LookRotation(p * -1, Vector3.up);
+    //     transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, magnitude);
+    // }
     void TakeFromGround(GameObject o){
         Log("TakeFromGround()");
         Item item = Item.GetItemByName(o.name);
@@ -545,6 +572,10 @@ public class EntityBehavior : EntityComponent
     // Update is called once per frame
     void Update()
     {   
+
+        handle.entityPhysics.moveDir = move;
+
+
         if(tag == "Player"){
             if(Input.GetKeyUp(KeyCode.K)){
                 MainCommand.current.SendCommand(777);
@@ -562,6 +593,8 @@ public class EntityBehavior : EntityComponent
                 MainCommand.current.SendCommand(999);
             }
         }
+
+        
 
 
         

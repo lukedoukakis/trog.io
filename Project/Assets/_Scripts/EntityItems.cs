@@ -113,7 +113,7 @@ public class EntityItems : EntityComponent
 
     void Update(){
 
-        float objSpeed = 30f * Time.deltaTime;
+        //float objSpeed = .15f;
 
         if(holding != null){
             GameObject hold = holding.Item2;
