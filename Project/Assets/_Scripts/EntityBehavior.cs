@@ -201,7 +201,9 @@ public class EntityBehavior : EntityComponent
 
             Transform targetT;
             if(a.bodyRotationMode == (int)EntityAnimation.BodyRotationMode.Normal){
-                targetT = a.obj.transform;
+                //targetT = a.obj.transform;
+                Transform directionalTs = Utility.FindDeepChild(a.obj.transform, "DirectionalTs");
+                targetT = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1));
             }
             else{
                 Transform directionalTs = Utility.FindDeepChild(a.obj.transform, "DirectionalTs");

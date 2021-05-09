@@ -1138,7 +1138,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Legs_full
     m_StateMachine: {fileID: 7166963962817665445}
-    m_Mask: {fileID: 0}
+    m_Mask: {fileID: 31900000, guid: 40414e6b97d2ef542b2a40b67bb374b6, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
@@ -1150,7 +1150,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Legs_shuffle
     m_StateMachine: {fileID: -1798717906716097190}
-    m_Mask: {fileID: 0}
+    m_Mask: {fileID: 31900000, guid: 40414e6b97d2ef542b2a40b67bb374b6, type: 2}
     m_Motions:
     - serializedVersion: 2
       m_State: {fileID: 804108232811629379}
@@ -1174,7 +1174,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Legs_backpedal
     m_StateMachine: {fileID: -3417725965936765089}
-    m_Mask: {fileID: 0}
+    m_Mask: {fileID: 31900000, guid: 40414e6b97d2ef542b2a40b67bb374b6, type: 2}
     m_Motions:
     - serializedVersion: 2
       m_State: {fileID: 804108232811629379}
