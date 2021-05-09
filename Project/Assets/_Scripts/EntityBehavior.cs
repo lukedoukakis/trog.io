@@ -12,11 +12,10 @@ public class EntityBehavior : EntityComponent
 
 
     public static float randomOffsetRange = 1f;
-    public float distanceThreshold_none = -1f;
-    public float distanceThreshold_point = .1f;
-    public float distanceThreshold_spot = 2f;
-    public float distanceThreshold_combat = 1.5f;
-    public float distanceThresholdWindow = .2f;
+    public static float distanceThreshold_none = -1f;
+    public static float distanceThreshold_point = .1f;
+    public static float distanceThreshold_spot = 2f;
+    public static float distanceThreshold_combat = 1.5f;
 
     Vector3 randomOffset;
 
@@ -38,9 +37,6 @@ public class EntityBehavior : EntityComponent
         Back, Front, FrontImmediate
     }
 
-    public enum Command{
-        Idle, Go_home, Follow_player, Collect_item, Find_weapon, Attack_entity
-    }
 
     public Dictionary<string, Action> actionLayers;
     public Dictionary<string, IEnumerator> coroutineLayers;
@@ -69,95 +65,19 @@ public class EntityBehavior : EntityComponent
     }
 
 
-
-    // primary method to be used for queueing actions
-    public void ProcessCommand(int command, int priority){
-        TerminateActionLayer("Command");
-        Action a = CreateActionFromCommand(command);
-        switch(priority){
-            case (int)Priority.Back :
-                AddAction(a);
-                break;
-            case (int)Priority.Front :
-                InsertAction(a);
-                break;
-            case (int)Priority.FrontImmediate :
-                InsertActionImmediate(a, true);
-                break;
-        }
-        //Debug.Log("ProcessCommand() done");
-    }
-
-    public Action CreateActionFromCommand(int command){
-        Action a = Action.GenerateAction();
-        switch(command){
-            case (int)Command.Idle :
-                a.type = (int)Action.ActionTypes.Idle;
-                break;
-            case (int)Command.Go_home :
-                a.type = (int)Action.ActionTypes.GoTo;
-                a.obj = home.gameObject;
-                a.distanceThreshold = distanceThreshold_spot;
-                break;
-            case (int)Command.Follow_player :
-                a.type = (int)Action.ActionTypes.Follow;
-                a.obj = Player.current.gameObject;
-                a.distanceThreshold = distanceThreshold_spot;
-                break;
-            case (int)Command.Collect_item :
-                a.type = (int)Action.ActionTypes.Collect;
-                // TODO: finish params
-                break;
-             case (int)Command.Attack_entity :
-                a.type = (int)Action.ActionTypes.Attack;
-                // TODO: finish params
-                break;
-
-            case 777 :
-                a.type = (int)Action.ActionTypes.Collect;
-                a.item_target = Item.Spear;
-                //Log(a.item_target.nme);
-                break;
-            case 888 :
-                a.type = (int)Action.ActionTypes.Collect;
-                a.item_target = Item.Stone;
-                //Log(a.item_target.nme);
-                break;
-            case 999 :
-                a.type = (int)Action.ActionTypes.Attack;
-                // a.obj = GameObject.FindGameObjectWithTag("Player");
-
-                GameObject[] gs = GameObject.FindGameObjectsWithTag("TribeMember");
-                Log(gs.Length.ToString());
-                foreach(GameObject g in gs){
-                    if(g != this.gameObject){
-                        a.obj = g;
-                    }
-                }
-
-
-                //Log(a.item_target.nme);
-                break;         
-            default :
-            //Debug.Log("ObjectBehavior: no action for command specified");
-                break;
-        }
-        //Debug.Log("CreateAction() done");
-        return a;    
-    }
-
     // add an action to the end of the queue
-    void AddAction(Action a){
+    public void AddAction(Action a){
         actions.Add(a);
     }
 
     // insert an action to the front of the queue, to be executed when the current action is finished
-    void InsertAction(Action a){
+    public void InsertAction(Action a){
         actions.Insert(0, a);
     }
 
     // insert an action to the front of the queue and immediately execute
-    void InsertActionImmediate(Action a, bool clear){
+    public void InsertActionImmediate(Action a, bool clear){
+        TerminateActionLayer("Command");
         if(clear){
             if(actions.Count > 0){
                 actions.Clear();
@@ -175,7 +95,8 @@ public class EntityBehavior : EntityComponent
     public Action NextAction(){
         if(actions.Count == 0){
             Log("Actions empty -> idling");
-            ProcessCommand((int)Command.Idle, (int)Priority.Front);
+            Action idle = Action.GenerateAction("Idle", handle);
+            InsertAction(idle);
         }
         activeAction = actions[0];
         actions.RemoveAt(0);
@@ -309,19 +230,21 @@ public class EntityBehavior : EntityComponent
         Item i_target = a.item_target;
         Log("target name: " + i_target.nme);
 
-        List<GameObject> foundObjects = SenseSurroundingItems(i_target.type, i_target.nme, senseDistance_infinite);
+        List<GameObject> foundObjects = SenseSurroundingItems(i_target.type, i_target.nme, senseDistance_infinite, handle.entityInfo.faction.warringFactions);
         if(foundObjects.Count == 0){
             // TODO: search in new area if nothing found
             Log("Collect: nothing found");
-            NextAction();
         }
         else{
             Log("Collect: picking up object");
             GameObject target = foundObjects[0];
+            Faction.AddItemTargeted(target, handle.entityInfo.faction);
             Action goToObject = Action.GenerateAction((int)(Action.ActionTypes.GoTo), target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Normal);
             Action pickupObject = Action.GenerateAction((int)(Action.ActionTypes.Pickup), target, -1, Item.GetItemByName(target.name), null, -1, -1f, (int)EntityAnimation.BodyRotationMode.Normal);
-            InsertActionImmediate(goToObject, false);
+            Action followPlayer = Action.GenerateAction("Follow Player", handle);
             InsertAction(pickupObject);
+            InsertAction(goToObject);
+            NextAction();
         }
     }
 
@@ -331,8 +254,11 @@ public class EntityBehavior : EntityComponent
         BeginActionLayer("Hands", a, _Pickup());
 
         IEnumerator _Pickup(){
+            GameObject target = a.obj;
+            Faction.AddItemOwned(target, handle.entityInfo.faction);
+            Faction.RemoveItemTargeted(target, handle.entityInfo.faction);
             yield return new WaitForSecondsRealtime(.25f);
-            TakeFromGround(a.obj);
+            TakeFromGround(target);
             yield return new WaitForSecondsRealtime(.25f);
             NextAction();
         }
@@ -510,12 +436,6 @@ public class EntityBehavior : EntityComponent
         }
 	}
 
-    // void RotateToward(Vector3 targetPos, float magnitude){
-    //     Vector3 p = transform.position - targetPos;
-    //     p.y = 0;
-    //     Quaternion targetRot = Quaternion.LookRotation(p * -1, Vector3.up);
-    //     transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, magnitude);
-    // }
     void TakeFromGround(GameObject o){
         Log("TakeFromGround()");
         Item item = Item.GetItemByName(o.name);
@@ -537,18 +457,31 @@ public class EntityBehavior : EntityComponent
         handle.entityAnimation.Pickup(item);
         //o.transform.position = o.transform.position += new Vector3(UnityEngine.Random.Range(-30f, 30f), 1f, UnityEngine.Random.Range(-30f, 30f));
     }
-    public List<GameObject> SenseSurroundingItems(int type, string name, float distance){
+    public List<GameObject> SenseSurroundingItems(int type, string name, float distance, List<Faction> forbiddenFacs){
         Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Item"));
        
         string sur = "";
         List<GameObject> foundObjects = new List<GameObject>();
         GameObject o;
+        Item i;
+        bool forbid;
         foreach(Collider col in colliders){
             o = col.gameObject;
-            if(type == -1 || Item.GetItemByName(o.name).type == type){
+            i = Item.GetItemByName(o.name);
+            forbid = false;
+            if(type == -1 || i.type == type){
                 if(name == null || o.name == name){
-                    foundObjects.Add(o);
-                    sur += o.name + ", ";
+                    if(!Faction.ItemIsTargetedByFaction(o, handle.entityInfo.faction)){
+                        foreach(Faction fac in forbiddenFacs){
+                            if(Faction.ItemIsOwnedByFaction(o, fac)){
+                                forbid = true;
+                            }
+                        }
+                        if(!forbid){
+                            foundObjects.Add(o);
+                            sur += o.name + ", ";
+                        }
+                    }
                 }
             }
         }
@@ -578,10 +511,10 @@ public class EntityBehavior : EntityComponent
 
         if(tag == "Player"){
             if(Input.GetKeyUp(KeyCode.K)){
-                MainCommand.current.SendCommand(777);
+                MainCommand.current.SendCommand("Collect Spear");
             }
             if(Input.GetKeyUp(KeyCode.L)){
-                MainCommand.current.SendCommand(888);
+                MainCommand.current.SendCommand("Collect Stone");
             }
 
             if(Input.GetKeyUp(KeyCode.Mouse0)){
@@ -590,7 +523,7 @@ public class EntityBehavior : EntityComponent
         }
         else{
              if(Input.GetKeyUp(KeyCode.Q)){
-                MainCommand.current.SendCommand(999);
+                MainCommand.current.SendCommand("Attack TribeMember");
             }
         }
 

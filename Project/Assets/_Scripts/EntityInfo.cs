@@ -5,25 +5,23 @@ using UnityEngine;
 public class EntityInfo : EntityComponent
 {
 
-    public int ID;
-    public string TYPE;
-    public string NAME;
+    public int id;
+    public string species;
+    public string nickname;
+    public Faction faction;
 
 
     void Awake(){
         handle = GetComponent<EntityHandle>();
         handle.entityInfo = this;
+
+        id = Random.Range(0, int.MaxValue);
+        faction = GameManager.current.testFac;
     }
+
+
 
     void Start(){
-        Init();
-    }
-
-    void Init(){
-
-        // TODO: createNew if doesnt exist in memory
-
-        ID = Random.Range(0, int.MaxValue);
 
     }
 

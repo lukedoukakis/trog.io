@@ -17,8 +17,5 @@ public class SavesManager : MonoBehaviour
         
     }
 
-    internal static Dictionary<string, float> GetStatsModifiers(int iD)
-    {
-        throw new NotImplementedException();
-    }
+
 }

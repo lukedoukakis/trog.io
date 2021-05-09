@@ -55,6 +55,64 @@ public class Action : ScriptableObject
         a.bodyRotationMode = (int)EntityAnimation.BodyRotationMode.Normal;
         return a;
     }
+    public static Action GenerateAction(string command, EntityHandle handle){
+
+        Action a = Action.GenerateAction();
+        switch(command){
+            case "Idle" :
+                a.type = (int)Action.ActionTypes.Idle;
+                break;
+            case "Go Home" :
+                a.type = (int)Action.ActionTypes.GoTo;
+                a.obj = handle.entityBehavior.home.gameObject;
+                a.distanceThreshold = EntityBehavior.distanceThreshold_spot;
+                break;
+            case "Follow Player" :
+                a.type = (int)Action.ActionTypes.Follow;
+                a.obj = Player.current.gameObject;
+                a.distanceThreshold = EntityBehavior.distanceThreshold_spot;
+                break;
+            case "Collect Item" :
+                a.type = (int)Action.ActionTypes.Collect;
+                // TODO: finish params
+                break;
+             case "Attack Entity" :
+                a.type = (int)Action.ActionTypes.Attack;
+                // TODO: finish params
+                break;
+
+            case "Collect Spear" :
+                a.type = (int)Action.ActionTypes.Collect;
+                a.item_target = Item.Spear;
+                //Log(a.item_target.nme);
+                break;
+            case "Collect Stone" :
+                a.type = (int)Action.ActionTypes.Collect;
+                a.item_target = Item.Stone;
+                //Log(a.item_target.nme);
+                break;
+            case "Attack TribeMember" :
+                a.type = (int)Action.ActionTypes.Attack;
+                // a.obj = GameObject.FindGameObjectWithTag("Player");
+
+                GameObject[] gs = GameObject.FindGameObjectsWithTag("TribeMember");
+                foreach(GameObject g in gs){
+                    if(g != handle.gameObject){
+                        a.obj = g;
+                    }
+                }
+
+
+                //Log(a.item_target.nme);
+                break;         
+            default :
+            Debug.Log("ObjectBehavior: no action for command specified: \"" + command + "\"");
+                break;
+        }
+        //Debug.Log("CreateAction() done");
+        return a;
+        
+    }
 
 
 

@@ -31,7 +31,7 @@ public class EntityStats : EntityComponent
         // TODO: createNew if doesnt exist in memory
 
 
-        stats_base = new Dictionary<string, float>(EntityStatsDefs.current.GetStats(handle.entityInfo.TYPE));
+        stats_base = new Dictionary<string, float>(EntityStatsDefs.current.GetStats(handle.entityInfo.species));
 
         if(CREATENEW){
             stats_modifiers = CreateModifiers(stats_base);
@@ -71,8 +71,8 @@ public class EntityStats : EntityComponent
 
     public string CreateStatsList(){
         string list = "";
-        string _name = handle.entityInfo.NAME;
-        string _type = handle.entityInfo.TYPE;
+        string _name = handle.entityInfo.nickname;
+        string _type = handle.entityInfo.species;
         if(_name != ""){ list += _name + " (" + _type + ")"; }
         else{ list += _type; }
         list += "\n";

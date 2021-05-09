@@ -882,7 +882,7 @@ PrefabInstance:
     - target: {fileID: 7416950688095815914, guid: 363cfb0b39703b14bb1ee04a19570480,
         type: 3}
       propertyPath: command
-      value: 2
+      value: Follow Player
       objectReference: {fileID: 0}
     - target: {fileID: 7895601884958315397, guid: 363cfb0b39703b14bb1ee04a19570480,
         type: 3}
@@ -1017,7 +1017,7 @@ PrefabInstance:
     - target: {fileID: 7416950688095815914, guid: 363cfb0b39703b14bb1ee04a19570480,
         type: 3}
       propertyPath: command
-      value: 1
+      value: Go Home
       objectReference: {fileID: 0}
     - target: {fileID: 7895601884958315397, guid: 363cfb0b39703b14bb1ee04a19570480,
         type: 3}

@@ -39,11 +39,11 @@ public class UnitButtonController : MonoBehaviour
         this.handle = handle;
         referencedObject = this.handle.gameObject;
         referencedObjectInfo = referencedObject.GetComponent<EntityInfo>();
-        if(referencedObjectInfo.NAME == ""){
-            label = referencedObjectInfo.TYPE;
+        if(referencedObjectInfo.nickname == ""){
+            label = referencedObjectInfo.species;
         }
         else{
-            label = referencedObjectInfo.NAME;
+            label = referencedObjectInfo.nickname;
         }
 
         // set buttons contained within

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// acts as a handle to access every other component of type EntityComponent for this entity
+// handles mouse input events
 public class EntityHandle : EntityComponent
 {
 
@@ -15,38 +17,103 @@ public class EntityHandle : EntityComponent
     public EntityUserInputMovement entityUserInputMovement;
 
 
-
-
-    public SkinnedMeshRenderer rdr;
-    public Material mat_none, mat_selecting, mat_selected;
-
     public bool selecting;
     public bool selected;
     public bool tooltip;
 
     void Awake(){
         handle = this;
-        rdr = GetComponentInChildren<SkinnedMeshRenderer>();
+        InitEntity(false);
     }
+
 
     void Start(){
-
+        
     }
+
+    void InitEntity(bool fromMemory){
+
+        // if loading from memory
+        if(fromMemory){
+            // TODO: initialize every EntityComponent for this handle with values from memory
+
+            // EntityInfo
+
+
+            // EntityStats
+
+
+            // EntityPhysics
+
+
+            // EntityBehavior
+
+
+            // EntityAnimation
+
+
+            // EntityItems
+
+
+            // EntityStatus
+
+
+            // EntityUserInputMovement
+
+
+            // EntityInfo
+        }
+
+        // if creating a new entity
+        else{
+
+            // EntityInfo
+    
+
+            // EntityStats
+
+
+            // EntityPhysics
+
+
+            // EntityBehavior
+
+
+            // EntityAnimation
+
+
+            // EntityItems
+
+
+            // EntityStatus
+
+
+            // EntityUserInputMovement
+
+
+            // EntityInfo
+
+
+
+        }
+    }
+
+
 
 
     public void SetSelecting(bool b){
         selecting = b;
         if(b){
-            rdr.sharedMaterial = mat_selecting;
+            //rdr.sharedMaterial = mat_selecting;
         }
     }
     public void SetSelected(bool b){
         selected = b;
         if(b){
-            rdr.sharedMaterial = mat_selected;
+            //rdr.sharedMaterial = mat_selected;
         }
         else{
-            rdr.sharedMaterial = mat_none;
+            //rdr.sharedMaterial = mat_none;
         }
     }
 

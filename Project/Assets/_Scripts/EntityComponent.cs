@@ -8,10 +8,12 @@ public class EntityComponent : MonoBehaviour
     public EntityHandle handle;
 
 
+    void Init(){
 
+    }
 
 
     public void Log(string msg){
-        Debug.Log("Entity " + handle.entityInfo.ID + ": " + this.GetType().Name + ": " + msg);
+        Debug.Log("Entity " + handle.entityInfo.id + ": " + this.GetType().Name + ": " + msg);
     }
 }

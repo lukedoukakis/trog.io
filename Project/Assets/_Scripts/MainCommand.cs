@@ -9,19 +9,19 @@ public class MainCommand : MonoBehaviour
     public static MainCommand current;
 
 
-    public int command;
+    public string command;
 
 
     void Awake(){
         current = this;
     }
 
-    public void SendCommand(int c){
+    public void SendCommand(string c){
         //Debug.Log("Sending command to selected");
         EntityBehavior behavior;
         foreach(EntityHandle handle in GlobalSelectionController.current.SelectedHandles.ToArray()){
             behavior = handle.entityBehavior;
-            behavior.ProcessCommand(c, (int)EntityBehavior.Priority.FrontImmediate);
+            behavior.InsertActionImmediate(Action.GenerateAction(c, behavior.handle), true);
         }
         //Debug.Log("Commands sent!");
     }

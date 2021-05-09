@@ -73,6 +73,7 @@ public class EntityItems : EntityComponent
         GameObject hold = holding.Item2;
         hold.GetComponent<Rigidbody>().AddForce(transform.forward*900f + transform.up*900f);
         TogglePhysics(hold, true);
+        Faction.RemoveItemOwned(holding.Item2, handle.entityInfo.faction);
         
         holding = null;
     }
@@ -90,6 +91,7 @@ public class EntityItems : EntityComponent
     }
     public void DropUnequippedWeapon(){
         TogglePhysics(weapon_equipped.Item2, true);
+        Faction.RemoveItemOwned(weapon_equipped.Item2, handle.entityInfo.faction);
         weapon_unequipped = null;
     }
     public void SetUnequippedWeapon(Tuple<Item, GameObject> itemObjectPair){
