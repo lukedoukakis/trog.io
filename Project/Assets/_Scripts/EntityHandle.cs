@@ -23,17 +23,24 @@ public class EntityHandle : EntityComponent
 
     void Awake(){
         handle = this;
-        InitEntity(false);
+        
     }
 
 
     void Start(){
-        
+        InitEntity(false);
     }
 
     void InitEntity(bool fromMemory){
 
 
+        // set camera
+        if(isLocalPlayer){
+            Debug.Log("Setting player");
+            CameraController.current.enabled = true;
+            CameraController.current.Init(this.transform);
+
+        }
 
         // if loading from memory
         if(fromMemory){

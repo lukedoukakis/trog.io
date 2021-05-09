@@ -1,11 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 public class CameraController : MonoBehaviour
 {
-
-    public Camera MainCamera;
     public Transform playerT;
     public Transform focusT;
     
@@ -19,49 +18,53 @@ public class CameraController : MonoBehaviour
 
     void Awake(){
         current = this;
-        playerT = GameObject.FindGameObjectWithTag("Player").transform;
     }
     // Start is called before the first frame update
     void Start()
     {
+    
+    }
+
+    public void Init(Transform t){
+        playerT = t;
         //Cursor.visible = false;
         Application.targetFrameRate = -1;
         QualitySettings.vSyncCount = 1;
         float[] cullDistances = new float[32];
         cullDistances[10] = featureCullDistance;
         cullDistances[11] = smallFeatureCullDistance;
-        MainCamera.layerCullDistances = cullDistances;
+        Camera.main.layerCullDistances = cullDistances;
 
         //RandomSpawn();
     }
-    
 
 
-
-    void Update(){
-
-        if(playerT == null){
-            playerT = GameObject.FindGameObjectWithTag("Player").transform;
-        }
-        else{
-            // static camera
-        if(GameManager.current.cameraMode == 0){
-            Vector3 targetPos = playerT.position + (Vector3.forward*-7f) + (Vector3.up*9f);
-            transform.position = Vector3.Lerp(transform.position, targetPos, 1f * Time.deltaTime);
-            transform.rotation = Quaternion.Euler(new Vector3(45f, 0f, 0f));
+    void AdjustCamera(int mode){
+        // static camera
+        if (mode == 0)
+        {
+            Vector3 targetPos = playerT.position + (Vector3.forward * -7f) + (Vector3.up * 9f);
+            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPos, 1f * Time.deltaTime);
+            Camera.main.transform.rotation = Quaternion.Euler(new Vector3(45f, 0f, 0f));
         }
 
         // dynamic camera
-        else if(GameManager.current.cameraMode == 1){
-            Vector3 targetPos = playerT.position + playerT.TransformDirection((Vector3.forward*-6.75f) + (Vector3.up*4.75f));
+        else if (mode == 1)
+        {
+            Vector3 targetPos = playerT.position + playerT.TransformDirection((Vector3.forward * -6.75f) + (Vector3.up * 4.75f));
             Quaternion targetRot = playerT.rotation * Quaternion.Euler(new Vector3(25f, 0f, 0f));
-            transform.position = Vector3.Lerp(transform.position, targetPos, 1000f * Time.deltaTime);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 1000f * Time.deltaTime);
+            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPos, 1000f * Time.deltaTime);
+            Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, targetRot, 1000f * Time.deltaTime);
         }
+    }
+
+
+    void Update()
+    {
+
+        if(playerT != null){
+            AdjustCamera(GameManager.current.cameraMode);
         }
-
-        
-
     }
 
     void FixedUpdate()
