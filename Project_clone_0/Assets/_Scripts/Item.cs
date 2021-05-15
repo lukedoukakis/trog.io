@@ -22,6 +22,7 @@ public class Item : ScriptableObject
     };
     public static Item GetItemByName(string _nme){
         return Items[_nme];
+       
     }
 
 

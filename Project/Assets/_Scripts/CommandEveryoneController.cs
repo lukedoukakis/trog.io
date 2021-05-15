@@ -20,7 +20,7 @@ public class CommandEveryoneController : MonoBehaviour
     public void OnHornPress(){
         ToggleExpanded();
         if(expanded){
-            GlobalSelectionController.current.SelectAllEntitiesWithTag("TribeMember");
+            GlobalSelectionController.current.SelectAllEntitiesWithTag("Npc");
         }
         else{
             GlobalSelectionController.current.ClearSelected();

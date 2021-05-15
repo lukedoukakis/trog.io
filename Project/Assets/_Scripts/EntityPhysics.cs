@@ -6,17 +6,22 @@ public class EntityPhysics : EntityComponent
 {
 
     public Collider hitbox;
+    public PhysicMaterial highFrictionMat;
+    public PhysicMaterial noFrictionMat;
+
+    public Rigidbody rb;
     public Transform groundSense;
     public Transform gyro;
     RaycastHit groundInfo;
-    public static float castDistance_ground = 100f;
+    public static float groundCastDistance_player = .01f;
+    public static float groundCastDistance_npc = .05f;
+    public static float groundCastDistance_far = 100f;
+    float groundCastDistance;
     public Transform obstacleHeightSense;
 
-    public Rigidbody rb;
-
-    public static float JumpForce = 450f;
-    public static float AccelerationScale = 32f;
-    public static float MaxSpeedScale = 12.5f;
+    public static float JumpForce = 150f;
+    public static float AccelerationScale = 10f;
+    public static float MaxSpeedScale = 3f;
     public static float JumpCoolDown = .15f;
 
 
@@ -45,11 +50,18 @@ public class EntityPhysics : EntityComponent
     void Awake(){
         handle = GetComponent<EntityHandle>();
         handle.entityPhysics = this;
-        hitbox = GetComponent<CapsuleCollider>();
+        hitbox = GetComponentInChildren<CapsuleCollider>();
+        highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
+        noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         rb = GetComponent<Rigidbody>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
-        groundSense = transform.Find("GroundSense");
-        obstacleHeightSense = transform.Find("ObstacleHeightSense");
+        groundSense = Utility.FindDeepChild(transform, "GroundSense");
+        obstacleHeightSense = Utility.FindDeepChild(transform, "ObstacleHeightSense");
+        if(tag == "Player"){
+            groundCastDistance = groundCastDistance_player;
+        }else if(tag == "Npc"){
+            groundCastDistance = groundCastDistance_npc;
+        }
     }
 
     void Start(){
@@ -68,13 +80,6 @@ public class EntityPhysics : EntityComponent
         if(!jumping){
             StartCoroutine(_Jump());
         }
-        
-        // Vector3 vel = rb.velocity;
-        // vel.y = 0f;
-        // rb.velocity = vel;
-        // rb.AddForce(Vector3.up * JumpForce, ForceMode.Force);
-        // jumpTime = 0;
-        // groundTime = 0;
     }
     IEnumerator _Jump(){
         jumping = true;
@@ -104,8 +109,8 @@ public class EntityPhysics : EntityComponent
     void CheckGround(){
         Vector3 vel = rb.velocity;
         // directly underneath
-        if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, castDistance_ground)){
-            if(Vector3.Distance(groundInfo.point, transform.position) < .2f){
+        if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far)){
+            if(Vector3.Distance(groundInfo.point, transform.position) < groundCastDistance){
                 if(!GROUNDTOUCH){
                     GROUNDTOUCH = true;
                     vel.y = 0f;
@@ -122,6 +127,9 @@ public class EntityPhysics : EntityComponent
                 airTime += Time.fixedDeltaTime;
             }
         }
+        if(GROUNDTOUCH && moveDir.magnitude > 0f){
+            rb.useGravity = false;
+        }else{ rb.useGravity = true; }
     }
 
     void CheckScrunch(){
@@ -131,6 +139,15 @@ public class EntityPhysics : EntityComponent
             landScrunch = Mathf.Lerp(0f, at, landScrunch);
         }else{
             landScrunch = 0f;
+        }
+    }
+
+    void CheckPhysicMaterial(){
+        if(moveDir.magnitude > 0f){
+            hitbox.sharedMaterial = noFrictionMat;
+        }
+        else{
+            hitbox.sharedMaterial = highFrictionMat;
         }
     }
 
@@ -157,8 +174,8 @@ public class EntityPhysics : EntityComponent
     {
        ROTATION_Y_LAST = transform.rotation.y;
 
+        CheckPhysicMaterial();
         Move(moveDir, acceleration);
-
         CheckGround();
         CheckScrunch();
         LimitSpeed();

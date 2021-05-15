@@ -6,7 +6,7 @@ using System;
 public class ChunkGenerator : MonoBehaviour
 {
     public static int Seed = 100;
-    public static int ChunkSize = 50;
+    public static int ChunkSize = 10;
     public static int ChunkRenderDistance = 2;
     public static float ElevationAmplitude = 180;
     public static float MinElevation = -.292893219f;
@@ -26,11 +26,13 @@ public class ChunkGenerator : MonoBehaviour
     public Vector2 currentChunkCoord;
 
 
-    [SerializeField] CameraController cameraController;
     [SerializeField] MeshFilter TerrainMeshFilter;
     [SerializeField] MeshFilter WaterMeshFilter;
     Mesh TerrainMesh;
     Mesh WaterMesh;
+
+
+    [SerializeField] PhysicMaterial physicMaterial;
 
     public GameObject chunkPrefab;
 
@@ -279,7 +281,8 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // TemperatureMap [0, 1]
-                temperatureValue = 1.2f - (e);
+                //temperatureValue = 1.2f - (e);
+                temperatureValue = .7f - (e);
                 rough = Mathf.Pow(Mathf.PerlinNoise((x + xOffset + .01f) / 50f, (z + zOffset + .01f) / 50f) + .5f, .1f) - 1f;
                 temperatureValue += rough;
 
@@ -288,7 +291,6 @@ public class ChunkGenerator : MonoBehaviour
 
                 temperatureValue += latitudeMod;
                 temperatureValue = Mathf.Clamp01(temperatureValue);
-                //temperatureValue = .8f;
 
 
                 // -------------------------------------------------------
@@ -623,7 +625,10 @@ public class ChunkGenerator : MonoBehaviour
         WaterMesh.colors = WaterColors;
         WaterMesh.RecalculateNormals();
 
-        Terrain.AddComponent<MeshCollider>();
+        MeshCollider mc = Terrain.AddComponent<MeshCollider>();
+        //mc.convex = true;
+        mc.sharedMaterial = physicMaterial;
+        //mc.isTrigger = true;
     }
 
 
@@ -707,7 +712,7 @@ public class ChunkGenerator : MonoBehaviour
                                 slantedRot = Quaternion.FromToRotation(transform.up, hit.normal);
 
                                 tree = GameObject.Instantiate(tree, point, Quaternion.Slerp(uprightRot, slantedRot, treeAngleMultiplier), Trees.transform);
-                                tree.transform.localScale = Vector3.one * treeScale * Mathf.Pow(UnityEngine.Random.value + .5f, .2f);
+                                tree.transform.localScale = Vector3.one * treeScale * Mathf.Pow(UnityEngine.Random.value + .5f, .75f);
                             }
                         }
 
@@ -715,7 +720,7 @@ public class ChunkGenerator : MonoBehaviour
                         slantedRot = Quaternion.FromToRotation(transform.up, hit.normal);
 
                         tree = GameObject.Instantiate(tree, point, Quaternion.Slerp(uprightRot, slantedRot, treeAngleMultiplier), Trees.transform);
-                        tree.transform.localScale = Vector3.one * treeScale * Mathf.Pow(UnityEngine.Random.value + .5f, .2f);
+                        tree.transform.localScale = Vector3.one * treeScale * Mathf.Pow(UnityEngine.Random.value + .5f, .75f);
                     }
                 }
             }

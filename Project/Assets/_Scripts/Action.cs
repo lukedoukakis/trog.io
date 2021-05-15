@@ -95,7 +95,7 @@ public class Action : ScriptableObject
                 a.type = (int)Action.ActionTypes.Attack;
                 // a.obj = GameObject.FindGameObjectWithTag("Player");
 
-                GameObject[] gs = GameObject.FindGameObjectsWithTag("TribeMember");
+                GameObject[] gs = GameObject.FindGameObjectsWithTag("Npc");
                 foreach(GameObject g in gs){
                     if(g != handle.gameObject){
                         a.obj = g;

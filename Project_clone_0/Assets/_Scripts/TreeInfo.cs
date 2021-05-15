@@ -23,7 +23,7 @@ public class TreeInfo : MonoBehaviour
         switch (name)
         {
             case "Acacia Tree":
-                scale = .08f;
+                scale = .08f*1.5f;
                 density = .1f;
                 normal = .998f;
                 slant = 0f;
@@ -51,7 +51,7 @@ public class TreeInfo : MonoBehaviour
                 spread = .5f;
                 break;
             case "Palm Tree":
-                scale = .09f;
+                scale = .09f*1.5f;
                 if(fw > .9f){
                     density = .2f;
                 }
@@ -63,28 +63,28 @@ public class TreeInfo : MonoBehaviour
                 spread = .1f;
                 break;
             case "Oak Tree":
-                scale = .08f;
-                density = 1f;
+                scale = .08f*1.5f;
+                density = 1f*.75f;
                 normal = .9f;
                 slant = .18f;
                 spread = .5f;
                 break;
             case "Plains Oak Tree":
-                scale = .09f;
+                scale = .09f*1.5f;
                 density = .01f;
                 normal = .9985f;
                 slant = .18f;
                 spread = .1f;
                 break;
             case string str when name.StartsWith("Grass"):
-                scale = .23f;
-                density = 7f;
+                scale = .17f;
+                density = 12f;
                 normal = .99f;
                 slant = 1f;
                 spread = .5f;
                 break;
             case string str when name.StartsWith("Reed"):
-                scale = .2f;
+                scale = .1f;
                 density = 4f;
                 normal = .99f;
                 slant = .5f;

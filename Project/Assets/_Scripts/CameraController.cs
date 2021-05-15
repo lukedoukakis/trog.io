@@ -7,6 +7,7 @@ public class CameraController : MonoBehaviour
 {
     public Transform playerT;
     public Transform focusT;
+    public static float cameraDistanceScale = .05f;
     
     public static CameraController current;
 
@@ -43,18 +44,18 @@ public class CameraController : MonoBehaviour
         // static camera
         if (mode == 0)
         {
-            Vector3 targetPos = playerT.position + (Vector3.forward * -7f) + (Vector3.up * 9f);
-            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPos, 1f * Time.deltaTime);
+            Vector3 targetPos = playerT.position + (Vector3.forward * .07f) + (Vector3.up * .09f);
+            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPos, 50f * Time.deltaTime);
             Camera.main.transform.rotation = Quaternion.Euler(new Vector3(45f, 0f, 0f));
         }
 
         // dynamic camera
         else if (mode == 1)
         {
-            Vector3 targetPos = playerT.position + playerT.TransformDirection((Vector3.forward * -6.75f) + (Vector3.up * 4.75f));
+            Vector3 targetPos = playerT.position + playerT.TransformDirection((Vector3.forward * -.7f) + (Vector3.up * .35f));
             Quaternion targetRot = playerT.rotation * Quaternion.Euler(new Vector3(25f, 0f, 0f));
-            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPos, 1000f * Time.deltaTime);
-            Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, targetRot, 1000f * Time.deltaTime);
+            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPos, 5000f * Time.deltaTime);
+            Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, targetRot, 5000f * Time.deltaTime);
         }
     }
 

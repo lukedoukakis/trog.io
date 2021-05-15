@@ -28,7 +28,7 @@ public class EntityAnimation : EntityComponent
     float posture_squat, squat_activity;
 
     float runMagnitude;
-    float bodySkew;
+    float bodySkew, slowness;
 
 
 
@@ -132,7 +132,8 @@ public class EntityAnimation : EntityComponent
 
     void UpdateBodyRotation(){
 
-        switch (bodyRotationMode){
+        if(handle.entityPhysics.moveDir.magnitude > 0){
+            switch (bodyRotationMode){
 
             // normal rotation
             case (int)BodyRotationMode.Normal:
@@ -167,6 +168,9 @@ public class EntityAnimation : EntityComponent
                     break;
         };
 
+        }
+
+        
 
 
         
@@ -179,7 +183,7 @@ public class EntityAnimation : EntityComponent
         Vector3 velHoriz = velRaw; velHoriz.y = 0;
 
         if(handle.entityPhysics.GROUNDTOUCH){
-            if(velHoriz.magnitude > .001f){
+            if(velHoriz.magnitude > .1f){
                 SetAnimationBool("Run", true);
                 SetAnimationBool("Stand", false);
             }
@@ -190,7 +194,7 @@ public class EntityAnimation : EntityComponent
             SetAnimationBool("Jump", false);
         }
         else{
-            if(handle.entityPhysics.airTime < .3f){
+            if(handle.entityPhysics.jumpTime < .3f){
                 SetAnimationBool("Jump", true);
             }
             else{
@@ -200,19 +204,21 @@ public class EntityAnimation : EntityComponent
             SetAnimationBool("Stand", false);
         }
 
-    
-        float slowness;
         // calculate run
-        if(handle.entityPhysics.GROUNDTOUCH){
-            bodySkew = Mathf.Lerp(bodySkew, Mathf.InverseLerp(0f, 230f, Vector3.Angle(velHoriz, bodyT.forward)), .03f);
+        if(handle.entityPhysics.moveDir.magnitude > 0){
+            if(handle.entityPhysics.GROUNDTOUCH){
+                bodySkew = Mathf.Lerp(bodySkew, Mathf.InverseLerp(0f, 230f, Vector3.Angle(velHoriz, bodyT.forward)), .03f);
+            }
+            else{
+                bodySkew = 0f;
+            }
         }
         else{
-            bodySkew = 0f;
+            bodySkew = Mathf.Lerp(bodySkew, 0f, .5f);
         }
         slowness = 1f - Mathf.InverseLerp(0f, handle.entityPhysics.maxSpeed, velHoriz.magnitude);
         runMagnitude = 1f - Mathf.Max(bodySkew, slowness);
         SetAnimationLayerWeight("Legs_full", runMagnitude);
-
         if(angularVelocityY < 0){
             SetAnimationLayerWeight("Turn Left Position", bodySkew/8f);
             SetAnimationLayerWeight("Turn Right Position", 0f);
@@ -225,7 +231,7 @@ public class EntityAnimation : EntityComponent
 
 
         // calculate backpedal
-        float backMagnitude = (1f - runMagnitude) * Mathf.Lerp(0f, .5f, bodySkew);
+        float backMagnitude = (1f - runMagnitude) * Mathf.Lerp(0f, .2f, bodySkew);
         SetAnimationLayerWeight("Legs_backpedal", backMagnitude);
         SetAnimationLayerWeight("Legs_shuffle", 1f - backMagnitude - runMagnitude);
 

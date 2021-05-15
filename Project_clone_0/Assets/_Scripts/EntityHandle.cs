@@ -36,9 +36,10 @@ public class EntityHandle : EntityComponent
 
         // set camera
         if(isLocalPlayer){
-            Debug.Log("Setting player");
+            //Debug.Log("Setting player");
             CameraController.current.enabled = true;
             CameraController.current.Init(this.transform);
+            transform.position = new Vector3(0f, 150f, 0f);
 
         }
 

@@ -43,6 +43,7 @@ public class ChunkData
         randomState = (int)(coord.x + coord.y * 10f);
 
         chunk = GameObject.Instantiate(chunkPrefab);
+        chunk.transform.SetParent(GameObject.Find("Chunk Generator").transform);
         terrain = chunk.transform.Find("Terrain").gameObject;
         water = chunk.transform.Find("Water").gameObject;
         chunk.transform.position = Vector3.zero;

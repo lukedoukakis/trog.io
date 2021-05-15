@@ -83,7 +83,7 @@ public class EntityUserInputMovement : EntityComponent
         move = Vector3.zero;
         if(isLocalPlayer){
             HandleMovement();
-            //HandleRotation();
+            HandleRotation();
             HandleAttack();
         }
 

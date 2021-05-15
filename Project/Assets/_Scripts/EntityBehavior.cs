@@ -11,11 +11,11 @@ public class EntityBehavior : EntityComponent
     public Vector3 move;
 
 
-    public static float randomOffsetRange = 1f;
+    public static float randomOffsetRange = .1f;
     public static float distanceThreshold_none = -1f;
-    public static float distanceThreshold_point = .1f;
-    public static float distanceThreshold_spot = 2f;
-    public static float distanceThreshold_combat = 1.5f;
+    public static float distanceThreshold_point = .01f;
+    public static float distanceThreshold_spot = .2f;
+    public static float distanceThreshold_combat = .15f;
 
     Vector3 randomOffset;
 
@@ -396,9 +396,9 @@ public class EntityBehavior : EntityComponent
             bool rightCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward + gyro.right*2f, out rightHitInfo, senseDistance_obstacle);
 
 
-            Debug.DrawRay(transform.position + new Vector3(0, .1f, 0), (gyro.forward + gyro.right*-2f).normalized*senseDistance_obstacle, Color.green, Time.deltaTime);
-            Debug.DrawRay(transform.position + new Vector3(0, .1f, 0), (gyro.forward).normalized*senseDistance_obstacle, Color.green, Time.deltaTime);
-            Debug.DrawRay(transform.position + new Vector3(0, .1f, 0), (gyro.forward + gyro.right*2f).normalized*senseDistance_obstacle, Color.green, Time.deltaTime);
+            // Debug.DrawRay(transform.position + new Vector3(0, .1f, 0), (gyro.forward + gyro.right*-2f).normalized*senseDistance_obstacle, Color.green, Time.deltaTime);
+            // Debug.DrawRay(transform.position + new Vector3(0, .1f, 0), (gyro.forward).normalized*senseDistance_obstacle, Color.green, Time.deltaTime);
+            // Debug.DrawRay(transform.position + new Vector3(0, .1f, 0), (gyro.forward + gyro.right*2f).normalized*senseDistance_obstacle, Color.green, Time.deltaTime);
             
             List<RaycastHit> hitInfos = new List<RaycastHit>();
 
@@ -414,8 +414,10 @@ public class EntityBehavior : EntityComponent
             int hits = 0;
             foreach(RaycastHit hitInfo in hitInfos){
                 string tag = hitInfo.collider.gameObject.tag;
-                if(tag != "TribeMember" && tag != "Player"){
+                //if(tag != "Npc" && tag != "Player" && tag != "Body" && tag != "Terrain"){
+                if(hitInfo.normal.y < .5f && tag != "Npc" && tag != "Player" && tag != "Body"){
                     hits++;
+                    Log("HIT!!!: " + hitInfo.collider.gameObject.tag);
                 }
             }
             return hits >= 2;
