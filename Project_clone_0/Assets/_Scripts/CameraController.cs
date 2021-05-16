@@ -16,6 +16,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] float smallFeatureCullDistance;
     float acceleration;
 
+    float posModifier;
 
     void Awake(){
         current = this;
@@ -35,7 +36,7 @@ public class CameraController : MonoBehaviour
         cullDistances[10] = featureCullDistance;
         cullDistances[11] = smallFeatureCullDistance;
         Camera.main.layerCullDistances = cullDistances;
-
+        posModifier = 0f;
         //RandomSpawn();
     }
 
@@ -52,10 +53,27 @@ public class CameraController : MonoBehaviour
         // dynamic camera
         else if (mode == 1)
         {
-            Vector3 targetPos = playerT.position + playerT.TransformDirection((Vector3.forward * -.7f) + (Vector3.up * .35f));
-            Quaternion targetRot = playerT.rotation * Quaternion.Euler(new Vector3(25f, 0f, 0f));
-            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPos, 5000f * Time.deltaTime);
-            Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, targetRot, 5000f * Time.deltaTime);
+
+            
+            float pi = Mathf.PI;
+
+            posModifier += Input.GetAxis("Mouse Y") * -.075f * sensitivity * Time.fixedDeltaTime;
+            if (posModifier * pi >= pi / 4)
+            {
+                posModifier = .25f;
+            }
+            if (posModifier * pi <= pi / -20)
+            {
+                posModifier = -.05f;
+            }
+
+            Vector3 targetPos = playerT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -.7f) + (Mathf.Sin(posModifier * pi) * Vector3.up) + (Vector3.up * .4f);
+            
+            Camera.main.transform.position = targetPos;
+
+            Camera.main.transform.LookAt(playerT.position + Vector3.up*.2f);
+        
+        
         }
     }
 

@@ -282,7 +282,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // TemperatureMap [0, 1]
                 //temperatureValue = 1.2f - (e);
-                temperatureValue = .7f - (e);
+                temperatureValue = 1f - (e);
                 rough = Mathf.Pow(Mathf.PerlinNoise((x + xOffset + .01f) / 50f, (z + zOffset + .01f) / 50f) + .5f, .1f) - 1f;
                 temperatureValue += rough;
 
