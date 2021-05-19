@@ -58,20 +58,21 @@ public class CameraController : MonoBehaviour
             float pi = Mathf.PI;
 
             posModifier += Input.GetAxis("Mouse Y") * -.075f * sensitivity * Time.fixedDeltaTime;
-            if (posModifier * pi >= pi / 4)
+            if (posModifier > .25f)
             {
                 posModifier = .25f;
             }
-            if (posModifier * pi <= pi / -20)
+            if (posModifier < -.1)
             {
-                posModifier = -.05f;
+                posModifier = -.1f;
             }
 
-            Vector3 targetPos = playerT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -.7f) + (Mathf.Sin(posModifier * pi) * Vector3.up) + (Vector3.up * .4f);
+            Vector3 targetPos = playerT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f) + (Mathf.Sin(posModifier * pi) * Vector3.up) + (Vector3.up * 4f);
             
             Camera.main.transform.position = targetPos;
 
-            Camera.main.transform.LookAt(playerT.position + Vector3.up*.2f);
+            Vector3 targetLookAt = playerT.position + Vector3.up*1f;
+            Camera.main.transform.LookAt(targetLookAt);
         
         
         }

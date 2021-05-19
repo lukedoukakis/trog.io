@@ -13,15 +13,15 @@ public class EntityPhysics : EntityComponent
     public Transform groundSense;
     public Transform gyro;
     RaycastHit groundInfo;
-    public static float groundCastDistance_player = .01f;
-    public static float groundCastDistance_npc = .05f;
+    public static float groundCastDistance_player = .01f * 10f;
+    public static float groundCastDistance_npc = .05f * 10f;
     public static float groundCastDistance_far = 100f;
     float groundCastDistance;
     public Transform obstacleHeightSense;
 
-    public static float JumpForce = 150f;
-    public static float AccelerationScale = 10f;
-    public static float MaxSpeedScale = 3f;
+    public static float JumpForce = 1500f;
+    public static float AccelerationScale = 50f;
+    public static float MaxSpeedScale = 20f;
     public static float JumpCoolDown = .15f;
 
 
@@ -189,7 +189,14 @@ public class EntityPhysics : EntityComponent
 
         jumpTime += Time.deltaTime;
 
-        
+        if(Input.GetKeyUp(KeyCode.P)){
+            acceleration *= 2f;
+            maxSpeed *= 2f;
+        }
+        if(Input.GetKeyUp(KeyCode.O)){
+            acceleration /= 2f;
+            maxSpeed /= 2f;
+        }
         
     
     }

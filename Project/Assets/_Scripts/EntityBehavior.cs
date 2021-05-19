@@ -11,21 +11,21 @@ public class EntityBehavior : EntityComponent
     public Vector3 move;
 
 
-    public static float randomOffsetRange = .1f;
+    public static float randomOffsetRange = 1f;
     public static float distanceThreshold_none = -1f;
-    public static float distanceThreshold_point = .01f;
-    public static float distanceThreshold_spot = .2f;
-    public static float distanceThreshold_combat = .15f;
+    public static float distanceThreshold_point = .1f;
+    public static float distanceThreshold_spot = 2f;
+    public static float distanceThreshold_combat = 15f;
 
     Vector3 randomOffset;
 
 
     // sensing and movement parameters
     public static float senseDistance_obstacle = 3f;
-    public static float senseDistance_immediate = .25f;
-    public static float senseDistance_search = 15f;
-    public static float senseDistance_earshot = 50f;
-    public static float senseDistance_infinite = 500f;
+    public static float senseDistance_immediate = 25f;
+    public static float senseDistance_search = 150f;
+    public static float senseDistance_earshot = 500f;
+    public static float senseDistance_infinite = 5000f;
     public static float maxJumpFromDistance = 2f;
     public static float rotationSpeed = 1f;
 

@@ -39,7 +39,7 @@ public class EntityHandle : EntityComponent
             //Debug.Log("Setting player");
             CameraController.current.enabled = true;
             CameraController.current.Init(this.transform);
-            transform.position = new Vector3(0f, 150f, 0f);
+            transform.position = new Vector3(0f, 1800f, 0f);
 
         }
 
