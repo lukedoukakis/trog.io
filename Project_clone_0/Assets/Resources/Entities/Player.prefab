@@ -177,20 +177,25 @@ MonoBehaviour:
   syncInterval: 0.1
   handle: {fileID: 0}
   hitbox: {fileID: 0}
-  groundSense: {fileID: 0}
-  gyro: {fileID: 0}
-  obstacleHeightSense: {fileID: 0}
+  highFrictionMat: {fileID: 0}
+  noFrictionMat: {fileID: 0}
   rb: {fileID: 0}
+  gyro: {fileID: 0}
+  groundSense: {fileID: 0}
+  wallSense: {fileID: 0}
+  obstacleHeightSense: {fileID: 0}
   moveDir: {x: 0, y: 0, z: 0}
   jumpTime: 0
   airTime: 0
   groundTime: 0
   acceleration: 0
-  maxSpeed: 0
+  maxSpeed_run: 0
+  maxSpeed_climb: 0
   landScrunch: 0
   ROTATION_Y_THIS: 0
   ROTATION_Y_LAST: 0
   GROUNDTOUCH: 0
+  WALLTOUCH: 0
 --- !u!114 &7063413353330055435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -386,6 +391,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_TagString
       value: Body
+      objectReference: {fileID: 0}
+    - target: {fileID: 2054828722533722266, guid: 521eeae15aa0e7d4e8e3db9805cdddd8,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.002
       objectReference: {fileID: 0}
     - target: {fileID: 3596895428147582909, guid: 521eeae15aa0e7d4e8e3db9805cdddd8,
         type: 3}

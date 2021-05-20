@@ -10,15 +10,14 @@ public class EntityPhysics : EntityComponent
     public PhysicMaterial noFrictionMat;
 
     public Rigidbody rb;
-    public Transform groundSense;
     public Transform gyro;
-    RaycastHit groundInfo;
-    public static float groundCastDistance_player = .01f * 10f;
-    public static float groundCastDistance_npc = .05f * 10f;
+    public Transform groundSense, wallSense, obstacleHeightSense;
+    RaycastHit groundInfo, wallInfo;
+    public static float groundCastDistance_player = .1f;
+    public static float groundCastDistance_npc = .1f;
     public static float groundCastDistance_far = 100f;
+    public static float wallCastDistance = 1f;
     float groundCastDistance;
-    public Transform obstacleHeightSense;
-
     public static float JumpForce = 1500f;
     public static float AccelerationScale = 50f;
     public static float MaxSpeedScale = 20f;
@@ -27,10 +26,12 @@ public class EntityPhysics : EntityComponent
 
     public Vector3 moveDir;
     public float jumpTime; bool jumping;
+    public float offWallTime;
     public float airTime;
     public float groundTime;
     public float acceleration;
-    public float maxSpeed;
+    public float maxSpeed_run;
+    public float maxSpeed_climb;
 
 
     public static float landScrunch_recoverySpeed = .75f;
@@ -40,7 +41,7 @@ public class EntityPhysics : EntityComponent
 
     public float ROTATION_Y_THIS;
     public float ROTATION_Y_LAST;
-    public bool GROUNDTOUCH;
+    public bool GROUNDTOUCH, WALLTOUCH;
 
 
 
@@ -57,6 +58,7 @@ public class EntityPhysics : EntityComponent
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
         groundSense = Utility.FindDeepChild(transform, "GroundSense");
         obstacleHeightSense = Utility.FindDeepChild(transform, "ObstacleHeightSense");
+        wallSense = Utility.FindDeepChild(transform, "WallSense");
         if(tag == "Player"){
             groundCastDistance = groundCastDistance_player;
         }else if(tag == "Npc"){
@@ -66,7 +68,8 @@ public class EntityPhysics : EntityComponent
 
     void Start(){
         acceleration = handle.entityStats.GetStat("speed") * AccelerationScale;
-        maxSpeed = handle.entityStats.GetStat("speed") * MaxSpeedScale;
+        maxSpeed_run = handle.entityStats.GetStat("speed") * MaxSpeedScale;
+        maxSpeed_climb = maxSpeed_run * .25f;
     }
 
 
@@ -76,12 +79,17 @@ public class EntityPhysics : EntityComponent
         rb.AddForce(move * speedStat, ForceMode.Force);
     }
 
-    public void Jump(){
+    public void Jump(float power){
         if(!jumping){
-            StartCoroutine(_Jump());
+            StartCoroutine(_Jump(power));
         }
     }
-    IEnumerator _Jump(){
+    public void Jump(){
+        if(!jumping){
+            StartCoroutine(_Jump(JumpForce));
+        }
+    }
+    IEnumerator _Jump(float power){
         jumping = true;
         if(groundTime <= JumpCoolDown){
             float t = JumpCoolDown - groundTime;
@@ -90,12 +98,16 @@ public class EntityPhysics : EntityComponent
         Vector3 vel = rb.velocity;
         vel.y = 0f;
         rb.velocity = vel;
-        rb.AddForce(Vector3.up * JumpForce, ForceMode.Force);
+        Vector3 direction = Vector3.up;
+        rb.AddForce(direction * power, ForceMode.Force);
         jumpTime = 0;
         groundTime = 0;
         yield return new WaitForSecondsRealtime(.1f);
         jumping = false;
         yield return null;
+    }
+    public void Vault(){
+        Jump(JumpForce*.7f);
     }
 
     public bool CanJump(){
@@ -127,9 +139,30 @@ public class EntityPhysics : EntityComponent
                 airTime += Time.fixedDeltaTime;
             }
         }
-        if(GROUNDTOUCH && moveDir.magnitude > 0f){
-            rb.useGravity = false;
-        }else{ rb.useGravity = true; }
+        
+    }
+
+    void CheckWall(){
+        bool w = false;
+        if(moveDir.magnitude > 0){
+            //Debug.DrawRay(wallSense.position, handle.entityAnimation.bodyT.forward*wallCastDistance, Color.green, Time.deltaTime);
+            if(Physics.Raycast(wallSense.position, transform.forward, out wallInfo, wallCastDistance)){
+                string tag = wallInfo.collider.gameObject.tag;
+                if(tag != "Npc" && tag != "Player" && tag != "Body"){
+                    w = true;
+                }
+            }
+        }
+        if(w){
+            WALLTOUCH = true;
+        }
+        else{
+            if(WALLTOUCH){
+                offWallTime = 0f;
+                Vault();
+            }
+            WALLTOUCH = false;
+        }
     }
 
     void CheckScrunch(){
@@ -152,14 +185,40 @@ public class EntityPhysics : EntityComponent
     }
 
     void LimitSpeed(){
+
         Vector3 horvel = rb.velocity;
         float ySpeed = horvel.y;
         horvel.y = 0f;
-        if(horvel.magnitude > maxSpeed){
-            horvel = horvel.normalized * maxSpeed;
+
+        float max;
+        if(WALLTOUCH){
+            max = 0f;
+            if(ySpeed > maxSpeed_climb/.5f){
+                if(ySpeed > maxSpeed_climb){
+                    ySpeed = maxSpeed_climb;
+                }
+            }
+            else{
+                ySpeed = maxSpeed_climb/.5f;
+            }
+            
+        }else{
+            max = maxSpeed_run;
+        }
+
+        if(horvel.magnitude > max){
+            horvel = horvel.normalized * max;
             horvel.y = ySpeed;
             rb.velocity = horvel;
         }
+
+        
+    }
+
+    void SetGravity(){
+        if((GROUNDTOUCH || WALLTOUCH) && moveDir.magnitude > 0f){
+            rb.useGravity = false;
+        }else{ rb.useGravity = true; }
     }
 
 
@@ -177,9 +236,10 @@ public class EntityPhysics : EntityComponent
         CheckPhysicMaterial();
         Move(moveDir, acceleration);
         CheckGround();
+        CheckWall();
         CheckScrunch();
         LimitSpeed();
-
+        SetGravity();
         
     }
 
@@ -188,14 +248,15 @@ public class EntityPhysics : EntityComponent
 
 
         jumpTime += Time.deltaTime;
+        offWallTime += Time.deltaTime;
 
         if(Input.GetKeyUp(KeyCode.P)){
             acceleration *= 2f;
-            maxSpeed *= 2f;
+            maxSpeed_run *= 2f;
         }
         if(Input.GetKeyUp(KeyCode.O)){
             acceleration /= 2f;
-            maxSpeed /= 2f;
+            maxSpeed_run /= 2f;
         }
         
     

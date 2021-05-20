@@ -417,9 +417,10 @@ public class EntityBehavior : EntityComponent
                 //if(tag != "Npc" && tag != "Player" && tag != "Body" && tag != "Terrain"){
                 if(hitInfo.normal.y < .5f && tag != "Npc" && tag != "Player" && tag != "Body"){
                     hits++;
-                    Log("HIT!!!: " + hitInfo.collider.gameObject.tag);
+                    //Log("HIT!!!: " + hitInfo.collider.gameObject.tag);
                 }
             }
+            return false;
             return hits >= 2;
 
         }

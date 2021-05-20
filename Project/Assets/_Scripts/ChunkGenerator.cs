@@ -5,8 +5,9 @@ using System;
 
 public class ChunkGenerator : MonoBehaviour
 {
+    public static ChunkGenerator current;
     public static int Seed = 100;
-    public static int ChunkSize = 50;
+    public static int ChunkSize = 100;
     public static int ChunkRenderDistance = 2;
     public static float ElevationAmplitude = 1800f;
     public static float MinElevation = -.292893219f;
@@ -20,9 +21,9 @@ public class ChunkGenerator : MonoBehaviour
     static GameObject Terrain;
     static GameObject Water;
 
-    public Transform cameraT;
-    public Vector3 cameraPos;
-    public Vector2 cameraPos_chunkSpace;
+    public Transform playerT;
+    public Vector3 playerPos;
+    public Vector2 playerPos_chunkSpace;
     public Vector2 currentChunkCoord;
 
 
@@ -81,19 +82,18 @@ public class ChunkGenerator : MonoBehaviour
     [Range(0f, 1f)] public float treeDensity;
 
 
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-
-        Seed = UnityEngine.Random.Range(0, 1000);
-
+        current = this;
         Init();
         Biome.Init();
     }
 
     private void Update()
     {
-        if (Biome.initialized)
+        if (Biome.initialized && playerT != null)
         {
             UpdateChunksToLoad();
             LoadChunks();
@@ -104,7 +104,7 @@ public class ChunkGenerator : MonoBehaviour
 
     void Init()
     {
-
+        Seed = UnityEngine.Random.Range(0, 1000);
         if (Seed == -1) { Seed = UnityEngine.Random.Range(-100000, 100000); }
 
         //RiverGenerator.Generate();
@@ -124,9 +124,9 @@ public class ChunkGenerator : MonoBehaviour
     {
 
 
-        cameraPos = cameraT.position;
-        cameraPos_chunkSpace = ToChunkSpace(cameraPos);
-        currentChunkCoord = new Vector2(Mathf.Floor(cameraPos_chunkSpace.x), Mathf.Floor(cameraPos_chunkSpace.y));
+        playerPos = playerT.position;
+        playerPos_chunkSpace = ToChunkSpace(playerPos);
+        currentChunkCoord = new Vector2(Mathf.Floor(playerPos_chunkSpace.x), Mathf.Floor(playerPos_chunkSpace.y));
 
 
         // get neighbor chunk coordinates
@@ -146,7 +146,7 @@ public class ChunkGenerator : MonoBehaviour
         // remove chunks out of rendering range from ChunksToLoad
         foreach (ChunkData cd in ChunkDataToLoad.ToArray())
         {
-            if (Vector2.Distance(cameraPos_chunkSpace, cd.coord + halfVec) >= ChunkRenderDistance)
+            if (Vector2.Distance(playerPos_chunkSpace, cd.coord + halfVec) >= ChunkRenderDistance)
             {
                 ChunkDataToLoad.Remove(cd);
             }
@@ -155,7 +155,7 @@ public class ChunkGenerator : MonoBehaviour
         // add chunks in rendering range to ChunksToLoad
         foreach (Vector2 chunkCoord in neighborChunkCoords)
         {
-            if (Vector2.Distance(cameraPos_chunkSpace, chunkCoord + halfVec) < ChunkRenderDistance)
+            if (Vector2.Distance(playerPos_chunkSpace, chunkCoord + halfVec) < ChunkRenderDistance)
             {
 
                 int index = ChunkDataToLoad.FindIndex(cd => cd.coord == chunkCoord);
@@ -316,7 +316,7 @@ public class ChunkGenerator : MonoBehaviour
                 // else{
                 //     freshWaterValue = Mathf.Pow(freshWaterValue, .5f);
                 // }
-                // freshWaterValue = 0f;
+                 freshWaterValue = 0f;
 
 
                 //freshWaterValue = -1f;
@@ -455,9 +455,13 @@ public class ChunkGenerator : MonoBehaviour
                 float lerpRate = 1f;
                 heightValue = Mathf.Lerp(heightValue, h, lerpRate);
 
-                float psgScale = Mathf.Max(600f * (1f - mountainValue), 60f);
-                float psgStep = .01f;
-                float psg = flatLevel + (.28f *  mountainValue * e * Mathf.PerlinNoise(((x + xOffset) / psgScale) + .01f, ((z + zOffset) / psgScale) + .01f));
+
+                // layers
+                float psgScale, psgStep, psg;
+
+                psgScale = Mathf.Max(600f * (1f - mountainValue), 60f);
+                psgStep = .01f;
+                psg = flatLevel + (.28f *  mountainValue * e * Mathf.PerlinNoise(((x + xOffset) / psgScale) + .01f, ((z + zOffset) / psgScale) + .01f));
                 psg = Mathf.Max(psg, e);
                 if(heightValue < psg){
                     if(heightValue >= flatLevel){
@@ -466,34 +470,10 @@ public class ChunkGenerator : MonoBehaviour
                             heightValue = psg;
                         }else{
                             heightValue = Mathf.Lerp(heightValue, psg, (heightValue - flatLevel)/c);
+                            //heightValue = Mathf.Lerp(heightValue, psg, .5f);
                         }
                     }
-                    
                 }
-
-
-                //Debug.Log(mtnPsg);
-
-                // steps = 50f;
-                // stepHeight = (.9f - flatLevel) / steps;
-                // h = 0f;
-                // for (int i = 0; i < steps; i++)
-                // {
-                //     thresh = flatLevel + stepHeight * i;
-                //     thresh = Mathf.Max(thresh + stepHeight * 10f * Mathf.PerlinNoise(((x + xOffset) / posterize_variationScale * 2f) + i * 10000, ((z + zOffset) / posterize_variationScale * 2f) + i * 10000), flatLevel);
-                //     if (heightValue >= thresh)
-                //     {
-                //         h = thresh;
-                //         lerpRate = 2f - ((heightValue - thresh) / stepHeight);
-                //     }
-                //     else
-                //     {
-                //         break;
-                //     }
-                // }
-                // heightValue = Mathf.Lerp(heightValue, h, lerpRate);
-
-
 
 
 
@@ -542,19 +522,11 @@ public class ChunkGenerator : MonoBehaviour
         Color c = new Color();
 
         
-        if (biome == (int)Biome.BiomeType.Tundra || biome == (int)Biome.BiomeType.SnowyTaiga)
+        if ((biome == (int)Biome.BiomeType.Tundra || biome == (int)Biome.BiomeType.SnowyTaiga) && height > snowLevel)
         {
             c.b = 255f;
             return c;
         }
-        // else if (temperature < (5f / 11f))
-        // {
-        //     if (mountain > .6f && height > snowLevel + ((1f - temperature) * .05f) * (UnityEngine.Random.value * .05f))
-        //     {
-        //         c.b = 255f;
-        //         return c;
-        //     }
-        // }
         
 
         // wetness (darkness of land)
@@ -671,9 +643,9 @@ public class ChunkGenerator : MonoBehaviour
         float height;
         float fw;
 
-        for (int z = 0; z < ChunkSize + 2; z+=10)
+        for (int z = 0; z < ChunkSize + 2; z+=5)
         {
-            for (int x = 0; x < ChunkSize + 2; x+=10)
+            for (int x = 0; x < ChunkSize + 2; x+=5)
             {
 
                 biome = BiomeMap[x, z];
@@ -752,7 +724,7 @@ public class ChunkGenerator : MonoBehaviour
                         slantedRot = Quaternion.FromToRotation(transform.up, hit.normal);
 
                         tree = GameObject.Instantiate(tree, point, Quaternion.Slerp(uprightRot, slantedRot, treeAngleMultiplier), Trees.transform);
-                        tree.transform.localScale = Vector3.one * treeScale *10f * Mathf.Pow(UnityEngine.Random.value + .5f, .75f);
+                        tree.transform.localScale = Vector3.one * treeScale * Mathf.Pow(UnityEngine.Random.value + .5f, .75f);
                     }
                 }
             }

@@ -19,7 +19,7 @@ RenderSettings:
   m_FogMode: 1
   m_FogDensity: 0
   m_LinearFogStart: 0
-  m_LinearFogEnd: 300
+  m_LinearFogEnd: 500
   m_AmbientSkyColor: {r: 0, g: 0, b: 0, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
@@ -982,9 +982,9 @@ RectTransform:
   m_Father: {fileID: 1157601965}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 879.38654, y: -280.74796}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 879.38654, y: 0}
   m_SizeDelta: {x: 1758.7731, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &419559652
@@ -4787,9 +4787,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67b245af831e7554bb19f1f1daae566f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraT: {fileID: 1817547877}
-  cameraPos: {x: 0, y: 0, z: 0}
-  cameraPos_chunkSpace: {x: 0, y: 0}
+  playerT: {fileID: 0}
+  playerPos: {x: 0, y: 0, z: 0}
+  playerPos_chunkSpace: {x: 0, y: 0}
   currentChunkCoord: {x: 0, y: 0}
   TerrainMeshFilter: {fileID: 1098165271}
   WaterMeshFilter: {fileID: 1402622343}

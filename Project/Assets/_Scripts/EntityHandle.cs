@@ -37,6 +37,7 @@ public class EntityHandle : EntityComponent
         // set camera
         if(isLocalPlayer){
             //Debug.Log("Setting player");
+            ChunkGenerator.current.playerT = transform;
             CameraController.current.enabled = true;
             CameraController.current.Init(this.transform);
             transform.position = new Vector3(0f, 1800f, 0f);

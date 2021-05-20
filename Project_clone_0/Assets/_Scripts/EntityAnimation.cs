@@ -37,7 +37,7 @@ public class EntityAnimation : EntityComponent
     public Dictionary<string, bool> animBools = new Dictionary<string, bool>{
         {"Stand",   false},
         {"Run",     false},
-        {"Limp",    false},
+        {"Climb",     false},
         {"Jump",    false},
         {"Land",    false},
         {"RightArm_weapon",    false},
@@ -45,6 +45,11 @@ public class EntityAnimation : EntityComponent
 
     public Dictionary<string, int> animInts = new Dictionary<string, int>{
         {"LeftArm_holdStyle",   -1},
+    };
+
+    public Dictionary<string, float> animFloats = new Dictionary<string, float>{
+        {"LegSpeed",   -1f},
+        {"ClimbSpeed",   -1f},
     };
 
     public enum BodyRotationMode{
@@ -82,11 +87,28 @@ public class EntityAnimation : EntityComponent
             animator.SetBool(movement, value);
         }
     }
+    public bool GetAnimationBool(string movement){
+        return animBools[movement];
+    }
+
     public void SetAnimationInt(string movement, int value){
         if(animInts[movement] != value){
             animInts[movement] = value;
             animator.SetInteger(movement, value);
         }
+    }
+    public int GetAnimationInt(string movement){
+        return animInts[movement];
+    }
+
+    public void SetAnimationFloat(string movement, float value){
+        if(animFloats[movement] != value){
+            animFloats[movement] = value;
+            animator.SetFloat(movement, value);
+        }
+    }
+    public float GetAnimationFloat(string movement){
+        return animFloats[movement];
     }
 
     public void SetAnimationTrigger(string movement){
@@ -137,24 +159,30 @@ public class EntityAnimation : EntityComponent
 
             // normal rotation
             case (int)BodyRotationMode.Normal:
+
+
                 Vector3 velRaw = rb.velocity;
                 Vector3 velHoriz = velRaw; velHoriz.y = 0;
-                Vector3 direction = Vector3.RotateTowards(bodyT.forward, velHoriz, bodyRotationSpeed, 0f);    
+                Vector3 direction = Vector3.RotateTowards(bodyT.forward, velHoriz, bodyRotationSpeed, 0f);
                 Quaternion rotation = Quaternion.LookRotation(direction);
-                if(handle.entityPhysics.GROUNDTOUCH){
+                if (handle.entityPhysics.GROUNDTOUCH)
+                {
                     Vector3 v = (rotation.eulerAngles) - (bodyRotationLast.eulerAngles);
                     angularVelocityY = Mathf.Lerp(bodyAngularVelocity.y, v.y, .5f);
                     angularVelocityY = Mathf.Clamp(angularVelocityY, -5f, 5f);
                     float dif = angularVelocityY - angularVelocityY_last;
-                    if(Math.Abs(dif) > angularVelocityY_maxDelta){
+                    if (Math.Abs(dif) > angularVelocityY_maxDelta)
+                    {
                         angularVelocityY = angularVelocityY_last + (angularVelocityY_maxDelta * Mathf.Sign(dif));
                     }
                 }
-                else{
+                else
+                {
                     angularVelocityY = 0f;
                 }
-                bodyT.rotation = rotation * Quaternion.Euler(Vector3.forward*angularVelocityY*-1f);
-                break;
+                bodyT.rotation = rotation * Quaternion.Euler(Vector3.forward * angularVelocityY * -1f);
+
+            break;
 
             // targeting rotation
             case (int)BodyRotationMode.Target:
@@ -182,26 +210,37 @@ public class EntityAnimation : EntityComponent
         Vector3 velRaw = rb.velocity;
         Vector3 velHoriz = velRaw; velHoriz.y = 0;
 
-        if(handle.entityPhysics.GROUNDTOUCH){
-            if(velHoriz.magnitude > .1f){
+        bool ground = handle.entityPhysics.GROUNDTOUCH;
+        bool wall = handle.entityPhysics.WALLTOUCH;
+
+        foreach(string mvmt in animBools.Keys){
+            SetAnimationBool(mvmt, false);
+        }
+
+        if(ground && !wall){
+            if(velHoriz.magnitude > .05f){
                 SetAnimationBool("Run", true);
-                SetAnimationBool("Stand", false);
             }
             else{
-                SetAnimationBool("Run", false);
                 SetAnimationBool("Stand", true);
             }
-            SetAnimationBool("Jump", false);
         }
         else{
-            if(handle.entityPhysics.jumpTime < .3f){
-                SetAnimationBool("Jump", true);
+            if(wall){
+                SetAnimationBool("Climb", true);
+                if(handle.entityPhysics.moveDir.magnitude > 0f){
+                    SetAnimationFloat("ClimbSpeed", 1f);
+                }
+                else{
+                    SetAnimationFloat("ClimbSpeed", 0f);
+                }
+            
             }
             else{
-                SetAnimationBool("Jump", false);
+                if(handle.entityPhysics.jumpTime < .3f || handle.entityPhysics.offWallTime < .3f){
+                    SetAnimationBool("Jump", true);
+                }
             }
-            SetAnimationBool("Run", false);
-            SetAnimationBool("Stand", false);
         }
 
         // calculate run
@@ -216,7 +255,7 @@ public class EntityAnimation : EntityComponent
         else{
             bodySkew = Mathf.Lerp(bodySkew, 0f, .5f);
         }
-        slowness = 1f - Mathf.InverseLerp(0f, handle.entityPhysics.maxSpeed, velHoriz.magnitude);
+        slowness = 1f - Mathf.InverseLerp(0f, handle.entityPhysics.maxSpeed_run, velHoriz.magnitude);
         runMagnitude = 1f - Mathf.Max(bodySkew, slowness);
         SetAnimationLayerWeight("Legs_full", runMagnitude);
         if(angularVelocityY < 0){
