@@ -40,7 +40,7 @@ public class EntityHandle : EntityComponent
             ChunkGenerator.current.playerT = transform;
             CameraController.current.enabled = true;
             CameraController.current.Init(this.transform);
-            transform.position = new Vector3(0f, 1800f, 0f);
+            transform.position = new Vector3(0f, 2500f, 0f);
 
         }
 
