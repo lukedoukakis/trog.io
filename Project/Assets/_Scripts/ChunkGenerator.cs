@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public class ChunkGenerator : MonoBehaviour
 {
     public static ChunkGenerator current;
     public static int Seed = 100;
-    public static int ChunkSize = 50;
+    public static int ChunkSize = 100;
     public static int ChunkRenderDistance = 10;
     public static float ElevationAmplitude = 1800f;
     public static float MinElevation = -.292893219f;
@@ -182,13 +183,16 @@ public class ChunkGenerator : MonoBehaviour
     {
 
         IEnumerator load;
-        foreach (ChunkData cd in ChunkDataToLoad.ToArray())
+        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(ToChunkSpace(playerT.position), c.coord)).ToArray())
         {
             if (!cd.loaded)
             {
                 load = LoadChunk(cd);
                 yield return StartCoroutine(load);
                 ChunkDataLoaded.Add(cd);
+            }
+            if(ToChunkSpace(playerT.position) != playerPos_chunkSpace){
+                break;
             }
         }
         LoadingChunks = false;
@@ -547,12 +551,19 @@ public class ChunkGenerator : MonoBehaviour
         Color c = new Color();
 
         
-        if ((biome == (int)Biome.BiomeType.Tundra || biome == (int)Biome.BiomeType.SnowyTaiga) && height > snowLevel)
+        if ((biome == (int)Biome.BiomeType.Tundra))
         {
+            if(height > snowLevel){
+                c.b = 255f;
+                return c;
+            }
+            
+        }
+        else if(biome == (int)Biome.BiomeType.SnowyTaiga){
             c.b = 255f;
             return c;
+
         }
-        
 
         // wetness (darkness of land)
         c.g = 230f * (1f - temperature);
