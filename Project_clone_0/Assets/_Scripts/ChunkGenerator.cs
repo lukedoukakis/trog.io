@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public class ChunkGenerator : MonoBehaviour
 {
     public static ChunkGenerator current;
     public static int Seed = 100;
     public static int ChunkSize = 100;
-    public static int ChunkRenderDistance = 2;
+    public static int ChunkRenderDistance = 10;
     public static float ElevationAmplitude = 1800f;
     public static float MinElevation = -.292893219f;
     public static float MaxElevation = .224744871f;
@@ -16,7 +17,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float ElevationMapScale = 2000;
     public static int TemperatureMapScale = 500;
     public static int HumidityMapScale = 500;
-    public static bool LoadingChunks;
+    public static bool LoadingChunks, DeloadingChunks;
     static GameObject Chunk;
     static GameObject Terrain;
     static GameObject Water;
@@ -90,15 +91,20 @@ public class ChunkGenerator : MonoBehaviour
         current = this;
         Init();
         Biome.Init();
+
     }
 
     private void Update()
     {
-        if ((Biome.initialized && playerT != null || Input.GetKeyUp(KeyCode.T)))
+        if (Biome.initialized && playerT != null)
         {
-            UpdateChunksToLoad();
-            LoadChunks();
-            DeloadChunks();
+            if(!LoadingChunks && !DeloadingChunks){
+                LoadingChunks = true;
+                DeloadingChunks = true;
+                UpdateChunksToLoad();
+                StartCoroutine(LoadChunks());
+                StartCoroutine(DeloadChunks());
+            }
         }
 
     }
@@ -173,38 +179,28 @@ public class ChunkGenerator : MonoBehaviour
 
     }
 
-    void LoadChunks()
+    IEnumerator LoadChunks()
     {
 
-        LoadingChunks = true;
-        foreach (ChunkData cd in ChunkDataToLoad.ToArray())
+        IEnumerator load;
+        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(ToChunkSpace(playerT.position), c.coord)).ToArray())
         {
             if (!cd.loaded)
             {
-                LoadChunk(cd);
+                load = LoadChunk(cd);
+                yield return StartCoroutine(load);
                 ChunkDataLoaded.Add(cd);
+            }
+            if(ToChunkSpace(playerT.position) != playerPos_chunkSpace){
+                break;
             }
         }
         LoadingChunks = false;
     }
 
-    void DeloadChunks()
-    {
-
-        foreach (ChunkData loadedCd in ChunkDataLoaded.ToArray())
-        {
-            int index = ChunkDataToLoad.FindIndex(cd => cd.coord == loadedCd.coord);
-            if (index < 0)
-            {
-                loadedCd.Deload();
-                ChunkDataLoaded.Remove(loadedCd);
-            }
-        }
-
-    }
 
 
-    void LoadChunk(ChunkData cd)
+    IEnumerator LoadChunk(ChunkData cd)
     {
 
         cd.Init(chunkPrefab);
@@ -221,7 +217,7 @@ public class ChunkGenerator : MonoBehaviour
         zOffset = zIndex * ChunkSize;
 
 
-        GenerateTerrainMaps();
+        yield return StartCoroutine(GenerateTerrainMaps());
         cd.TemperatureMap = TemperatureMap;
         cd.HumidityMap = HumidityMap;
         cd.ElevationMap = ElevationMap;
@@ -235,10 +231,29 @@ public class ChunkGenerator : MonoBehaviour
         PlaceTerrainAndWater();
         PlaceFeatures();
 
+        yield return null;
+
+    }
+
+    IEnumerator DeloadChunks()
+    {
+
+        foreach (ChunkData loadedCd in ChunkDataLoaded.ToArray())
+        {
+            int index = ChunkDataToLoad.FindIndex(cd => cd.coord == loadedCd.coord);
+            if (index < 0)
+            {
+                loadedCd.Deload();
+                ChunkDataLoaded.Remove(loadedCd);
+                yield return null;
+            }
+        }
+        DeloadingChunks = false;
+
     }
 
 
-    void GenerateTerrainMaps()
+    IEnumerator GenerateTerrainMaps()
     {
 
         TemperatureMap = new float[ChunkSize + 2, ChunkSize + 2];
@@ -521,8 +536,12 @@ public class ChunkGenerator : MonoBehaviour
                 TreeMap[x, z] = treeValue;
 
             }
+
+            yield return new WaitForSecondsRealtime(.00001f);
+            
         }
 
+        
     }
 
     Color SetVertexColor(int biome, float height, float mountain, float temperature, float humidity, float wetness, float fw)
@@ -532,12 +551,19 @@ public class ChunkGenerator : MonoBehaviour
         Color c = new Color();
 
         
-        if ((biome == (int)Biome.BiomeType.Tundra || biome == (int)Biome.BiomeType.SnowyTaiga) && height > snowLevel)
+        if ((biome == (int)Biome.BiomeType.Tundra))
         {
+            if(height > snowLevel){
+                c.b = 255f;
+                return c;
+            }
+            
+        }
+        else if(biome == (int)Biome.BiomeType.SnowyTaiga){
             c.b = 255f;
             return c;
+
         }
-        
 
         // wetness (darkness of land)
         c.g = 230f * (1f - temperature);
