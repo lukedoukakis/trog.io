@@ -67,7 +67,7 @@ public class CameraController : MonoBehaviour
                 posModifier = -.1f;
             }
 
-            Vector3 targetPos = playerT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f) + (Mathf.Sin(posModifier * pi) * Vector3.up) + (Vector3.up * 4f);
+            Vector3 targetPos = playerT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f) + (Mathf.Sin(posModifier * pi) * Vector3.up * 4f);
             
             Camera.main.transform.position = targetPos;
 

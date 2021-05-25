@@ -255,6 +255,80 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 95474748}
   m_CullTransparentMesh: 0
+--- !u!1001 &145397725
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3882535010369916060, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 27
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882535010369916060, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882535010369916060, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1800
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882535010369916060, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.512
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882535010369916060, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882535010369916060, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882535010369916060, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882535010369916060, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882535010369916060, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882535010369916060, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882535010369916060, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882535010369916063, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_Name
+      value: Torch
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882535010369916063, guid: f73d9c245a4b276408b54264f821813f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f73d9c245a4b276408b54264f821813f, type: 3}
 --- !u!1001 &171174205
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -321,6 +395,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Npc (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114389023734901768, guid: fe8351d38e60107458c40f99f91343fa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe8351d38e60107458c40f99f91343fa, type: 3}
@@ -391,6 +470,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Npc (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 114389023734901768, guid: fe8351d38e60107458c40f99f91343fa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe8351d38e60107458c40f99f91343fa, type: 3}
 --- !u!1001 &183579470
@@ -404,6 +488,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Spear
+      objectReference: {fileID: 0}
+    - target: {fileID: 4108053884969293493, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6140566077603684854, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
         type: 3}
@@ -877,6 +966,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Npc (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 114389023734901768, guid: fe8351d38e60107458c40f99f91343fa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe8351d38e60107458c40f99f91343fa, type: 3}
 --- !u!1001 &408218961
@@ -945,6 +1039,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Npc (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114389023734901768, guid: fe8351d38e60107458c40f99f91343fa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe8351d38e60107458c40f99f91343fa, type: 3}
@@ -1129,6 +1228,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Npc
+      objectReference: {fileID: 0}
+    - target: {fileID: 114389023734901768, guid: fe8351d38e60107458c40f99f91343fa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe8351d38e60107458c40f99f91343fa, type: 3}
@@ -1536,6 +1640,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Npc (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 114389023734901768, guid: fe8351d38e60107458c40f99f91343fa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe8351d38e60107458c40f99f91343fa, type: 3}
 --- !u!1 &649292948
@@ -1774,6 +1883,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Spear
+      objectReference: {fileID: 0}
+    - target: {fileID: 4108053884969293493, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6140566077603684854, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
         type: 3}
@@ -2388,6 +2502,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spear
       objectReference: {fileID: 0}
+    - target: {fileID: 4108053884969293493, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6140566077603684854, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
         type: 3}
       propertyPath: m_RootOrder
@@ -2984,6 +3103,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spear
       objectReference: {fileID: 0}
+    - target: {fileID: 4108053884969293493, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6140566077603684854, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
         type: 3}
       propertyPath: m_RootOrder
@@ -3052,6 +3176,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Spear
+      objectReference: {fileID: 0}
+    - target: {fileID: 4108053884969293493, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6140566077603684854, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
         type: 3}
@@ -3681,6 +3810,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spear
       objectReference: {fileID: 0}
+    - target: {fileID: 4108053884969293493, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6140566077603684854, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
         type: 3}
       propertyPath: m_RootOrder
@@ -3749,6 +3883,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Spear
+      objectReference: {fileID: 0}
+    - target: {fileID: 4108053884969293493, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6140566077603684854, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
         type: 3}
@@ -4296,6 +4435,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Npc (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 114389023734901768, guid: fe8351d38e60107458c40f99f91343fa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe8351d38e60107458c40f99f91343fa, type: 3}
 --- !u!1 &1991343438
@@ -4429,6 +4573,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Npc (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 114389023734901768, guid: fe8351d38e60107458c40f99f91343fa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe8351d38e60107458c40f99f91343fa, type: 3}
 --- !u!1001 &2017638403
@@ -4442,6 +4591,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Spear
+      objectReference: {fileID: 0}
+    - target: {fileID: 4108053884969293493, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6140566077603684854, guid: 622cdbcf0b257f24ab466f11cbb1b56f,
         type: 3}
@@ -4802,8 +4956,8 @@ MonoBehaviour:
   persistance: 0.2
   lacunarity: 10
   posterize_variationScale: 100
-  flatLevel: 0.8
-  seaLevel: 0.799985
+  flatLevel: 0.85
+  seaLevel: 0.849985
   snowLevel: 0.88
   treeDensity: 0.5
 --- !u!114 &2134817000

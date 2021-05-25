@@ -11,12 +11,14 @@ public class Item : ScriptableObject
 
 
     // Item defs
+    public static Item Torch = GenerateItem("Torch", (int)Type.Misc, .1f, (int)HoldStyle.Torch, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject"), Resources.Load<Image>("Items/Torch/Image"));
     public static Item Stone = GenerateItem("Stone", (int)Type.Misc, .1f, (int)HoldStyle.UnderArm, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject"), Resources.Load<Image>("Items/Stone/Image"));
     public static Item Spear = GenerateItem("Spear", (int)Type.Weapon, .1f, (int)HoldStyle.Spear, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject"), Resources.Load<Image>("Items/Spear/Image"));
 
 
     public static Dictionary<string, Item> Items = new Dictionary<string, Item>
     {
+        { "Torch", Torch },
         { "Stone", Stone },
         { "Spear", Spear },
     };
@@ -42,7 +44,7 @@ public class Item : ScriptableObject
     }
 
     public enum HoldStyle{
-        Hug, UnderArm, Spear, Axe, OverShoulder
+        Hug, UnderArm, Spear, Axe, OverShoulder, Torch
     }
 
 

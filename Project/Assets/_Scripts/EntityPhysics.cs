@@ -8,11 +8,12 @@ public class EntityPhysics : EntityComponent
     public Collider hitbox;
     public PhysicMaterial highFrictionMat;
     public PhysicMaterial noFrictionMat;
+    public LayerMask layerMask_water;
 
     public Rigidbody rb;
     public Transform gyro;
-    public Transform groundSense, wallSense, obstacleHeightSense;
-    RaycastHit groundInfo, wallInfo;
+    public Transform groundSense, wallSense, waterSense, obstacleHeightSense;
+    RaycastHit groundInfo, wallInfo, waterInfo;
     public static float groundCastDistance_player = .1f;
     public static float groundCastDistance_npc = .1f;
     public static float groundCastDistance_far = 100f;
@@ -25,10 +26,8 @@ public class EntityPhysics : EntityComponent
 
 
     public Vector3 moveDir;
-    public float jumpTime; bool jumping;
-    public float offWallTime;
-    public float airTime;
-    public float groundTime;
+    bool jumping;
+    public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
     public float acceleration;
     public float maxSpeed_run;
     public float maxSpeed_climb;
@@ -41,7 +40,7 @@ public class EntityPhysics : EntityComponent
 
     public float ROTATION_Y_THIS;
     public float ROTATION_Y_LAST;
-    public bool GROUNDTOUCH, WALLTOUCH;
+    public bool GROUNDTOUCH, WALLTOUCH, IN_WATER;
 
 
 
@@ -54,11 +53,13 @@ public class EntityPhysics : EntityComponent
         hitbox = GetComponentInChildren<CapsuleCollider>();
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
+        layerMask_water = LayerMask.GetMask("Water");
         rb = GetComponent<Rigidbody>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
         groundSense = Utility.FindDeepChild(transform, "GroundSense");
         obstacleHeightSense = Utility.FindDeepChild(transform, "ObstacleHeightSense");
         wallSense = Utility.FindDeepChild(transform, "WallSense");
+        waterSense = Utility.FindDeepChild(transform, "WaterSense");
         if(tag == "Player"){
             groundCastDistance = groundCastDistance_player;
         }else if(tag == "Npc"){
@@ -144,15 +145,18 @@ public class EntityPhysics : EntityComponent
 
     void CheckWall(){
         bool w = false;
-        if(moveDir.magnitude > 0){
-            //Debug.DrawRay(wallSense.position, handle.entityAnimation.bodyT.forward*wallCastDistance, Color.green, Time.deltaTime);
-            if(Physics.Raycast(wallSense.position, transform.forward, out wallInfo, wallCastDistance)){
-                string tag = wallInfo.collider.gameObject.tag;
-                if(tag != "Npc" && tag != "Player" && tag != "Body"){
-                    w = true;
+        if(offWallTime > .25f){
+            if(moveDir.magnitude > 0){
+                //Debug.DrawRay(wallSense.position, handle.entityAnimation.bodyT.forward*wallCastDistance, Color.green, Time.deltaTime);
+                if(Physics.Raycast(wallSense.position, transform.forward, out wallInfo, wallCastDistance)){
+                    string tag = wallInfo.collider.gameObject.tag;
+                    if(tag != "Npc" && tag != "Player" && tag != "Body"){
+                        w = true;
+                    }
                 }
             }
         }
+        
         if(w){
             WALLTOUCH = true;
         }
@@ -162,6 +166,28 @@ public class EntityPhysics : EntityComponent
                 Vault();
             }
             WALLTOUCH = false;
+        }
+    }
+
+    void CheckWater(){
+        bool w = false;
+        Log("offwaterTIME: " + offWaterTime.ToString());
+        if(offWaterTime > 1f){
+            if(transform.position.y <= ChunkGenerator.current.seaLevel*ChunkGenerator.ElevationAmplitude){
+            //if(Physics.Raycast(waterSense.position, Vector3.up, out waterInfo, layerMask_water)){
+                Log("WATER!!");
+                w = true;    
+            }
+        }
+        
+        if(w){
+            IN_WATER = true;
+        }
+        else{
+            if(IN_WATER){
+                offWaterTime = 0f;
+            }
+            IN_WATER = false;
         }
     }
 
@@ -237,6 +263,7 @@ public class EntityPhysics : EntityComponent
         Move(moveDir, acceleration);
         CheckGround();
         CheckWall();
+        CheckWater();
         CheckScrunch();
         LimitSpeed();
         SetGravity();
@@ -249,6 +276,7 @@ public class EntityPhysics : EntityComponent
 
         jumpTime += Time.deltaTime;
         offWallTime += Time.deltaTime;
+        offWaterTime += Time.deltaTime;
 
         if(Input.GetKeyUp(KeyCode.P)){
             acceleration *= 2f;

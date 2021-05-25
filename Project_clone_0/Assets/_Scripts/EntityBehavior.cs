@@ -22,7 +22,7 @@ public class EntityBehavior : EntityComponent
 
     // sensing and movement parameters
     public static float senseDistance_obstacle = 3f;
-    public static float senseDistance_immediate = 25f;
+    public static float senseDistance_immediate = 1f;
     public static float senseDistance_search = 150f;
     public static float senseDistance_earshot = 500f;
     public static float senseDistance_infinite = 5000f;
@@ -233,6 +233,7 @@ public class EntityBehavior : EntityComponent
         Log("target name: " + i_target.nme);
 
         List<GameObject> foundObjects = SenseSurroundingItems(i_target.type, i_target.nme, senseDistance_infinite, handle.entityInfo.faction.warringFactions);
+        foundObjects = foundObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
         if(foundObjects.Count == 0){
             // TODO: search in new area if nothing found
             Log("Collect: nothing found");
@@ -441,7 +442,7 @@ public class EntityBehavior : EntityComponent
         }
 	}
 
-    void TakeFromGround(GameObject o){
+    public void TakeFromGround(GameObject o){
         Log("TakeFromGround()");
         Item item = Item.GetItemByName(o.name);
         Tuple<Item, GameObject> pair = new Tuple<Item, GameObject>(item, o);
@@ -492,9 +493,6 @@ public class EntityBehavior : EntityComponent
         }
         //Debug.Log("Surroundings: " + sur);
 
-        // order by proximity to entity
-        foundObjects = foundObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
-
 
         return foundObjects;
         
@@ -514,7 +512,7 @@ public class EntityBehavior : EntityComponent
         handle.entityPhysics.moveDir = move;
 
 
-        if(tag == "Player"){
+        if(isLocalPlayer){
             if(Input.GetKeyUp(KeyCode.K)){
                 MainCommand.current.SendCommand("Collect Spear");
             }
@@ -523,6 +521,7 @@ public class EntityBehavior : EntityComponent
             }
 
         }
+
         else{
              if(Input.GetKeyUp(KeyCode.Q)){
                 MainCommand.current.SendCommand("Attack TribeMember");

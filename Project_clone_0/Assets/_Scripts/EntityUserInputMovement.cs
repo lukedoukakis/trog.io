@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EntityUserInputMovement : EntityComponent
@@ -7,6 +8,7 @@ public class EntityUserInputMovement : EntityComponent
 
 
     public bool pressForward, pressBack, pressLeft, pressRight;
+    public List<GameObject> interactableObjects;
     public Vector3 move;
 
     void Awake(){
@@ -78,6 +80,20 @@ public class EntityUserInputMovement : EntityComponent
         }
     }
 
+    void CheckInteractableItems(){
+        interactableObjects = handle.entityBehavior.SenseSurroundingItems(-1, null, EntityBehavior.senseDistance_immediate, handle.entityInfo.faction.warringFactions);
+    }
+
+    void Interact(){
+        
+        if(interactableObjects.Count != 0){
+            interactableObjects = interactableObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
+            GameObject obj = interactableObjects[0];
+            handle.entityBehavior.TakeFromGround(obj);            
+        }
+        
+    }
+
     void Update(){
 
         move = Vector3.zero;
@@ -85,6 +101,10 @@ public class EntityUserInputMovement : EntityComponent
             HandleMovement();
             HandleRotation();
             HandleAttack();
+            if(Input.GetKeyUp(KeyCode.E)){
+                CheckInteractableItems();
+                Interact();
+            }
         }
 
         

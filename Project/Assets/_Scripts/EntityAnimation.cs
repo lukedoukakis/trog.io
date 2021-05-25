@@ -38,6 +38,8 @@ public class EntityAnimation : EntityComponent
         {"Stand",   false},
         {"Run",     false},
         {"Climb",     false},
+        {"Swim",     false},
+        {"Tread",     false},
         {"Jump",    false},
         {"Land",    false},
         {"RightArm_weapon",    false},
@@ -50,6 +52,7 @@ public class EntityAnimation : EntityComponent
     public Dictionary<string, float> animFloats = new Dictionary<string, float>{
         {"LegSpeed",   -1f},
         {"ClimbSpeed",   -1f},
+        {"SwimSpeed",   -1f},
     };
 
     public enum BodyRotationMode{
@@ -212,12 +215,13 @@ public class EntityAnimation : EntityComponent
 
         bool ground = handle.entityPhysics.GROUNDTOUCH;
         bool wall = handle.entityPhysics.WALLTOUCH;
+        bool water = handle.entityPhysics.IN_WATER;
 
         foreach(string mvmt in animBools.Keys){
             SetAnimationBool(mvmt, false);
         }
 
-        if(ground && !wall){
+        if(ground && !wall && !water){
             if(velHoriz.magnitude > .05f){
                 SetAnimationBool("Run", true);
             }
@@ -237,9 +241,20 @@ public class EntityAnimation : EntityComponent
             
             }
             else{
-                if(handle.entityPhysics.jumpTime < .3f || handle.entityPhysics.offWallTime < .3f){
-                    SetAnimationBool("Jump", true);
+                if(water){
+                    if(handle.entityPhysics.moveDir.magnitude > 0f){
+                        SetAnimationBool("Swim", true);
+                    }
+                    else{
+                        SetAnimationBool("Tread", true);
+                    }
                 }
+                else{
+                    if(handle.entityPhysics.jumpTime < .3f || handle.entityPhysics.offWallTime < .3f){
+                        SetAnimationBool("Jump", true);
+                    }
+                }
+                
             }
         }
 

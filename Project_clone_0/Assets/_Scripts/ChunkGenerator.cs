@@ -12,10 +12,10 @@ public class ChunkGenerator : MonoBehaviour
     public static float ElevationAmplitude = 1800f;
     public static float MinElevation = -.292893219f;
     public static float MaxElevation = .224744871f;
-    public static int MountainMapScale = 1000;
+    public static int MountainMapScale = 400;
     public static float ElevationMapScale = 2000;
-    public static int TemperatureMapScale = 1000;
-    public static int HumidityMapScale = 1000;
+    public static int TemperatureMapScale = 500;
+    public static int HumidityMapScale = 500;
     public static bool LoadingChunks;
     static GameObject Chunk;
     static GameObject Terrain;
@@ -93,7 +93,7 @@ public class ChunkGenerator : MonoBehaviour
 
     private void Update()
     {
-        if (Biome.initialized && playerT != null)
+        if ((Biome.initialized && playerT != null || Input.GetKeyUp(KeyCode.T)))
         {
             UpdateChunksToLoad();
             LoadChunks();
@@ -105,6 +105,7 @@ public class ChunkGenerator : MonoBehaviour
     void Init()
     {
         Seed = UnityEngine.Random.Range(0, 1000);
+        Seed = 1;
         if (Seed == -1) { Seed = UnityEngine.Random.Range(-100000, 100000); }
 
         //RiverGenerator.Generate();
@@ -259,14 +260,17 @@ public class ChunkGenerator : MonoBehaviour
             {
 
                 float e = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / ElevationMapScale, (z + zOffset - Seed + .01f) / ElevationMapScale);
+                rough = Mathf.Pow(Mathf.PerlinNoise((x + xOffset + .01f) / 50f, (z + zOffset + .01f) / 50f) * 2f - 1f, .1f);
+                //e += rough;
                 elevationValue = Mathf.Pow(e + .5f, .5f) - 1f;
                 float maxE = Mathf.Pow(1f + .5f, .5f) - 1f;
                 float minE = Mathf.Pow(0f + .5f, .5f) - 1f;
                 // -------------------------------------------------------
 
                 // MountainMap [0, 1]
-                mountainValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / ElevationMapScale, (z + zOffset - Seed + .01f) / ElevationMapScale);
-                mountainValue = .99f;
+                mountainValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / MountainMapScale, (z + zOffset - Seed + .01f) / MountainMapScale);
+                mountainValue = Mathf.InverseLerp(.35f, .65f, mountainValue);
+                //mountainValue = .99f;
                 mountainValue *= .75f;
                 mountainValue = Mathf.Pow(mountainValue, 2f);
                 mountainValue = Mathf.InverseLerp(0f, Mathf.Pow(.75f, 2f), mountainValue);
@@ -286,6 +290,8 @@ public class ChunkGenerator : MonoBehaviour
 
                 temperatureValue += latitudeMod;
                 temperatureValue = Mathf.Clamp01(temperatureValue);
+
+                //temperatureValue = .9f;
 
 
                 // -------------------------------------------------------
@@ -427,7 +433,7 @@ public class ChunkGenerator : MonoBehaviour
                 // add rivers
                 if (heightValue >= seaLevel && mountainValue < 1f)
                 {
-                    heightValue = Mathf.Lerp(heightValue, seaLevel - .001f, freshWaterValue);
+                    heightValue = Mathf.Lerp(heightValue, seaLevel - .0001f, freshWaterValue);
                 }
 
 
@@ -436,8 +442,8 @@ public class ChunkGenerator : MonoBehaviour
 
                 float steps, stepHeight, h, thresh;
 
-                steps = 2000f * (1f - (Mathf.Pow(mountainValue, .5f)));
-                stepHeight = (.9f - flatLevel) / steps;
+                steps = 4000f * (1f - (Mathf.Pow(mountainValue, .5f)));
+                stepHeight = (1f - flatLevel) / steps;
                 h = 0f;
                 for (int i = 0; i < steps; i++)
                 {
@@ -459,7 +465,7 @@ public class ChunkGenerator : MonoBehaviour
                 // layers
                 float psgScale, psgStep, psg;
 
-                psgScale = Mathf.Max(600f * (1f - mountainValue), 60f);
+                psgScale = 600f;
                 psgStep = .01f;
                 psg = flatLevel + (.28f *  mountainValue * e * Mathf.PerlinNoise(((x + xOffset) / psgScale) + .01f, ((z + zOffset) / psgScale) + .01f));
                 psg = Mathf.Max(psg, e);
@@ -481,12 +487,12 @@ public class ChunkGenerator : MonoBehaviour
                 // create slight roughness in terrain
                 if (biomeValue == (int)Biome.BiomeType.Desert)
                 {
-                    float duneMag = .0012f * (1f - Mathf.Pow(Mathf.Clamp01(freshWaterValue), 1.3f)) * (1f - Mathf.Pow(wetnessValue, 1.2f));
+                    float duneMag = .0008f * (1f - Mathf.Pow(Mathf.Clamp01(freshWaterValue), 1.3f)) * (1f - Mathf.Pow(wetnessValue, 1.2f));
                     heightValue += duneMag * (1f - Mathf.Abs(Mathf.Sin((x + xOffset - Seed + .01f + Mathf.Sin(z+zOffset)*8f) / 15f)));
                 }
 
-                if(heightValue < seaLevel - .001f){
-                    heightValue = seaLevel - .001f;
+                if(heightValue < seaLevel - .0001f){
+                    heightValue = seaLevel - .0001f;
                 }
 
                 // -------------------------------------------------------
@@ -530,18 +536,12 @@ public class ChunkGenerator : MonoBehaviour
         
 
         // wetness (darkness of land)
-        if (biome == (int)Biome.BiomeType.Desert)
-        {
-            c.g = 255f * Mathf.Clamp01(Mathf.Pow(fw, 1.5f)) *.3f;
-        }else if(biome == (int)Biome.BiomeType.Chaparral){
-            c.g = 255f * Mathf.Clamp01(Mathf.Pow(fw, 1.5f)) *.3f;
-        }else{
-            c.g = 255f * wetness;
-        }
+        c.g = 230f * (1f - temperature);
         
 
         // yellowness
-        c.r = 255f * Mathf.Lerp(1f - wetness, temperature, .5f);
+
+        c.r = 230f * (1f - humidity);
 
         return c;
     }
@@ -629,9 +629,10 @@ public class ChunkGenerator : MonoBehaviour
         WaterMesh.RecalculateNormals();
 
         MeshCollider mc = Terrain.AddComponent<MeshCollider>();
-        //mc.convex = true;
+        BoxCollider bc = Water.AddComponent<BoxCollider>();
         mc.sharedMaterial = physicMaterial;
-        //mc.isTrigger = true;
+        bc.isTrigger = true;
+
     }
 
 

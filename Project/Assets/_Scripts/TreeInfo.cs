@@ -31,14 +31,14 @@ public class TreeInfo : MonoBehaviour
                 break;
             case "Jungle Tree":
                 scale = 2.2f;
-                density = 1.5f;
+                density = 1f;
                 normal = .7f;
                 slant = .5f;
                 spread = 1.5f;
                 break;
             case "Fir Tree":
                 scale = 1.75f;
-                density = .75f;
+                density = .7f;
                 normal = .7f;
                 slant = .18f;
                 spread = 2f;
