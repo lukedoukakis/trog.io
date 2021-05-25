@@ -34,6 +34,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
     [SerializeField] PhysicMaterial physicMaterial;
+    public LayerMask layerMask_terrain;
 
     public GameObject chunkPrefab;
 
@@ -105,7 +106,8 @@ public class ChunkGenerator : MonoBehaviour
     void Init()
     {
         Seed = UnityEngine.Random.Range(0, 1000);
-        Seed = 1;
+        Debug.Log("seed: " + Seed.ToString());
+        //Seed = 1;
         if (Seed == -1) { Seed = UnityEngine.Random.Range(-100000, 100000); }
 
         //RiverGenerator.Generate();
@@ -118,6 +120,8 @@ public class ChunkGenerator : MonoBehaviour
         TerrainMeshFilter.mesh = TerrainMesh;
         WaterMeshFilter.mesh = WaterMesh;
         currentChunkCoord = Vector2.positiveInfinity;
+
+        layerMask_terrain = LayerMask.GetMask("Terrain");
     }
 
 
@@ -705,7 +709,7 @@ public class ChunkGenerator : MonoBehaviour
                 
                 if(onWater){ castLength = ElevationAmplitude - ((seaLevel - .003f)* ElevationAmplitude); }
                 else{ castLength = ElevationAmplitude - ((seaLevel + .002f)* ElevationAmplitude); }
-                if (Physics.Raycast(castVec, Vector3.down, out RaycastHit hit, castLength))
+                if (Physics.Raycast(castVec, Vector3.down, out RaycastHit hit, castLength, layerMask_terrain))
                 {
                     Vector3 point = hit.point;
                     //if (hit.normal.y > treeMinYNormal)

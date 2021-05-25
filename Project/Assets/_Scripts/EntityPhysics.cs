@@ -29,8 +29,7 @@ public class EntityPhysics : EntityComponent
     bool jumping;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
     public float acceleration;
-    public float maxSpeed_run;
-    public float maxSpeed_climb;
+    public float maxSpeed_run, maxSpeed_climb, maxSpeed_swim;
 
 
     public static float landScrunch_recoverySpeed = .75f;
@@ -71,6 +70,7 @@ public class EntityPhysics : EntityComponent
         acceleration = handle.entityStats.GetStat("speed") * AccelerationScale;
         maxSpeed_run = handle.entityStats.GetStat("speed") * MaxSpeedScale;
         maxSpeed_climb = maxSpeed_run * .25f;
+        maxSpeed_swim = maxSpeed_run * .75f;
     }
 
 
@@ -171,7 +171,6 @@ public class EntityPhysics : EntityComponent
 
     void CheckWater(){
         bool w = false;
-        Log("offwaterTIME: " + offWaterTime.ToString());
         if(offWaterTime > 1f){
             if(transform.position.y <= ChunkGenerator.current.seaLevel*ChunkGenerator.ElevationAmplitude){
             //if(Physics.Raycast(waterSense.position, Vector3.up, out waterInfo, layerMask_water)){
@@ -229,7 +228,12 @@ public class EntityPhysics : EntityComponent
             }
             
         }else{
-            max = maxSpeed_run;
+            if(IN_WATER){
+                max = maxSpeed_swim;
+            }
+            else{
+                max = maxSpeed_run;
+            }
         }
 
         if(horvel.magnitude > max){

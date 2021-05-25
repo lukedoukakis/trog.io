@@ -325,7 +325,7 @@ PrefabInstance:
     - target: {fileID: 3882535010369916063, guid: f73d9c245a4b276408b54264f821813f,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f73d9c245a4b276408b54264f821813f, type: 3}
@@ -1081,9 +1081,9 @@ RectTransform:
   m_Father: {fileID: 1157601965}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 879.38654, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 879.38654, y: -280.74796}
   m_SizeDelta: {x: 1758.7731, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &419559652
@@ -4948,6 +4948,9 @@ MonoBehaviour:
   TerrainMeshFilter: {fileID: 1098165271}
   WaterMeshFilter: {fileID: 1402622343}
   physicMaterial: {fileID: 13400000, guid: 3c2720acdc0ef2d43aeb89dd00e2bb70, type: 2}
+  layerMask_terrain:
+    serializedVersion: 2
+    m_Bits: 0
   chunkPrefab: {fileID: 2854202466093326487, guid: 3b2ccdcd009fcc04bb6cee6704c61cba,
     type: 3}
   waterAlpha: 1
