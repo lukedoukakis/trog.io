@@ -1071,7 +1071,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: d4dbb92c81014c44788e0c90a5a8f960, type: 2}
+  m_Motion: {fileID: 7400000, guid: a3c97be3c017a9d4e8045166b3b8256c, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -1142,85 +1142,85 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Run
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Climb
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Swim
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Tread
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Jump
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: RightArm_weapon
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: LeftArm_holdStyle
     m_Type: 3
     m_DefaultFloat: 0
     m_DefaultInt: -1
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Thrust
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Swing
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: JumpTrigger
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: LegSpeed
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: ClimbSpeed
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: SwimSpeed
     m_Type: 1
-    m_DefaultFloat: 0.5
+    m_DefaultFloat: 2
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Default
@@ -1256,7 +1256,7 @@ AnimatorController:
       m_Motion: {fileID: 7400000, guid: f92df55210a24a245a51d5acdf6f8092, type: 2}
     - serializedVersion: 2
       m_State: {fileID: -393220873960605823}
-      m_Motion: {fileID: 7400000, guid: d4dbb92c81014c44788e0c90a5a8f960, type: 2}
+      m_Motion: {fileID: 7400000, guid: a3c97be3c017a9d4e8045166b3b8256c, type: 2}
     - serializedVersion: 2
       m_State: {fileID: -868874907024594909}
       m_Motion: {fileID: 7400000, guid: dd354400c02a822429bb9ea8d76a5c9d, type: 2}
@@ -1266,6 +1266,9 @@ AnimatorController:
     - serializedVersion: 2
       m_State: {fileID: 6638267691187048821}
       m_Motion: {fileID: 7400000, guid: 1fb09b726666b4f438fe45ea53dc6435, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 5292417937829364687}
+      m_Motion: {fileID: 7400000, guid: d4dbb92c81014c44788e0c90a5a8f960, type: 2}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 1
@@ -1289,10 +1292,13 @@ AnimatorController:
       m_Motion: {fileID: 7400000, guid: dd354400c02a822429bb9ea8d76a5c9d, type: 2}
     - serializedVersion: 2
       m_State: {fileID: -393220873960605823}
-      m_Motion: {fileID: 7400000, guid: d4dbb92c81014c44788e0c90a5a8f960, type: 2}
+      m_Motion: {fileID: 7400000, guid: a3c97be3c017a9d4e8045166b3b8256c, type: 2}
     - serializedVersion: 2
       m_State: {fileID: 6638267691187048821}
       m_Motion: {fileID: 7400000, guid: 1fb09b726666b4f438fe45ea53dc6435, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 5292417937829364687}
+      m_Motion: {fileID: 7400000, guid: d4dbb92c81014c44788e0c90a5a8f960, type: 2}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 1
@@ -1777,7 +1783,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: a3c97be3c017a9d4e8045166b3b8256c, type: 2}
+  m_Motion: {fileID: 7400000, guid: d4dbb92c81014c44788e0c90a5a8f960, type: 2}
   m_Tag: 
   m_SpeedParameter: SwimSpeed
   m_MirrorParameter: 
