@@ -29,7 +29,7 @@ public class CameraController : MonoBehaviour
 
     public void Init(Transform t){
         playerT = t;
-        Cursor.visible = false;
+        //Cursor.visible = false;
         Application.targetFrameRate = -1;
         QualitySettings.vSyncCount = 1;
         float[] cullDistances = new float[32];

@@ -173,7 +173,7 @@ public class EntityPhysics : EntityComponent
 
     void CheckWater(){
         bool w = false;
-        float y = waterSense.position.y;
+        float y = transform.position.y;
         float waterY = ChunkGenerator.current.seaLevel*ChunkGenerator.ElevationAmplitude;
         if(y <= waterY){
         //if(Physics.Raycast(waterSense.position, Vector3.up, out waterInfo, layerMask_water)){

@@ -326,22 +326,26 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // FreshWaterMap [0, 1]
-
-                float riverWindingScale = 75f + (25f * (mountainValue * 2f - 1f))*100f;
+                float riverWindingScale = 75f + (25f * (mountainValue * 2f - 1f));
                 freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverWindingScale, (z + zOffset - Seed + .01f) / riverWindingScale) * 2f - 1f;
-                rough = Mathf.Pow(Mathf.PerlinNoise((x + xOffset + .01f) / 100f, (z + zOffset + .01f) / 100f) + .5f, .3f) - 1f;
+                rough = Mathf.Pow(Mathf.PerlinNoise((x + xOffset + .01f) / 10f, (z + zOffset + .01f) / 10f) + .5f, .3f) - 1f;
                 freshWaterValue += rough;
-                freshWaterValue -= Mathf.PerlinNoise((x + xOffset + .01f) / 4000f, (z + zOffset + .01f) / 4000f) / 2f;
+                freshWaterValue -= Mathf.PerlinNoise((x + xOffset + .01f) / 400f, (z + zOffset + .01f) / 400f) / 2f;
                 freshWaterValue = Mathf.Abs(freshWaterValue);
                 freshWaterValue *= -1f;
                 freshWaterValue += 1f;
-                if (freshWaterValue > .9f) {
-                    freshWaterValue = 1f;
+                if (freshWaterValue > .93f) { freshWaterValue = Mathf.Pow(freshWaterValue, 1f); }
+                else if (freshWaterValue > .85f)
+                {
+                    freshWaterValue = .93f;
                 }
-                // else{
-                //     freshWaterValue = Mathf.Pow(freshWaterValue, .5f);
-                // }
-                 freshWaterValue = 0f;
+                else
+                {
+                    //freshWaterValue = Mathf.Pow(freshWaterValue, 7f * temperatureValue);
+                    freshWaterValue = Mathf.Pow(freshWaterValue, 1f);
+                }
+                
+                //freshWaterValue = 0f;
 
 
                 //freshWaterValue = -1f;
@@ -397,16 +401,8 @@ public class ChunkGenerator : MonoBehaviour
                 {
                     float sampleX = (x + xOffset) / scale * frequency + Seed;
                     float sampleZ = (z + zOffset) / scale * frequency + Seed;
-
-                    //float scale2 = scale + 5f;
-                    //float scale3 = scale - 5f;
-
                     float perlinValue = Mathf.PerlinNoise(sampleX, sampleZ) * 2 - 1;
-                    //perlinValue += Mathf.PerlinNoise(sampleX * scale / scale2, sampleZ) * 2 - 1;
-                    //perlinValue -= Mathf.PerlinNoise(sampleX * scale / scale3, sampleZ) * 2 - 1;
-
                     heightValue += perlinValue * amplitude;
-
                     amplitude *= persistance;
                     frequency *= lacunarity;
                 }
@@ -444,13 +440,12 @@ public class ChunkGenerator : MonoBehaviour
                 // create ocean where height is below flatLevel
                 if (heightValue < flatLevel)
                 {
-                    //heightValue = seaLevel - .001f;
                     float f = Mathf.InverseLerp(0f, .004f, flatLevel - heightValue);
                     freshWaterValue = Mathf.Max(freshWaterValue, f);
                 }
 
                 // add rivers
-                if (heightValue >= seaLevel && mountainValue < 1f)
+                if (heightValue >= seaLevel)
                 {
                     heightValue = Mathf.Lerp(heightValue, seaLevel - .0001f, freshWaterValue);
                 }
@@ -742,7 +737,7 @@ public class ChunkGenerator : MonoBehaviour
                 if (Physics.Raycast(castVec, Vector3.down, out RaycastHit hit, castLength, layerMask_terrain))
                 {
                     //if (hit.normal.y > treeMinYNormal)
-                    if (hit.normal.y > .5f)
+                    if (hit.normal.y > .8f)
                     {
                         point = hit.point;
                         uprightRot = Quaternion.AngleAxis(UnityEngine.Random.value * 360f, Vector3.up);
