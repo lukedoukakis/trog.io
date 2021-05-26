@@ -112,9 +112,9 @@ public class ChunkGenerator : MonoBehaviour
     void Init()
     {
         Seed = UnityEngine.Random.Range(0, 1000);
-        Debug.Log("seed: " + Seed.ToString());
-        //Seed = 1;
+        Seed = 920;
         if (Seed == -1) { Seed = UnityEngine.Random.Range(-100000, 100000); }
+        Debug.Log("seed: " + Seed.ToString());
 
         //RiverGenerator.Generate();
 
@@ -310,7 +310,7 @@ public class ChunkGenerator : MonoBehaviour
                 temperatureValue += latitudeMod;
                 temperatureValue = Mathf.Clamp01(temperatureValue);
 
-                //temperatureValue = .9f;
+                //temperatureValue = .3f;
 
 
                 // -------------------------------------------------------
@@ -511,7 +511,7 @@ public class ChunkGenerator : MonoBehaviour
                 }
 
                 if(heightValue < seaLevel - .0001f){
-                    heightValue = seaLevel - .0001f;
+                    heightValue = seaLevel - (.001f);
                 }
 
                 // -------------------------------------------------------
@@ -560,15 +560,19 @@ public class ChunkGenerator : MonoBehaviour
             
         }
         else if(biome == (int)Biome.BiomeType.SnowyTaiga){
-            c.b = 255f;
-            return c;
+            if(height > seaLevel){
+                c.b = 255f;
+                return c;
+            }
 
         }
 
         // wetness (darkness of land)
-        c.g = 230f * (1f - temperature);
+        if(height > seaLevel){
+            c.g = 230f * (1f - temperature);
+        }
         
-
+    
         // yellowness
 
         c.r = 230f * (1f - humidity);
@@ -674,9 +678,9 @@ public class ChunkGenerator : MonoBehaviour
         float height;
         float fw;
 
-        for (int z = 0; z < ChunkSize + 2; z+=5)
+        for (int z = 0; z < ChunkSize + 2; z += 10)
         {
-            for (int x = 0; x < ChunkSize + 2; x+=5)
+            for (int x = 0; x < ChunkSize + 2; x += 10)
             {
 
                 biome = BiomeMap[x, z];
@@ -716,20 +720,20 @@ public class ChunkGenerator : MonoBehaviour
     {
         GameObject tree = treeTuple.Item1;
         float treeScale = treeTuple.Item2.Item1;
-        int passesMultipler = (int)(treeTuple.Item2.Item2 * 10f);
+        int densityMultipler = (int)(treeTuple.Item2.Item2 * 10f);
         float treeMinYNormal = treeTuple.Item2.Item3;
         float treeAngleMultiplier = treeTuple.Item2.Item4;
         float spreadMultiplier = treeTuple.Item2.Item5;
         Quaternion uprightRot;
         Quaternion slantedRot;
-        Vector3 castVec;
+        Vector3 castVec, point;
         float castLength;
 
-        int passes = (int)(wetness * passesMultipler * treeDensity);
+        int passes = (int)(wetness * densityMultipler * treeDensity);
         passes = Mathf.Clamp(passes, (int)(UnityEngine.Random.value + .25f), passes);
         if (passes > 0)
         {
-            for (int j = 0; j < treeDensity * passes; j++)
+            for(int p = 0; p < passes; p++)
             {
                 castVec = new Vector3(x + xOffset + (UnityEngine.Random.value * 2f - 1f) * spreadMultiplier * 10, ElevationAmplitude, z + zOffset + (UnityEngine.Random.value * 2f - 1f) * spreadMultiplier * 10);
                 
@@ -737,23 +741,20 @@ public class ChunkGenerator : MonoBehaviour
                 else{ castLength = ElevationAmplitude - ((seaLevel + .002f)* ElevationAmplitude); }
                 if (Physics.Raycast(castVec, Vector3.down, out RaycastHit hit, castLength, layerMask_terrain))
                 {
-                    Vector3 point = hit.point;
                     //if (hit.normal.y > treeMinYNormal)
                     if (hit.normal.y > .5f)
                     {
+                        point = hit.point;
+                        uprightRot = Quaternion.AngleAxis(UnityEngine.Random.value * 360f, Vector3.up);
+                        slantedRot = Quaternion.FromToRotation(transform.up, hit.normal);
                         if(onWater){
                             if(point.y < (seaLevel - .018f) * ElevationAmplitude){
-                                uprightRot = Quaternion.AngleAxis(UnityEngine.Random.value * 360f, Vector3.up);
-                                slantedRot = Quaternion.FromToRotation(transform.up, hit.normal);
-
                                 tree = GameObject.Instantiate(tree, point, Quaternion.Slerp(uprightRot, slantedRot, treeAngleMultiplier), Trees.transform);
                                 tree.transform.localScale = Vector3.one * treeScale * Mathf.Pow(UnityEngine.Random.value + .5f, .75f);
                             }
                         }
 
-                        uprightRot = Quaternion.AngleAxis(UnityEngine.Random.value * 360f, Vector3.up);
-                        slantedRot = Quaternion.FromToRotation(transform.up, hit.normal);
-
+                    
                         tree = GameObject.Instantiate(tree, point, Quaternion.Slerp(uprightRot, slantedRot, treeAngleMultiplier), Trees.transform);
                         tree.transform.localScale = Vector3.one * treeScale * Mathf.Pow(UnityEngine.Random.value + .5f, .75f);
                     }

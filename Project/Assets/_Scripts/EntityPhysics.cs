@@ -9,6 +9,7 @@ public class EntityPhysics : EntityComponent
     public PhysicMaterial highFrictionMat;
     public PhysicMaterial noFrictionMat;
     public LayerMask layerMask_water;
+    public LayerMask layerMask_noWater;
 
     public Rigidbody rb;
     public Transform gyro;
@@ -53,6 +54,7 @@ public class EntityPhysics : EntityComponent
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         layerMask_water = LayerMask.GetMask("Water");
+        layerMask_noWater = LayerMask.GetMask("Terrain", "Feature");
         rb = GetComponent<Rigidbody>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
         groundSense = Utility.FindDeepChild(transform, "GroundSense");
@@ -122,7 +124,7 @@ public class EntityPhysics : EntityComponent
     void CheckGround(){
         Vector3 vel = rb.velocity;
         // directly underneath
-        if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far)){
+        if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far, layerMask_noWater)){
             if(Vector3.Distance(groundInfo.point, transform.position) < groundCastDistance){
                 if(!GROUNDTOUCH){
                     GROUNDTOUCH = true;
@@ -171,12 +173,16 @@ public class EntityPhysics : EntityComponent
 
     void CheckWater(){
         bool w = false;
-        if(offWaterTime > 1f){
-            if(transform.position.y <= ChunkGenerator.current.seaLevel*ChunkGenerator.ElevationAmplitude){
-            //if(Physics.Raycast(waterSense.position, Vector3.up, out waterInfo, layerMask_water)){
-                Log("WATER!!");
-                w = true;    
+        float y = waterSense.position.y;
+        float waterY = ChunkGenerator.current.seaLevel*ChunkGenerator.ElevationAmplitude;
+        if(y <= waterY){
+        //if(Physics.Raycast(waterSense.position, Vector3.up, out waterInfo, layerMask_water)){
+            if(offWaterTime > .2f){
+                w = true;
             }
+        }
+        if(y <= waterY + .2f){
+            ApplyFlotationForce(waterY - y);    
         }
         
         if(w){
@@ -245,10 +251,15 @@ public class EntityPhysics : EntityComponent
         
     }
 
+    void ApplyFlotationForce(float distanceFromSurface){
+        rb.AddForce(Physics.gravity * 2f * (Mathf.InverseLerp(0f, 20f, distanceFromSurface) + .5f) * -1f, ForceMode.Force);
+    }
+
     void SetGravity(){
-        if((GROUNDTOUCH || WALLTOUCH) && moveDir.magnitude > 0f){
+        if((GROUNDTOUCH || WALLTOUCH) && !IN_WATER && moveDir.magnitude > 0f){
             rb.useGravity = false;
-        }else{ rb.useGravity = true; }
+        }
+        else{ rb.useGravity = true; }
     }
 
 
