@@ -53,6 +53,7 @@ public class EntityAnimation : EntityComponent
         {"LegSpeed",   -1f},
         {"ClimbSpeed",   -1f},
         {"SwimSpeed",   -1f},
+        {"TreadSpeed",   -1f},
     };
 
     public enum BodyRotationMode{

@@ -15,13 +15,13 @@ public class EntityPhysics : EntityComponent
     public Transform gyro;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense;
     RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float groundCastDistance_player = .1f;
-    public static float groundCastDistance_npc = .1f;
+    public static float groundCastDistance_player = .05f;
+    public static float groundCastDistance_npc = .05f;
     public static float groundCastDistance_far = 100f;
-    public static float wallCastDistance = 1f;
+    public static float wallCastDistance = 0f;
     float groundCastDistance;
-    public static float JumpForce = 1500f;
-    public static float AccelerationScale = 50f;
+    public static float JumpForce = 700f;
+    public static float AccelerationScale = 35f;
     public static float MaxSpeedScale = 20f;
     public static float JumpCoolDown = .15f;
 
@@ -54,7 +54,7 @@ public class EntityPhysics : EntityComponent
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         layerMask_water = LayerMask.GetMask("Water");
-        layerMask_noWater = LayerMask.GetMask("Terrain", "Feature");
+        layerMask_noWater = LayerMask.GetMask("Terrain");
         rb = GetComponent<Rigidbody>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
         groundSense = Utility.FindDeepChild(transform, "GroundSense");
@@ -147,7 +147,7 @@ public class EntityPhysics : EntityComponent
 
     void CheckWall(){
         bool w = false;
-        if(offWallTime > .25f){
+        if(offWallTime > -1f){
             if(moveDir.magnitude > 0){
                 //Debug.DrawRay(wallSense.position, handle.entityAnimation.bodyT.forward*wallCastDistance, Color.green, Time.deltaTime);
                 if(Physics.Raycast(wallSense.position, transform.forward, out wallInfo, wallCastDistance)){
@@ -177,9 +177,7 @@ public class EntityPhysics : EntityComponent
         float waterY = ChunkGenerator.current.seaLevel*ChunkGenerator.ElevationAmplitude;
         if(y <= waterY){
         //if(Physics.Raycast(waterSense.position, Vector3.up, out waterInfo, layerMask_water)){
-            if(offWaterTime > .2f){
-                w = true;
-            }
+            w = true;
         }
         if(y <= waterY + .2f){
             ApplyFlotationForce(waterY - y);    
@@ -282,7 +280,6 @@ public class EntityPhysics : EntityComponent
         CheckScrunch();
         LimitSpeed();
         SetGravity();
-        
     }
 
     void Update(){
