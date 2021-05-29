@@ -79,7 +79,7 @@ public class EntityPhysics : EntityComponent
 
     public void Move(Vector3 direction, float speed){
         float speedStat = speed * handle.entityStats.GetStat("speed");
-        sprinting = handle.entityUserInputMovement.pressSprint || handle.entityBehavior.urgent;
+        sprinting = handle.entityBehavior.urgent || GameManager.current.localPlayer.GetComponent<EntityHandle>().entityUserInputMovement.pressSprint;
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
         rb.AddForce(move * speedStat, ForceMode.Force);
     }

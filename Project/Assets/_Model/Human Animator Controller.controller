@@ -1186,97 +1186,97 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: Run
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: Sprint
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: Climb
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: Swim
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: Tread
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: Jump
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: RightArm_weapon
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: LeftArm_holdStyle
     m_Type: 3
     m_DefaultFloat: 0
     m_DefaultInt: -1
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: Thrust
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: Swing
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: JumpTrigger
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: LegSpeed
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: ClimbSpeed
     m_Type: 1
     m_DefaultFloat: 1
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: SwimSpeed
     m_Type: 1
     m_DefaultFloat: 2
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: TreadSpeed
     m_Type: 1
     m_DefaultFloat: 2
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Default
@@ -1293,7 +1293,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Legs_full
     m_StateMachine: {fileID: 7166963962817665445}
-    m_Mask: {fileID: 31900000, guid: 40414e6b97d2ef542b2a40b67bb374b6, type: 2}
+    m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
@@ -1305,7 +1305,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Legs_shuffle
     m_StateMachine: {fileID: -1798717906716097190}
-    m_Mask: {fileID: 31900000, guid: 40414e6b97d2ef542b2a40b67bb374b6, type: 2}
+    m_Mask: {fileID: 0}
     m_Motions:
     - serializedVersion: 2
       m_State: {fileID: 804108232811629379}
@@ -1328,6 +1328,9 @@ AnimatorController:
     - serializedVersion: 2
       m_State: {fileID: 1597659730655176697}
       m_Motion: {fileID: 7400000, guid: 8bf9a3a8ee768e243bbe5898acc08fff, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 6082339797199627359}
+      m_Motion: {fileID: 7400000, guid: 5a03759477d5362428f74df76d71b1f7, type: 2}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 1
@@ -1338,7 +1341,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Legs_backpedal
     m_StateMachine: {fileID: -3417725965936765089}
-    m_Mask: {fileID: 31900000, guid: 40414e6b97d2ef542b2a40b67bb374b6, type: 2}
+    m_Mask: {fileID: 0}
     m_Motions:
     - serializedVersion: 2
       m_State: {fileID: 804108232811629379}
@@ -1361,6 +1364,9 @@ AnimatorController:
     - serializedVersion: 2
       m_State: {fileID: 1597659730655176697}
       m_Motion: {fileID: 7400000, guid: 8bf9a3a8ee768e243bbe5898acc08fff, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 6082339797199627359}
+      m_Motion: {fileID: 7400000, guid: 5a03759477d5362428f74df76d71b1f7, type: 2}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 1

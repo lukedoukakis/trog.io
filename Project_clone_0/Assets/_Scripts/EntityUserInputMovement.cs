@@ -16,9 +16,17 @@ public class EntityUserInputMovement : EntityComponent
         handle.entityUserInputMovement = this;
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+        GameManager.current.localPlayer = this.gameObject;
+    }
+
     void Start(){
 
     }
+
+    
 
     void ApplyMouseInput(){
 

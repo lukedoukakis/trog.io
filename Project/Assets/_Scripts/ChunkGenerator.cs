@@ -15,8 +15,8 @@ public class ChunkGenerator : MonoBehaviour
     public static float MaxElevation = .224744871f;
     public static int MountainMapScale = 400;
     public static float ElevationMapScale = 2000;
-    public static int TemperatureMapScale = 1000;
-    public static int HumidityMapScale = 1000;
+    public static int TemperatureMapScale = 4000;
+    public static int HumidityMapScale = 2000;
     public static bool LoadingChunks, DeloadingChunks;
     static GameObject Chunk;
     static GameObject Terrain;
@@ -281,10 +281,9 @@ public class ChunkGenerator : MonoBehaviour
                 float e = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / ElevationMapScale, (z + zOffset - Seed + .01f) / ElevationMapScale);
                 //rough = Mathf.Pow(Mathf.PerlinNoise((x + xOffset + .01f) / 50f, (z + zOffset + .01f) / 50f) * 2f - 1f, .1f);
                 //e += rough;
-                e = .5f;
-                elevationValue = Mathf.Pow(e + .5f, .5f) - .75f;
-                float maxE = Mathf.Pow(1f + .5f, .5f) - .75f;
-                float minE = Mathf.Pow(0f + .5f, .5f) - .75f;
+                elevationValue = Mathf.Pow(e + .5f, .5f) - 1f;
+                float maxE = Mathf.Pow(1f + .5f, .5f) - 1f;
+                float minE = Mathf.Pow(0f + .5f, .5f) - 1f;
                 // -------------------------------------------------------
 
                 // MountainMap [0, 1]
@@ -329,16 +328,17 @@ public class ChunkGenerator : MonoBehaviour
                 // FreshWaterMap [0, 1]
                 float riverWindingScale = 180f;
                 freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverWindingScale, (z + zOffset - Seed + .01f) / riverWindingScale) * 2f - 1f;
-                rough = Mathf.Pow(Mathf.PerlinNoise((x + xOffset + .01f) / 10f, (z + zOffset + .01f) / 10f) + .5f, .3f) - 1f;
-                freshWaterValue += rough*.35f;
+                rough = Mathf.PerlinNoise((x + xOffset + .01f) / 40f, (z + zOffset + .01f) / 40f);
+                freshWaterValue *= Mathf.Pow(rough, .075f);
                 //freshWaterValue -= Mathf.PerlinNoise((x + xOffset + .01f) / 400f, (z + zOffset + .01f) / 400f) / 2f;
                 freshWaterValue = Mathf.Abs(freshWaterValue);
                 freshWaterValue *= -1f;
                 freshWaterValue += 1f;
                 freshWaterValue = Mathf.Clamp01(freshWaterValue);
-                freshWaterValue = Mathf.Pow(freshWaterValue, .13f);
-                freshWaterValue *= Mathf.InverseLerp(.55f, .85f, 1f - mountainValue);
-                //freshWaterValue = 0f;
+                //freshWaterValue = Mathf.Pow(freshWaterValue, .13f);
+            
+                //freshWaterValue *= Mathf.InverseLerp(.55f, .85f, 1f - mountainValue);
+                freshWaterValue = 0f;
 
 
     
@@ -404,14 +404,6 @@ public class ChunkGenerator : MonoBehaviour
                 // apply ElevationMap
                 heightValue += elevationValue * .1f;
 
-                // flatten high areas with respect to TemperatureMap
-                // tMod = 1f - Mathf.InverseLerp(temperatureValue, .45f, .55f);
-                // float heightCutoff = Mathf.Lerp(flatLevel + .01f, 1f, tMod);
-                // heightCutoff = Mathf.Clamp(heightCutoff, .86f + (flatLevel - flatLevel), 1f);
-                // if (heightValue > heightCutoff)
-                // {
-                //     heightValue = Mathf.Lerp(heightValue, heightCutoff, tMod);
-                // }
 
                 // create ocean and rivers
                 if (heightValue < flatLevel)
@@ -430,7 +422,7 @@ public class ChunkGenerator : MonoBehaviour
                 // posterize terrain
 
                 float steps, stepHeight, h, thresh;
-                steps = 2800f * (1f - (Mathf.Pow(mountainValue, 1f - temperatureValue)));
+                steps = 2800f * (1f - (Mathf.Pow(mountainValue, 1f)));
                 stepHeight = (1f - flatLevel) / steps;
                 h = 0f;
                 for (int i = 0; i < steps; i++)
@@ -454,7 +446,7 @@ public class ChunkGenerator : MonoBehaviour
                 float psgScale, psg;
                 psgScale = 600f;
                 psg = flatLevel + (.28f *  mountainValue * e * Mathf.PerlinNoise(((x + xOffset) / psgScale) + .01f, ((z + zOffset) / psgScale) + .01f));
-                psg = Mathf.Max(psg, e);
+                //psg = Mathf.Max(psg, e);
                 if(heightValue < psg){
                     if(heightValue >= flatLevel){
                         float c = .003f * Mathf.Pow(mountainValue, .1f);
@@ -465,6 +457,10 @@ public class ChunkGenerator : MonoBehaviour
                             //heightValue = Mathf.Lerp(heightValue, psg, .5f);
                         }
                     }
+                }
+
+                if((biomeValue == (int)Biome.BiomeType.SnowyTaiga || biomeValue == (int)Biome.BiomeType.Tundra) && heightValue > seaLevel){
+                    heightValue += .0002f;
                 }
 
 
@@ -529,16 +525,8 @@ public class ChunkGenerator : MonoBehaviour
         //     return c;
         // }
 
-        
-        if ((biome == (int)Biome.BiomeType.Tundra))
-        {
-            if(height > snowLevel){
-                c.b = 255f;
-                return c;
-            }
-            
-        }
-        else if(biome == (int)Biome.BiomeType.SnowyTaiga){
+    
+        if(biome == (int)Biome.BiomeType.SnowyTaiga || biome == (int)Biome.BiomeType.Tundra){
             if(height > seaLevel){
                 c.b = 255f;
                 return c;
@@ -723,12 +711,13 @@ public class ChunkGenerator : MonoBehaviour
 
                     point = hit.point;
                     float minY, maxY;
+                    float seaY = seaLevel * ElevationAmplitude;
                     if(onWater){
-                        minY = seaLevel * ElevationAmplitude;
-                        maxY = flatLevel + .001f;
+                        minY = seaY - .1f;
+                        maxY = seaY + .1f;
                     }
                     else{
-                        minY = flatLevel * ElevationAmplitude;
+                        minY = seaY + .02f;
                         maxY = float.MaxValue;
                     }
                     //if (hit.normal.y > treeMinYNormal)

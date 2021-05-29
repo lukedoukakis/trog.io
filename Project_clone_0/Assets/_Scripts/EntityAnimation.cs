@@ -227,7 +227,7 @@ public class EntityAnimation : EntityComponent
             if(velHoriz.magnitude > .05f){
                 if(handle.entityPhysics.sprinting){
                     SetAnimationBool("Sprint", true);
-                    SetAnimationFloat("LegSpeed", 1.175f);
+                    SetAnimationFloat("LegSpeed", 1.22f);
                 }
                 else{
                     SetAnimationBool("Run", true);

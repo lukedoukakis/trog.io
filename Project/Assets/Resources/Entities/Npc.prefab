@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 114389023734901772}
   - component: {fileID: 114389023734901775}
   - component: {fileID: 114389023734901769}
+  - component: {fileID: 2862668722696777771}
   m_Layer: 12
   m_Name: Npc
   m_TagString: Npc
@@ -133,6 +134,7 @@ MonoBehaviour:
   handle: {fileID: 0}
   home: {fileID: 0}
   move: {x: 0, y: 0, z: 0}
+  urgent: 0
   activeAction: {fileID: 0}
   actions: []
 --- !u!114 &114389023734901773
@@ -172,20 +174,37 @@ MonoBehaviour:
   hitbox: {fileID: 0}
   highFrictionMat: {fileID: 0}
   noFrictionMat: {fileID: 0}
+  layerMask_water:
+    serializedVersion: 2
+    m_Bits: 0
+  layerMask_noWater:
+    serializedVersion: 2
+    m_Bits: 0
   rb: {fileID: 0}
-  groundSense: {fileID: 0}
   gyro: {fileID: 0}
+  groundSense: {fileID: 0}
+  wallSense: {fileID: 0}
+  waterSense: {fileID: 0}
   obstacleHeightSense: {fileID: 0}
   moveDir: {x: 0, y: 0, z: 0}
+  jumping: 0
+  sprinting: 0
+  offWallTime: 0
+  offWaterTime: 0
   jumpTime: 0
   airTime: 0
   groundTime: 0
   acceleration: 0
-  maxSpeed: 0
+  maxSpeed_run: 0
+  maxSpeed_sprint: 0
+  maxSpeed_climb: 0
+  maxSpeed_swim: 0
   landScrunch: 0
   ROTATION_Y_THIS: 0
   ROTATION_Y_LAST: 0
   GROUNDTOUCH: 0
+  WALLTOUCH: 0
+  IN_WATER: 0
 --- !u!114 &114389023734901775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,6 +244,23 @@ MonoBehaviour:
   t_left_current: {fileID: 0}
   itemT: {fileID: 0}
   t_hand_right: {fileID: 0}
+--- !u!114 &2862668722696777771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114389023734901768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 0
+  visible: 0
+  m_AssetId: 
+  hasSpawned: 0
 --- !u!1001 &114389025283688070
 PrefabInstance:
   m_ObjectHideFlags: 0
