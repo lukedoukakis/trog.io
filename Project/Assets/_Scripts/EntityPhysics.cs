@@ -27,10 +27,10 @@ public class EntityPhysics : EntityComponent
 
 
     public Vector3 moveDir;
-    bool jumping;
+    public bool jumping, sprinting;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
     public float acceleration;
-    public float maxSpeed_run, maxSpeed_climb, maxSpeed_swim;
+    public float maxSpeed_run, maxSpeed_sprint, maxSpeed_climb, maxSpeed_swim;
 
 
     public static float landScrunch_recoverySpeed = .75f;
@@ -71,6 +71,7 @@ public class EntityPhysics : EntityComponent
     void Start(){
         acceleration = handle.entityStats.GetStat("speed") * AccelerationScale;
         maxSpeed_run = handle.entityStats.GetStat("speed") * MaxSpeedScale;
+        maxSpeed_sprint = maxSpeed_run * 1.5f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * .75f;
     }
@@ -78,6 +79,7 @@ public class EntityPhysics : EntityComponent
 
     public void Move(Vector3 direction, float speed){
         float speedStat = speed * handle.entityStats.GetStat("speed");
+        sprinting = handle.entityUserInputMovement.pressSprint || handle.entityBehavior.urgent;
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
         rb.AddForce(move * speedStat, ForceMode.Force);
     }
@@ -236,7 +238,7 @@ public class EntityPhysics : EntityComponent
                 max = maxSpeed_swim;
             }
             else{
-                max = maxSpeed_run;
+                max = sprinting ? maxSpeed_sprint : maxSpeed_run;
             }
         }
 

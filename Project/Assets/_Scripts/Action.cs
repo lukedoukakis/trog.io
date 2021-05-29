@@ -27,11 +27,14 @@ public class Action : ScriptableObject
     // body rotation mode
     public int bodyRotationMode;
 
+    // is urgent, i.e. will the entity sprint to accomplish the action etc.
+    public bool urgent;
+
 
     // maximum time to be spent executing the action
     public int maxSeconds;
 
-    public static Action GenerateAction(int _type, GameObject _obj, int _number, Item _item_target, Item _item_result, int _maxSeconds, float _distanceThreshold, int _bodyRotationMode){
+    public static Action GenerateAction(int _type, GameObject _obj, int _number, Item _item_target, Item _item_result, int _maxSeconds, float _distanceThreshold, int _bodyRotationMode, bool _urgent){
         Action a = ScriptableObject.CreateInstance<Action>();
         a.type = _type;
         a.obj = _obj;
@@ -41,6 +44,8 @@ public class Action : ScriptableObject
         a.maxSeconds = _maxSeconds;
         a.distanceThreshold = _distanceThreshold;
         a.bodyRotationMode = _bodyRotationMode;
+        a.urgent = _urgent;
+
         return a;
     }
     public static Action GenerateAction(){
@@ -53,8 +58,11 @@ public class Action : ScriptableObject
         a.maxSeconds = -1;
         a.distanceThreshold = -1;
         a.bodyRotationMode = (int)EntityAnimation.BodyRotationMode.Normal;
+        a.urgent = false;
         return a;
     }
+
+    // some predefined actions
     public static Action GenerateAction(string command, EntityHandle handle){
 
         Action a = Action.GenerateAction();
@@ -78,6 +86,7 @@ public class Action : ScriptableObject
                 break;
              case "Attack Entity" :
                 a.type = (int)Action.ActionTypes.Attack;
+                a.urgent = true;
                 // TODO: finish params
                 break;
 
@@ -93,6 +102,7 @@ public class Action : ScriptableObject
                 break;
             case "Attack TribeMember" :
                 a.type = (int)Action.ActionTypes.Attack;
+                a.urgent = true;
                 // a.obj = GameObject.FindGameObjectWithTag("Player");
 
                 GameObject[] gs = GameObject.FindGameObjectsWithTag("Npc");

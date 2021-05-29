@@ -9,6 +9,7 @@ public class EntityBehavior : EntityComponent
 
     public Transform home;
     public Vector3 move;
+    public bool urgent;
 
 
     public static float randomOffsetRange = 1f;
@@ -148,6 +149,8 @@ public class EntityBehavior : EntityComponent
                 Debug.Log("ObjectBehavior: called action not a defined action (" + a.type + ")... idling.");
                 break;
         }
+
+        urgent = a.urgent;
     }
 
 
@@ -242,8 +245,8 @@ public class EntityBehavior : EntityComponent
             Log("Collect: picking up object");
             GameObject target = foundObjects[0];
             Faction.AddItemTargeted(target, handle.entityInfo.faction);
-            Action goToObject = Action.GenerateAction((int)(Action.ActionTypes.GoTo), target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Normal);
-            Action pickupObject = Action.GenerateAction((int)(Action.ActionTypes.Pickup), target, -1, Item.GetItemByName(target.name), null, -1, -1f, (int)EntityAnimation.BodyRotationMode.Normal);
+            Action goToObject = Action.GenerateAction((int)(Action.ActionTypes.GoTo), target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Normal, false);
+            Action pickupObject = Action.GenerateAction((int)(Action.ActionTypes.Pickup), target, -1, Item.GetItemByName(target.name), null, -1, -1f, (int)EntityAnimation.BodyRotationMode.Normal, false);
             Action followPlayer = Action.GenerateAction("Follow Player", handle);
             InsertAction(pickupObject);
             InsertAction(goToObject);
@@ -270,8 +273,8 @@ public class EntityBehavior : EntityComponent
 
     public void Attack(Action a){
         GameObject target = a.obj;
-        Action goToTarget = Action.GenerateAction((int)(Action.ActionTypes.GoTo), target, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target);
-        Action swingAtTarget = Action.GenerateAction((int)(Action.ActionTypes.Swing), target, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target);
+        Action goToTarget = Action.GenerateAction((int)(Action.ActionTypes.GoTo), target, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target, true);
+        Action swingAtTarget = Action.GenerateAction((int)(Action.ActionTypes.Swing), target, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target, false);
         InsertAction(swingAtTarget);
         InsertAction(goToTarget);
         NextAction();
@@ -284,7 +287,7 @@ public class EntityBehavior : EntityComponent
 
         IEnumerator _Swing(){
             handle.entityAnimation.UseWeapon();
-            Action attackRecover = Action.GenerateAction((int)(Action.ActionTypes.AttackRecover), a.obj, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target);
+            Action attackRecover = Action.GenerateAction((int)(Action.ActionTypes.AttackRecover), a.obj, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target, false);
             InsertAction(attackRecover);
             yield return null;
             NextAction();
@@ -303,8 +306,8 @@ public class EntityBehavior : EntityComponent
             if(true){ // TODO: if target is alive
                 
                 
-                Action followTarget = Action.GenerateAction((int)(Action.ActionTypes.Follow), a.obj, -1, null, null, -1, distanceThreshold_combat, (int)EntityAnimation.BodyRotationMode.Target);
-                Action repeatAttack = Action.GenerateAction((int)(Action.ActionTypes.Attack), a.obj, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target);
+                Action followTarget = Action.GenerateAction((int)(Action.ActionTypes.Follow), a.obj, -1, null, null, -1, distanceThreshold_combat, (int)EntityAnimation.BodyRotationMode.Target, true);
+                Action repeatAttack = Action.GenerateAction((int)(Action.ActionTypes.Attack), a.obj, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target, false);
                 
                 InsertAction(followTarget);
                 NextAction();

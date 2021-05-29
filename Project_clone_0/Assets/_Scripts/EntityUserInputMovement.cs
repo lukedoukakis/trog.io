@@ -7,7 +7,7 @@ public class EntityUserInputMovement : EntityComponent
 {
 
 
-    public bool pressForward, pressBack, pressLeft, pressRight;
+    public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump;
     public List<GameObject> interactableObjects;
     public Vector3 move;
 
@@ -42,6 +42,8 @@ public class EntityUserInputMovement : EntityComponent
         pressBack = Input.GetKey(KeyCode.S);
         pressLeft = Input.GetKey(KeyCode.A);
         pressRight = Input.GetKey(KeyCode.D);
+        pressSprint = Input.GetKey(KeyCode.LeftShift);
+        pressJump = Input.GetKey(KeyCode.Space);
 
         if (pressForward)
         {
@@ -59,7 +61,10 @@ public class EntityUserInputMovement : EntityComponent
         {
             move.x += 1;
         }
-        if (Input.GetKey(KeyCode.Space))
+        if(pressSprint){
+            //handle.entityPhysics.sprinting = true;
+        }
+        if (pressJump)
         {
             if(handle.entityPhysics.CanJump()){
                 handle.entityPhysics.Jump();
@@ -80,10 +85,16 @@ public class EntityUserInputMovement : EntityComponent
         }
     }
 
+
+    void CheckInteraction(){
+        if(Input.GetKeyUp(KeyCode.E)){
+            CheckInteractableItems();
+            Interact();
+        }
+    }
     void CheckInteractableItems(){
         interactableObjects = handle.entityBehavior.SenseSurroundingItems(-1, null, EntityBehavior.senseDistance_immediate, handle.entityInfo.faction.warringFactions);
     }
-
     void Interact(){
         
         if(interactableObjects.Count != 0){
@@ -101,10 +112,8 @@ public class EntityUserInputMovement : EntityComponent
             HandleMovement();
             HandleRotation();
             HandleAttack();
-            if(Input.GetKeyUp(KeyCode.E)){
-                CheckInteractableItems();
-                Interact();
-            }
+            CheckInteraction();
+            
         }
 
         

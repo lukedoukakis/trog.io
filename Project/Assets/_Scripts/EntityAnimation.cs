@@ -37,6 +37,7 @@ public class EntityAnimation : EntityComponent
     public Dictionary<string, bool> animBools = new Dictionary<string, bool>{
         {"Stand",   false},
         {"Run",     false},
+        {"Sprint",     false},
         {"Climb",     false},
         {"Swim",     false},
         {"Tread",     false},
@@ -224,7 +225,14 @@ public class EntityAnimation : EntityComponent
 
         if(ground && !wall && !water){
             if(velHoriz.magnitude > .05f){
-                SetAnimationBool("Run", true);
+                if(handle.entityPhysics.sprinting){
+                    SetAnimationBool("Sprint", true);
+                    SetAnimationFloat("LegSpeed", 1.175f);
+                }
+                else{
+                    SetAnimationBool("Run", true);
+                    SetAnimationFloat("LegSpeed", 1f);
+                }
             }
             else{
                 SetAnimationBool("Stand", true);
