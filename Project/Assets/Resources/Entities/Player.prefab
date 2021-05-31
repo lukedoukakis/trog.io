@@ -233,6 +233,7 @@ MonoBehaviour:
   handle: {fileID: 0}
   home: {fileID: 0}
   move: {x: 0, y: 0, z: 0}
+  urgent: 0
   activeAction: {fileID: 0}
   actions: []
 --- !u!114 &7063413353330055437
@@ -272,24 +273,37 @@ MonoBehaviour:
   hitbox: {fileID: 0}
   highFrictionMat: {fileID: 0}
   noFrictionMat: {fileID: 0}
+  layerMask_water:
+    serializedVersion: 2
+    m_Bits: 0
+  layerMask_noWater:
+    serializedVersion: 2
+    m_Bits: 0
   rb: {fileID: 0}
   gyro: {fileID: 0}
   groundSense: {fileID: 0}
   wallSense: {fileID: 0}
+  waterSense: {fileID: 0}
   obstacleHeightSense: {fileID: 0}
   moveDir: {x: 0, y: 0, z: 0}
-  jumpTime: 0
+  jumping: 0
+  sprinting: 0
   offWallTime: 0
+  offWaterTime: 0
+  jumpTime: 0
   airTime: 0
   groundTime: 0
   acceleration: 0
   maxSpeed_run: 0
+  maxSpeed_sprint: 0
   maxSpeed_climb: 0
+  maxSpeed_swim: 0
   landScrunch: 0
   ROTATION_Y_THIS: 0
   ROTATION_Y_LAST: 0
   GROUNDTOUCH: 0
   WALLTOUCH: 0
+  IN_WATER: 0
 --- !u!114 &7063413353330055435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,6 +374,8 @@ MonoBehaviour:
   pressBack: 0
   pressLeft: 0
   pressRight: 0
+  pressSprint: 0
+  pressJump: 0
   interactableObjects: []
   move: {x: 0, y: 0, z: 0}
 --- !u!114 &2671546838428155326

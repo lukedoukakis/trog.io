@@ -506,7 +506,7 @@ public class ChunkGenerator : MonoBehaviour
 
             }
 
-            yield return new WaitForSecondsRealtime(.00001f);
+            yield return new WaitForSecondsRealtime(.0000001f);
             
         }
 

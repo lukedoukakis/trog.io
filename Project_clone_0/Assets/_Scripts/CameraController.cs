@@ -6,6 +6,7 @@ using Mirror;
 public class CameraController : MonoBehaviour
 {
     public Transform playerT;
+    Transform followT;
     public Transform focusT;
     public static float cameraDistanceScale = .05f;
     
@@ -29,8 +30,9 @@ public class CameraController : MonoBehaviour
 
     public void Init(Transform t){
         playerT = t;
+        followT = GameObject.Instantiate(new GameObject(), playerT.position, Quaternion.identity).transform;
         //Cursor.visible = false;
-        Application.targetFrameRate = -1;
+        Application.targetFrameRate = 50;
         QualitySettings.vSyncCount = 1;
         float[] cullDistances = new float[32];
         cullDistances[10] = featureCullDistance;
@@ -66,12 +68,12 @@ public class CameraController : MonoBehaviour
             {
                 posModifier = -.1f;
             }
+            followT.position = Vector3.Lerp(followT.position, playerT.position, 18f * Time.deltaTime);
 
-            Vector3 targetPos = playerT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f) + (Mathf.Sin(posModifier * pi) * Vector3.up * 4f);
-            
+            Vector3 targetPos = followT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f) + (Mathf.Sin(posModifier * pi) * Vector3.up * 4f);
             Camera.main.transform.position = targetPos;
 
-            Vector3 targetLookAt = playerT.position + Vector3.up*1f;
+            Vector3 targetLookAt = followT.position + Vector3.up*1f;
             Camera.main.transform.LookAt(targetLookAt);
         
         

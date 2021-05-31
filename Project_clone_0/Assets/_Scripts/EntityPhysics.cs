@@ -14,11 +14,11 @@ public class EntityPhysics : EntityComponent
     public Rigidbody rb;
     public Transform gyro;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense;
-    RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float groundCastDistance_player = .05f;
-    public static float groundCastDistance_npc = .05f;
+    public RaycastHit groundInfo, wallInfo, waterInfo;
+    public static float groundCastDistance_player = .1f;
+    public static float groundCastDistance_npc = .1f;
     public static float groundCastDistance_far = 100f;
-    public static float wallCastDistance = 0f;
+    public static float wallCastDistance = 1f;
     float groundCastDistance;
     public static float JumpForce = 700f;
     public static float AccelerationScale = 35f;
@@ -27,7 +27,7 @@ public class EntityPhysics : EntityComponent
 
 
     public Vector3 moveDir;
-    public bool jumping, sprinting;
+    public bool jumping, leftJump, sprinting;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
     public float acceleration;
     public float maxSpeed_run, maxSpeed_sprint, maxSpeed_climb, maxSpeed_swim;
@@ -82,6 +82,7 @@ public class EntityPhysics : EntityComponent
         sprinting = handle.entityBehavior.urgent || GameManager.current.localPlayer.GetComponent<EntityHandle>().entityUserInputMovement.pressSprint;
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
         rb.AddForce(move * speedStat, ForceMode.Force);
+        
     }
 
     public void Jump(float power){
@@ -96,6 +97,7 @@ public class EntityPhysics : EntityComponent
     }
     IEnumerator _Jump(float power){
         jumping = true;
+        leftJump = !leftJump;
         if(groundTime <= JumpCoolDown){
             float t = JumpCoolDown - groundTime;
             yield return new WaitForSecondsRealtime(t);
@@ -107,7 +109,7 @@ public class EntityPhysics : EntityComponent
         rb.AddForce(direction * power, ForceMode.Force);
         jumpTime = 0;
         groundTime = 0;
-        yield return new WaitForSecondsRealtime(.1f);
+        yield return new WaitForSecondsRealtime(.2f);
         jumping = false;
         yield return null;
     }
@@ -116,7 +118,10 @@ public class EntityPhysics : EntityComponent
     }
 
     public bool CanJump(){
-        return GROUNDTOUCH;
+        if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_noWater)){
+            return true;
+        }
+        return false;
     }
 
 
@@ -125,7 +130,6 @@ public class EntityPhysics : EntityComponent
 
     void CheckGround(){
         Vector3 vel = rb.velocity;
-        // directly underneath
         if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far, layerMask_noWater)){
             if(Vector3.Distance(groundInfo.point, transform.position) < groundCastDistance){
                 if(!GROUNDTOUCH){
@@ -144,15 +148,13 @@ public class EntityPhysics : EntityComponent
                 airTime += Time.fixedDeltaTime;
             }
         }
-        
     }
 
     void CheckWall(){
         bool w = false;
-        if(offWallTime > -1f){
+        if(offWallTime > .4f){
             if(moveDir.magnitude > 0){
-                //Debug.DrawRay(wallSense.position, handle.entityAnimation.bodyT.forward*wallCastDistance, Color.green, Time.deltaTime);
-                if(Physics.Raycast(wallSense.position, transform.forward, out wallInfo, wallCastDistance)){
+                if(Physics.Raycast(wallSense.position, transform.forward, out wallInfo, wallCastDistance) || Physics.Raycast(wallSense.position, handle.entityAnimation.bodyT.forward, out wallInfo, wallCastDistance)){
                     string tag = wallInfo.collider.gameObject.tag;
                     if(tag != "Npc" && tag != "Player" && tag != "Body"){
                         w = true;
@@ -239,6 +241,9 @@ public class EntityPhysics : EntityComponent
             }
             else{
                 max = sprinting ? maxSpeed_sprint : maxSpeed_run;
+                if(!jumping && ySpeed > maxSpeed_climb){
+                    ySpeed = maxSpeed_climb; 
+                }
             }
         }
 
@@ -277,7 +282,7 @@ public class EntityPhysics : EntityComponent
         CheckPhysicMaterial();
         Move(moveDir, acceleration);
         CheckGround();
-        CheckWall();
+        //CheckWall();
         CheckWater();
         CheckScrunch();
         LimitSpeed();

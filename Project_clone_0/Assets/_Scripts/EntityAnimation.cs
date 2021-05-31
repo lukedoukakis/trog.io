@@ -27,7 +27,7 @@ public class EntityAnimation : EntityComponent
 
     float posture_squat, squat_activity;
 
-    float runMagnitude;
+    float runMagnitude, climbMagnitude;
     float bodySkew, slowness;
 
 
@@ -42,6 +42,7 @@ public class EntityAnimation : EntityComponent
         {"Swim",     false},
         {"Tread",     false},
         {"Jump",    false},
+        {"Left Jump",    false},
         {"Land",    false},
         {"RightArm_weapon",    false},
     };
@@ -266,6 +267,7 @@ public class EntityAnimation : EntityComponent
                 
             }
         }
+        SetAnimationBool("Left Jump", handle.entityPhysics.leftJump);
 
         // calculate run
         if(handle.entityPhysics.moveDir.magnitude > 0){
@@ -297,7 +299,6 @@ public class EntityAnimation : EntityComponent
         float backMagnitude = (1f - runMagnitude) * Mathf.Lerp(0f, .2f, bodySkew);
         SetAnimationLayerWeight("Legs_backpedal", backMagnitude);
         SetAnimationLayerWeight("Legs_shuffle", 1f - backMagnitude - runMagnitude);
-
 
         // calculate posture
         SetAnimationLayerWeight("Squat Position", posture_squat + squat_activity + handle.entityPhysics.landScrunch);
