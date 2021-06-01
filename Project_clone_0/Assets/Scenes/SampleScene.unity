@@ -1519,6 +1519,11 @@ PrefabInstance:
       propertyPath: sceneId
       value: 123794198
       objectReference: {fileID: 0}
+    - target: {fileID: 3493906433694126395, guid: fe8351d38e60107458c40f99f91343fa,
+        type: 3}
+      propertyPath: m_UpdateMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8686448459088111716, guid: fe8351d38e60107458c40f99f91343fa,
         type: 3}
       propertyPath: m_AABB.m_Center.x

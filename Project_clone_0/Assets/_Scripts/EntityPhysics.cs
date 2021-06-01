@@ -20,7 +20,7 @@ public class EntityPhysics : EntityComponent
     public static float groundCastDistance_far = 100f;
     public static float wallCastDistance = 1f;
     float groundCastDistance;
-    public static float JumpForce = 700f;
+    public static float JumpForce = 2800f;
     public static float AccelerationScale = 35f;
     public static float MaxSpeedScale = 20f;
     public static float JumpCoolDown = .15f;
@@ -79,7 +79,7 @@ public class EntityPhysics : EntityComponent
 
     public void Move(Vector3 direction, float speed){
         float speedStat = speed * handle.entityStats.GetStat("speed");
-        sprinting = handle.entityBehavior.urgent || GameManager.current.localPlayer.GetComponent<EntityHandle>().entityUserInputMovement.pressSprint;
+        sprinting = handle.entityBehavior.urgent || (isLocalPlayer && handle.entityUserInputMovement.pressSprint);
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
         rb.AddForce(move * speedStat, ForceMode.Force);
         

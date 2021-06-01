@@ -287,6 +287,7 @@ MonoBehaviour:
   obstacleHeightSense: {fileID: 0}
   moveDir: {x: 0, y: 0, z: 0}
   jumping: 0
+  leftJump: 0
   sprinting: 0
   offWallTime: 0
   offWaterTime: 0
@@ -376,6 +377,9 @@ MonoBehaviour:
   pressRight: 0
   pressSprint: 0
   pressJump: 0
+  mouseX: 0
+  mouseY: 0
+  mouseZ: 0
   interactableObjects: []
   move: {x: 0, y: 0, z: 0}
 --- !u!114 &2671546838428155326

@@ -17,6 +17,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] float smallFeatureCullDistance;
     float acceleration;
 
+    Vector3 targetPos;
+    Vector3 targetLookAt;
     float posModifier;
 
     void Awake(){
@@ -32,7 +34,7 @@ public class CameraController : MonoBehaviour
         playerT = t;
         followT = GameObject.Instantiate(new GameObject(), playerT.position, Quaternion.identity).transform;
         //Cursor.visible = false;
-        Application.targetFrameRate = 50;
+        Application.targetFrameRate = -1;
         QualitySettings.vSyncCount = 1;
         float[] cullDistances = new float[32];
         cullDistances[10] = featureCullDistance;
@@ -43,7 +45,7 @@ public class CameraController : MonoBehaviour
     }
 
 
-    void AdjustCamera(int mode){
+    public void AdjustCamera(int mode){
         // static camera
         if (mode == 0)
         {
@@ -56,7 +58,6 @@ public class CameraController : MonoBehaviour
         else if (mode == 1)
         {
 
-            
             float pi = Mathf.PI;
 
             posModifier += Input.GetAxis("Mouse Y") * -.075f * sensitivity * Time.fixedDeltaTime;
@@ -70,10 +71,10 @@ public class CameraController : MonoBehaviour
             }
             followT.position = Vector3.Lerp(followT.position, playerT.position, 18f * Time.deltaTime);
 
-            Vector3 targetPos = followT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f) + (Mathf.Sin(posModifier * pi) * Vector3.up * 4f);
+            targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f) + (Mathf.Sin(posModifier * pi) * Vector3.up * 4f), 50f * Time.deltaTime);
             Camera.main.transform.position = targetPos;
 
-            Vector3 targetLookAt = followT.position + Vector3.up*1f;
+            targetLookAt = Vector3.Lerp(targetLookAt, followT.position + Vector3.up*1f, 50f * Time.deltaTime);
             Camera.main.transform.LookAt(targetLookAt);
         
         

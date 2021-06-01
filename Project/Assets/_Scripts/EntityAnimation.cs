@@ -15,8 +15,8 @@ public class EntityAnimation : EntityComponent
     // rotation
     int bodyRotationMode;
     Transform bodyRotationTarget;
-    public static float bodyRotationSpeed_player = .25f;
-    public static float bodyRotationSpeed_ai = .25f;
+    public static float bodyRotationSpeed_player = .0625f;
+    public static float bodyRotationSpeed_ai = .0625f;
     float bodyRotationSpeed;
     Quaternion bodyRotation;
     Quaternion bodyRotationLast;
@@ -36,6 +36,7 @@ public class EntityAnimation : EntityComponent
     // should match 'parameters' in Animator
     public Dictionary<string, bool> animBools = new Dictionary<string, bool>{
         {"Stand",   false},
+        {"Rotate",   false},
         {"Run",     false},
         {"Sprint",     false},
         {"Climb",     false},
@@ -236,7 +237,12 @@ public class EntityAnimation : EntityComponent
                 }
             }
             else{
-                SetAnimationBool("Stand", true);
+                if((isLocalPlayer && handle.entityUserInputMovement.mouseY < -.5f)){
+                    SetAnimationBool("Rotate", true);
+                }
+                else{
+                    SetAnimationBool("Stand", true);
+                }
             }
         }
         else{

@@ -8,6 +8,9 @@ public class EntityUserInputMovement : EntityComponent
 
 
     public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump;
+    public float mouseX, mouseY, mouseZ;
+
+    Quaternion targetRot;
     public List<GameObject> interactableObjects;
     public Vector3 move;
 
@@ -30,16 +33,25 @@ public class EntityUserInputMovement : EntityComponent
 
     void ApplyMouseInput(){
 
+        float sensitivity = 5f;
+        float smoothing = 300f * Time.deltaTime;
+
         if(GameManager.current.cameraMode == 0){
             
         }
         else if(GameManager.current.cameraMode == 1){
-            float y = Input.GetAxis("Mouse X") * 700f * Time.deltaTime;
-            float x = 0f;
-            float z = 0f;
 
-            Quaternion targetRot = transform.rotation * Quaternion.Euler(new Vector3(x, y, z));
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 1f);
+            float deltaY = Input.GetAxis("Mouse X") * sensitivity * smoothing;
+            mouseY = Mathf.Clamp(Mathf.Lerp(mouseY, deltaY, 1f / smoothing), mouseY - 2f, mouseY + 2f);
+
+            mouseX = 0f;
+            mouseZ = 0f;
+
+            //Log(mouseY.ToString());
+
+            targetRot = Quaternion.Slerp(transform.rotation, transform.rotation * Quaternion.Euler(new Vector3(mouseX, mouseY, mouseZ)), 1f / smoothing);
+            transform.rotation = targetRot;
+           
         }
         
     }
@@ -123,8 +135,6 @@ public class EntityUserInputMovement : EntityComponent
             CheckInteraction();
             
         }
-
-        
 
     }
 
