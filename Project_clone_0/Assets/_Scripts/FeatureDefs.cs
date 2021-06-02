@@ -23,7 +23,7 @@ public class TreeInfo : MonoBehaviour
         switch (name)
         {
             case "Acacia Tree":
-                scale = 1.2f;
+                scale = 1.3f;
                 density = .05f;
                 normal = .998f;
                 slant = 0f;
@@ -37,17 +37,17 @@ public class TreeInfo : MonoBehaviour
                 spread = 1.5f;
                 break;
             case "Fir Tree":
-                scale = 1.75f;
-                density = .7f;
+                scale = 1.5f;
+                density = 1f;
                 normal = .7f;
-                slant = .18f;
+                slant = .12f;
                 spread = 2f;
                 break;
             case "Snowy Fir Tree":
-                scale = 1.75f;
-                density = .7f;
+                scale = 1.5f;
+                density = 1f;
                 normal = .7f;
-                slant = .18f;
+                slant = .12f;
                 spread = 2f;
                 break;
             case "Palm Tree":

@@ -113,7 +113,7 @@ public class ChunkGenerator : MonoBehaviour
     void Init()
     {
         Seed = UnityEngine.Random.Range(0, 1000);
-        Seed = 1;
+        //Seed = 1;
         if (Seed == -1) { Seed = UnityEngine.Random.Range(-100000, 100000); }
         Debug.Log("seed: " + Seed.ToString());
 
@@ -403,7 +403,7 @@ public class ChunkGenerator : MonoBehaviour
                 }
 
                 // apply ElevationMap
-                heightValue += elevationValue * .01f;
+                heightValue += elevationValue * .1f;
 
 
                 // create ocean and rivers
@@ -444,23 +444,20 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // create flatland
-                float psgScale, psgSteps, psgStepHeight, psg, oldPsg, psgNoise;
-                psgScale = 6000000f;
-                psgSteps = 50f;
+                float psgScale, psgSteps, psgStepHeight, psg, oldPsg;
+                psgSteps = 20f;
                 psgStepHeight = (1f - flatLevel) / psgSteps;
-                psgNoise = Mathf.PerlinNoise(((x + xOffset) / psgScale) + .01f, ((z + zOffset) / psgScale) + .01f);
-                psgNoise = .5f;
                 
 
                 oldPsg = flatLevel;
                 for(int i = 0; i < psgSteps; i++){
-                    psg = oldPsg + (.13f *  mountainValue * e * psgNoise);
+                    psg = oldPsg + (.065f *  mountainValue * e);
                     if(psg >= .92f){
                         break;
                     }
                     if (heightValue < psg){
                         if (heightValue >= oldPsg){
-                            float c = .003f * Mathf.Pow(mountainValue, .01f);
+                            float c = .003f * (Mathf.Pow(mountainValue, .01f) - .1f);
                             if (heightValue >= oldPsg + c){
                                 heightValue = psg;
                             }
@@ -490,11 +487,10 @@ public class ChunkGenerator : MonoBehaviour
                 {
                     float duneMag = .0008f * (1f - Mathf.Pow(Mathf.Clamp01(freshWaterValue), 1.3f)) * (1f - Mathf.Pow(wetnessValue, 1.2f));
                     heightValue += duneMag * (1f - Mathf.Abs(Mathf.Sin((x + xOffset - Seed + .01f + Mathf.Sin(z+zOffset)*8f) / 15f)));
+                }else{
+                    heightValue += .0001f * Mathf.PerlinNoise((x + xOffset) / 5f, (z + zOffset) /5f);
                 }
 
-                // if(heightValue > snowLevel - .0005f){
-                //     heightValue = snowLevel;
-                // }
 
                 // dip
                 if(heightValue < seaLevel - .0001f){
@@ -664,6 +660,8 @@ public class ChunkGenerator : MonoBehaviour
         float height;
         float fw;
 
+        int step = (int)(20f * (1f - treeDensity)) + 1;
+
         for (int z = 0; z < ChunkSize + 2; z += 10)
         {
             for (int x = 0; x < ChunkSize + 2; x += 10)
@@ -714,6 +712,7 @@ public class ChunkGenerator : MonoBehaviour
         Quaternion slantedRot;
         Vector3 castVec, point;
         float castLength;
+        float yNorm;
 
         int passes = (int)(wetness * densityMultipler * treeDensity);
         passes = Mathf.Clamp(passes, (int)(UnityEngine.Random.value + .25f), passes);
@@ -740,8 +739,10 @@ public class ChunkGenerator : MonoBehaviour
                         maxY = float.MaxValue;
                     }
                     //if (hit.normal.y > treeMinYNormal)
-                    if (point.y >= minY && point.y <= maxY && hit.normal.y > .8f)
+                    yNorm = hit.normal.y;
+                    if (point.y >= minY && point.y <= maxY && yNorm > .25f)
                     {
+                        point.y -= 1.5f * (1f - yNorm);
                         uprightRot = Quaternion.AngleAxis(UnityEngine.Random.value * 360f, Vector3.up);
                         slantedRot = Quaternion.FromToRotation(transform.up, hit.normal);
                         tree = GameObject.Instantiate(tree, point, Quaternion.Slerp(uprightRot, slantedRot, treeAngleMultiplier), Trees.transform);
@@ -782,24 +783,5 @@ public class ChunkGenerator : MonoBehaviour
         return GetChunk(chunkCoord);
     }
 
-    public float Posterize(float value, float maxValue, int sections)
-    {
-        float ret = -1;
-
-        float sectionSize = maxValue / sections;
-        for (int i = 0; i < sections; i++)
-        {
-            ret = sectionSize * (i + 1);
-            if (value <= ret)
-            {
-                return ret;
-            }
-        }
-
-
-
-
-        return ret;
-    }
 
 }

@@ -37,6 +37,7 @@ public class EntityAnimation : EntityComponent
     public Dictionary<string, bool> animBools = new Dictionary<string, bool>{
         {"Stand",   false},
         {"Rotate",   false},
+        {"Mirror Rotate",   false},
         {"Run",     false},
         {"Sprint",     false},
         {"Climb",     false},
@@ -237,8 +238,14 @@ public class EntityAnimation : EntityComponent
                 }
             }
             else{
-                if((isLocalPlayer && handle.entityUserInputMovement.mouseY < -.5f)){
-                    SetAnimationBool("Rotate", true);
+                if(isLocalPlayer){
+                    if(handle.entityUserInputMovement.mouseY < -.5f){
+                        SetAnimationBool("Rotate", true);
+                    }
+                    // else if(handle.entityUserInputMovement.mouseY > .5f){
+                    //     SetAnimationBool("Rotate", true);
+                    //     SetAnimationBool("Mirror Rotate", true);
+                    // }
                 }
                 else{
                     SetAnimationBool("Stand", true);
