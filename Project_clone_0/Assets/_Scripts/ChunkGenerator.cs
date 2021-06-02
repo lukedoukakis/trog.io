@@ -11,7 +11,7 @@ public class ChunkGenerator : MonoBehaviour
     public static int ChunkSize = 100;
     public static int ChunkRenderDistance = 10;
     public static float Scale = 800f;
-    public static float ElevationAmplitude = 1800f * 3f;
+    public static float ElevationAmplitude = 1800f * 5f;
     public static float MinElevation = -.292893219f;
     public static float MaxElevation = .224744871f;
     public static int MountainMapScale = 400 * 2;
@@ -446,7 +446,7 @@ public class ChunkGenerator : MonoBehaviour
                 // create flatland
                 float psgScale, psgSteps, psgStepHeight, psg, oldPsg, psgNoise;
                 psgScale = 6000000f;
-                psgSteps = 20f;
+                psgSteps = 50f;
                 psgStepHeight = (1f - flatLevel) / psgSteps;
                 psgNoise = Mathf.PerlinNoise(((x + xOffset) / psgScale) + .01f, ((z + zOffset) / psgScale) + .01f);
                 psgNoise = .5f;
@@ -454,7 +454,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 oldPsg = flatLevel;
                 for(int i = 0; i < psgSteps; i++){
-                    psg = oldPsg + (.16f *  mountainValue * e * psgNoise);
+                    psg = oldPsg + (.13f *  mountainValue * e * psgNoise);
                     if(psg >= .92f){
                         break;
                     }
@@ -736,7 +736,7 @@ public class ChunkGenerator : MonoBehaviour
                         maxY = seaY + .1f;
                     }
                     else{
-                        minY = seaY + .02f;
+                        minY = seaY + .001f;
                         maxY = float.MaxValue;
                     }
                     //if (hit.normal.y > treeMinYNormal)
