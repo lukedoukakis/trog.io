@@ -42,7 +42,7 @@ public class EntityHandle : EntityComponent
             CameraController.current.Init(this.transform);
 
         }
-        transform.position = new Vector3(0f, 1650f * 5f, 0f);
+        transform.position = new Vector3(0f, 1650f * 3f, 0f);
 
         // if loading from memory
         if(fromMemory){
@@ -154,7 +154,9 @@ public class EntityHandle : EntityComponent
     // Update is called once per frame
     void Update()
     {
-        
+        if(Input.GetKeyUp(KeyCode.R)){
+            transform.position = new Vector3(Random.Range(-5000f, 5000f), 1650f * 3f, Random.Range(-5000f, 5000f));
+        }
     }
     
 }

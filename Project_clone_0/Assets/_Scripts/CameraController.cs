@@ -8,13 +8,16 @@ public class CameraController : MonoBehaviour
     public Transform playerT;
     Transform followT;
     public Transform focusT;
-    public static float cameraDistanceScale = .05f;
+    public float cameraDistance_baked;
+    public float cameraDistance_input;
     
     public static CameraController current;
 
-    [SerializeField] float sensitivity;
+    [SerializeField] float sensitivity_rotation;
+    [SerializeField] float sensitivity_zoom;
     [SerializeField] float featureCullDistance;
     [SerializeField] float smallFeatureCullDistance;
+    [SerializeField] bool showCursor;
     float acceleration;
 
     Vector3 targetPos;
@@ -33,7 +36,7 @@ public class CameraController : MonoBehaviour
     public void Init(Transform t){
         playerT = t;
         followT = GameObject.Instantiate(new GameObject(), playerT.position, Quaternion.identity).transform;
-        //Cursor.visible = false;
+        Cursor.visible = showCursor;
         Application.targetFrameRate = -1;
         QualitySettings.vSyncCount = 1;
         float[] cullDistances = new float[32];
@@ -41,11 +44,15 @@ public class CameraController : MonoBehaviour
         cullDistances[11] = smallFeatureCullDistance;
         Camera.main.layerCullDistances = cullDistances;
         posModifier = 0f;
+        cameraDistance_input = 1f;
         //RandomSpawn();
     }
 
 
     public void AdjustCamera(int mode){
+
+        ZoomInput();
+
         // static camera
         if (mode == 0)
         {
@@ -60,25 +67,38 @@ public class CameraController : MonoBehaviour
 
             float pi = Mathf.PI;
 
-            posModifier += Input.GetAxis("Mouse Y") * -.075f * sensitivity * Time.fixedDeltaTime;
-            if (posModifier > .25f)
-            {
-                posModifier = .25f;
-            }
-            if (posModifier < -.1)
-            {
-                posModifier = -.1f;
-            }
-            followT.position = Vector3.Lerp(followT.position, playerT.position, 18f * Time.deltaTime);
+            posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
 
-            targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f) + (Mathf.Sin(posModifier * pi) * Vector3.up * 4f), 50f * Time.deltaTime);
+            // above
+            if (posModifier > .48f)
+            {
+                posModifier = .48f;
+            }
+
+            // below
+            if (posModifier < -.48f)
+            {
+                posModifier = -.48f;
+            }
+
+            cameraDistance_baked = 1f - (Mathf.Min(0f, posModifier) * -1.5f);
+
+            followT.position = Vector3.Lerp(followT.position, playerT.position + Vector3.up*1f, 18f * Time.deltaTime);
+
+            targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f * cameraDistance_baked * cameraDistance_input) + (Mathf.Sin(posModifier * pi) * Vector3.up * 4f * cameraDistance_baked * cameraDistance_input), 50f * Time.deltaTime);
             Camera.main.transform.position = targetPos;
 
-            targetLookAt = Vector3.Lerp(targetLookAt, followT.position + Vector3.up*1f, 50f * Time.deltaTime);
+            targetLookAt = Vector3.Lerp(targetLookAt, followT.position + Vector3.up*0f, 50f * Time.deltaTime);
             Camera.main.transform.LookAt(targetLookAt);
         
         
         }
+    }
+
+    void ZoomInput(){
+        float zoomDelta = Input.mouseScrollDelta.y * sensitivity_zoom;
+        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .2f, 2f);
+        cameraDistance_input = Mathf.Lerp(cameraDistance_input, targetZoom, 40f * Time.deltaTime);
     }
 
 

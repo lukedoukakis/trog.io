@@ -27,7 +27,7 @@ public class EntityPhysics : EntityComponent
 
 
     public Vector3 moveDir;
-    public bool jumping, leftJump, sprinting;
+    public bool jumping, jumpOpposite, sprinting;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
     public float acceleration;
     public float maxSpeed_run, maxSpeed_sprint, maxSpeed_climb, maxSpeed_swim;
@@ -97,7 +97,7 @@ public class EntityPhysics : EntityComponent
     }
     IEnumerator _Jump(float power){
         jumping = true;
-        leftJump = !leftJump;
+        jumpOpposite = !jumpOpposite;
         if(groundTime <= JumpCoolDown){
             float t = JumpCoolDown - groundTime;
             yield return new WaitForSecondsRealtime(t);
@@ -178,7 +178,7 @@ public class EntityPhysics : EntityComponent
     void CheckWater(){
         bool w = false;
         float y = transform.position.y;
-        float waterY = ChunkGenerator.current.seaLevel*ChunkGenerator.ElevationAmplitude;
+        float waterY = ChunkGenerator.SeaLevel*ChunkGenerator.ElevationAmplitude;
         if(y <= waterY){
         //if(Physics.Raycast(waterSense.position, Vector3.up, out waterInfo, layerMask_water)){
             w = true;

@@ -37,14 +37,14 @@ public class EntityAnimation : EntityComponent
     public Dictionary<string, bool> animBools = new Dictionary<string, bool>{
         {"Stand",   false},
         {"Rotate",   false},
-        {"Mirror Rotate",   false},
+        {"Rotate Opposite",   false},
         {"Run",     false},
         {"Sprint",     false},
         {"Climb",     false},
         {"Swim",     false},
         {"Tread",     false},
         {"Jump",    false},
-        {"Left Jump",    false},
+        {"Jump Opposite",    false},
         {"Land",    false},
         {"RightArm_weapon",    false},
     };
@@ -238,14 +238,14 @@ public class EntityAnimation : EntityComponent
                 }
             }
             else{
+                //SetAnimationBool("Stand", true);
                 if(isLocalPlayer){
-                    if(handle.entityUserInputMovement.mouseY < -.5f){
+                    if(Mathf.Abs(handle.entityUserInputMovement.mouseY) > .5f){
                         SetAnimationBool("Rotate", true);
                     }
-                    // else if(handle.entityUserInputMovement.mouseY > .5f){
-                    //     SetAnimationBool("Rotate", true);
-                    //     SetAnimationBool("Mirror Rotate", true);
-                    // }
+                    else{
+                        SetAnimationBool("Stand", true);
+                    }
                 }
                 else{
                     SetAnimationBool("Stand", true);
@@ -280,7 +280,8 @@ public class EntityAnimation : EntityComponent
                 
             }
         }
-        SetAnimationBool("Left Jump", handle.entityPhysics.leftJump);
+        SetAnimationBool("Jump Opposite", handle.entityPhysics.jumpOpposite);
+        SetAnimationBool("Rotate Opposite", handle.entityUserInputMovement.mouseY > .5f);
 
         // calculate run
         if(handle.entityPhysics.moveDir.magnitude > 0){
@@ -386,13 +387,12 @@ public class EntityAnimation : EntityComponent
 
     void FixedUpdate(){
         UpdateBodyRotation();
-        UpdateMovement();
         bodyRotationLast = bodyT.rotation;
         angularVelocityY_last = angularVelocityY;
     }
 
     void Update(){
-       
+        UpdateMovement();
     }
 
 

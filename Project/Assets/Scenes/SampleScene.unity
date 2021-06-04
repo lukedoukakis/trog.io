@@ -3226,9 +3226,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerT: {fileID: 0}
   focusT: {fileID: 0}
-  sensitivity: 10
+  cameraDistance_baked: 0
+  cameraDistance_input: 0
+  sensitivity_rotation: 3
+  sensitivity_zoom: 0.3
   featureCullDistance: 1000
   smallFeatureCullDistance: 100
+  showCursor: 0
 --- !u!114 &1158204826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5386,9 +5390,6 @@ MonoBehaviour:
   persistance: 0.17
   lacunarity: 10
   posterize_variationScale: 100
-  flatLevel: 0.85
-  seaLevel: 0.849985
-  snowLevel: 0.88
   treeDensity: 0.65
 --- !u!114 &2134817000
 MonoBehaviour:

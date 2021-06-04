@@ -11,7 +11,7 @@ public class ChunkGenerator : MonoBehaviour
     public static int ChunkSize = 100;
     public static int ChunkRenderDistance = 10;
     public static float Scale = 800f;
-    public static float ElevationAmplitude = 1800f * 5f;
+    public static float ElevationAmplitude = 1800f * 3f;
     public static float MinElevation = -.292893219f;
     public static float MaxElevation = .224744871f;
     public static int MountainMapScale = 400 * 2;
@@ -19,6 +19,9 @@ public class ChunkGenerator : MonoBehaviour
     public static int TemperatureMapScale = 4000;
     public static int HumidityMapScale = 2000;
     public static float MountainPolarity = 1f;
+    public static float FlatLevel = .85f;
+    public static float SeaLevel = 0.849985f;
+    public static float SnowLevel = .86f;
     public static bool LoadingChunks, DeloadingChunks;
     static GameObject Chunk;
     static GameObject Terrain;
@@ -75,9 +78,6 @@ public class ChunkGenerator : MonoBehaviour
     public float lacunarity;
     public float posterize_variationScale;
 
-    public float flatLevel;
-    public float seaLevel;
-    public float snowLevel;
 
 
     // feature
@@ -113,7 +113,7 @@ public class ChunkGenerator : MonoBehaviour
     void Init()
     {
         Seed = UnityEngine.Random.Range(0, 1000);
-        //Seed = 1;
+        Seed = 1;
         if (Seed == -1) { Seed = UnityEngine.Random.Range(-100000, 100000); }
         Debug.Log("seed: " + Seed.ToString());
 
@@ -310,6 +310,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 temperatureValue += latitudeMod;
                 temperatureValue = Mathf.Clamp01(temperatureValue);
+                temperatureValue = Mathf.InverseLerp(.2f, .8f, temperatureValue);
 
                 //temperatureValue = .3f;
 
@@ -392,14 +393,14 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // reduce hills
-                if (heightValue < flatLevel)
+                if (heightValue < FlatLevel)
                 {
-                    heightValue = flatLevel;
+                    heightValue = FlatLevel;
                 }
                 else
                 {
                     float flat = (1f - mountainValue) * .99f;
-                    heightValue = Mathf.Lerp(heightValue, flatLevel, flat);
+                    heightValue = Mathf.Lerp(heightValue, FlatLevel, flat);
                 }
 
                 // apply ElevationMap
@@ -407,14 +408,14 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // create ocean and rivers
-                if (heightValue < flatLevel)
+                if (heightValue < FlatLevel)
                 {
-                    float ocean = Mathf.InverseLerp(0f, .004f, flatLevel - heightValue);
+                    float ocean = Mathf.InverseLerp(0f, .004f, FlatLevel - heightValue);
                     freshWaterValue = ocean;
                 }
                 else
                 {
-                    heightValue = Mathf.Lerp(heightValue, seaLevel - .0001f, freshWaterValue);
+                    heightValue = Mathf.Lerp(heightValue, SeaLevel - .0001f, freshWaterValue);
                     //heightValue = Mathf.Lerp(heightValue, heightValue - .01f, freshWaterValue);
                 }
 
@@ -444,20 +445,29 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // create flatland
-                float psgScale, psgSteps, psgStepHeight, psg, oldPsg;
-                psgSteps = 20f;
-                psgStepHeight = (1f - flatLevel) / psgSteps;
+                float psgScale, psgNoise, psgSteps, psgStepHeight, psg, oldPsg;
+                psgScale = 500f;
+                psgSteps = 50f;
+                psgStepHeight = (1f - FlatLevel) / psgSteps;
                 
 
-                oldPsg = flatLevel;
+                oldPsg = FlatLevel;
                 for(int i = 0; i < psgSteps; i++){
-                    psg = oldPsg + (.065f *  mountainValue * e);
+                    psgNoise = .003f * (Mathf.PerlinNoise((x + xOffset) / psgScale + (i * 1000f), (z + zOffset) / psgScale + (i * 1000f)) * 2f - 1f);
+                    //psgNoise = 0f;
+                    if(i == 0){
+                        psg = FlatLevel + .005f;
+                    }
+                    else{
+                        psg = oldPsg + (.065f * 1.5f * mountainValue * e) + psgNoise;
+                    }
                     if(psg >= .92f){
                         break;
                     }
                     if (heightValue < psg){
                         if (heightValue >= oldPsg){
-                            float c = .003f * (Mathf.Pow(mountainValue, .01f) - .1f);
+                            //float c = .003f * (Mathf.Pow(mountainValue, .01f) - .1f);
+                            float c = .003f * (1f - 0f);
                             if (heightValue >= oldPsg + c){
                                 heightValue = psg;
                             }
@@ -466,7 +476,7 @@ public class ChunkGenerator : MonoBehaviour
                             }
                         }
                     }
-                    oldPsg = psg;
+                    oldPsg = psg - psgNoise;
                 }
 
 
@@ -475,7 +485,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
-                if((biomeValue == (int)Biome.BiomeType.SnowyTaiga || biomeValue == (int)Biome.BiomeType.Tundra) && heightValue > seaLevel){
+                if((biomeValue == (int)Biome.BiomeType.SnowyTaiga || biomeValue == (int)Biome.BiomeType.Tundra) && heightValue > SeaLevel){
                     heightValue += .0002f;
                 }
 
@@ -493,15 +503,15 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // dip
-                if(heightValue < seaLevel - .0001f){
-                    heightValue = seaLevel - (.0005f);
+                if(heightValue < SeaLevel - .0001f){
+                    heightValue = SeaLevel - (.0005f);
                 }
 
 
                 // -------------------------------------------------------
 
                 // TreeMap
-                if (heightValue > seaLevel)
+                if (heightValue > SeaLevel)
                 {
                     treeValue = true;
                 }
@@ -528,37 +538,40 @@ public class ChunkGenerator : MonoBehaviour
         
     }
 
-    Color SetVertexColor(int biome, float height, float mountain, float temperature, float humidity, float wetness, float fw)
+    Color SetVertexColor(int x, int z, int biome, float height, float mountain, float temperature, float humidity, float wetness, float fw)
     {
 
-        
+        // r: yellowness
+        // g: darkness
+        // b: snow
+
+
         Color c = new Color();
         
-
-        // if(height >= snowLevel){
-        //     c.b = 255f;
-        //     return c;
-        // }
+        c.a = mountain * humidity * 255f;
 
     
-        if(biome == (int)Biome.BiomeType.SnowyTaiga || biome == (int)Biome.BiomeType.Tundra){
-            if(height > seaLevel){
-                c.b = 255f;
+        if(height > SeaLevel){
+            if(temperature < .28f){
+                c.b = 255f * .95f - (Mathf.InverseLerp(0f, .28f, temperature));
                 return c;
             }
-
+            else if(height > SnowLevel + .005f * Mathf.PerlinNoise(x / 10f, z / 10f) + temperature*.02f){
+                c.b = 255f * (Mathf.InverseLerp(.3f, 1f, height));
+                return c;
+            }
         }
 
+
+
         // wetness (darkness of land)
-        if(height > seaLevel){
+        if(height > SeaLevel){
             c.g = 230f * (1f - temperature);
         }
         
     
         // yellowness
-
         c.r = 230f * (1f - humidity);
-
         return c;
     }
 
@@ -584,8 +597,8 @@ public class ChunkGenerator : MonoBehaviour
             for (int x = 0; x < ChunkSize + 2; x++)
             {
                 TerrainVertices[i] = new Vector3(x + xOffset, HeightMap[x, z] * ElevationAmplitude, z + zOffset);
-                TerrainColors[i] = SetVertexColor(BiomeMap[x, z], HeightMap[x, z], MountainMap[x, z], TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], FreshWaterMap[x, z]);
-                WaterVertices[i] = new Vector3(x + xOffset, seaLevel * ElevationAmplitude, z + zOffset);
+                TerrainColors[i] = SetVertexColor(x + xOffset, z + zOffset, BiomeMap[x, z], HeightMap[x, z], MountainMap[x, z], TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], FreshWaterMap[x, z]);
+                WaterVertices[i] = new Vector3(x + xOffset, SeaLevel * ElevationAmplitude, z + zOffset);
                 Color waterColor = new Color();
                 waterColor.a = waterAlpha;
                 WaterColors[i] = waterColor;
@@ -677,8 +690,8 @@ public class ChunkGenerator : MonoBehaviour
             
                 if (TreeMap[x, z])
                 {
-                    if(seaLevel >= height-.00025f){
-                        onWater = seaLevel - height <= .0018f;
+                    if(SeaLevel >= height-.00025f){
+                        onWater = SeaLevel - height <= .0018f;
                     }
                     else{ onWater = false; }
 
@@ -722,14 +735,14 @@ public class ChunkGenerator : MonoBehaviour
             {
                 castVec = new Vector3(x + xOffset + (UnityEngine.Random.value * 2f - 1f) * spreadMultiplier * 10, ElevationAmplitude, z + zOffset + (UnityEngine.Random.value * 2f - 1f) * spreadMultiplier * 10);
                 
-                if(onWater){ castLength = ElevationAmplitude - ((seaLevel - .003f)* ElevationAmplitude); }
-                else{ castLength = ElevationAmplitude - ((seaLevel + .002f)* ElevationAmplitude); }
+                if(onWater){ castLength = ElevationAmplitude - ((SeaLevel - .003f)* ElevationAmplitude); }
+                else{ castLength = ElevationAmplitude - ((SeaLevel + .002f)* ElevationAmplitude); }
                 if (Physics.Raycast(castVec, Vector3.down, out RaycastHit hit, castLength, layerMask_terrain))
                 {
 
                     point = hit.point;
                     float minY, maxY;
-                    float seaY = seaLevel * ElevationAmplitude;
+                    float seaY = SeaLevel * ElevationAmplitude;
                     if(onWater){
                         minY = seaY - .1f;
                         maxY = seaY + .1f;
