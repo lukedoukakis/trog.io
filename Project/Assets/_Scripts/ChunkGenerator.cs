@@ -14,7 +14,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float ElevationAmplitude = 1800f * 3f;
     public static float MinElevation = -.292893219f;
     public static float MaxElevation = .224744871f;
-    public static int MountainMapScale = 400 * 2;
+    public static int MountainMapScale = 800;
     public static float ElevationMapScale = 2000;
     public static int TemperatureMapScale = 4000;
     public static int HumidityMapScale = 2000;
@@ -300,16 +300,19 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // TemperatureMap [0, 1]
-                //temperatureValue = 1.2f - (e);
-                temperatureValue = 1f - (e);
-                rough = Mathf.Pow(Mathf.PerlinNoise((x + xOffset + .01f) / 50f, (z + zOffset + .01f) / 50f) + .5f, .1f) - 1f;
-                temperatureValue += rough;
+                temperatureValue = Mathf.PerlinNoise((x + xOffset + .01f) / TemperatureMapScale, (z + zOffset + .01f) / TemperatureMapScale);
 
-                float latitudeMod;
-                latitudeMod = ((Mathf.PerlinNoise((x + xOffset + .01f) / TemperatureMapScale, (z + zOffset + .01f) / TemperatureMapScale) + .5f) - 1f) * 1.5f;
 
-                temperatureValue += latitudeMod;
-                temperatureValue = Mathf.Clamp01(temperatureValue);
+
+                // temperatureValue = 1.1f - (e);
+                // rough = Mathf.Pow(Mathf.PerlinNoise((x + xOffset + .01f) / 50f, (z + zOffset + .01f) / 50f) + .5f, .1f) - 1f;
+                // temperatureValue += rough;
+
+                // float latitudeMod;
+                // latitudeMod = ((Mathf.PerlinNoise((x + xOffset + .01f) / TemperatureMapScale, (z + zOffset + .01f) / TemperatureMapScale) + .5f) - 1f) * 1.5f;
+
+                // temperatureValue += latitudeMod;
+                // temperatureValue = Mathf.Clamp01(temperatureValue);
                 temperatureValue = Mathf.InverseLerp(.2f, .8f, temperatureValue);
 
                 //temperatureValue = .3f;
@@ -420,28 +423,16 @@ public class ChunkGenerator : MonoBehaviour
                 }
 
 
+                // -------------------------------------------------------
 
-                // posterize terrain
+                // TreeMap
+                if (heightValue > SeaLevel)
+                {
+                    treeValue = true;
+                }
+                else { treeValue = false; }
 
-                // float steps, stepHeight, h, thresh;
-                // steps = 3100f * 3f * (1f - (Mathf.Pow(mountainValue, 1f)));
-                // stepHeight = (1f - flatLevel) / steps;
-                // h = 0f;
-                // for (int i = 0; i < steps; i++)
-                // {
-                //     thresh = flatLevel + stepHeight * i;
-                //     thresh = Mathf.Max(thresh + stepHeight * 5f * (Mathf.PerlinNoise(((x + xOffset) / posterize_variationScale) + i * 10000, ((z + zOffset) / posterize_variationScale) + i * 10000) * 2f - 1f), flatLevel);
-                //     if (heightValue >= thresh)
-                //     {
-                //         h = thresh;
-                //     }
-                //     else
-                //     {
-                //         break;
-                //     }
-                // }
-                // float lerpRate = 1f;
-                // heightValue = Mathf.Lerp(heightValue, h, lerpRate);
+                // -------------------------------------------------------
 
 
                 // create flatland
@@ -450,16 +441,18 @@ public class ChunkGenerator : MonoBehaviour
                 psgSteps = 50f;
                 psgStepHeight = (1f - FlatLevel) / psgSteps;
                 
+        
 
                 oldPsg = FlatLevel;
                 for(int i = 0; i < psgSteps; i++){
-                    psgNoise = .003f * (Mathf.PerlinNoise((x + xOffset) / psgScale + (i * 1000f), (z + zOffset) / psgScale + (i * 1000f)) * 2f - 1f);
-                    //psgNoise = 0f;
                     if(i == 0){
-                        psg = FlatLevel + .005f;
+                        psgNoise = 0f;
+                        psg = FlatLevel + .005f * Mathf.PerlinNoise((x + xOffset) / psgScale*2f, (z + zOffset) / psgScale*2f);
                     }
                     else{
-                        psg = oldPsg + (.065f * 1.5f * mountainValue * e) + psgNoise;
+                        psgNoise = .007f * (Mathf.PerlinNoise((x + xOffset) / psgScale + (i * 1000f), (z + zOffset) / psgScale + (i * 1000f)) * 2f - 1f);
+                        //psg = oldPsg + (.005f * Mathf.Pow(mountainValue, .03f)) + psgNoise;
+                        psg = oldPsg + (.002f) + psgNoise;
                     }
                     if(psg >= .92f){
                         break;
@@ -470,6 +463,7 @@ public class ChunkGenerator : MonoBehaviour
                             float c = .003f * (1f - 0f);
                             if (heightValue >= oldPsg + c){
                                 heightValue = psg;
+                                treeValue = false;
                             }
                             else{
                                 heightValue = Mathf.Lerp(heightValue, psg, (heightValue - oldPsg) / c);
@@ -507,15 +501,6 @@ public class ChunkGenerator : MonoBehaviour
                     heightValue = SeaLevel - (.0005f);
                 }
 
-
-                // -------------------------------------------------------
-
-                // TreeMap
-                if (heightValue > SeaLevel)
-                {
-                    treeValue = true;
-                }
-                else { treeValue = false; }
 
                 // -------------------------------------------------------
 
@@ -586,7 +571,7 @@ public class ChunkGenerator : MonoBehaviour
         TerrainUvs = new Vector2[TerrainVertices.Length];
         TerrainColors = new Color[TerrainVertices.Length];
         WaterVertices = new Vector3[(ChunkSize + 2) * (ChunkSize + 2)];
-        WaterTriangles = new int[(ChunkSize + 1) * (ChunkSize + 1) * 6];
+        WaterTriangles = new int[(ChunkSize + 2) * (ChunkSize + 2) * 6];
         WaterUvs = new Vector2[TerrainVertices.Length];
         WaterColors = new Color[TerrainVertices.Length];
 

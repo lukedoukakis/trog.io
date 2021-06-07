@@ -155,7 +155,7 @@ public class EntityHandle : EntityComponent
     void Update()
     {
         if(Input.GetKeyUp(KeyCode.R)){
-            transform.position = new Vector3(Random.Range(-5000f, 5000f), 1650f * 3f, Random.Range(-5000f, 5000f));
+            transform.position = new Vector3(Random.Range(-50000f, 50000f), 1650f * 3f, Random.Range(-5000f, 5000f));
         }
     }
     

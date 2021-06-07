@@ -24,7 +24,7 @@ public class TreeInfo : MonoBehaviour
         {
             case "Acacia Tree":
                 scale = 1.3f;
-                density = .05f;
+                density = .1f;
                 normal = .998f;
                 slant = 0f;
                 spread = 2f;
