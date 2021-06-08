@@ -21,7 +21,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float MountainPolarity = 1f;
     public static float FlatLevel = .85f;
     public static float SeaLevel = 0.849985f;
-    public static float SnowLevel = .86f;
+    public static float SnowLevel = .875f;
     public static bool LoadingChunks, DeloadingChunks;
     static GameObject Chunk;
     static GameObject Terrain;

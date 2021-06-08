@@ -25,7 +25,7 @@ public class PolyverseSkies : StyledMonoBehaviour
     public Material skyboxDay;
     public Material skyboxNight;
     [Range(0, 1)]
-    public float timeOfDay = 0;
+    public static float timeOfDay = 0;
 
     [Space(10)]
     public bool updateLighting = false;

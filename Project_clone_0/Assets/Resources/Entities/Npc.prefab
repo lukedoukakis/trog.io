@@ -188,6 +188,7 @@ MonoBehaviour:
   obstacleHeightSense: {fileID: 0}
   moveDir: {x: 0, y: 0, z: 0}
   jumping: 0
+  jumpOpposite: 0
   sprinting: 0
   offWallTime: 0
   offWaterTime: 0
@@ -342,6 +343,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8726308048535252706, guid: 521eeae15aa0e7d4e8e3db9805cdddd8,
+        type: 3}
+      propertyPath: m_AABB.m_Center.x
+      value: -0.0012043864
+      objectReference: {fileID: 0}
+    - target: {fileID: 8726308048535252706, guid: 521eeae15aa0e7d4e8e3db9805cdddd8,
+        type: 3}
+      propertyPath: m_AABB.m_Center.y
+      value: 0.056187995
+      objectReference: {fileID: 0}
+    - target: {fileID: 8726308048535252706, guid: 521eeae15aa0e7d4e8e3db9805cdddd8,
+        type: 3}
+      propertyPath: m_AABB.m_Center.z
+      value: 1.0752358
+      objectReference: {fileID: 0}
+    - target: {fileID: 8726308048535252706, guid: 521eeae15aa0e7d4e8e3db9805cdddd8,
+        type: 3}
+      propertyPath: m_AABB.m_Extent.x
+      value: 0.15592377
+      objectReference: {fileID: 0}
+    - target: {fileID: 8726308048535252706, guid: 521eeae15aa0e7d4e8e3db9805cdddd8,
+        type: 3}
+      propertyPath: m_AABB.m_Extent.y
+      value: 0.1131633
+      objectReference: {fileID: 0}
+    - target: {fileID: 8726308048535252706, guid: 521eeae15aa0e7d4e8e3db9805cdddd8,
+        type: 3}
+      propertyPath: m_AABB.m_Extent.z
+      value: 0.1126945
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 521eeae15aa0e7d4e8e3db9805cdddd8, type: 3}
