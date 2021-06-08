@@ -268,6 +268,9 @@ public class EntityAnimation : EntityComponent
                     if(handle.entityPhysics.moveDir.magnitude > 0f){
                         SetAnimationBool("Swim", true);
                     }
+                    else if(isLocalPlayer && handle.entityUserInputMovement.move.magnitude > 0){
+                        SetAnimationBool("Swim", true);
+                    }
                     else{
                         SetAnimationBool("Tread", true);
                     }
@@ -281,7 +284,9 @@ public class EntityAnimation : EntityComponent
             }
         }
         SetAnimationBool("Jump Opposite", handle.entityPhysics.jumpOpposite);
-        SetAnimationBool("Rotate Opposite", handle.entityUserInputMovement.mouseY > .5f);
+        if(isLocalPlayer){
+            SetAnimationBool("Rotate Opposite", handle.entityUserInputMovement.mouseY > .5f);
+        }
 
         // calculate run
         if(handle.entityPhysics.moveDir.magnitude > 0){
