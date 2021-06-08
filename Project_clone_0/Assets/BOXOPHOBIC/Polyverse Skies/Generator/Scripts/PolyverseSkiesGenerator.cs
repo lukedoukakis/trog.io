@@ -5,7 +5,7 @@ using UnityEngine;
 using Boxophobic.StyledGUI;
 using System.IO;
 
-namespace PolyverseSkies
+namespace PolyverseSkiesNamespace
 {
     public enum CubemapType
     {
