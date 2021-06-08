@@ -101,7 +101,7 @@ public class EntityUserInputMovement : EntityComponent
 
     void HandleAttack(){
         if(Input.GetKeyDown(KeyCode.Mouse0)){
-            handle.entityAnimation.UseWeapon();
+            handle.entityAnimation.OnAttack();
         }
     }
 

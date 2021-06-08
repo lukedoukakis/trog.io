@@ -286,7 +286,7 @@ public class EntityBehavior : EntityComponent
         BeginActionLayer("Hands", a, _Swing());
 
         IEnumerator _Swing(){
-            handle.entityAnimation.UseWeapon();
+            handle.entityAnimation.OnAttack();
             Action attackRecover = Action.GenerateAction((int)(Action.ActionTypes.AttackRecover), a.obj, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target, false);
             InsertAction(attackRecover);
             yield return null;
@@ -418,14 +418,15 @@ public class EntityBehavior : EntityComponent
             int hits = 0;
             foreach(RaycastHit hitInfo in hitInfos){
                 string tag = hitInfo.collider.gameObject.tag;
-                //if(tag != "Npc" && tag != "Player" && tag != "Body" && tag != "Terrain"){
                 if(hitInfo.normal.y < .5f && tag != "Npc" && tag != "Player" && tag != "Body"){
                     hits++;
-                    //Log("HIT!!!: " + hitInfo.collider.gameObject.tag);
                 }
             }
+            //return hits >= 2;
+
+
             return false;
-            return hits >= 2;
+            
 
         }
 

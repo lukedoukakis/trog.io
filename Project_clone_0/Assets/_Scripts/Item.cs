@@ -11,15 +11,17 @@ public class Item : ScriptableObject
 
 
     // Item defs
-    public static Item Torch = GenerateItem("Torch", (int)Type.Misc, .1f, (int)HoldStyle.Torch, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject"), Resources.Load<Image>("Items/Torch/Image"));
-    public static Item Stone = GenerateItem("Stone", (int)Type.Misc, .1f, (int)HoldStyle.UnderArm, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject"), Resources.Load<Image>("Items/Stone/Image"));
-    public static Item Spear = GenerateItem("Spear", (int)Type.Weapon, .1f, (int)HoldStyle.Spear, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject"), Resources.Load<Image>("Items/Spear/Image"));
+    public static Item Torch = GenerateItem("Torch", (int)Type.Misc, .1f, (int)HoldStyle.Torch, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
+    public static Item Stone = GenerateItem("Stone", (int)Type.Misc, .1f, (int)HoldStyle.UnderArm, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject/Stone"), Resources.Load<Image>("Items/Stone/Image"));
+    public static Item SmallStone = GenerateItem("SmallStone", (int)Type.Misc, .1f, (int)HoldStyle.Torch, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/SmallStone/Gameobject/SmallStone"), Resources.Load<Image>("Items/SmallStone/Image"));
+    public static Item Spear = GenerateItem("Spear", (int)Type.Weapon, .1f, (int)HoldStyle.Spear, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Spear/Image"));
 
 
     public static Dictionary<string, Item> Items = new Dictionary<string, Item>
     {
         { "Torch", Torch },
         { "Stone", Stone },
+        { "SmallStone", SmallStone },
         { "Spear", Spear },
     };
     public static Item GetItemByName(string _nme){
@@ -60,17 +62,6 @@ public class Item : ScriptableObject
         i.image = _image;
         return i;
     }
-
-
-
-
-
-
-    void Awake(){
-
-    }
-
-
 
 
     public static ItemCollection EmptyItemCollection = new ItemCollection(new Dictionary<Item, int>());

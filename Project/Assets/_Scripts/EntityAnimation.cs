@@ -339,36 +339,32 @@ public class EntityAnimation : EntityComponent
         }
     }
 
-    public void UseWeapon(){
+
+    public void OnAttack(){
 
         string trigger;
         Item weap;
 
         if(handle.entityItems.weapon_equipped == null){
-            trigger = "Thrust";
+            trigger = "Throw";
+            handle.entityPhysics.LaunchProjectile(Item.SmallStone.gameobject);
         }
         else{
             weap = handle.entityItems.weapon_equipped.Item1;
-            if (weap == null)
+            switch (weap.holdStyle)
             {
-                trigger = "Thrust";
-            }
-            else
-            {
-                switch (weap.holdStyle)
-                {
-                    case (int)Item.HoldStyle.Spear:
-                        trigger = "Thrust";
-                        break;
-                    case (int)Item.HoldStyle.Axe:
-                        trigger = "Swing";
-                        break;
-                    default:
-                        trigger = "Thrust";
-                        Log("Trying to swing a weapon with no specified hold style");
-                        break;
+                case (int)Item.HoldStyle.Spear:
+                    trigger = "Thrust";
+                    break;
+                case (int)Item.HoldStyle.Axe:
+                    trigger = "Swing";
+                    break;
+                default:
+                    trigger = "Thrust";
+                    Log("Trying to swing a weapon with no specified hold style");
+                    break;
                 }
-            }
+            
         }
         
         SetAnimationTrigger(trigger);

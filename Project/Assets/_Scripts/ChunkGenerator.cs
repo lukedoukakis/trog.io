@@ -112,7 +112,7 @@ public class ChunkGenerator : MonoBehaviour
 
     void Init()
     {
-        Seed = UnityEngine.Random.Range(0, 1000);
+        Seed = UnityEngine.Random.Range(0, 100000);
         Seed = 1;
         if (Seed == -1) { Seed = UnityEngine.Random.Range(-100000, 100000); }
         Debug.Log("seed: " + Seed.ToString());
@@ -271,7 +271,7 @@ public class ChunkGenerator : MonoBehaviour
         int biomeValue;
         bool treeValue;
 
-        float tMod, rough;
+        float rough;
 
         // loop start
         for (int z = 0; z < ChunkSize + 2; z++)

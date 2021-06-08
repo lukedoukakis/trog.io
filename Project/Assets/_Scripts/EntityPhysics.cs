@@ -21,6 +21,7 @@ public class EntityPhysics : EntityComponent
     public static float wallCastDistance = 1f;
     float groundCastDistance;
     public static float JumpForce = 2800f;
+    public static float ThrowForce = 200f;
     public static float AccelerationScale = 35f;
     public static float MaxSpeedScale = 20f;
     public static float JumpCoolDown = .15f;
@@ -122,6 +123,31 @@ public class EntityPhysics : EntityComponent
             return true;
         }
         return false;
+    }
+
+    public void LaunchProjectile(GameObject projectilePrefab){
+
+        GameObject projectile = GameObject.Instantiate(projectilePrefab, transform.position + Vector3.up*1.5f, Quaternion.identity);
+        Vector3 targetPos, throwDir;
+
+        if(isLocalPlayer){
+            RaycastHit hit;
+            if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 100f)){
+                targetPos = hit.point;
+            }
+            else{
+                targetPos = Camera.main.transform.position + (Camera.main.transform.forward * 100f);
+            }
+        }
+        else{
+            targetPos = Vector3.zero;
+        }
+
+        throwDir = targetPos - transform.position;
+        projectile.GetComponent<Rigidbody>().velocity = throwDir.normalized * ThrowForce;
+        
+
+
     }
 
 

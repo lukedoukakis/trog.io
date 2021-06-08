@@ -6,7 +6,6 @@ using UnityEngine;
 // handles mouse input events
 public class EntityHandle : EntityComponent
 {
-
     public EntityInfo entityInfo;
     public EntityStats entityStats;
     public EntityBehavior entityBehavior;
@@ -23,7 +22,6 @@ public class EntityHandle : EntityComponent
 
     void Awake(){
         handle = this;
-        
     }
 
 
@@ -156,6 +154,11 @@ public class EntityHandle : EntityComponent
     {
         if(Input.GetKeyUp(KeyCode.R)){
             transform.position = new Vector3(Random.Range(-50000f, 50000f), 1650f * 3f, Random.Range(-5000f, 5000f));
+        }
+        if(isLocalPlayer){
+            if(Input.GetKeyUp(KeyCode.LeftControl)){
+                GameObject.Find("Torch").transform.position = transform.position + Vector3.up * 3f;
+            }
         }
     }
     
