@@ -131,7 +131,9 @@ public class EntityUserInputMovement : EntityComponent
 
         if(isLocalPlayer){
             HandleMovement();
-            HandleRotation();
+            if(!UIController.UImode){
+                HandleRotation();
+            }
             HandleAttack();
             CheckInteraction();
         

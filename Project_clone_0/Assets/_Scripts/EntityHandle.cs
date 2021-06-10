@@ -18,6 +18,7 @@ public class EntityHandle : EntityComponent
 
 
     public GameObject npcPrefab;
+    public bool hovering;
     public bool selecting;
     public bool selected;
     public bool tooltip;
@@ -98,11 +99,15 @@ public class EntityHandle : EntityComponent
 
 
     void OnMouseOver(){
-        UIEvents.current.OnUnitMouseOver(this);
+        if(!hovering){
+            hovering = true;
+            GlobalSelectionController.current.OnEntityMouseOver(this);
+        }
     }
 
     void OnMouseExit(){
-        UIEvents.current.OnUnitMouseExit(this);
+        hovering = false;
+        GlobalSelectionController.current.OnEntityMouseExit(this);
     }
 
 

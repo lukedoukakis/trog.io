@@ -17,7 +17,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] float sensitivity_zoom;
     [SerializeField] float featureCullDistance;
     [SerializeField] float smallFeatureCullDistance;
-    [SerializeField] bool showCursor;
     float acceleration;
 
     Vector3 targetPos;
@@ -36,7 +35,6 @@ public class CameraController : MonoBehaviour
     public void Init(Transform t){
         playerT = t;
         followT = GameObject.Instantiate(new GameObject(), playerT.position, Quaternion.identity).transform;
-        Cursor.visible = showCursor;
         Application.targetFrameRate = -1;
         QualitySettings.vSyncCount = 1;
         float[] cullDistances = new float[32];
@@ -50,8 +48,6 @@ public class CameraController : MonoBehaviour
 
 
     public void AdjustCamera(int mode){
-
-        ZoomInput();
 
         // static camera
         if (mode == 0)
@@ -67,7 +63,10 @@ public class CameraController : MonoBehaviour
 
             float pi = Mathf.PI;
 
-            posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
+            if(!UIController.UImode){
+                posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
+                ZoomInput();
+            }
 
             // above
             if (posModifier > .48f)

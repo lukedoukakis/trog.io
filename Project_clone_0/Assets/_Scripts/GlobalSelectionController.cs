@@ -6,14 +6,19 @@ public class GlobalSelectionController : MonoBehaviour
 {
 
     public static GlobalSelectionController current;
-    void Awake()
-    {
-        current = this;
-    }
 
     public List<EntityHandle> SelectingHandles;
     public List<EntityHandle> SelectedHandles;
 
+    bool mouseDown;
+    int hoveredEntities;
+
+
+    void Awake()
+    {
+        current = this;
+        hoveredEntities = 0;
+    }
    
     public void AddToSelecting(EntityHandle handle){
         if(!handle.selecting && !handle.selected){
@@ -22,13 +27,13 @@ public class GlobalSelectionController : MonoBehaviour
         }
     }
 
-    public void Select(){
+    public void ApplySelection(){
         foreach(EntityHandle handle in SelectingHandles){
             handle.SetSelecting(false);
             handle.SetSelected(true);
             SelectedHandles.Add(handle);
         }
-        SelectionMenuController.current.UpdateSelectionMenu();
+        UIController.current.UpdateSelectionMenu();
         SelectingHandles.Clear();
     }
 
@@ -42,7 +47,7 @@ public class GlobalSelectionController : MonoBehaviour
             handle.SetSelected(false);
         }
         SelectedHandles.Clear();
-        SelectionMenuController.current.UpdateSelectionMenu();
+        UIController.current.UpdateSelectionMenu();
     }
 
     public bool SelectionIsEmpty(){
@@ -55,19 +60,85 @@ public class GlobalSelectionController : MonoBehaviour
         ClearSelected();
         Faction f = GameManager.current.localPlayer.GetComponent<EntityHandle>().entityInfo.faction;
         foreach(EntityHandle handle in f.members){
-            AddToSelecting(handle);
+            if(handle != GameManager.current.localPlayer.GetComponent<EntityHandle>()){
+                AddToSelecting(handle);
+            }
         }
-        Select();
+        ApplySelection();
     }
 
 
-    // selects all entities with given tag
-    public void SelectAllEntitiesWithTag(string tag){
-        ClearSelected();
-        foreach(GameObject obj in GameObject.FindGameObjectsWithTag(tag)){
-            AddToSelecting(obj.GetComponent<EntityHandle>());
+    public void OnEntityMouseOver(EntityHandle handle)
+    {
+
+        if(handle.tag == "Player"){ return; }
+
+        // handle tooltip
+        if (!handle.tooltip)
+        {
+            handle.ShowTooltip();
         }
-        Select();
+
+        // handle selecting
+        if (mouseDown)
+        {
+            if (!handle.selected || !handle.selecting)
+            {
+                GlobalSelectionController.current.AddToSelecting(handle);
+            }
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (handle.selected)
+            {
+                GlobalSelectionController.current.RemoveFromSelected(handle);
+            }
+        }
+
+        hoveredEntities++;
+        
+    }
+
+
+    public void OnEntityMouseExit(EntityHandle handle)
+    {
+
+        if(handle.tag == "Player"){ return; }
+
+        handle.HideTooltip();
+        hoveredEntities--;
+    }
+
+
+    void Update(){
+
+        Debug.Log(hoveredEntities);
+
+        if (Input.GetKey(KeyCode.Mouse1))
+        {
+            if (!mouseDown)
+            {
+                mouseDown = true;
+                if (!Input.GetKey(KeyCode.LeftControl))
+                {
+                    ClearSelected();
+                    UIController.current.ClearSelectionMenu();
+                    UIController.current.ToggleUIMode();
+                }
+            }
+        }
+        else
+        {
+            if (mouseDown)
+            {
+                mouseDown = false;
+                ApplySelection();
+                if (!SelectionIsEmpty())
+                {
+                    //SelectionMenuController.current.SetVisible(true);
+                }
+            }
+        }
     }
 
 }

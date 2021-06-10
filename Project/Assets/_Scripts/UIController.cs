@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectionMenuController : MonoBehaviour
+public class UIController : MonoBehaviour
 {
-    public bool visible;
+    public static bool UImode;
+    public static bool cursorActive;
 
 
-    public static SelectionMenuController current;
+    public static UIController current;
     void Awake()
     {
         current = this;
+        SetUIMode(false);
     }
 
     public void UpdateSelectionMenu(){
@@ -25,17 +27,23 @@ public class SelectionMenuController : MonoBehaviour
 
     }
 
-    public void SetVisible(bool b){
-        if(b && !visible){
-            GetComponent<RectTransform>().localScale = Vector2.one;
+    public void SetUIMode(bool active){
+        UImode = active;
+        cursorActive = active;
+
+        if(active){
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
-        else if(!b && visible){
-            GetComponent<RectTransform>().localScale = Vector2.zero;
+        else{
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
-        visible = b;
+        
     }
-    public void ToggleVisible(){
-        SetVisible(!visible);
+    public void ToggleUIMode(){
+        SetUIMode(!UImode);
+        CommandEveryoneController.current.OnHornPress();
     }
 
     

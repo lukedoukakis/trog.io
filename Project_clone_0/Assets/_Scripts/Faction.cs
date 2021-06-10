@@ -39,7 +39,7 @@ public class Faction : ScriptableObject
         fac.objects_currentlyOwned.Remove(o);
     }
 
-    public string ToString(){
+    public override string ToString(){
         string str = factionName + ": ";
         foreach(EntityHandle handle in members){
             str += handle.entityInfo.nickname + ", ";
