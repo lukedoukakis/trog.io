@@ -13,6 +13,7 @@ public class EntityPhysics : EntityComponent
 
     public Rigidbody rb;
     public Transform gyro;
+    public Transform rightHand;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense;
     public RaycastHit groundInfo, wallInfo, waterInfo;
     public static float groundCastDistance_player = .1f;
@@ -58,6 +59,7 @@ public class EntityPhysics : EntityComponent
         layerMask_noWater = LayerMask.GetMask("Terrain");
         rb = GetComponent<Rigidbody>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
+        rightHand = Utility.FindDeepChild(this.transform, "B-hand_R");
         groundSense = Utility.FindDeepChild(transform, "GroundSense");
         obstacleHeightSense = Utility.FindDeepChild(transform, "ObstacleHeightSense");
         wallSense = Utility.FindDeepChild(transform, "WallSense");
@@ -127,27 +129,31 @@ public class EntityPhysics : EntityComponent
 
     public void LaunchProjectile(GameObject projectilePrefab){
 
-        GameObject projectile = GameObject.Instantiate(projectilePrefab, transform.position + Vector3.up*1.5f, Quaternion.identity);
-        Vector3 targetPos, throwDir;
+        StartCoroutine(_LaunchProjectile());
 
-        if(isLocalPlayer){
-            RaycastHit hit;
-            if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 100f)){
-                targetPos = hit.point;
+        IEnumerator _LaunchProjectile(){
+
+            yield return new WaitForSeconds(.2f);
+
+            GameObject projectile = GameObject.Instantiate(projectilePrefab, rightHand.position, Quaternion.identity);
+            Physics.IgnoreCollision(projectile.GetComponent<Collider>(), hitbox);
+            Vector3 targetPos, throwDir;
+
+            if (isLocalPlayer){
+                targetPos = Camera.main.transform.position + (Camera.main.transform.forward * 1000f);
             }
-            else{
-                targetPos = Camera.main.transform.position + (Camera.main.transform.forward * 100f);
+            else
+            {
+                targetPos = Vector3.zero;
             }
-        }
-        else{
-            targetPos = Vector3.zero;
+
+            throwDir = targetPos - transform.position;
+            projectile.GetComponent<Rigidbody>().velocity = (throwDir.normalized * ThrowForce) + rb.velocity;
+            StartCoroutine(Utility.DespawnObject(projectile, 5f));
+
         }
 
-        throwDir = targetPos - transform.position;
-        projectile.GetComponent<Rigidbody>().velocity = throwDir.normalized * ThrowForce;
         
-
-
     }
 
 

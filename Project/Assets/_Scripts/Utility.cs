@@ -20,4 +20,9 @@ public class Utility : MonoBehaviour
         return null;
     }
 
+    public static IEnumerator DespawnObject(GameObject gameObject, float delay){
+        yield return new WaitForSeconds(delay);
+        GameObject.Destroy(gameObject);
+    }
+
 }

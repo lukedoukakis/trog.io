@@ -30,7 +30,7 @@ public class LightingController : MonoBehaviour
         moonLight = moon.GetComponent<Light>();
         
 
-        time = 0f;
+        time = 100f;
     }
 
 
