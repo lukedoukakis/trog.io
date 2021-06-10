@@ -16,7 +16,6 @@ public class EntityInfo : EntityComponent
         handle.entityInfo = this;
 
         id = Random.Range(0, int.MaxValue);
-        faction = GameManager.current.testFac;
     }
 
 

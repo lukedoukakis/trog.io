@@ -16,98 +16,58 @@ public class EntityHandle : EntityComponent
     public EntityUserInputMovement entityUserInputMovement;
 
 
+
+    public GameObject npcPrefab;
     public bool selecting;
     public bool selected;
     public bool tooltip;
+
+
+    
 
     void Awake(){
         handle = this;
     }
 
+    public void InitPlayer(bool fromMemory){
 
-    void Start(){
-        InitEntity(false);
-    }
+        // set global variables
+        GameManager.current.localPlayer = this.gameObject;
+        ChunkGenerator.current.playerT = transform;
+        CameraController.current.enabled = true;
+        CameraController.current.Init(this.transform);
+        npcPrefab = Resources.Load<GameObject>("Entities/Npc");
 
-    void InitEntity(bool fromMemory){
+        // init player specific entity settings
+        transform.position = new Vector3(0f, 1600f * 3f, 0f);
+        Faction faction = Faction.GenerateFaction("FactionName", true);
+        faction.AddMember(this);
+        entityInfo.faction = faction;
 
 
-        // set camera
-        if(isLocalPlayer){
-            //Debug.Log("Setting player");
-            ChunkGenerator.current.playerT = transform;
-            CameraController.current.enabled = true;
-            CameraController.current.Init(this.transform);
-
+        // spawn initial tribe members
+        for(int i = 0; i < GameManager.startingTribeMembers; i++){
+            GameManager.SpawnNpc(npcPrefab, this.gameObject);
         }
-        transform.position = new Vector3(0f, 1650f * 3f, 0f);
+
+
+
+
+
+
+
+
 
         // if loading from memory
         if(fromMemory){
-            // TODO: initialize every EntityComponent for this handle with values from memory
-
-            // EntityInfo
-
-
-            // EntityStats
-
-
-            // EntityPhysics
-
-
-            // EntityBehavior
-
-
-            // EntityAnimation
-
-
-            // EntityItems
-
-
-            // EntityStatus
-
-
-            // EntityUserInputMovement
-
-
-            // EntityInfo
+            
         }
 
-        // if creating a new entity
+        // if new game
         else{
-
-            // EntityInfo
-    
-
-            // EntityStats
-
-
-            // EntityPhysics
-
-
-            // EntityBehavior
-
-
-            // EntityAnimation
-
-
-            // EntityItems
-
-
-            // EntityStatus
-
-
-            // EntityUserInputMovement
-
-
-            // EntityInfo
-
-
 
         }
     }
-
-
 
 
     public void SetSelecting(bool b){

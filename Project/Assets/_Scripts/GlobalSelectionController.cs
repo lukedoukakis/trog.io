@@ -50,6 +50,17 @@ public class GlobalSelectionController : MonoBehaviour
     }
 
 
+
+    public void SelectAllPlayerFactionMembers(){
+        ClearSelected();
+        Faction f = GameManager.current.localPlayer.GetComponent<EntityHandle>().entityInfo.faction;
+        foreach(EntityHandle handle in f.members){
+            AddToSelecting(handle);
+        }
+        Select();
+    }
+
+
     // selects all entities with given tag
     public void SelectAllEntitiesWithTag(string tag){
         ClearSelected();
@@ -58,4 +69,5 @@ public class GlobalSelectionController : MonoBehaviour
         }
         Select();
     }
+
 }

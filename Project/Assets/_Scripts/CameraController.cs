@@ -105,7 +105,7 @@ public class CameraController : MonoBehaviour
     {
 
         if(playerT != null){
-            AdjustCamera(GameManager.current.cameraMode);
+            AdjustCamera(GameManager.cameraMode);
         }
     }
 

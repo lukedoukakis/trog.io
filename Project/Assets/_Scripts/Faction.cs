@@ -18,9 +18,12 @@ public class Faction : ScriptableObject
 
 
 
-
+    void Init(){
+        members = new List<EntityHandle>();
+    }
     public void AddMember(EntityHandle handle){
         members.Add(handle);
+        handle.entityInfo.faction = this;
     }
 
     public static void AddItemTargeted(GameObject o, Faction fac){
@@ -81,6 +84,7 @@ public class Faction : ScriptableObject
         f.objects_currentlyTargeted = new List<GameObject>();
         f.objects_currentlyOwned = new List<GameObject>();
         f.warringFactions = new List<Faction>();
+        f.Init();
         return f;
     }
 }
