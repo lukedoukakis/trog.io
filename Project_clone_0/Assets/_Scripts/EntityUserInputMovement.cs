@@ -58,6 +58,8 @@ public class EntityUserInputMovement : EntityComponent
 
     void HandleMovement(){
 
+        move = Vector3.zero;
+
         pressForward = Input.GetKey(KeyCode.W);
         pressBack = Input.GetKey(KeyCode.S);
         pressLeft = Input.GetKey(KeyCode.A);
@@ -127,13 +129,12 @@ public class EntityUserInputMovement : EntityComponent
 
     void Update(){
 
-        move = Vector3.zero;
         if(isLocalPlayer){
             HandleMovement();
             HandleRotation();
             HandleAttack();
             CheckInteraction();
-            
+        
         }
 
     }

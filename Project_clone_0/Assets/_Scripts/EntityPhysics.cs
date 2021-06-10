@@ -133,6 +133,15 @@ public class EntityPhysics : EntityComponent
 
         IEnumerator _LaunchProjectile(){
 
+            
+            GameObject temp = new GameObject();
+            temp.transform.position = transform.position + transform.forward;
+            temp.transform.SetParent(transform);
+            bool notTargeting = handle.entityAnimation.bodyRotationMode != (int)EntityAnimation.BodyRotationMode.Target;
+            if(notTargeting){
+                handle.entityAnimation.SetBodyRotationMode((int)EntityAnimation.BodyRotationMode.Target, temp.transform);
+            }
+    
             yield return new WaitForSeconds(.2f);
 
             GameObject projectile = GameObject.Instantiate(projectilePrefab, rightHand.position, Quaternion.identity);
@@ -140,7 +149,7 @@ public class EntityPhysics : EntityComponent
             Vector3 targetPos, throwDir;
 
             if (isLocalPlayer){
-                targetPos = Camera.main.transform.position + (Camera.main.transform.forward * 1000f);
+                targetPos = Camera.main.transform.position + (Camera.main.transform.up * 100f) + (Camera.main.transform.forward * 1000f);
             }
             else
             {
@@ -150,6 +159,13 @@ public class EntityPhysics : EntityComponent
             throwDir = targetPos - transform.position;
             projectile.GetComponent<Rigidbody>().velocity = (throwDir.normalized * ThrowForce) + rb.velocity;
             StartCoroutine(Utility.DespawnObject(projectile, 5f));
+
+
+            yield return new WaitForSeconds(.075f);
+            if(notTargeting){
+                handle.entityAnimation.SetBodyRotationMode((int)EntityAnimation.BodyRotationMode.Normal, null);
+            }
+            GameObject.Destroy(temp);
 
         }
 
@@ -338,6 +354,6 @@ public class EntityPhysics : EntityComponent
             maxSpeed_run /= 2f;
         }
         
-    
+        
     }
 }
