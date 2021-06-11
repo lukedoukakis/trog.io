@@ -12,7 +12,7 @@ public class UIController : MonoBehaviour
     void Awake()
     {
         current = this;
-        SetUIMode(false);
+        SetUIMode(true);
     }
 
     public void UpdateSelectionMenu(){

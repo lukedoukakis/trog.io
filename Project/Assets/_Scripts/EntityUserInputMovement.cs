@@ -23,6 +23,7 @@ public class EntityUserInputMovement : EntityComponent
     {
         base.OnStartLocalPlayer();
         handle.InitPlayer(false);
+        UIController.current.SetUIMode(false);
     }
 
     void Start(){

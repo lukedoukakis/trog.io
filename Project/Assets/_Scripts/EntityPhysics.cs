@@ -48,7 +48,6 @@ public class EntityPhysics : EntityComponent
 
 
 
-
     void Awake(){
         handle = GetComponent<EntityHandle>();
         handle.entityPhysics = this;
