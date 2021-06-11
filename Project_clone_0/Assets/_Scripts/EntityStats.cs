@@ -14,16 +14,13 @@ public class EntityStats : EntityComponent
     public static float modifierRange = .15f;
 
 
-    void Awake(){
-        handle = GetComponent<EntityHandle>();
-        handle.entityStats = this;
+    protected override void Awake(){
+
+        base.Awake();
 
         Init();
     }
 
-    void Start(){
-        
-    }
 
     public void Init(){
 
@@ -31,7 +28,7 @@ public class EntityStats : EntityComponent
         // TODO: createNew if doesnt exist in memory
 
 
-        stats_base = new Dictionary<string, float>(EntityStatsDefs.current.GetStats(handle.entityInfo.species));
+        stats_base = new Dictionary<string, float>(EntityStatsDefs.current.GetStats(entityInfo.species));
 
         if(CREATENEW){
             stats_modifiers = CreateModifiers(stats_base);
@@ -71,8 +68,8 @@ public class EntityStats : EntityComponent
 
     public string CreateStatsList(){
         string list = "";
-        string _name = handle.entityInfo.nickname;
-        string _type = handle.entityInfo.species;
+        string _name = entityInfo.nickname;
+        string _type = entityInfo.species;
         if(_name != ""){ list += _name + " (" + _type + ")"; }
         else{ list += _type; }
         list += "\n";

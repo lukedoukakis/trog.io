@@ -48,9 +48,10 @@ public class EntityPhysics : EntityComponent
 
 
 
-    void Awake(){
-        handle = GetComponent<EntityHandle>();
-        handle.entityPhysics = this;
+    protected override void Awake(){
+
+        base.Awake();
+
         hitbox = GetComponentInChildren<CapsuleCollider>();
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
@@ -71,8 +72,8 @@ public class EntityPhysics : EntityComponent
     }
 
     void Start(){
-        acceleration = handle.entityStats.GetStat("speed") * AccelerationScale;
-        maxSpeed_run = handle.entityStats.GetStat("speed") * MaxSpeedScale;
+        acceleration = entityStats.GetStat("speed") * AccelerationScale;
+        maxSpeed_run = entityStats.GetStat("speed") * MaxSpeedScale;
         maxSpeed_sprint = maxSpeed_run * 1.5f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * .75f;
@@ -80,8 +81,8 @@ public class EntityPhysics : EntityComponent
 
 
     public void Move(Vector3 direction, float speed){
-        float speedStat = speed * handle.entityStats.GetStat("speed");
-        sprinting = handle.entityBehavior.urgent || (isLocalPlayer && handle.entityUserInputMovement.pressSprint);
+        float speedStat = speed * entityStats.GetStat("speed");
+        sprinting = entityBehavior.urgent || (isLocalPlayer && entityUserInputMovement.pressSprint);
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
         rb.AddForce(move * speedStat, ForceMode.Force);
         
@@ -136,9 +137,9 @@ public class EntityPhysics : EntityComponent
             GameObject temp = new GameObject();
             temp.transform.position = transform.position + transform.forward;
             temp.transform.SetParent(transform);
-            bool notTargeting = handle.entityAnimation.bodyRotationMode != (int)EntityAnimation.BodyRotationMode.Target;
+            bool notTargeting = entityAnimation.bodyRotationMode != (int)EntityAnimation.BodyRotationMode.Target;
             if(notTargeting){
-                handle.entityAnimation.SetBodyRotationMode((int)EntityAnimation.BodyRotationMode.Target, temp.transform);
+                entityAnimation.SetBodyRotationMode((int)EntityAnimation.BodyRotationMode.Target, temp.transform);
             }
     
             yield return new WaitForSeconds(.2f);
@@ -162,7 +163,7 @@ public class EntityPhysics : EntityComponent
 
             yield return new WaitForSeconds(.075f);
             if(notTargeting){
-                handle.entityAnimation.SetBodyRotationMode((int)EntityAnimation.BodyRotationMode.Normal, null);
+                entityAnimation.SetBodyRotationMode((int)EntityAnimation.BodyRotationMode.Normal, null);
             }
             GameObject.Destroy(temp);
 
@@ -201,7 +202,7 @@ public class EntityPhysics : EntityComponent
         bool w = false;
         if(offWallTime > .4f){
             if(moveDir.magnitude > 0){
-                if(Physics.Raycast(wallSense.position, transform.forward, out wallInfo, wallCastDistance) || Physics.Raycast(wallSense.position, handle.entityAnimation.bodyT.forward, out wallInfo, wallCastDistance)){
+                if(Physics.Raycast(wallSense.position, transform.forward, out wallInfo, wallCastDistance) || Physics.Raycast(wallSense.position, entityAnimation.bodyT.forward, out wallInfo, wallCastDistance)){
                     string tag = wallInfo.collider.gameObject.tag;
                     if(tag != "Npc" && tag != "Player" && tag != "Body"){
                         w = true;

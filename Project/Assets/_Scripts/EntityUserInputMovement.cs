@@ -14,10 +14,6 @@ public class EntityUserInputMovement : EntityComponent
     public List<GameObject> interactableObjects;
     public Vector3 move;
 
-    void Awake(){
-        handle = GetComponent<EntityHandle>();
-        handle.entityUserInputMovement = this;
-    }
 
     public override void OnStartLocalPlayer()
     {

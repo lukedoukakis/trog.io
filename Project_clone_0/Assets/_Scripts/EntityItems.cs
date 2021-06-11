@@ -38,9 +38,9 @@ public class EntityItems : EntityComponent
 
 
 
-    void Awake(){
-        handle = GetComponent<EntityHandle>();
-        handle.entityItems = this;
+    protected override void Awake(){
+     
+        base.Awake();
 
         itemT = transform.Find("ItemT");
         t_hand_left = Utility.FindDeepChild(transform, "B-palm_01_L");
@@ -73,7 +73,7 @@ public class EntityItems : EntityComponent
         GameObject hold = holding.Item2;
         hold.GetComponent<Rigidbody>().AddForce(transform.forward*900f + transform.up*900f);
         TogglePhysics(hold, true);
-        Faction.RemoveItemOwned(holding.Item2, handle.entityInfo.faction);
+        Faction.RemoveItemOwned(holding.Item2, entityInfo.faction);
         
         holding = null;
     }
@@ -91,7 +91,7 @@ public class EntityItems : EntityComponent
     }
     public void DropUnequippedWeapon(){
         TogglePhysics(weapon_equipped.Item2, true);
-        Faction.RemoveItemOwned(weapon_equipped.Item2, handle.entityInfo.faction);
+        Faction.RemoveItemOwned(weapon_equipped.Item2, entityInfo.faction);
         weapon_unequipped = null;
     }
     public void SetUnequippedWeapon(Tuple<Item, GameObject> itemObjectPair){

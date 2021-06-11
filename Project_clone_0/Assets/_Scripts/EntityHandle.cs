@@ -6,17 +6,6 @@ using UnityEngine;
 // handles mouse input events
 public class EntityHandle : EntityComponent
 {
-    public EntityInfo entityInfo;
-    public EntityStats entityStats;
-    public EntityBehavior entityBehavior;
-    public EntityAnimation entityAnimation;
-    public EntityPhysics entityPhysics;
-    public EntityStatus entityStatus;
-    public EntityItems entityItems;
-    public EntityUserInputMovement entityUserInputMovement;
-
-
-
     public GameObject npcPrefab;
     public bool hovering;
     public bool selecting;
@@ -24,10 +13,23 @@ public class EntityHandle : EntityComponent
     public bool tooltip;
 
 
-    
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+        Log("Starting local player");
+    }
 
-    void Awake(){
-        handle = this;
+    protected override void Awake(){
+
+        base.Awake();
+
+        //Log(isLocalPlayer.ToString());
+
+        if(tag == "Player"){
+            Debug.Log("INIT PLAYER");
+            InitPlayer(false);
+            UIController.current.SetUIMode(false);
+        }
     }
 
     public void InitPlayer(bool fromMemory){
@@ -41,7 +43,7 @@ public class EntityHandle : EntityComponent
 
         // init player specific entity settings
         transform.position = new Vector3(0f, 1600f * 3f, 0f);
-        Faction faction = Faction.GenerateFaction("FactionName", true);
+        Faction faction = Faction.GenerateFaction("Faction " + (Random.Range(0, 10000f)).ToString(), true);
         faction.AddMember(this);
         entityInfo.faction = faction;
 

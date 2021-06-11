@@ -141,7 +141,7 @@ public class Action : ScriptableObject
 
 
 
-    public string ToString(){
+    public override string ToString(){
         return Enum.GetName(typeof(ActionTypes), type);
     }
 }

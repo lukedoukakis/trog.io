@@ -271,8 +271,6 @@ public class ChunkGenerator : MonoBehaviour
         int biomeValue;
         bool treeValue;
 
-        float rough;
-
         // loop start
         for (int z = 0; z < ChunkSize + 2; z++)
         {

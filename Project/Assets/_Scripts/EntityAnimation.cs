@@ -67,9 +67,11 @@ public class EntityAnimation : EntityComponent
     }
 
 
-    void Awake(){
-        handle = GetComponent<EntityHandle>();
-        handle.entityAnimation = this;
+    protected override void Awake(){
+
+        base.Awake();
+
+      
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
         headT = Utility.FindDeepChild(transform, "B-head");
@@ -172,12 +174,12 @@ public class EntityAnimation : EntityComponent
             // normal rotation
             case (int)BodyRotationMode.Normal:
 
-                if(handle.entityPhysics.moveDir.magnitude > 0){
+                if(entityPhysics.moveDir.magnitude > 0){
                     Vector3 velRaw = rb.velocity;
                     Vector3 velHoriz = velRaw; velHoriz.y = 0;
                     Vector3 direction = Vector3.RotateTowards(bodyT.forward, velHoriz, bodyRotationSpeed, 0f);
                     Quaternion rotation = Quaternion.LookRotation(direction);
-                    if (handle.entityPhysics.GROUNDTOUCH)
+                    if (entityPhysics.GROUNDTOUCH)
                     {
                         Vector3 v = (rotation.eulerAngles) - (bodyRotationLast.eulerAngles);
                         angularVelocityY = Mathf.Lerp(bodyAngularVelocity.y, v.y, .5f);
@@ -224,9 +226,9 @@ public class EntityAnimation : EntityComponent
         Vector3 velRaw = rb.velocity;
         Vector3 velHoriz = velRaw; velHoriz.y = 0;
 
-        bool ground = handle.entityPhysics.GROUNDTOUCH;
-        bool wall = handle.entityPhysics.WALLTOUCH;
-        bool water = handle.entityPhysics.IN_WATER;
+        bool ground = entityPhysics.GROUNDTOUCH;
+        bool wall = entityPhysics.WALLTOUCH;
+        bool water = entityPhysics.IN_WATER;
 
         foreach(string mvmt in keysList){
             SetAnimationBool(mvmt, false);
@@ -234,7 +236,7 @@ public class EntityAnimation : EntityComponent
 
         if(ground && !wall && !water){
             if(velHoriz.magnitude > .05f){
-                if(handle.entityPhysics.sprinting){
+                if(entityPhysics.sprinting){
                     SetAnimationBool("Sprint", true);
                     SetAnimationFloat("LegSpeed", 1.22f);
                 }
@@ -245,7 +247,7 @@ public class EntityAnimation : EntityComponent
             }
             else{
                 if(isLocalPlayer){
-                    if(Mathf.Abs(handle.entityUserInputMovement.mouseY) > .5f){
+                    if(Mathf.Abs(entityUserInputMovement.mouseY) > .5f){
                         SetAnimationBool("Rotate", true);
                     }
                     else{
@@ -260,7 +262,7 @@ public class EntityAnimation : EntityComponent
         else{
             if(wall){
                 SetAnimationBool("Climb", true);
-                if(handle.entityPhysics.moveDir.magnitude > 0f){
+                if(entityPhysics.moveDir.magnitude > 0f){
                     SetAnimationFloat("ClimbSpeed", 1f);
                 }
                 else{
@@ -270,10 +272,10 @@ public class EntityAnimation : EntityComponent
             }
             else{
                 if(water){
-                    if(handle.entityPhysics.moveDir.magnitude > 0f){
+                    if(entityPhysics.moveDir.magnitude > 0f){
                         SetAnimationBool("Swim", true);
                     }
-                    else if(isLocalPlayer && handle.entityUserInputMovement.move.magnitude > 0){
+                    else if(isLocalPlayer && entityUserInputMovement.move.magnitude > 0){
                         SetAnimationBool("Swim", true);
                     }
                     else{
@@ -281,23 +283,23 @@ public class EntityAnimation : EntityComponent
                     }
                 }
                 else{
-                    if(handle.entityPhysics.jumpTime < .3f || handle.entityPhysics.offWallTime < .3f){
+                    if(entityPhysics.jumpTime < .3f || entityPhysics.offWallTime < .3f){
                         SetAnimationBool("Jump", true);
                     }
                 }
                 
             }
         }
-        SetAnimationBool("Jump Opposite", handle.entityPhysics.jumpOpposite);
+        SetAnimationBool("Jump Opposite", entityPhysics.jumpOpposite);
         if(isLocalPlayer){
-            SetAnimationBool("Rotate Opposite", handle.entityUserInputMovement.mouseY > .5f);
+            SetAnimationBool("Rotate Opposite", entityUserInputMovement.mouseY > .5f);
         }
 
         // calculate run
-        //Log(handle.entityPhysics.moveDir.magnitude.ToString());
-        if(handle.entityPhysics.moveDir.magnitude > 0){
+        //Log(entityPhysics.moveDir.magnitude.ToString());
+        if(entityPhysics.moveDir.magnitude > 0){
 
-            if(handle.entityPhysics.GROUNDTOUCH){
+            if(entityPhysics.GROUNDTOUCH){
                 bodySkew = Mathf.Lerp(bodySkew, Mathf.InverseLerp(0f, 180f, Vector3.Angle(velHoriz, bodyT.forward)), .05f);
                 //Log(bodySkew.ToString());
             }
@@ -309,7 +311,7 @@ public class EntityAnimation : EntityComponent
             bodySkew = Mathf.Lerp(bodySkew, 0f, .01f);
         }
 
-        slowness = 1f - Mathf.InverseLerp(0f, handle.entityPhysics.maxSpeed_run, velHoriz.magnitude);
+        slowness = 1f - Mathf.InverseLerp(0f, entityPhysics.maxSpeed_run, velHoriz.magnitude);
         runMagnitude = 1f - Mathf.Max(bodySkew, slowness);
         SetAnimationLayerWeight("Legs_full", runMagnitude);
         if (bodyRotationMode == (int)BodyRotationMode.Normal)
@@ -353,7 +355,7 @@ public class EntityAnimation : EntityComponent
         SetAnimationLayerWeight("Legs_shuffle", 1f - backMagnitude - runMagnitude);
 
         // calculate posture
-        SetAnimationLayerWeight("Squat Position", posture_squat + squat_activity + handle.entityPhysics.landScrunch);
+        SetAnimationLayerWeight("Squat Position", posture_squat + squat_activity + entityPhysics.landScrunch);
 
 
     }
@@ -378,12 +380,12 @@ public class EntityAnimation : EntityComponent
         string trigger;
         Item weap;
 
-        if(handle.entityItems.weapon_equipped == null){
+        if(entityItems.weapon_equipped == null){
             trigger = "Throw";
-            handle.entityPhysics.LaunchProjectile(Item.SmallStone.gameobject);
+            entityPhysics.LaunchProjectile(Item.SmallStone.gameobject);
         }
         else{
-            weap = handle.entityItems.weapon_equipped.Item1;
+            weap = entityItems.weapon_equipped.Item1;
             switch (weap.holdStyle)
             {
                 case (int)Item.HoldStyle.Spear:

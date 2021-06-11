@@ -11,9 +11,10 @@ public class EntityInfo : EntityComponent
     public Faction faction;
 
 
-    void Awake(){
-        handle = GetComponent<EntityHandle>();
-        handle.entityInfo = this;
+    protected override void Awake(){
+
+        base.Awake();
+
 
         id = Random.Range(0, int.MaxValue);
     }

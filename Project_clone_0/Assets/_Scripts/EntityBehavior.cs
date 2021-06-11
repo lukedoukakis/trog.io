@@ -44,9 +44,10 @@ public class EntityBehavior : EntityComponent
 
 
 
-    void Awake(){
-        handle = GetComponent<EntityHandle>();
-        handle.entityBehavior = this;
+    protected override void Awake(){
+
+        base.Awake();
+
         home = GameObject.FindGameObjectWithTag("Home").transform;
         randomOffset = new Vector3(UnityEngine.Random.Range(randomOffsetRange*-1f, randomOffsetRange), 0f, UnityEngine.Random.Range(randomOffsetRange*-1f, 0));
         actionLayers = new Dictionary<string, Action>{
@@ -112,7 +113,7 @@ public class EntityBehavior : EntityComponent
     public void ExecuteAction(Action a){
         Transform t = null;
         if(a.obj == null){ t = null; }else{ t = a.obj.transform; }
-        handle.entityAnimation.SetBodyRotationMode(a.bodyRotationMode, t);
+        entityAnimation.SetBodyRotationMode(a.bodyRotationMode, t);
 
         switch(a.type){
             case (int)Action.ActionTypes.Idle :
@@ -183,7 +184,7 @@ public class EntityBehavior : EntityComponent
             {
                 if (!IsAtPosition(targetT.position, a.distanceThreshold)){
                     move = GetNavigationDirection(targetT);
-                    handle.entityPhysics.moveDir = move;
+                    entityPhysics.moveDir = move;
                 }
                 else
                 {
@@ -219,10 +220,10 @@ public class EntityBehavior : EntityComponent
 
                 if(Vector3.Distance(transform.position, targetT.position) > a.distanceThreshold){
                     move = GetNavigationDirection(targetT);
-                    handle.entityPhysics.moveDir = move;
+                    entityPhysics.moveDir = move;
                 }
                 else{
-                    handle.entityPhysics.moveDir = Vector3.zero;
+                    entityPhysics.moveDir = Vector3.zero;
                 }
                 yield return null;
 
@@ -235,7 +236,7 @@ public class EntityBehavior : EntityComponent
         Item i_target = a.item_target;
         Log("target name: " + i_target.nme);
 
-        List<GameObject> foundObjects = SenseSurroundingItems(i_target.type, i_target.nme, senseDistance_infinite, handle.entityInfo.faction.warringFactions);
+        List<GameObject> foundObjects = SenseSurroundingItems(i_target.type, i_target.nme, senseDistance_infinite, entityInfo.faction.warringFactions);
         foundObjects = foundObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
         if(foundObjects.Count == 0){
             // TODO: search in new area if nothing found
@@ -244,7 +245,7 @@ public class EntityBehavior : EntityComponent
         else{
             Log("Collect: picking up object");
             GameObject target = foundObjects[0];
-            Faction.AddItemTargeted(target, handle.entityInfo.faction);
+            Faction.AddItemTargeted(target, entityInfo.faction);
             Action goToObject = Action.GenerateAction((int)(Action.ActionTypes.GoTo), target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Normal, false);
             Action pickupObject = Action.GenerateAction((int)(Action.ActionTypes.Pickup), target, -1, Item.GetItemByName(target.name), null, -1, -1f, (int)EntityAnimation.BodyRotationMode.Normal, false);
             Action followPlayer = Action.GenerateAction("Follow Player", handle);
@@ -261,8 +262,8 @@ public class EntityBehavior : EntityComponent
 
         IEnumerator _Pickup(){
             GameObject target = a.obj;
-            Faction.AddItemOwned(target, handle.entityInfo.faction);
-            Faction.RemoveItemTargeted(target, handle.entityInfo.faction);
+            Faction.AddItemOwned(target, entityInfo.faction);
+            Faction.RemoveItemTargeted(target, entityInfo.faction);
             yield return new WaitForSecondsRealtime(.25f);
             TakeFromGround(target);
             yield return new WaitForSecondsRealtime(.25f);
@@ -286,7 +287,7 @@ public class EntityBehavior : EntityComponent
         BeginActionLayer("Hands", a, _Swing());
 
         IEnumerator _Swing(){
-            handle.entityAnimation.OnAttack();
+            entityAnimation.OnAttack();
             Action attackRecover = Action.GenerateAction((int)(Action.ActionTypes.AttackRecover), a.obj, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target, false);
             InsertAction(attackRecover);
             yield return null;
@@ -350,7 +351,7 @@ public class EntityBehavior : EntityComponent
     Vector3 GetNavigationDirection(Transform targetT){
 
         Vector3 targetDirection = targetT.position - transform.position;
-        Transform gyro = handle.entityPhysics.gyro;
+        Transform gyro = entityPhysics.gyro;
         gyro.LookAt(targetT);
         Quaternion rot = gyro.rotation;
         rot.x = 0;
@@ -374,8 +375,8 @@ public class EntityBehavior : EntityComponent
 				
 				// if close enough to obstacle and on the ground, jump
 				if(Mathf.Min(Mathf.Min(leftDistance, centerDistance), rightDistance) < maxJumpFromDistance){
-					if(handle.entityPhysics.CanJump()){
-						handle.entityPhysics.Jump();
+					if(entityPhysics.CanJump()){
+						entityPhysics.Jump();
 					}
 				}
 			}
@@ -392,8 +393,8 @@ public class EntityBehavior : EntityComponent
         bool SenseObstacle(){
 
             // set raycasts to reach castDistance units away
-            Transform gs = handle.entityPhysics.groundSense;
-            Vector3 moveDir = handle.entityPhysics.moveDir;
+            Transform gs = entityPhysics.groundSense;
+            Vector3 moveDir = entityPhysics.moveDir;
 
             bool leftCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward + gyro.right*-2f, out leftHitInfo, senseDistance_obstacle);
             bool centerCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward, out centerHitInfo, senseDistance_obstacle);
@@ -431,8 +432,8 @@ public class EntityBehavior : EntityComponent
         }
 
         bool CanClearObstacle(){
-            Transform ohs = handle.entityPhysics.obstacleHeightSense;
-            return !Physics.BoxCast(ohs.position, new Vector3(handle.entityPhysics.hitbox.bounds.extents.x, .01f, .1f), gyro.forward, gyro.rotation, Mathf.Max(leftDistance, centerDistance, rightDistance));
+            Transform ohs = entityPhysics.obstacleHeightSense;
+            return !Physics.BoxCast(ohs.position, new Vector3(entityPhysics.hitbox.bounds.extents.x, .01f, .1f), gyro.forward, gyro.rotation, Mathf.Max(leftDistance, centerDistance, rightDistance));
         }
 
         void TurnTowardsMostOpenPath(){
@@ -452,19 +453,19 @@ public class EntityBehavior : EntityComponent
         Tuple<Item, GameObject> pair = new Tuple<Item, GameObject>(item, o);
         switch(item.type){
             case (int)Item.Type.Misc:
-                handle.entityItems.SetHolding(pair);
+                entityItems.SetHolding(pair);
                 break;
             case (int)Item.Type.Weapon:
-                handle.entityItems.SetWeapon(pair);
+                entityItems.SetWeapon(pair);
                 break;
             case (int)Item.Type.Container:
-                handle.entityItems.SetHolding(pair);
+                entityItems.SetHolding(pair);
                 break;
             case (int)Item.Type.Pocket:
-                handle.entityItems.PocketItem(item);
+                entityItems.PocketItem(item);
                 break;
         }
-        handle.entityAnimation.Pickup(item);
+        entityAnimation.Pickup(item);
         //o.transform.position = o.transform.position += new Vector3(UnityEngine.Random.Range(-30f, 30f), 1f, UnityEngine.Random.Range(-30f, 30f));
     }
     public List<GameObject> SenseSurroundingItems(int type, string name, float distance, List<Faction> forbiddenFacs){
@@ -481,7 +482,7 @@ public class EntityBehavior : EntityComponent
             forbid = false;
             if(type == -1 || i.type == type){
                 if(name == null || o.name == name){
-                    if(!Faction.ItemIsTargetedByFaction(o, handle.entityInfo.faction)){
+                    if(!Faction.ItemIsTargetedByFaction(o, entityInfo.faction)){
                         foreach(Faction fac in forbiddenFacs){
                             if(Faction.ItemIsOwnedByFaction(o, fac)){
                                 forbid = true;
@@ -513,7 +514,7 @@ public class EntityBehavior : EntityComponent
     void Update()
     {   
 
-        handle.entityPhysics.moveDir = move;
+        entityPhysics.moveDir = move;
 
 
         if(isLocalPlayer){
