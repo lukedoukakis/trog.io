@@ -105,10 +105,10 @@ public class Action : ScriptableObject
                 a.urgent = true;
                 // a.obj = GameObject.FindGameObjectWithTag("Player");
 
-                GameObject[] gs = GameObject.FindGameObjectsWithTag("Npc");
-                foreach(GameObject g in gs){
-                    if(g != handle.gameObject){
-                        a.obj = g;
+                EntityHandle[] members = handle.entityInfo.faction.members.ToArray();
+                foreach(EntityHandle h in members){
+                    if(h != handle){
+                        a.obj = h.gameObject;
                     }
                 }
 

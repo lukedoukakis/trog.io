@@ -11,28 +11,21 @@ public class EntityHandle : EntityComponent
     public bool selecting;
     public bool selected;
     public bool tooltip;
+    public bool localP;
 
 
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
-        Log("Starting local player");
-    }
-
-    protected override void Awake(){
-
-        base.Awake();
-
-        //Log(isLocalPlayer.ToString());
-
-        if(tag == "Player"){
-            Debug.Log("INIT PLAYER");
-            InitPlayer(false);
-            UIController.current.SetUIMode(false);
+        
+        if(isLocalPlayer){
+            Debug.Log("LOCAL!!!");
+            localP = true;
+            InitAsLocalPlayer(false);
         }
     }
 
-    public void InitPlayer(bool fromMemory){
+    public void InitAsLocalPlayer(bool fromMemory){
 
         // set global variables
         GameManager.current.localPlayer = this.gameObject;
@@ -52,6 +45,8 @@ public class EntityHandle : EntityComponent
         for(int i = 0; i < GameManager.startingTribeMembers; i++){
             GameManager.SpawnNpc(npcPrefab, this.gameObject);
         }
+
+        UIController.current.SetUIMode(false);
 
 
 

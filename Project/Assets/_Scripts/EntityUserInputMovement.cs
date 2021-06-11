@@ -15,13 +15,6 @@ public class EntityUserInputMovement : EntityComponent
     public Vector3 move;
 
 
-    public override void OnStartLocalPlayer()
-    {
-        base.OnStartLocalPlayer();
-        handle.InitPlayer(false);
-        UIController.current.SetUIMode(false);
-    }
-
     void Start(){
 
     }
@@ -81,12 +74,12 @@ public class EntityUserInputMovement : EntityComponent
             move.x += 1;
         }
         if(pressSprint){
-            //handle.entityPhysics.sprinting = true;
+            //entityPhysics.sprinting = true;
         }
         if (pressJump)
         {
-            if(handle.entityPhysics.CanJump()){
-                handle.entityPhysics.Jump();
+            if(entityPhysics.CanJump()){
+                entityPhysics.Jump();
             }
         }
 
@@ -100,7 +93,7 @@ public class EntityUserInputMovement : EntityComponent
 
     void HandleAttack(){
         if(Input.GetKeyDown(KeyCode.Mouse0)){
-            handle.entityAnimation.OnAttack();
+            entityAnimation.OnAttack();
         }
     }
 
@@ -112,14 +105,14 @@ public class EntityUserInputMovement : EntityComponent
         }
     }
     void CheckInteractableItems(){
-        interactableObjects = handle.entityBehavior.SenseSurroundingItems(-1, null, EntityBehavior.senseDistance_immediate, handle.entityInfo.faction.warringFactions);
+        interactableObjects = entityBehavior.SenseSurroundingItems(-1, null, EntityBehavior.senseDistance_immediate, entityInfo.faction.warringFactions);
     }
     void Interact(){
         
         if(interactableObjects.Count != 0){
             interactableObjects = interactableObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
             GameObject obj = interactableObjects[0];
-            handle.entityBehavior.TakeFromGround(obj);            
+            entityBehavior.TakeFromGround(obj);            
         }
         
     }
@@ -140,7 +133,7 @@ public class EntityUserInputMovement : EntityComponent
 
     void FixedUpdate()
     {
-        handle.entityPhysics.moveDir = move;
+        entityPhysics.moveDir = move;
     }
 
 

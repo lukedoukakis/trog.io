@@ -112,7 +112,7 @@ public class GlobalSelectionController : MonoBehaviour
 
     void Update(){
 
-        Debug.Log(hoveredEntities);
+        //Debug.Log(hoveredEntities);
 
         if (Input.GetKey(KeyCode.Mouse1))
         {
