@@ -6,7 +6,6 @@ using UnityEngine;
 // handles mouse input events
 public class EntityHandle : EntityComponent
 {
-    public GameObject npcPrefab;
     public bool hovering;
     public bool selecting;
     public bool selected;
@@ -19,7 +18,6 @@ public class EntityHandle : EntityComponent
         base.OnStartLocalPlayer();
         
         if(isLocalPlayer){
-            Debug.Log("LOCAL!!!");
             localP = true;
             InitAsLocalPlayer(false);
         }
@@ -32,18 +30,14 @@ public class EntityHandle : EntityComponent
         ChunkGenerator.current.playerT = transform;
         CameraController.current.enabled = true;
         CameraController.current.Init(this.transform);
-        npcPrefab = Resources.Load<GameObject>("Entities/Npc");
 
         // init player specific entity settings
-        transform.position = new Vector3(0f, 1600f * 3f, 0f);
-        Faction faction = Faction.GenerateFaction("Faction " + (Random.Range(0, 10000f)).ToString(), true);
-        faction.AddMember(this);
-        entityInfo.faction = faction;
-
+        transform.position = new Vector3(0f, 4800f, 0f);
+        StartCoroutine(entityCommandServer.SetNewFactionWhenReady(this.gameObject));
 
         // spawn initial tribe members
         for(int i = 0; i < GameManager.startingTribeMembers; i++){
-            GameManager.SpawnNpc(npcPrefab, this.gameObject);
+            StartCoroutine(entityCommandServer.SpawnNpcWhenReady(this.gameObject));
         }
 
         UIController.current.SetUIMode(false);

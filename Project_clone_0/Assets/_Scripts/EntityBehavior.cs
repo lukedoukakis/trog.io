@@ -103,7 +103,7 @@ public class EntityBehavior : EntityComponent
         activeAction = actions[0];
         actions.RemoveAt(0);
         ExecuteAction(activeAction);
-        Log("Action type: " + activeAction.ToString());
+        //Log("Action type: " + activeAction.ToString());
         return activeAction;
     }
     public void OnActionInterrupt(){
@@ -234,16 +234,16 @@ public class EntityBehavior : EntityComponent
     public void Collect(Action a){
 
         Item i_target = a.item_target;
-        Log("target name: " + i_target.nme);
+        //Log("target name: " + i_target.nme);
 
         List<GameObject> foundObjects = SenseSurroundingItems(i_target.type, i_target.nme, senseDistance_infinite, entityInfo.faction.warringFactions);
         foundObjects = foundObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
         if(foundObjects.Count == 0){
             // TODO: search in new area if nothing found
-            Log("Collect: nothing found");
+            //Log("Collect: nothing found");
         }
         else{
-            Log("Collect: picking up object");
+            //Log("Collect: picking up object");
             GameObject target = foundObjects[0];
             Faction.AddItemTargeted(target, entityInfo.faction);
             Action goToObject = Action.GenerateAction((int)(Action.ActionTypes.GoTo), target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Normal, false);
@@ -448,7 +448,7 @@ public class EntityBehavior : EntityComponent
 	}
 
     public void TakeFromGround(GameObject o){
-        Log("TakeFromGround()");
+        //Log("TakeFromGround()");
         Item item = Item.GetItemByName(o.name);
         Tuple<Item, GameObject> pair = new Tuple<Item, GameObject>(item, o);
         switch(item.type){

@@ -6,15 +6,16 @@ using Mirror;
 public class EntityComponent : NetworkBehaviour
 {
 
-    public EntityHandle handle;
-    public EntityInfo entityInfo;
-    public EntityStats entityStats;
-    public EntityBehavior entityBehavior;
-    public EntityAnimation entityAnimation;
-    public EntityPhysics entityPhysics;
-    public EntityStatus entityStatus;
-    public EntityItems entityItems;
-    public EntityUserInputMovement entityUserInputMovement;
+    [HideInInspector] public EntityHandle handle;
+    [HideInInspector] public EntityInfo entityInfo;
+    [HideInInspector] public EntityStats entityStats;
+    [HideInInspector] public EntityBehavior entityBehavior;
+    [HideInInspector] public EntityAnimation entityAnimation;
+    [HideInInspector] public EntityPhysics entityPhysics;
+    [HideInInspector] public EntityStatus entityStatus;
+    [HideInInspector] public EntityItems entityItems;
+    [HideInInspector] public EntityUserInputMovement entityUserInputMovement;
+    [HideInInspector] public EntityCommandServer entityCommandServer;
 
 
     protected virtual void Awake(){
@@ -27,6 +28,7 @@ public class EntityComponent : NetworkBehaviour
         entityStatus = GetComponent<EntityStatus>();
         entityItems = GetComponent<EntityItems>();
         entityUserInputMovement = GetComponent<EntityUserInputMovement>();
+        entityCommandServer = GetComponent<EntityCommandServer>();
     }
 
 

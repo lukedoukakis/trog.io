@@ -112,6 +112,7 @@ GameObject:
   - component: {fileID: 7063413353330055428}
   - component: {fileID: 7063413353330055434}
   - component: {fileID: 7063413353330055433}
+  - component: {fileID: 8776602885645935818}
   - component: {fileID: 2671546838428155326}
   - component: {fileID: 4862650538293438238}
   - component: {fileID: 3705341397007737133}
@@ -179,9 +180,13 @@ MonoBehaviour:
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
+  entityCommandServer: {fileID: 0}
+  npcPrefab: {fileID: 0}
+  hovering: 0
   selecting: 0
   selected: 0
   tooltip: 0
+  localP: 0
 --- !u!114 &7063413353330055426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,6 +202,15 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   handle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityAnimation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
+  entityCommandServer: {fileID: 0}
   id: 0
   species: human
   nickname: Player
@@ -216,6 +230,15 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   handle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityAnimation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
+  entityCommandServer: {fileID: 0}
 --- !u!114 &7063413353330055438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,6 +254,15 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   handle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityAnimation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
+  entityCommandServer: {fileID: 0}
   home: {fileID: 0}
   move: {x: 0, y: 0, z: 0}
   urgent: 0
@@ -251,10 +283,21 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   handle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityAnimation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
+  entityCommandServer: {fileID: 0}
   rb: {fileID: 0}
   bodyT: {fileID: 0}
   headT: {fileID: 0}
   animator: {fileID: 0}
+  bodyRotationMode: 0
+  keysList: []
 --- !u!114 &7063413353330055436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,6 +313,15 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   handle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityAnimation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
+  entityCommandServer: {fileID: 0}
   hitbox: {fileID: 0}
   highFrictionMat: {fileID: 0}
   noFrictionMat: {fileID: 0}
@@ -281,6 +333,7 @@ MonoBehaviour:
     m_Bits: 0
   rb: {fileID: 0}
   gyro: {fileID: 0}
+  rightHand: {fileID: 0}
   groundSense: {fileID: 0}
   wallSense: {fileID: 0}
   waterSense: {fileID: 0}
@@ -320,6 +373,15 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   handle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityAnimation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
+  entityCommandServer: {fileID: 0}
   hp: 0
   alive: 0
 --- !u!114 &7063413353330055428
@@ -337,6 +399,15 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   handle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityAnimation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
+  entityCommandServer: {fileID: 0}
   t_hand_left: {fileID: 0}
   t_upperArm_left: {fileID: 0}
   t_shoulder_left: {fileID: 0}
@@ -371,6 +442,15 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   handle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityAnimation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
+  entityCommandServer: {fileID: 0}
   pressForward: 0
   pressBack: 0
   pressLeft: 0
@@ -382,6 +462,30 @@ MonoBehaviour:
   mouseZ: 0
   interactableObjects: []
   move: {x: 0, y: 0, z: 0}
+--- !u!114 &8776602885645935818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7063413353330055447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b6b30ed41c0ca74a9b1ee1b542728a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  handle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityAnimation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
+  entityCommandServer: {fileID: 0}
 --- !u!114 &2671546838428155326
 MonoBehaviour:
   m_ObjectHideFlags: 0
