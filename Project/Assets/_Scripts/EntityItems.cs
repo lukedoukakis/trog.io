@@ -18,13 +18,12 @@ public class EntityItems : EntityComponent
     public ItemCollection pockets;
 
 
+    // TODO: assign these in inspector
     public Transform t_hand_left;
     public Transform t_upperArm_left;
     public Transform t_shoulder_left;
     public Transform t_back;
     public Transform t_left_current;
-
-
     public Transform itemT;
     public Transform t_hand_right;
     

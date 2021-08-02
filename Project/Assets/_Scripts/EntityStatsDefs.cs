@@ -9,7 +9,10 @@ public class EntityStatsDefs : MonoBehaviour
     public static EntityStatsDefs current;
     
     public Dictionary<string, Dictionary<string, float>> EntityStats;
-    Dictionary<string, float> human, tree;
+    Dictionary<string, float>
+        human,
+        tree,
+        bear;
 
     public bool init;
 
@@ -26,6 +29,7 @@ public class EntityStatsDefs : MonoBehaviour
             {"stamina", .5f},
         };
 
+
         tree = new Dictionary<string, float>()
         {
             {"hp", 2f},
@@ -34,11 +38,24 @@ public class EntityStatsDefs : MonoBehaviour
             {"stamina", -1f},
         };
 
+        bear = new Dictionary<string, float>()
+        {
+            {"hp", 1f},
+            {"speed", .65f},
+            {"strength", .9f},
+            {"stamina", .4f},
+        };
+
+
+
+
+
 
         EntityStats = new Dictionary<string, Dictionary<string, float>>()
         {
             {"human", human},
             {"tree", tree},
+            {"bear", bear}
         };
 
     }

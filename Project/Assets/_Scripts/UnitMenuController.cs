@@ -7,6 +7,7 @@ public class UnitMenuController : MonoBehaviour
 
     public static UnitMenuController current;
 
+    public Transform dropdownT;
     public bool open;
     public GameObject buttonPrefab;
     List<GameObject> buttons;
@@ -21,7 +22,7 @@ public class UnitMenuController : MonoBehaviour
     }
 
     public void AddButton(EntityHandle handle){
-        GameObject newButton = Instantiate(buttonPrefab, this.gameObject.transform);
+        GameObject newButton = Instantiate(buttonPrefab, dropdownT);
         UnitButtonController ubc = newButton.GetComponent<UnitButtonController>();
         ubc.SetFromObject(handle);
         buttons.Add(newButton);

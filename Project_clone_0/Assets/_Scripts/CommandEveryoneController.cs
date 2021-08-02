@@ -7,13 +7,14 @@ public class CommandEveryoneController : MonoBehaviour
     
 
     Animator animator;
+    public Transform commandEveryoneT;
     public bool expanded;
 
     public static CommandEveryoneController current;
 
     void Awake(){
         current = this;
-        animator = GetComponent<Animator>();
+        animator = commandEveryoneT.GetComponent<Animator>();
     }
 
 
