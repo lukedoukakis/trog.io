@@ -83,7 +83,7 @@ public class CameraController : MonoBehaviour
             cameraDistance_baked = 1f - (Mathf.Min(0f, posModifier) * -1.5f);
             float cameraDistance_combined = cameraDistance_baked * cameraDistance_input;
 
-            followT.position = Vector3.Lerp(followT.position, playerT.position + Vector3.up*3f*cameraDistance_combined, 18f * Time.deltaTime);
+            followT.position = Vector3.Lerp(followT.position, playerT.position + Vector3.up * 4.2f * cameraDistance_combined, 18f * Time.deltaTime);
             targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f * cameraDistance_combined) + (Mathf.Sin(posModifier * pi) * Vector3.up * 4f * cameraDistance_combined), 50f * Time.deltaTime);
             Camera.main.transform.position = targetPos;
             targetLookAt = Vector3.Lerp(targetLookAt, followT.position, 50f * Time.deltaTime);

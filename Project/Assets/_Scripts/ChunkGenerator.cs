@@ -21,7 +21,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float MountainPolarity = 1f;
     public static float FlatLevel = .85f;
     public static float SeaLevel = 0.849985f;
-    public static float SnowLevel = .875f;
+    public static float SnowLevel = .86f;
     public static bool LoadingChunks, DeloadingChunks;
     static GameObject Chunk;
     static GameObject Terrain;
@@ -682,7 +682,7 @@ public class ChunkGenerator : MonoBehaviour
         float height;
         float fw;
 
-        int step = (int)(20f * (1f - treeDensity)) + 1;
+        int step = (int)(10f * (1f - treeDensity)) + 1;
 
         for (int z = 0; z < ChunkSize + 2; z += 10)
         {

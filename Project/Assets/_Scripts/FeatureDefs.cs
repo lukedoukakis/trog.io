@@ -35,7 +35,7 @@ public class TreeInfo : MonoBehaviour
             case "Jungle Tree":
                 scale = 2.2f * ChunkGenerator.current.treeScale;
                 density = 1f;
-                normal_min = .7f;
+                normal_min = .6f;
                 normal_max = 1f;
                 slant = .5f;
                 spread = 1.5f;
@@ -43,7 +43,7 @@ public class TreeInfo : MonoBehaviour
             case "Fir Tree":
                 scale = 1.5f * ChunkGenerator.current.treeScale;
                 density = 1f;
-                normal_min = .94f;
+                normal_min = .25f;
                 normal_max = 1f;
                 slant = .12f;
                 spread = 2f;
@@ -51,7 +51,7 @@ public class TreeInfo : MonoBehaviour
             case "Snowy Fir Tree":
                 scale = 1.5f * ChunkGenerator.current.treeScale;
                 density = 1f;
-                normal_min = .94f;
+                normal_min = .6f;
                 normal_max = 1f;
                 slant = .12f;
                 spread = 2f;

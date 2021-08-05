@@ -23,8 +23,8 @@ public class EntityPhysics : EntityComponent
     float groundCastDistance;
     public static float JumpForce = 2800f;
     public static float ThrowForce = 200f;
-    public static float AccelerationScale = 35f;
-    public static float MaxSpeedScale = 20f;
+    public static float AccelerationScale = 30f;
+    public static float MaxSpeedScale = 15f;
     public static float JumpCoolDown = .15f;
 
 
