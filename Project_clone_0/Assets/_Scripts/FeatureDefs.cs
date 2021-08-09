@@ -70,23 +70,23 @@ public class TreeInfo : MonoBehaviour
                 spread = 1f;
                 break;
             case "Oak Tree":
-                scale = .5f * ChunkGenerator.current.treeScale;
-                density = .05f;
-                normal_min = .95f;
+                scale = 2f * ChunkGenerator.current.treeScale;
+                density = 1f;
+                normal_min = .25f;
                 normal_max = 1f;
-                slant = .18f;
+                slant = .12f;
                 spread = 2f;
                 break;
             case "Plains Oak Tree":
-                scale = 2.5f * ChunkGenerator.current.treeScale;
-                density = .1f;
-                normal_min = .95f;
+                scale = 2f * ChunkGenerator.current.treeScale;
+                density = 1f;
+                normal_min = .25f;
                 normal_max = 1f;
-                slant = .18f;
-                spread = 1f;
+                slant = .12f;
+                spread = 2f;
                 break;
             case string str when name.StartsWith("Grass"):
-                scale = 1.7f * ChunkGenerator.current.treeScale;
+                scale = 1.7f;
                 density = 5f;
                 normal_min = .95f;
                 normal_max = 1f;
@@ -94,7 +94,7 @@ public class TreeInfo : MonoBehaviour
                 spread = .5f;
                 break;
             case string str when name.StartsWith("Reed"):
-                scale = 1f* ChunkGenerator.current.treeScale;
+                scale = 1f;;
                 density = 4f;
                 normal_min = .99f;
                 normal_max = 1f;
@@ -102,7 +102,7 @@ public class TreeInfo : MonoBehaviour
                 spread = .65f;
                 break;
             case string str when name.StartsWith("Mushroom"):
-                scale = 1.2f* ChunkGenerator.current.treeScale;
+                scale = 1.2f;
                 density = .1f;
                 normal_min = .7f;
                 normal_max = 1f;
@@ -110,7 +110,7 @@ public class TreeInfo : MonoBehaviour
                 spread = .5f;
                 break;
             case string str when name.StartsWith("Bush"):
-                scale = .4f* ChunkGenerator.current.treeScale;
+                scale = .4f;
                 density = 7f;
                 normal_min = .99f;
                 normal_max = 1f;
@@ -118,7 +118,7 @@ public class TreeInfo : MonoBehaviour
                 spread = .7f;
                 break;
             case string str when name.StartsWith("Dead Bush"):
-                scale = 2f* ChunkGenerator.current.treeScale;
+                scale = 2f;
                 density = .02f;
                 normal_min = .6f;
                 normal_max = 1f;
@@ -126,7 +126,7 @@ public class TreeInfo : MonoBehaviour
                 spread = 5f;
                 break;
             case string str when name.StartsWith("Cactus"):
-                scale = 1f* ChunkGenerator.current.treeScale;
+                scale = 1f;
                 if(fw > .92f){
                     density = 0f;
                 }
@@ -139,7 +139,7 @@ public class TreeInfo : MonoBehaviour
                 spread = 5f;
                 break;
             case string str when name.StartsWith("Rock"):
-                scale = 3f* ChunkGenerator.current.treeScale;
+                scale = 3f;
                 density = .2f;
                 normal_min = .5f;
                 normal_max = .8f;
@@ -147,7 +147,7 @@ public class TreeInfo : MonoBehaviour
                 spread = 5f;
                 break;
             default:
-                scale = -1f* ChunkGenerator.current.treeScale;
+                scale = -1f;
                 density = -1f;
                 normal_min = -1f;
                 normal_max = -1f;
