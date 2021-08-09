@@ -19,7 +19,22 @@ Material:
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
-    m_Floats: []
+    m_TexEnvs:
+    - _FurTex:
+        m_Texture: {fileID: 2800000, guid: 9fd01f5f0610c914bab8756575536cca, type: 3}
+        m_Scale: {x: 23.48, y: 47.66}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 373999fd26f1a054dab3611997559ef1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _FurDensity: 1.059
+    - _FurLength: 0.543
+    - _FurShading: 0.25
+    - _FurThinness: 1
+    - _Shininess: 0.01
     m_Colors:
-    - Color_EB41B935: {r: 0.31132078, g: 0.2474339, b: 0.09545213, a: 0}
+    - Color_EB41B935: {r: 0.5188679, g: 0.36792448, b: 0, a: 1}
+    - _Color: {r: 0.5283019, g: 0.46226415, b: 0, a: 1}
+    - _Specular: {r: 0.5188679, g: 0.2454389, b: 0, a: 1}
