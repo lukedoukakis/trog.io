@@ -86,6 +86,7 @@ public class ChunkGenerator : MonoBehaviour
     [Range(0f, 1f)] public float treeScale;
 
 
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -656,7 +657,6 @@ public class ChunkGenerator : MonoBehaviour
         bc.isTrigger = true;
 
     }
-
 
     void PlaceFeatures()
     {
