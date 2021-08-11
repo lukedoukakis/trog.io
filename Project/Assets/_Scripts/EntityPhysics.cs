@@ -9,7 +9,7 @@ public class EntityPhysics : EntityComponent
     public PhysicMaterial highFrictionMat;
     public PhysicMaterial noFrictionMat;
     public LayerMask layerMask_water;
-    public LayerMask layerMask_noWater;
+    public LayerMask layerMask_terrain;
 
     public Rigidbody rb;
     public Transform gyro;
@@ -63,7 +63,7 @@ public class EntityPhysics : EntityComponent
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         layerMask_water = LayerMask.GetMask("Water");
-        layerMask_noWater = LayerMask.GetMask("Terrain");
+        layerMask_terrain = LayerMask.GetMask("Terrain");
         rb = GetComponent<Rigidbody>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
         rightHand = Utility.FindDeepChild(this.transform, "B-hand_R");
@@ -107,17 +107,27 @@ public class EntityPhysics : EntityComponent
 
     // check if foot is behind threshhold, if so set new plant point
     public void IKUpdate(){
-        if(true){
+        if(!IN_WATER){
             
             // update limb positions with plant points;
             UpdateLimbPositions();
 
-            // check if plant points need update
-            if(footPlantUpdateTimeRight >= 1f){
-                ResetFootPlantPoint(targetFootRight, basePositionFootRight, ref footPlantPosRight, ref footPlantUpdateTimeRight);
+            if (GetHorizVelocity().magnitude > .1f)
+            {
+
+                // check if plant points need update
+                if (footPlantUpdateTimeRight >= 1f)
+                {
+                    ResetFootPlantPoint(targetFootRight, basePositionFootRight, ref footPlantPosRight, ref footPlantUpdateTimeRight);
+                }
+                if (footPlantUpdateTimeLeft >= 1f)
+                {
+                    ResetFootPlantPoint(targetFootLeft, basePositionFootLeft, ref footPlantPosLeft, ref footPlantUpdateTimeLeft);
+                }
             }
-            if(footPlantUpdateTimeLeft >= 1f){
-                ResetFootPlantPoint(targetFootLeft, basePositionFootLeft, ref footPlantPosLeft, ref footPlantUpdateTimeLeft);
+            else{
+                SetPlantPosition(targetFootLeft, basePositionFootLeft, ref footPlantPosLeft);
+                SetPlantPosition(targetFootRight, basePositionFootRight, ref footPlantPosRight);
             }
         }
 
@@ -126,29 +136,39 @@ public class EntityPhysics : EntityComponent
         footPlantUpdateTimeRight += footPlantTimeUpdateSpeed;
         footPlantUpdateTimeLeft += footPlantTimeUpdateSpeed;
 
-        Log(rb.angularVelocity.magnitude.ToString());
+
     }
 
     public void UpdateLimbPositions(){
         float changePositionSpeed = 5f * Time.deltaTime;
-
         targetFootRight.position = Vector3.Lerp(targetFootRight.position, footPlantPosRight, changePositionSpeed) + Vector3.up * .016f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeRight * 2f * Mathf.PI) + 1f), .7f);
         targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, footPlantPosLeft, changePositionSpeed) + Vector3.up * .016f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeLeft * 2f * Mathf.PI) + 1f), .7f);
 
     }
 
-    public void ResetFootPlantPoint(Transform targetIk, Transform basePos, ref Vector3 plantPos, ref float updateTime){
+    public void ResetFootPlantPoint(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime){
         float forwardReachDistance = .6f;
-        Vector3 castOrigin = (basePos.position + GetHorizVelocity().normalized * forwardReachDistance) + (Vector3.up * 10f);
+        Vector3 castOrigin = (baseTransform.position + GetHorizVelocity().normalized * forwardReachDistance) + (Vector3.up * 10f);
         RaycastHit hit;
-        if(Physics.Raycast(castOrigin, Vector3.down, out hit, ChunkGenerator.ElevationAmplitude, layerMask_noWater)){
-            // Log("resetting foot plant pos");
+        if(Physics.Raycast(castOrigin, Vector3.down, out hit, ChunkGenerator.ElevationAmplitude, layerMask_terrain)){
             Vector3 pt = hit.point;
             Vector3 newPlantPt = new Vector3(pt.x, Mathf.Min(pt.y, kneeHeightT.position.y), pt.z);
             plantPos = newPlantPt + (GetHorizVelocity().normalized * .85f);
         }
         updateTime = 0f + (Mathf.Max(updateTime, 1f) - 1f);
 
+    }
+
+    public void SetPlantPosition(Transform targetIk, Transform targetTransform, ref Vector3 positionPointer){
+        RaycastHit hit;
+        if(Physics.Raycast(targetTransform.position, Vector3.up, out hit, 1f, layerMask_terrain)){
+            positionPointer = hit.point;
+        }
+        else{
+            positionPointer = targetTransform.position;
+        }
+        positionPointer = targetTransform.position;
+        
     }
 
 
@@ -193,7 +213,7 @@ public class EntityPhysics : EntityComponent
     }
 
     public bool CanJump(){
-        if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_noWater)){
+        if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_terrain)){
             return true;
         }
         return false;
@@ -250,7 +270,7 @@ public class EntityPhysics : EntityComponent
 
     void CheckGround(){
         Vector3 vel = rb.velocity;
-        if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far, layerMask_noWater)){
+        if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far, layerMask_terrain)){
             if(Vector3.Distance(groundInfo.point, transform.position) < groundCastDistance){
                 if(!GROUNDTOUCH){
                     GROUNDTOUCH = true;
