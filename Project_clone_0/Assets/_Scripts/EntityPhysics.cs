@@ -45,6 +45,11 @@ public class EntityPhysics : EntityComponent
     public bool GROUNDTOUCH, WALLTOUCH, IN_WATER;
 
 
+    // ik
+    public Transform ikParent;
+    public Transform targetFootRight, targetFootLeft;
+    public Vector3 footPlantPosLeft, footPlantPosRight;
+
 
 
 
@@ -69,6 +74,10 @@ public class EntityPhysics : EntityComponent
         }else if(tag == "Npc"){
             groundCastDistance = groundCastDistance_npc;
         }
+
+        ikParent = Utility.FindDeepChild(transform, "IKTargets");
+        targetFootRight = ikParent.Find("TargetFootRight");
+        targetFootLeft = ikParent.Find("TargetFootLeft");
     }
 
     void Start(){
