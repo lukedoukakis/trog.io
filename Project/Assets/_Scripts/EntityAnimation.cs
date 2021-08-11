@@ -422,7 +422,7 @@ public class EntityAnimation : EntityComponent
 
 
     void FixedUpdate(){
-        UpdateMovement();
+        //UpdateMovement();
         UpdateBodyRotation();
         bodyRotationLast = bodyT.rotation;
         angularVelocityY_last = angularVelocityY;

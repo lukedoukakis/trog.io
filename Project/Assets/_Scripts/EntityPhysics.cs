@@ -14,7 +14,7 @@ public class EntityPhysics : EntityComponent
     public Rigidbody rb;
     public Transform gyro;
     public Transform rightHand;
-    public Transform groundSense, wallSense, waterSense, obstacleHeightSense;
+    public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
     public static float groundCastDistance_player = .1f;
     public static float groundCastDistance_npc = .1f;
@@ -47,8 +47,10 @@ public class EntityPhysics : EntityComponent
 
     // ik
     public Transform ikParent;
+    public Transform basePositionFeet;
     public Transform targetFootRight, targetFootLeft;
     public Vector3 footPlantPosLeft, footPlantPosRight;
+    public float footPlantUpdateTimeRight, footPlantUpdateTimeLeft;
 
 
 
@@ -69,6 +71,7 @@ public class EntityPhysics : EntityComponent
         obstacleHeightSense = Utility.FindDeepChild(transform, "ObstacleHeightSense");
         wallSense = Utility.FindDeepChild(transform, "WallSense");
         waterSense = Utility.FindDeepChild(transform, "WaterSense");
+        kneeHeightT = Utility.FindDeepChild(transform, "KneeHeight");
         if(tag == "Player"){
             groundCastDistance = groundCastDistance_player;
         }else if(tag == "Npc"){
@@ -76,8 +79,12 @@ public class EntityPhysics : EntityComponent
         }
 
         ikParent = Utility.FindDeepChild(transform, "IKTargets");
+        basePositionFeet = ikParent.Find("BasePositionFeet");
         targetFootRight = ikParent.Find("TargetFootRight");
         targetFootLeft = ikParent.Find("TargetFootLeft");
+        targetFootRight.SetParent(GameObject.Find("Global Object").transform);
+        targetFootLeft.SetParent(GameObject.Find("Global Object").transform);
+
     }
 
     void Start(){
@@ -86,6 +93,56 @@ public class EntityPhysics : EntityComponent
         maxSpeed_sprint = maxSpeed_run * 1.5f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * .75f;
+
+
+        footPlantPosRight = targetFootRight.position;
+        footPlantPosLeft = targetFootLeft.position;
+        footPlantUpdateTimeRight = 0f;
+        footPlantUpdateTimeLeft = .5f;
+    }
+
+
+    // check if foot is behind threshhold, if so set new plant point
+    public void IKUpdate(){
+        if(true){
+            
+            // update limb positions with plant points;
+            UpdateLimbPositions();
+
+            // check if plant points need update
+            if(footPlantUpdateTimeRight >= 1f){
+                Log("new plant pos needed");
+                ResetFootPlantPoint(targetFootRight, ref footPlantPosRight, ref footPlantUpdateTimeRight);
+            }
+            if(footPlantUpdateTimeLeft >= 1f){
+                Log("new plant pos needed");
+                ResetFootPlantPoint(targetFootLeft, ref footPlantPosLeft, ref footPlantUpdateTimeLeft);
+            }
+        }
+
+        float footPlantTimeUpdateSpeed = 3f * (GetHorizVelocity().magnitude / maxSpeed_sprint) * Time.deltaTime;
+        footPlantUpdateTimeRight += footPlantTimeUpdateSpeed;
+        footPlantUpdateTimeLeft += footPlantTimeUpdateSpeed;
+    }
+
+    public void UpdateLimbPositions(){
+        float changePositionSpeed = 10f * Time.deltaTime;
+        targetFootRight.position = Vector3.Lerp(targetFootRight.position, footPlantPosRight, changePositionSpeed);
+        targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, footPlantPosLeft, changePositionSpeed);
+    }
+
+    public void ResetFootPlantPoint(Transform targetIk, ref Vector3 plantPos, ref float updateTime){
+        float forwardReachDistance = 3f;
+        Vector3 castOrigin = (basePositionFeet.position + GetHorizVelocity().normalized * forwardReachDistance) + (Vector3.up * 10f);
+        RaycastHit hit;
+        if(Physics.Raycast(castOrigin, Vector3.down, out hit, ChunkGenerator.ElevationAmplitude, layerMask_noWater)){
+            // Log("resetting foot plant pos");
+            Vector3 pt = hit.point;
+            Vector3 newPlantPt = new Vector3(pt.x, Mathf.Min(pt.y, kneeHeightT.position.y), pt.z);
+            plantPos = newPlantPt;
+        }
+        updateTime = 0f + Mathf.Max(updateTime, 1f) - 1f;
+
     }
 
 
@@ -363,6 +420,6 @@ public class EntityPhysics : EntityComponent
             maxSpeed_run /= 2f;
         }
         
-        
+        IKUpdate();
     }
 }

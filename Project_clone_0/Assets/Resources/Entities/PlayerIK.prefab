@@ -244,6 +244,7 @@ MonoBehaviour:
   wallSense: {fileID: 0}
   waterSense: {fileID: 0}
   obstacleHeightSense: {fileID: 0}
+  kneeHeightT: {fileID: 0}
   moveDir: {x: 0, y: 0, z: 0}
   jumping: 0
   jumpOpposite: 0
@@ -265,6 +266,7 @@ MonoBehaviour:
   WALLTOUCH: 0
   IN_WATER: 0
   ikParent: {fileID: 0}
+  basePositionFeet: {fileID: 0}
   targetFootRight: {fileID: 0}
   targetFootLeft: {fileID: 0}
   footPlantPosLeft: {x: 0, y: 0, z: 0}
@@ -457,7 +459,7 @@ MonoBehaviour:
   compressRotation: 0
   interpolateScale: 1
   syncScale: 1
-  target: {fileID: 0}
+  target: {fileID: 8259034806594529843}
 --- !u!114 &4223180527397998597
 MonoBehaviour:
   m_ObjectHideFlags: 0
