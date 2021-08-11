@@ -112,7 +112,7 @@ public class EntityPhysics : EntityComponent
             // update limb positions with plant points;
             UpdateLimbPositions();
 
-            if (GetHorizVelocity().magnitude > .1f)
+            if (IsMoving())
             {
 
                 // check if plant points need update
@@ -141,8 +141,16 @@ public class EntityPhysics : EntityComponent
 
     public void UpdateLimbPositions(){
         float changePositionSpeed = 5f * Time.deltaTime;
-        targetFootRight.position = Vector3.Lerp(targetFootRight.position, footPlantPosRight, changePositionSpeed) + Vector3.up * .016f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeRight * 2f * Mathf.PI) + 1f), .7f);
-        targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, footPlantPosLeft, changePositionSpeed) + Vector3.up * .016f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeLeft * 2f * Mathf.PI) + 1f), .7f);
+        Vector3 vertLeft, vertRight;
+        if(IsMoving()){
+            vertLeft = Vector3.up * .016f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeLeft * 2f * Mathf.PI) + 1f), .7f);
+            vertRight = Vector3.up * .016f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeRight * 2f * Mathf.PI) + 1f), .7f);
+        }
+        else{
+            vertLeft = vertRight = Vector3.zero;
+        }
+        targetFootRight.position = Vector3.Lerp(targetFootRight.position, footPlantPosRight, changePositionSpeed) + vertRight;
+        targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, footPlantPosLeft, changePositionSpeed) + vertLeft;
 
     }
 
@@ -413,6 +421,10 @@ public class EntityPhysics : EntityComponent
         float ySpeed = horvel.y;
         horvel.y = 0f;
         return horvel;
+    }
+
+    bool IsMoving(){
+        return GetHorizVelocity().magnitude > .1f;
     }
 
     void FixedUpdate()
