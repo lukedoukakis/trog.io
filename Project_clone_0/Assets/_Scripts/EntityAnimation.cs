@@ -21,14 +21,14 @@ public class EntityAnimation : EntityComponent
     Quaternion bodyRotation;
     Quaternion bodyRotationLast;
     Vector3 bodyAngularVelocity;
-    float angularVelocityY;
+    public float angularVelocityY;
     float angularVelocityY_last;
     public static float angularVelocityY_maxDelta = .1f;
 
     float posture_squat, squat_activity;
 
     float runMagnitude, climbMagnitude;
-    float bodySkew, slowness;
+    public float bodySkew, slowness;
 
 
 
