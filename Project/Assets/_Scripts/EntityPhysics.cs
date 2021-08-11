@@ -124,6 +124,9 @@ public class EntityPhysics : EntityComponent
                 {
                     ResetFootPlantPoint(targetFootLeft, basePositionFootLeft, ref footPlantPosLeft, ref footPlantUpdateTimeLeft);
                 }
+                AdjustFootPlantPoint(targetFootRight, basePositionFootRight, ref footPlantPosRight);
+                AdjustFootPlantPoint(targetFootLeft, basePositionFootLeft, ref footPlantPosLeft);
+
             }
             else{
                 SetPlantPosition(targetFootLeft, basePositionFootLeft, ref footPlantPosLeft);
@@ -132,7 +135,7 @@ public class EntityPhysics : EntityComponent
         }
 
         float footPlantTimeUpdateSpeed = 4f * (rb.velocity.magnitude / maxSpeed_sprint) * Time.deltaTime;
-        //footPlantTimeUpdateSpeed = 2f * Time.deltaTime;
+        //float footPlantTimeUpdateSpeed = 2f * Time.deltaTime;
         footPlantUpdateTimeRight += footPlantTimeUpdateSpeed;
         footPlantUpdateTimeLeft += footPlantTimeUpdateSpeed;
 
@@ -161,10 +164,21 @@ public class EntityPhysics : EntityComponent
         if(Physics.Raycast(castOrigin, Vector3.down, out hit, ChunkGenerator.ElevationAmplitude, layerMask_terrain)){
             Vector3 pt = hit.point;
             Vector3 newPlantPt = new Vector3(pt.x, Mathf.Min(pt.y, kneeHeightT.position.y), pt.z);
-            plantPos = newPlantPt + (GetHorizVelocity().normalized * .85f);
+            plantPos = newPlantPt + (GetHorizVelocity().normalized * .82f);
         }
         updateTime = 0f + (Mathf.Max(updateTime, 1f) - 1f);
-
+    }
+    public void AdjustFootPlantPoint(Transform targetIk, Transform baseTransform, ref Vector3 plantPos){
+        // move platPos down until hits terrain
+        RaycastHit hit;
+        if(Physics.Raycast(plantPos, Vector3.down, out hit, 1f, layerMask_terrain)){
+            plantPos.y = hit.point.y;
+        }
+        else{
+            if(Physics.Raycast(plantPos, Vector3.up, out hit, 1f, layerMask_terrain)){
+                plantPos = new Vector3(plantPos.x, Mathf.Min(hit.point.x, kneeHeightT.position.y), plantPos.z);
+            }
+        }
     }
 
     public void SetPlantPosition(Transform targetIk, Transform targetTransform, ref Vector3 positionPointer){

@@ -1624,6 +1624,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3607853374633369399}
   - component: {fileID: 5232666116693593886}
+  - component: {fileID: 4820056643030031537}
   m_Layer: 0
   m_Name: Human Model
   m_TagString: Untagged
@@ -1699,6 +1700,25 @@ SkinnedMeshRenderer:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
   m_DirtyAABB: 1
+--- !u!95 &4820056643030031537
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4132751036807316877}
+  m_Enabled: 0
+  m_Avatar: {fileID: 9000000, guid: d90869f96f870ce4aaef5ad00a0d6e28, type: 3}
+  m_Controller: {fileID: 9100000, guid: cb734da5d7af7b346bc5e6e331af4161, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &4407648293570653867
 GameObject:
   m_ObjectHideFlags: 0
@@ -2980,8 +3000,8 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 5589353078028230979}
   m_AABB:
-    m_Center: {x: -0.0012060851, y: 0.056187727, z: 0.5712334}
-    m_Extent: {x: 0.1559078, y: 0.113163255, z: 0.11271773}
+    m_Center: {x: -0.0012455136, y: 0.056187727, z: 0.5712368}
+    m_Extent: {x: 0.15595773, y: 0.113163255, z: 0.11274481}
   m_DirtyAABB: 0
 --- !u!183 &2078147216617457281
 Cloth:
