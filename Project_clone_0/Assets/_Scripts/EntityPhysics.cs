@@ -131,8 +131,10 @@ public class EntityPhysics : EntityComponent
 
     public void UpdateLimbPositions(){
         float changePositionSpeed = 5f * Time.deltaTime;
-        targetFootRight.position = Vector3.up * .00f + Vector3.Lerp(targetFootRight.position, footPlantPosRight, changePositionSpeed) + Vector3.up * .015f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeRight * 2f * Mathf.PI) + 1f), .7f);
-        targetFootLeft.position = Vector3.up * .00f + Vector3.Lerp(targetFootLeft.position, footPlantPosLeft, changePositionSpeed) + Vector3.up * .015f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeLeft * 2f * Mathf.PI) + 1f), .7f);
+
+        targetFootRight.position = Vector3.Lerp(targetFootRight.position, footPlantPosRight, changePositionSpeed) + Vector3.up * .016f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeRight * 2f * Mathf.PI) + 1f), .7f);
+        targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, footPlantPosLeft, changePositionSpeed) + Vector3.up * .016f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeLeft * 2f * Mathf.PI) + 1f), .7f);
+
     }
 
     public void ResetFootPlantPoint(Transform targetIk, Transform basePos, ref Vector3 plantPos, ref float updateTime){
