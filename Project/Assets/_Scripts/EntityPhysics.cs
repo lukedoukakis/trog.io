@@ -85,8 +85,8 @@ public class EntityPhysics : EntityComponent
         targetFootLeft = ikParent.Find("TargetFootLeft");
         targetToeRight = ikParent.Find("TargetToeRight");
         targetToeLeft = ikParent.Find("TargetToeLeft");
-        targetFootRight.SetParent(GameObject.Find("Global Object").transform);
-        targetFootLeft.SetParent(GameObject.Find("Global Object").transform);
+        //targetFootRight.SetParent(GameObject.Find("Global Object").transform);
+        //targetFootLeft.SetParent(GameObject.Find("Global Object").transform);
 
     }
 
@@ -121,27 +121,29 @@ public class EntityPhysics : EntityComponent
             }
         }
 
-        float footPlantTimeUpdateSpeedRight = 3f * (rb.velocity.magnitude / maxSpeed_sprint) * Mathf.Max(1f, entityAnimation.angularVelocityY*2f) * Mathf.Max(1f, entityAnimation.bodySkew *10f) * Mathf.Pow(Mathf.Sin(footPlantUpdateTimeRight * Mathf.PI), .3f) * Time.deltaTime;
-        float footPlantTimeUpdateSpeedLeft = 3f * (rb.velocity.magnitude / maxSpeed_sprint) * Mathf.Max(1f, entityAnimation.angularVelocityY*2f) * Mathf.Max(1f, entityAnimation.bodySkew *10f) * Mathf.Pow(Mathf.Sin(footPlantUpdateTimeLeft * Mathf.PI), 3f) * Time.deltaTime;
-        footPlantUpdateTimeRight += footPlantTimeUpdateSpeedRight;
-        footPlantUpdateTimeLeft += footPlantTimeUpdateSpeedLeft;
+        float footPlantTimeUpdateSpeed = 4f * (rb.velocity.magnitude / maxSpeed_sprint) * Time.deltaTime;
+        //footPlantTimeUpdateSpeed = 2f * Time.deltaTime;
+        footPlantUpdateTimeRight += footPlantTimeUpdateSpeed;
+        footPlantUpdateTimeLeft += footPlantTimeUpdateSpeed;
+
+        Log(rb.angularVelocity.magnitude.ToString());
     }
 
     public void UpdateLimbPositions(){
-        float changePositionSpeed = 10f * Time.deltaTime;
-        targetFootRight.position = Vector3.Lerp(targetFootRight.position, footPlantPosRight, changePositionSpeed) + Vector3.up * .01f * (Mathf.Cos(footPlantUpdateTimeRight * 2f * Mathf.PI) + 1f);
-        targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, footPlantPosLeft, changePositionSpeed) + Vector3.up * .01f * (Mathf.Cos(footPlantUpdateTimeLeft * 2f * Mathf.PI) + 1f);
+        float changePositionSpeed = 5f * Time.deltaTime;
+        targetFootRight.position = Vector3.up * .00f + Vector3.Lerp(targetFootRight.position, footPlantPosRight, changePositionSpeed) + Vector3.up * .015f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeRight * 2f * Mathf.PI) + 1f), .7f);
+        targetFootLeft.position = Vector3.up * .00f + Vector3.Lerp(targetFootLeft.position, footPlantPosLeft, changePositionSpeed) + Vector3.up * .015f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeLeft * 2f * Mathf.PI) + 1f), .7f);
     }
 
     public void ResetFootPlantPoint(Transform targetIk, Transform basePos, ref Vector3 plantPos, ref float updateTime){
-        float forwardReachDistance = 3f;
+        float forwardReachDistance = .6f;
         Vector3 castOrigin = (basePos.position + GetHorizVelocity().normalized * forwardReachDistance) + (Vector3.up * 10f);
         RaycastHit hit;
         if(Physics.Raycast(castOrigin, Vector3.down, out hit, ChunkGenerator.ElevationAmplitude, layerMask_noWater)){
             // Log("resetting foot plant pos");
             Vector3 pt = hit.point;
             Vector3 newPlantPt = new Vector3(pt.x, Mathf.Min(pt.y, kneeHeightT.position.y), pt.z);
-            plantPos = newPlantPt;
+            plantPos = newPlantPt + (GetHorizVelocity().normalized * .85f);
         }
         updateTime = 0f + (Mathf.Max(updateTime, 1f) - 1f);
 
