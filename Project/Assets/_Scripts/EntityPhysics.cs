@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -47,8 +48,8 @@ public class EntityPhysics : EntityComponent
 
     // ik
     public Transform ikParent;
-    public Transform basePositionFootRight, basePositionFootLeft;
-    public Transform targetFootRight, targetFootLeft, targetToeRight, targetToeLeft;
+    public Transform basePositionFootRight, basePositionFootLeft, basePositionHandRight, basePositionHandLeft;
+    public Transform targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft;
     public Vector3 footPlantPosLeft, footPlantPosRight;
     public float footPlantUpdateTimeRight, footPlantUpdateTimeLeft;
 
@@ -85,6 +86,10 @@ public class EntityPhysics : EntityComponent
         targetFootLeft = ikParent.Find("TargetFootLeft");
         targetToeRight = ikParent.Find("TargetToeRight");
         targetToeLeft = ikParent.Find("TargetToeLeft");
+        targetHandRight = ikParent.Find("TargetHandRight");
+        targetHandLeft = ikParent.Find("TargetHandLeft");
+        basePositionHandRight = ikParent.Find("BasePositionHandRight");
+        basePositionHandLeft = ikParent.Find("BasePositionHandLeft");
         //targetFootRight.SetParent(GameObject.Find("Global Object").transform);
         //targetFootLeft.SetParent(GameObject.Find("Global Object").transform);
 
@@ -127,6 +132,10 @@ public class EntityPhysics : EntityComponent
                 AdjustFootPlantPoint(targetFootRight, basePositionFootRight, ref footPlantPosRight);
                 AdjustFootPlantPoint(targetFootLeft, basePositionFootLeft, ref footPlantPosLeft);
 
+                // if running
+                //AdjustHandTarget(targetHandLeft, basePositionHandLeft, entityItems.holding, footPlantUpdateTimeRight);
+                //AdjustHandTarget(targetHandRight, basePositionHandRight, entityItems.weapon_equipped, footPlantUpdateTimeLeft);
+
             }
             else{
                 SetPlantPosition(targetFootLeft, basePositionFootLeft, ref footPlantPosLeft);
@@ -146,8 +155,8 @@ public class EntityPhysics : EntityComponent
         float changePositionSpeed = 5f * Time.deltaTime;
         Vector3 vertLeft, vertRight;
         if(IsMoving()){
-            vertLeft = Vector3.up * .016f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeLeft * 2f * Mathf.PI) + 1f), .7f);
-            vertRight = Vector3.up * .016f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeRight * 2f * Mathf.PI) + 1f), .7f);
+            vertLeft = Vector3.up * .018f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeLeft * 2f * Mathf.PI - .3f) + 1f), .7f);
+            vertRight = Vector3.up * .018f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeRight * 2f * Mathf.PI - .3f) + 1f), .7f);
         }
         else{
             vertLeft = vertRight = Vector3.zero;
@@ -158,7 +167,7 @@ public class EntityPhysics : EntityComponent
     }
 
     public void ResetFootPlantPoint(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime){
-        float forwardReachDistance = .6f;
+        float forwardReachDistance = .8f;
         RaycastHit hit;
         if(Physics.Raycast(baseTransform.position, GetHorizVelocity().normalized, out hit, forwardReachDistance, layerMask_terrain)){
             Vector3 pt = hit.point;
@@ -194,6 +203,23 @@ public class EntityPhysics : EntityComponent
         positionPointer = targetTransform.position;
         
     }
+
+    public void AdjustHandTarget(Transform handTarget, Transform baseTransform, Tuple<Item, GameObject> itemObjectPair, float updateTime){
+        if(itemObjectPair == null){
+            float swingDistance = .25f;
+            float armBendDistance = .5f;
+
+            // empty hand movement
+            float awayFromBase = Mathf.Sin(updateTime * 2f * Mathf.PI);
+            float z = baseTransform.position.z + awayFromBase * swingDistance;
+            float y = baseTransform.position.y + Mathf.Abs(awayFromBase) * armBendDistance;
+            handTarget.position = 
+            
+            handTarget.position = baseTransform.position + GetHorizVelocity().normalized * awayFromBase * swingDistance + Vector3.up * Mathf.Abs(awayFromBase) * armBendDistance;
+            
+        }
+    }
+
 
 
     public void Move(Vector3 direction, float speed){

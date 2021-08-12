@@ -685,6 +685,7 @@ public class ChunkGenerator : MonoBehaviour
                 {
                     if(SeaLevel >= height-.00025f){
                         onWater = SeaLevel - height <= .0018f;
+                        onWater = false;
                     }
                     else{ onWater = false; }
 
