@@ -143,8 +143,8 @@ public class EntityPhysics : EntityComponent
             }
         }
 
-        float footPlantTimeUpdateSpeed = 4f * (rb.velocity.magnitude / maxSpeed_sprint) * Time.deltaTime;
-        //float footPlantTimeUpdateSpeed = 2f * Time.deltaTime;
+        //float footPlantTimeUpdateSpeed = 4f * (rb.velocity.magnitude / maxSpeed_sprint) * Time.deltaTime;
+        float footPlantTimeUpdateSpeed = 3f * Mathf.Max(1f, rb.velocity.y * .25f) * Time.deltaTime;
         footPlantUpdateTimeRight += footPlantTimeUpdateSpeed;
         footPlantUpdateTimeLeft += footPlantTimeUpdateSpeed;
 
@@ -167,7 +167,7 @@ public class EntityPhysics : EntityComponent
     }
 
     public void ResetFootPlantPoint(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime){
-        float forwardReachDistance = .8f;
+        float forwardReachDistance = .85f * (GetHorizVelocity().magnitude / maxSpeed_sprint) * (1f - Mathf.InverseLerp(0f, 20f, rb.velocity.y));
         RaycastHit hit;
         if(Physics.Raycast(baseTransform.position, GetHorizVelocity().normalized, out hit, forwardReachDistance, layerMask_terrain)){
             Vector3 pt = hit.point;
@@ -182,7 +182,7 @@ public class EntityPhysics : EntityComponent
     public void AdjustFootPlantPoint(Transform targetIk, Transform baseTransform, ref Vector3 plantPos){
         // move platPos down until hits terrain
         RaycastHit hit;
-        if(Physics.Raycast(plantPos, Vector3.down, out hit, 1f, layerMask_terrain)){
+        if(Physics.Raycast(plantPos, Vector3.down, out hit, 100f, layerMask_terrain)){
             plantPos.y = hit.point.y;
         }
         else{
