@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DitzelGames.FastIK;
 
 public class EntityPhysics : EntityComponent
 {
@@ -49,7 +50,8 @@ public class EntityPhysics : EntityComponent
 
     // ik
     public bool ikEnabled;
-    public DitzelGames.FastIK.FastIKFabric ikScript_footLeft, ikScript_footRight, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft;
+    public FastIKFabric ikScript_footLeft, ikScript_footRight, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft;
+    public FastIKFabric[] ikScripts, ikScripts_legs, ikScripts_upperBody;
     public Transform ikParent;
     public Transform basePositionFootRight, basePositionFootLeft, basePositionHandRight, basePositionHandLeft;
     public Transform targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft;
@@ -102,6 +104,16 @@ public class EntityPhysics : EntityComponent
         targetHandLeft = ikParent.Find("TargetHandLeft");
         basePositionHandRight = ikParent.Find("BasePositionHandRight");
         basePositionHandLeft = ikParent.Find("BasePositionHandLeft");
+        ikScript_footRight = footRight.GetComponent<FastIKFabric>();
+        ikScript_footLeft = footLeft.GetComponent<FastIKFabric>();
+        ikScript_toeRight = toeRight.GetComponent<FastIKFabric>();
+        ikScript_toeLeft = toeLeft.GetComponent<FastIKFabric>();
+        ikScript_handRight = handRight.GetComponent<FastIKFabric>();
+        ikScript_handLeft = handLeft.GetComponent<FastIKFabric>();
+        ikScripts = new FastIKFabric[]{ ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft };
+        ikScripts_legs = new FastIKFabric[]{ ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft };
+        ikScripts_upperBody = new FastIKFabric[]{ ikScript_handRight, ikScript_handLeft };
+
         //targetFootRight.SetParent(GameObject.Find("Global Object").transform);
         //targetFootLeft.SetParent(GameObject.Find("Global Object").transform);
 
@@ -160,7 +172,7 @@ public class EntityPhysics : EntityComponent
             }
         }else{
             if(CanJump()){
-                ToggleIKForBodyPartGroup(bodyPartTs_legs, true);
+                ToggleIKGroup(ikScripts_legs, true);
             }
         }
         
@@ -175,8 +187,8 @@ public class EntityPhysics : EntityComponent
         float changePositionSpeed = 5f * Time.deltaTime;
         Vector3 vertLeft, vertRight;
         if(IsMoving()){
-            vertLeft = Vector3.up * Mathf.Pow((Mathf.InverseLerp(0f, 2f, rb.velocity.y) + .05f), .05f) * .028f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeLeft * 2f * Mathf.PI - .3f) + 1f), .7f);
-            vertRight = Vector3.up * Mathf.Pow((Mathf.InverseLerp(0f, 2f, rb.velocity.y) + .05f), .05f) * .028f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeRight * 2f * Mathf.PI - .3f) + 1f), .7f);
+            vertLeft = Vector3.up * Mathf.Pow((Mathf.InverseLerp(0f, 2f, rb.velocity.y) + .03f), .05f) * .032f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeLeft * 2f * Mathf.PI - .3f) + 1f), .7f);
+            vertRight = Vector3.up * Mathf.Pow((Mathf.InverseLerp(0f, 2f, rb.velocity.y) + .03f), .05f) * .032f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeRight * 2f * Mathf.PI - .3f) + 1f), .7f);
         }
         else{
             vertLeft = vertRight = Vector3.zero;
@@ -239,18 +251,15 @@ public class EntityPhysics : EntityComponent
         }
     }
 
-    public void ToggleIKForBodyPartGroup(Transform[] Ts, bool enabled){
-        if(ikEnabled != enabled){
-            foreach(Transform t in Ts){
-                toggleIKForTransform(t, enabled);
-            }
-            ikEnabled = enabled;
-        }
+    public void ToggleIKGroup(FastIKFabric[] ikScripts, bool enabled){
+        // if(ikEnabled != enabled){
+        //     foreach(FastIKFabric script in ikScripts){
+        //         script.enabled = false;
+        //     }
+        //     ikEnabled = enabled;
+        // }
     }
 
-    public void toggleIKForTransform(Transform bodyPartT, bool enabled){
-        bodyPartT.GetComponent<DitzelGames.FastIK.FastIKFabric>().enabled = enabled;
-    }
 
 
 
@@ -273,7 +282,7 @@ public class EntityPhysics : EntityComponent
         }
     }
     IEnumerator _Jump(float power){
-        ToggleIKForBodyPartGroup(bodyPartTs_legs, false);
+        ToggleIKGroup(ikScripts_legs, false);
         jumping = true;
         jumpOpposite = !jumpOpposite;
         if(groundTime <= JumpCoolDown){
