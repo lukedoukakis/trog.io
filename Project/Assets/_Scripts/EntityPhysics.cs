@@ -159,12 +159,14 @@ public class EntityPhysics : EntityComponent
 
     public void ResetFootPlantPoint(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime){
         float forwardReachDistance = .6f;
-        Vector3 castOrigin = (baseTransform.position + GetHorizVelocity().normalized * forwardReachDistance) + (Vector3.up * 10f);
         RaycastHit hit;
-        if(Physics.Raycast(castOrigin, Vector3.down, out hit, ChunkGenerator.ElevationAmplitude, layerMask_terrain)){
+        if(Physics.Raycast(baseTransform.position, GetHorizVelocity().normalized, out hit, forwardReachDistance, layerMask_terrain)){
             Vector3 pt = hit.point;
             Vector3 newPlantPt = new Vector3(pt.x, Mathf.Min(pt.y, kneeHeightT.position.y), pt.z);
             plantPos = newPlantPt + (GetHorizVelocity().normalized * .82f);
+        }
+        else{
+            plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
         }
         updateTime = 0f + (Mathf.Max(updateTime, 1f) - 1f);
     }

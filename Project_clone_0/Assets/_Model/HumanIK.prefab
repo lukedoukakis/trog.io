@@ -272,7 +272,7 @@ CharacterJoint:
     bounciness: 0
     contactDistance: 0
   m_Swing2Limit:
-    limit: 7.0389404
+    limit: 40
     bounciness: 0
     contactDistance: 0
   m_EnableProjection: 0
@@ -3126,8 +3126,8 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 5589353078028230979}
   m_AABB:
-    m_Center: {x: -0.0012060851, y: 0.056187727, z: 0.5712219}
-    m_Extent: {x: 0.1559078, y: 0.113163255, z: 0.11272925}
+    m_Center: {x: -0.0012060851, y: 0.056187727, z: 0.5712334}
+    m_Extent: {x: 0.1559078, y: 0.113163255, z: 0.11271773}
   m_DirtyAABB: 0
 --- !u!183 &2078147216617457281
 Cloth:
