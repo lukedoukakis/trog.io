@@ -231,7 +231,7 @@ public class ChunkGenerator : MonoBehaviour
         cd.TreeMap = TreeMap;
 
         PlaceTerrainAndWater();
-        //PlaceFeatures();
+        PlaceFeatures();
 
         yield return null;
 

@@ -107,7 +107,7 @@ public class EntityPhysics : EntityComponent
 
     // check if foot is behind threshhold, if so set new plant point
     public void IKUpdate(){
-        if(!IN_WATER){
+        if(GroundIsClose()){
             
             // update limb positions with plant points;
             UpdateLimbPositions();
@@ -441,6 +441,12 @@ public class EntityPhysics : EntityComponent
 
     bool IsMoving(){
         return GetHorizVelocity().magnitude > .1f;
+    }
+
+    bool GroundIsClose(){
+
+        return Physics.OverlapSphere(groundSense.position, .5f, layerMask_terrain).Length > 0;
+
     }
 
     void FixedUpdate()
