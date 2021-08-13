@@ -187,8 +187,12 @@ public class EntityPhysics : EntityComponent
         float changePositionSpeed = 5f * Time.deltaTime;
         Vector3 vertLeft, vertRight;
         if(IsMoving()){
-            vertLeft = Vector3.up * Mathf.Pow((Mathf.InverseLerp(0f, 2f, rb.velocity.y) + .03f), .05f) * .032f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeLeft * 2f * Mathf.PI - .3f) + 1f), .7f);
-            vertRight = Vector3.up * Mathf.Pow((Mathf.InverseLerp(0f, 2f, rb.velocity.y) + .03f), .05f) * .032f * Mathf.Pow((Mathf.Cos(footPlantUpdateTimeRight * 2f * Mathf.PI - .3f) + 1f), .7f);
+
+
+            float vertMin = Mathf.Lerp(GetVerticality(.5f), GetVerticality(1f), Mathf.InverseLerp(0f, 5f, rb.velocity.y));
+            vertLeft = Vector3.up * Mathf.Max(vertMin, GetVerticality(footPlantUpdateTimeLeft));
+            vertRight = Vector3.up * Mathf.Max(vertMin, GetVerticality(footPlantUpdateTimeRight));
+        
         }
         else{
             vertLeft = vertRight = Vector3.zero;
@@ -196,7 +200,13 @@ public class EntityPhysics : EntityComponent
         targetFootRight.position = Vector3.Lerp(targetFootRight.position, footPlantPosRight, changePositionSpeed) + vertRight;
         targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, footPlantPosLeft, changePositionSpeed) + vertLeft;
 
+
+        float GetVerticality(float updateTime){
+            return Mathf.Pow((Mathf.InverseLerp(0f, 2f, rb.velocity.y) + .03f), .05f) * .032f * Mathf.Pow((Mathf.Cos(updateTime * 2f * Mathf.PI - .3f) + 1f), .7f);
+        }
     }
+
+
 
     public void ResetFootPlantPoint(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime){
 
