@@ -41,6 +41,7 @@ public class EntityPhysics : EntityComponent
     public static float landScrunch_recoverySpeed = .75f;
     public static float landScrunch_airTimeThreshhold = 1.2f;
     public float landScrunch;
+    public bool handFree_right, handFree_left;
 
 
     public float ROTATION_Y_THIS;
@@ -55,7 +56,7 @@ public class EntityPhysics : EntityComponent
     public Transform ikParent;
     public Transform basePositionFootRight, basePositionFootLeft, basePositionHandRight, basePositionHandLeft;
     public Transform targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft;
-    public Vector3 footPlantPosLeft, footPlantPosRight;
+    public Vector3 plantPosFootLeft, plantPosFootRight;
     public float footPlantUpdateTimeRight, footPlantUpdateTimeLeft;
 
 
@@ -127,10 +128,12 @@ public class EntityPhysics : EntityComponent
         maxSpeed_swim = maxSpeed_run * .75f;
 
 
-        footPlantPosRight = targetFootRight.position;
-        footPlantPosLeft = targetFootLeft.position;
+        plantPosFootRight = targetFootRight.position;
+        plantPosFootLeft = targetFootLeft.position;
         footPlantUpdateTimeRight = 0f;
         footPlantUpdateTimeLeft = .5f;
+
+        handFree_right = handFree_left = true;
     }
 
 
@@ -138,42 +141,49 @@ public class EntityPhysics : EntityComponent
     public void IKUpdate(){
         if (ikEnabled)
         {
+
+            bool moving = IsMoving();
+
             if (GroundIsClose())
             {
 
-                // update limb positions with plant points;
+                // update foot positions with plant points;
                 UpdateLimbPositions();
 
-                if (IsMoving())
+                if (moving)
                 {
-
                     // check if plant points need update
                     if (footPlantUpdateTimeRight >= 1f)
                     {
-                        ResetFootPlantPoint(targetFootRight, basePositionFootRight, ref footPlantPosRight, ref footPlantUpdateTimeRight);
+                        ResetFootPlantPoint(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref footPlantUpdateTimeRight);
                     }
                     if (footPlantUpdateTimeLeft >= 1f)
                     {
-                        ResetFootPlantPoint(targetFootLeft, basePositionFootLeft, ref footPlantPosLeft, ref footPlantUpdateTimeLeft);
+                        ResetFootPlantPoint(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, ref footPlantUpdateTimeLeft);
                     }
-                    AdjustFootPlantPoint(targetFootRight, basePositionFootRight, ref footPlantPosRight);
-                    AdjustFootPlantPoint(targetFootLeft, basePositionFootLeft, ref footPlantPosLeft);
-
-                    // if running
-                    //AdjustHandTarget(targetHandLeft, basePositionHandLeft, entityItems.holding, footPlantUpdateTimeRight);
-                    //AdjustHandTarget(targetHandRight, basePositionHandRight, entityItems.weapon_equipped, footPlantUpdateTimeLeft);
-
+                    AdjustFootPlantPoint(targetFootRight, basePositionFootRight, ref plantPosFootRight);
+                    AdjustFootPlantPoint(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft);
                 }
                 else
                 {
-                    SetPlantPosition(targetFootLeft, basePositionFootLeft, ref footPlantPosLeft);
-                    SetPlantPosition(targetFootRight, basePositionFootRight, ref footPlantPosRight);
+                    SetPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft);
+                    SetPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight);
+                }
+
+                // hand movement if free
+                if (handFree_right)
+                {
+                    AdjustFreeHandPosition(targetHandRight, basePositionHandRight, footPlantUpdateTimeLeft, moving);
+                }
+
+                if (handFree_left)
+                {
+                    AdjustFreeHandPosition(targetHandLeft, basePositionHandLeft, footPlantUpdateTimeRight, moving);
                 }
             }
-        }else{
-            if(CanJump()){
-                ToggleIKGroup(ikScripts_legs, true);
-            }
+
+
+            
         }
         
         float footPlantTimeUpdateSpeed = 3f * Time.deltaTime;
@@ -184,6 +194,8 @@ public class EntityPhysics : EntityComponent
     }
 
     public void UpdateLimbPositions(){
+
+        // feet
         float changePositionSpeed = 5f * Time.deltaTime;
         Vector3 vertLeft, vertRight;
         if(IsMoving()){
@@ -197,8 +209,9 @@ public class EntityPhysics : EntityComponent
         else{
             vertLeft = vertRight = Vector3.zero;
         }
-        targetFootRight.position = Vector3.Lerp(targetFootRight.position, footPlantPosRight, changePositionSpeed) + vertRight;
-        targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, footPlantPosLeft, changePositionSpeed) + vertLeft;
+        targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertRight;
+        targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertLeft;
+
 
 
         float GetVerticality(float updateTime){
@@ -245,29 +258,70 @@ public class EntityPhysics : EntityComponent
         
     }
 
-    public void AdjustHandTarget(Transform handTarget, Transform baseTransform, Tuple<Item, GameObject> itemObjectPair, float updateTime){
-        if(itemObjectPair == null){
+    public void AdjustFreeHandPosition(Transform ikTarget, Transform ikBasePositionTransform, float updateTime, bool moving){
+        if(moving){ 
+            // character is moving
+
             float swingDistance = .25f;
             float armBendDistance = .5f;
 
             // empty hand movement
             float awayFromBase = Mathf.Sin(updateTime * 2f * Mathf.PI);
-            float z = baseTransform.position.z + awayFromBase * swingDistance;
-            float y = baseTransform.position.y + Mathf.Abs(awayFromBase) * armBendDistance;
-            handTarget.position = 
+            float z = ikBasePositionTransform.position.z + awayFromBase * swingDistance;
+            float y = ikBasePositionTransform.position.y + Mathf.Abs(awayFromBase) * armBendDistance;
+            ikTarget.position = ikBasePositionTransform.position + GetHorizVelocity().normalized * awayFromBase * swingDistance + Vector3.up * Mathf.Abs(awayFromBase) * armBendDistance;
             
-            handTarget.position = baseTransform.position + GetHorizVelocity().normalized * awayFromBase * swingDistance + Vector3.up * Mathf.Abs(awayFromBase) * armBendDistance;
-            
+        }
+        else{
+            // character is not moving
+            float moveSpeed = 5f * Time.deltaTime;
+            ikTarget.position = Vector3.Lerp(ikTarget.position, ikBasePositionTransform.position, moveSpeed);
         }
     }
 
-    public void ToggleIKGroup(FastIKFabric[] ikScripts, bool enabled){
-        // if(ikEnabled != enabled){
-        //     foreach(FastIKFabric script in ikScripts){
-        //         script.enabled = false;
-        //     }
-        //     ikEnabled = enabled;
-        // }
+    public void UpdateIKForCarryingItems(){
+
+        var itemRight = entityItems.weaponEquipped;
+        var itemLeft = entityItems.holding;
+
+
+        handFree_left = (itemLeft == null);
+
+        // right hand
+        if(itemRight != null){
+            handFree_right = false;
+            targetHandRight = itemRight.Item2.transform.Find("IKTargetT_Right");
+        }
+        else{
+            targetHandRight = ikParent.Find("TargetHandRight");
+            handFree_right = true;
+        }
+        
+        // left hand
+        if(itemLeft != null){
+            handFree_left = false;
+            targetHandLeft = itemRight.Item2.transform.Find("IKTargetT_Left");
+        }
+        else{
+            // if hand is free, support right hand with holding the weapon, if equipped
+            if(!handFree_right){
+                targetHandLeft = itemRight.Item2.transform.Find("IKTargetT_Left");
+            }
+            else{
+                targetHandLeft = ikParent.transform.Find("TargetHandLeft");
+            }
+            handFree_left = true;
+        }
+
+
+        // iKPackage.ikTarget.position = ... set ik target to handle on holding item
+    }
+
+
+    // ----------
+
+    public void OnItemSwitch(){
+        UpdateIKForCarryingItems();
     }
 
 
@@ -292,7 +346,6 @@ public class EntityPhysics : EntityComponent
         }
     }
     IEnumerator _Jump(float power){
-        ToggleIKGroup(ikScripts_legs, false);
         jumping = true;
         jumpOpposite = !jumpOpposite;
         if(groundTime <= JumpCoolDown){
@@ -364,6 +417,36 @@ public class EntityPhysics : EntityComponent
         }
 
         
+    }
+
+    public void Attack(){
+        if(entityItems.weaponEquipped == null){
+            LaunchProjectile(Item.SmallStone.gameobject);
+        }
+        else{
+            Item weap = entityItems.weaponEquipped.Item1;
+            switch (weap.holdStyle)
+            {
+                case Item.HoldStyle.Spear:
+                    StartCoroutine("SetWeaponTrajectoryThrust");
+                    break;
+
+                case Item.HoldStyle.Axe:
+                    StartCoroutine("SetWeaponTrajectorySwing");
+                    break;
+                default:
+
+                    Log("Trying to attack with a weapon with no specified hold style!!!");
+                    break;
+                }
+            
+        }
+    }
+    IEnumerator SetWeaponTrajectoryThrust(){
+        yield return null;
+    }
+    IEnumerator SetWeaponTrajectorySwing(){
+        yield return null;
     }
 
 

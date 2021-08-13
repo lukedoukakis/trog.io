@@ -105,7 +105,7 @@ public class EntityUserInputMovement : EntityComponent
         }
     }
     void CheckInteractableItems(){
-        interactableObjects = entityBehavior.SenseSurroundingItems(-1, null, EntityBehavior.senseDistance_immediate, entityInfo.faction.warringFactions);
+        interactableObjects = entityBehavior.SenseSurroundingItems(null, null, EntityBehavior.senseDistance_immediate, entityInfo.faction.warringFactions);
     }
     void Interact(){
         

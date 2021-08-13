@@ -287,7 +287,7 @@ public class EntityBehavior : EntityComponent
         BeginActionLayer("Hands", a, _Swing());
 
         IEnumerator _Swing(){
-            entityAnimation.OnAttack();
+            entityPhysics.Attack();
             Action attackRecover = Action.GenerateAction((int)(Action.ActionTypes.AttackRecover), a.obj, -1, null, null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Target, false);
             InsertAction(attackRecover);
             yield return null;
@@ -452,23 +452,23 @@ public class EntityBehavior : EntityComponent
         Item item = Item.GetItemByName(o.name);
         Tuple<Item, GameObject> pair = new Tuple<Item, GameObject>(item, o);
         switch(item.type){
-            case (int)Item.Type.Misc:
+            case Item.Type.Misc:
                 entityItems.SetHolding(pair);
                 break;
-            case (int)Item.Type.Weapon:
+            case Item.Type.Weapon:
                 entityItems.SetWeapon(pair);
                 break;
-            case (int)Item.Type.Container:
+            case Item.Type.Container:
                 entityItems.SetHolding(pair);
                 break;
-            case (int)Item.Type.Pocket:
+            case Item.Type.Pocket:
                 entityItems.PocketItem(item);
                 break;
         }
         entityAnimation.Pickup(item);
         //o.transform.position = o.transform.position += new Vector3(UnityEngine.Random.Range(-30f, 30f), 1f, UnityEngine.Random.Range(-30f, 30f));
     }
-    public List<GameObject> SenseSurroundingItems(int type, string name, float distance, List<Faction> forbiddenFacs){
+    public List<GameObject> SenseSurroundingItems(Enum type, string name, float distance, List<Faction> forbiddenFacs){
         Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Item"));
        
         string sur = "";
@@ -480,7 +480,7 @@ public class EntityBehavior : EntityComponent
             o = col.gameObject;
             i = Item.GetItemByName(o.name);
             forbid = false;
-            if(type == -1 || i.type == type){
+            if(type == null || i.type == type){
                 if(name == null || o.name == name){
                     if(!Faction.ItemIsTargetedByFaction(o, entityInfo.faction)){
                         foreach(Faction fac in forbiddenFacs){
