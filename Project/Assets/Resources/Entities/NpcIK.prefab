@@ -239,7 +239,15 @@ MonoBehaviour:
     m_Bits: 0
   rb: {fileID: 0}
   gyro: {fileID: 0}
-  rightHand: {fileID: 0}
+  bodyPartTs: []
+  bodyPartTs_legs: []
+  bodyPartTs_upperBody: []
+  handRight: {fileID: 0}
+  handLeft: {fileID: 0}
+  footRight: {fileID: 0}
+  footLeft: {fileID: 0}
+  toeRight: {fileID: 0}
+  toeLeft: {fileID: 0}
   groundSense: {fileID: 0}
   wallSense: {fileID: 0}
   waterSense: {fileID: 0}
@@ -260,20 +268,36 @@ MonoBehaviour:
   maxSpeed_climb: 0
   maxSpeed_swim: 0
   landScrunch: 0
+  handFree_right: 0
+  handFree_left: 0
   ROTATION_Y_THIS: 0
   ROTATION_Y_LAST: 0
   GROUNDTOUCH: 0
   WALLTOUCH: 0
   IN_WATER: 0
+  ikEnabled: 0
+  ikScript_footLeft: {fileID: 0}
+  ikScript_footRight: {fileID: 0}
+  ikScript_toeRight: {fileID: 0}
+  ikScript_toeLeft: {fileID: 0}
+  ikScript_handRight: {fileID: 0}
+  ikScript_handLeft: {fileID: 0}
+  ikScripts: []
+  ikScripts_legs: []
+  ikScripts_upperBody: []
   ikParent: {fileID: 0}
   basePositionFootRight: {fileID: 0}
   basePositionFootLeft: {fileID: 0}
+  basePositionHandRight: {fileID: 0}
+  basePositionHandLeft: {fileID: 0}
   targetFootRight: {fileID: 0}
   targetFootLeft: {fileID: 0}
   targetToeRight: {fileID: 0}
   targetToeLeft: {fileID: 0}
-  footPlantPosLeft: {x: 0, y: 0, z: 0}
-  footPlantPosRight: {x: 0, y: 0, z: 0}
+  targetHandRight: {fileID: 0}
+  targetHandLeft: {fileID: 0}
+  plantPosFootLeft: {x: 0, y: 0, z: 0}
+  plantPosFootRight: {x: 0, y: 0, z: 0}
   footPlantUpdateTimeRight: 0
   footPlantUpdateTimeLeft: 0
 --- !u!114 &114389023734901775
@@ -326,13 +350,10 @@ MonoBehaviour:
   entityItems: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
-  t_hand_left: {fileID: 0}
-  t_upperArm_left: {fileID: 0}
-  t_shoulder_left: {fileID: 0}
-  t_back: {fileID: 0}
-  t_left_current: {fileID: 0}
-  itemT: {fileID: 0}
-  t_hand_right: {fileID: 0}
+  equippedWeaponT_spear: {fileID: 0}
+  equippedWeaponT_axe: {fileID: 0}
+  unequippedWeaponT: {fileID: 0}
+  entityBackT: {fileID: 0}
 --- !u!114 &2862668722696777771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -392,7 +413,7 @@ MonoBehaviour:
   compressRotation: 0
   interpolateScale: 1
   syncScale: 1
-  target: {fileID: 0}
+  target: {fileID: 8957971331447657194}
 --- !u!114 &1985850820274905753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,7 +421,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 114389023734901768}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
   m_Name: 
@@ -441,12 +462,37 @@ PrefabInstance:
     - target: {fileID: 1619802029402244102, guid: bcf187194d93e87428143f82751631f7,
         type: 3}
       propertyPath: m_ConnectedAnchor.x
-      value: -0.3503685
+      value: -0.35036862
       objectReference: {fileID: 0}
     - target: {fileID: 1619802029402244102, guid: bcf187194d93e87428143f82751631f7,
         type: 3}
       propertyPath: m_ConnectedAnchor.z
-      value: 0.013500617
+      value: 0.013500632
+      objectReference: {fileID: 0}
+    - target: {fileID: 2385599701034485678, guid: bcf187194d93e87428143f82751631f7,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: 0.19160663
+      objectReference: {fileID: 0}
+    - target: {fileID: 2385599701034485678, guid: bcf187194d93e87428143f82751631f7,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 0.011617945
+      objectReference: {fileID: 0}
+    - target: {fileID: 3832276993889054768, guid: bcf187194d93e87428143f82751631f7,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: 0.19160618
+      objectReference: {fileID: 0}
+    - target: {fileID: 3832276993889054768, guid: bcf187194d93e87428143f82751631f7,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: 0.10209942
+      objectReference: {fileID: 0}
+    - target: {fileID: 3832276993889054768, guid: bcf187194d93e87428143f82751631f7,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 0.011616291
       objectReference: {fileID: 0}
     - target: {fileID: 4229178266382626678, guid: bcf187194d93e87428143f82751631f7,
         type: 3}
@@ -536,17 +582,17 @@ PrefabInstance:
     - target: {fileID: 4719348253421298441, guid: bcf187194d93e87428143f82751631f7,
         type: 3}
       propertyPath: m_ConnectedAnchor.x
-      value: -0.13649985
+      value: -0.13649979
       objectReference: {fileID: 0}
     - target: {fileID: 4719348253421298441, guid: bcf187194d93e87428143f82751631f7,
         type: 3}
       propertyPath: m_ConnectedAnchor.y
-      value: 0.000000004993885
+      value: 0.0000000049938813
       objectReference: {fileID: 0}
     - target: {fileID: 4719348253421298441, guid: bcf187194d93e87428143f82751631f7,
         type: 3}
       propertyPath: m_ConnectedAnchor.z
-      value: 0.01600534
+      value: 0.016005294
       objectReference: {fileID: 0}
     - target: {fileID: 6505903539574722470, guid: bcf187194d93e87428143f82751631f7,
         type: 3}

@@ -147,9 +147,6 @@ public class EntityPhysics : EntityComponent
             if (GroundIsClose())
             {
 
-                // update foot positions with plant points;
-                UpdateLimbPositions();
-
                 if (moving)
                 {
                     // check if plant points need update
@@ -180,6 +177,9 @@ public class EntityPhysics : EntityComponent
                 {
                     AdjustFreeHandPosition(targetHandLeft, basePositionHandLeft, footPlantUpdateTimeRight, moving);
                 }
+
+                // update foot positions with plant points;
+                UpdateLimbPositions();
             }
 
 
@@ -201,9 +201,9 @@ public class EntityPhysics : EntityComponent
         if(IsMoving()){
 
 
-            float vertMin = Mathf.Lerp(GetVerticality(.5f), GetVerticality(1f), Mathf.InverseLerp(0f, 5f, rb.velocity.y));
-            vertLeft = Vector3.up * Mathf.Max(vertMin, GetVerticality(footPlantUpdateTimeLeft));
-            vertRight = Vector3.up * Mathf.Max(vertMin, GetVerticality(footPlantUpdateTimeRight));
+            float vertMin = Mathf.Lerp(GetRunCycleVerticality(.5f), GetRunCycleVerticality(1f), Mathf.InverseLerp(0f, 5f, rb.velocity.y));
+            vertLeft = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(footPlantUpdateTimeLeft));
+            vertRight = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(footPlantUpdateTimeRight));
         
         }
         else{
@@ -212,10 +212,17 @@ public class EntityPhysics : EntityComponent
         targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertRight;
         targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertLeft;
 
+        // toes
+        targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward * .5f + Vector3.down * ((GetRunCycleDistanceFromBase(footPlantUpdateTimeRight) + 1) / 2f + .2f);
+        targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward * .5f + Vector3.down * ((GetRunCycleDistanceFromBase(footPlantUpdateTimeLeft) + 1) / 2f + .2f);
 
 
-        float GetVerticality(float updateTime){
-            return Mathf.Pow((Mathf.InverseLerp(0f, 2f, rb.velocity.y) + .03f), .05f) * .032f * Mathf.Pow((Mathf.Cos(updateTime * 2f * Mathf.PI - .3f) + 1f), .7f);
+        float GetRunCycleVerticality(float updateTime){
+            return .02f * Mathf.Pow((GetRunCycleDistanceFromBase(updateTime) + 1f), .7f);
+        }
+
+        float GetRunCycleDistanceFromBase(float updateTime){
+            return Mathf.Cos(updateTime * 2f * Mathf.PI - .3f);
         }
     }
 
@@ -262,14 +269,15 @@ public class EntityPhysics : EntityComponent
         if(moving){ 
             // character is moving
 
-            float swingDistance = .25f;
-            float armBendDistance = .5f;
+            Log("swinging arm");
+
+            float swingDistance = .17f;
+            float armBendDistance = .2f;
 
             // empty hand movement
             float awayFromBase = Mathf.Sin(updateTime * 2f * Mathf.PI);
-            float z = ikBasePositionTransform.position.z + awayFromBase * swingDistance;
             float y = ikBasePositionTransform.position.y + Mathf.Abs(awayFromBase) * armBendDistance;
-            ikTarget.position = ikBasePositionTransform.position + GetHorizVelocity().normalized * awayFromBase * swingDistance + Vector3.up * Mathf.Abs(awayFromBase) * armBendDistance;
+            ikTarget.position = ikBasePositionTransform.position + GetHorizVelocity().normalized * awayFromBase * swingDistance + Vector3.up * Mathf.Abs(awayFromBase) * armBendDistance + (entityAnimation.bodyT.right * Mathf.Sin(footPlantUpdateTimeRight * 2f * Mathf.PI) * .1f);
             
         }
         else{
