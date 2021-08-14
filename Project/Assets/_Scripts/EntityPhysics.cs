@@ -195,7 +195,7 @@ public class EntityPhysics : EntityComponent
 
     public void UpdateLimbPositions(){
 
-        // feet
+        // feet and toes
         float changePositionSpeed = 5f * Time.deltaTime;
         Vector3 vertLeft, vertRight;
         if(IsMoving()){
@@ -204,6 +204,9 @@ public class EntityPhysics : EntityComponent
             float vertMin = Mathf.Lerp(GetRunCycleVerticality(.5f), GetRunCycleVerticality(1f), Mathf.InverseLerp(0f, 5f, rb.velocity.y));
             vertLeft = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(footPlantUpdateTimeLeft));
             vertRight = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(footPlantUpdateTimeRight));
+            
+            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward * .5f + Vector3.down * ((GetRunCycleDistanceFromBase(footPlantUpdateTimeRight) + 1) / 2f + .2f);
+            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward * .5f + Vector3.down * ((GetRunCycleDistanceFromBase(footPlantUpdateTimeLeft) + 1) / 2f + .2f);
         
         }
         else{
@@ -211,14 +214,14 @@ public class EntityPhysics : EntityComponent
         }
         targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertRight;
         targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertLeft;
+        targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down;
+            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward + Vector3.down;
 
-        // toes
-        targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward * .5f + Vector3.down * ((GetRunCycleDistanceFromBase(footPlantUpdateTimeRight) + 1) / 2f + .2f);
-        targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward * .5f + Vector3.down * ((GetRunCycleDistanceFromBase(footPlantUpdateTimeLeft) + 1) / 2f + .2f);
+    
 
 
         float GetRunCycleVerticality(float updateTime){
-            return .02f * Mathf.Pow((GetRunCycleDistanceFromBase(updateTime) + 1f), .7f);
+            return .021f * Mathf.Pow((GetRunCycleDistanceFromBase(updateTime) + 1f), .7f);
         }
 
         float GetRunCycleDistanceFromBase(float updateTime){
@@ -230,7 +233,7 @@ public class EntityPhysics : EntityComponent
 
     public void ResetFootPlantPoint(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime){
 
-        float forwardReachDistance = .85f * (GetHorizVelocity().magnitude / maxSpeed_sprint) * Mathf.Pow((Mathf.InverseLerp(0f, 2f, rb.velocity.y) + .1f), .05f);
+        float forwardReachDistance = .8f * (GetHorizVelocity().magnitude / maxSpeed_sprint) * Mathf.Pow((Mathf.InverseLerp(0f, 2f, rb.velocity.y) + .1f), .05f);
 
         plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
         RaycastHit hit;
