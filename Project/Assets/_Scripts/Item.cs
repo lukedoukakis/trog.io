@@ -11,10 +11,10 @@ public class Item : ScriptableObject
 
 
     // Item defs
-    public static Item Torch = GenerateItem("Torch", (int)Type.Misc, .1f, (int)HoldStyle.Torch, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
-    public static Item Stone = GenerateItem("Stone", (int)Type.Misc, .1f, (int)HoldStyle.UnderArm, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject/Stone"), Resources.Load<Image>("Items/Stone/Image"));
-    public static Item SmallStone = GenerateItem("SmallStone", (int)Type.Misc, .1f, (int)HoldStyle.Torch, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/SmallStone/Gameobject/SmallStone"), Resources.Load<Image>("Items/SmallStone/Image"));
-    public static Item Spear = GenerateItem("Spear", (int)Type.Weapon, .1f, (int)HoldStyle.Spear, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Spear/Image"));
+    public static Item Torch = InitiailizeItem("Torch", Type.Misc, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
+    public static Item Stone = InitiailizeItem("Stone", Type.Misc, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject/Stone"), Resources.Load<Image>("Items/Stone/Image"));
+    public static Item SmallStone = InitiailizeItem("SmallStone", Type.Misc, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/SmallStone/Gameobject/SmallStone"), Resources.Load<Image>("Items/SmallStone/Image"));
+    public static Item Spear = InitiailizeItem("Spear", Type.Weapon, HoldStyle.Spear, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Spear/Image"));
 
 
     public static Dictionary<string, Item> Items = new Dictionary<string, Item>
@@ -33,9 +33,9 @@ public class Item : ScriptableObject
 
 
     public string nme;
-    public int type;
-    public float weight;
-    public int holdStyle;
+    public Enum type;
+    public Enum holdStyle;
+    public Enum damageType;
     public ItemCollection contents;
     public ItemCollection components;
     public GameObject gameobject;
@@ -49,12 +49,15 @@ public class Item : ScriptableObject
         Hug, UnderArm, Spear, Axe, OverShoulder, Torch
     }
 
+    public enum DamageType{
+        Blunt, Pierce, Slash
+    };
 
-    public static Item GenerateItem(string _nme, int _type, float _weight, int _holdStyle, ItemCollection _contents, ItemCollection _components, GameObject _gameobject, Image _image){
+
+    public static Item InitiailizeItem(string _nme, Enum _type, Enum _holdStyle, Enum _damageType, ItemCollection _contents, ItemCollection _components, GameObject _gameobject, Image _image){
         Item i = ScriptableObject.CreateInstance<Item>();
         i.nme = _nme;
         i.type = _type;
-        i.weight = _weight;
         i.holdStyle = _holdStyle;
         i.contents = _contents;
         i.components = _components;
@@ -67,4 +70,3 @@ public class Item : ScriptableObject
     public static ItemCollection EmptyItemCollection = new ItemCollection(new Dictionary<Item, int>());
 
 }
-

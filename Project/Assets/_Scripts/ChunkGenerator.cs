@@ -8,8 +8,8 @@ public class ChunkGenerator : MonoBehaviour
 {
     public static ChunkGenerator current;
     public static int Seed = -1;
-    public static int ChunkSize = 100;
-    public static int ChunkRenderDistance = 5;
+    public static int ChunkSize = 50;
+    public static int ChunkRenderDistance = 3;
     public static float Scale = 800f;
     public static float ElevationAmplitude = 1800f * 3f;
     public static float MinElevation = -.292893219f;
@@ -685,6 +685,7 @@ public class ChunkGenerator : MonoBehaviour
                 {
                     if(SeaLevel >= height-.00025f){
                         onWater = SeaLevel - height <= .0018f;
+                        onWater = false;
                     }
                     else{ onWater = false; }
 

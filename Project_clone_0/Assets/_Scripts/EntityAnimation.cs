@@ -21,14 +21,14 @@ public class EntityAnimation : EntityComponent
     Quaternion bodyRotation;
     Quaternion bodyRotationLast;
     Vector3 bodyAngularVelocity;
-    float angularVelocityY;
+    public float angularVelocityY;
     float angularVelocityY_last;
     public static float angularVelocityY_maxDelta = .1f;
 
     float posture_squat, squat_activity;
 
     float runMagnitude, climbMagnitude;
-    float bodySkew, slowness;
+    public float bodySkew, slowness;
 
 
 
@@ -366,12 +366,12 @@ public class EntityAnimation : EntityComponent
 
         StartCoroutine(SquatAndStand());
 
-        if(i.type == (int)Item.Type.Weapon){
-            SetAnimationBool("RightArm_weapon", true);
-        }
-        else if(i.type != (int)Item.Type.Pocket){
-            SetAnimationInt("LeftArm_holdStyle", i.holdStyle);
-        }
+        // if(i.type == (int)Item.Type.Weapon){
+        //     SetAnimationBool("RightArm_weapon", true);
+        // }
+        // else if(i.type != (int)Item.Type.Pocket){
+        //     SetAnimationInt("LeftArm_holdStyle", i.holdStyle);
+        // }
     }
 
 
@@ -380,18 +380,18 @@ public class EntityAnimation : EntityComponent
         string trigger;
         Item weap;
 
-        if(entityItems.weapon_equipped == null){
+        if(entityItems.weaponEquipped == null){
             trigger = "Throw";
             entityPhysics.LaunchProjectile(Item.SmallStone.gameobject);
         }
         else{
-            weap = entityItems.weapon_equipped.Item1;
+            weap = entityItems.weaponEquipped.Item1;
             switch (weap.holdStyle)
             {
-                case (int)Item.HoldStyle.Spear:
+                case Item.HoldStyle.Spear:
                     trigger = "Thrust";
                     break;
-                case (int)Item.HoldStyle.Axe:
+                case Item.HoldStyle.Axe:
                     trigger = "Swing";
                     break;
                 default:
@@ -406,6 +406,7 @@ public class EntityAnimation : EntityComponent
         //DisableAnimationLayer("LeftArm", .5f);
         //MaximizeAnimationLayer("RightArm", .5f);
     }
+
 
 
     IEnumerator SquatAndStand(){

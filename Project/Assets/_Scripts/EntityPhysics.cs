@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DitzelGames.FastIK;
 
 public class EntityPhysics : EntityComponent
 {
@@ -9,12 +11,13 @@ public class EntityPhysics : EntityComponent
     public PhysicMaterial highFrictionMat;
     public PhysicMaterial noFrictionMat;
     public LayerMask layerMask_water;
-    public LayerMask layerMask_noWater;
+    public LayerMask layerMask_terrain;
 
     public Rigidbody rb;
     public Transform gyro;
-    public Transform rightHand;
-    public Transform groundSense, wallSense, waterSense, obstacleHeightSense;
+    public Transform[] bodyPartTs, bodyPartTs_legs, bodyPartTs_upperBody;
+    public Transform hips, head, handRight, handLeft, footRight, footLeft, toeRight, toeLeft;
+    public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
     public static float groundCastDistance_player = .1f;
     public static float groundCastDistance_npc = .1f;
@@ -38,12 +41,23 @@ public class EntityPhysics : EntityComponent
     public static float landScrunch_recoverySpeed = .75f;
     public static float landScrunch_airTimeThreshhold = 1.2f;
     public float landScrunch;
+    public bool handFree_right, handFree_left;
 
 
     public float ROTATION_Y_THIS;
     public float ROTATION_Y_LAST;
     public bool GROUNDTOUCH, WALLTOUCH, IN_WATER;
 
+
+    // ik
+    public bool ikEnabled;
+    public FastIKFabric ikScript_hips, ikScript_head, ikScript_footLeft, ikScript_footRight, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft;
+    public FastIKFabric[] ikScripts, ikScripts_legs, ikScripts_upperBody;
+    public Transform ikParent;
+    public Transform basePositionHips, basePositionHead, basePositionFootRight, basePositionFootLeft, basePositionHandRight, basePositionHandLeft;
+    public Transform targetHips, targetHead, targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft;
+    public Vector3 plantPosFootLeft, plantPosFootRight;
+    public float footPlantUpdateTimeRight, footPlantUpdateTimeLeft;
 
 
 
@@ -56,19 +70,63 @@ public class EntityPhysics : EntityComponent
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         layerMask_water = LayerMask.GetMask("Water");
-        layerMask_noWater = LayerMask.GetMask("Terrain");
+        layerMask_terrain = LayerMask.GetMask("Terrain");
         rb = GetComponent<Rigidbody>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
-        rightHand = Utility.FindDeepChild(this.transform, "B-hand_R");
+
+        hips = Utility.FindDeepChild(this.transform, "B-hips");
+        head = Utility.FindDeepChild(this.transform, "B-head");
+        handRight = Utility.FindDeepChild(this.transform, "B-hand_R");
+        handLeft = Utility.FindDeepChild(this.transform, "B-hand_L");
+        footRight = Utility.FindDeepChild(this.transform, "B-foot_R");
+        footLeft = Utility.FindDeepChild(this.transform, "B-foot_L");
+        toeRight = Utility.FindDeepChild(this.transform, "B-toe_R");
+        toeLeft = Utility.FindDeepChild(this.transform, "B-toe_L");
+        bodyPartTs = new Transform[]{ handRight, handLeft, footRight, footLeft, toeRight, toeLeft };
+        bodyPartTs_legs = new Transform[]{ footRight, footLeft, toeRight, toeLeft };
+        bodyPartTs_upperBody = new Transform[]{ handRight, handLeft };
         groundSense = Utility.FindDeepChild(transform, "GroundSense");
         obstacleHeightSense = Utility.FindDeepChild(transform, "ObstacleHeightSense");
         wallSense = Utility.FindDeepChild(transform, "WallSense");
         waterSense = Utility.FindDeepChild(transform, "WaterSense");
+        kneeHeightT = Utility.FindDeepChild(transform, "KneeHeight");
         if(tag == "Player"){
             groundCastDistance = groundCastDistance_player;
         }else if(tag == "Npc"){
             groundCastDistance = groundCastDistance_npc;
         }
+
+        ikEnabled = true;
+        ikParent = Utility.FindDeepChild(transform, "IKTargets");
+        basePositionHips = ikParent.Find("BasePositionHips");
+        basePositionHead = ikParent.Find("BasePositionHead");
+        basePositionFootRight = ikParent.Find("BasePositionFootRight");
+        basePositionFootLeft = ikParent.Find("BasePositionFootLeft");
+        targetHips = ikParent.Find("TargetHips");
+        targetHead = ikParent.Find("TargetHead");
+        targetFootRight = ikParent.Find("TargetFootRight");
+        targetFootLeft = ikParent.Find("TargetFootLeft");
+        targetToeRight = ikParent.Find("TargetToeRight");
+        targetToeLeft = ikParent.Find("TargetToeLeft");
+        targetHandRight = ikParent.Find("TargetHandRight");
+        targetHandLeft = ikParent.Find("TargetHandLeft");
+        basePositionHandRight = ikParent.Find("BasePositionHandRight");
+        basePositionHandLeft = ikParent.Find("BasePositionHandLeft");
+        ikScript_hips = hips.GetComponent<FastIKFabric>();
+        ikScript_head = head.GetComponent<FastIKFabric>();
+        ikScript_footRight = footRight.GetComponent<FastIKFabric>();
+        ikScript_footLeft = footLeft.GetComponent<FastIKFabric>();
+        ikScript_toeRight = toeRight.GetComponent<FastIKFabric>();
+        ikScript_toeLeft = toeLeft.GetComponent<FastIKFabric>();
+        ikScript_handRight = handRight.GetComponent<FastIKFabric>();
+        ikScript_handLeft = handLeft.GetComponent<FastIKFabric>();
+        ikScripts = new FastIKFabric[]{ ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft };
+        ikScripts_legs = new FastIKFabric[]{ ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft };
+        ikScripts_upperBody = new FastIKFabric[]{ ikScript_handRight, ikScript_handLeft };
+
+        //targetFootRight.SetParent(GameObject.Find("Global Object").transform);
+        //targetFootLeft.SetParent(GameObject.Find("Global Object").transform);
+
     }
 
     void Start(){
@@ -77,7 +135,227 @@ public class EntityPhysics : EntityComponent
         maxSpeed_sprint = maxSpeed_run * 1.5f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * .75f;
+
+
+        plantPosFootRight = targetFootRight.position;
+        plantPosFootLeft = targetFootLeft.position;
+        footPlantUpdateTimeRight = 0f;
+        footPlantUpdateTimeLeft = .5f;
+
+        handFree_right = handFree_left = true;
     }
+
+
+    // check if foot is behind threshhold, if so set new plant point
+    public void IKUpdate(){
+        if (ikEnabled)
+        {
+
+            UpdateLimbPositions();
+
+
+            bool moving = IsMoving();
+
+            if (GroundIsClose())
+            {
+
+                if (moving)
+                {
+                    // check if plant points need update
+                    if (footPlantUpdateTimeRight >= 1f)
+                    {
+                        ResetFootPlantPoint(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref footPlantUpdateTimeRight);
+                    }
+                    if (footPlantUpdateTimeLeft >= 1f)
+                    {
+                        ResetFootPlantPoint(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, ref footPlantUpdateTimeLeft);
+                    }
+                    AdjustFootPlantPoint(targetFootRight, basePositionFootRight, ref plantPosFootRight);
+                    AdjustFootPlantPoint(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft);
+                }
+                else
+                {
+                    SetPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft);
+                    SetPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight);
+                }
+
+                // hand movement if free
+                if (handFree_right)
+                {
+                    AdjustFreeHandPosition(targetHandRight, basePositionHandRight, footPlantUpdateTimeLeft, moving);
+                }
+
+                if (handFree_left)
+                {
+                    AdjustFreeHandPosition(targetHandLeft, basePositionHandLeft, footPlantUpdateTimeRight, moving);
+                }
+
+        
+                
+            }
+
+
+            
+        }
+        
+        float footPlantTimeUpdateSpeed = 3f * Time.deltaTime;
+        footPlantUpdateTimeRight += footPlantTimeUpdateSpeed;
+        footPlantUpdateTimeLeft += footPlantTimeUpdateSpeed;
+
+
+    }
+
+    public void UpdateLimbPositions(){
+
+        // hips
+        targetHips.position = basePositionHips.position + Vector3.up * GetRunCyclePhase(footPlantUpdateTimeRight, 0f) * .1f;
+
+
+        // feet and toes
+        float changePositionSpeed = 5f * Time.deltaTime;
+        Vector3 vertLeft, vertRight;
+        if(IsMoving()){
+
+
+            float vertMin = Mathf.Lerp(GetRunCycleVerticality(.5f), GetRunCycleVerticality(.75f), Mathf.InverseLerp(0f, 5f, rb.velocity.y));
+            //vertMin = 0f;
+            vertLeft = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(footPlantUpdateTimeLeft));
+            vertRight = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(footPlantUpdateTimeRight));
+            
+            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward * .2f + Vector3.down * ((GetRunCyclePhase(footPlantUpdateTimeRight, -5f) + 1) / 2f + .2f);
+            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward * .2f + Vector3.down * ((GetRunCyclePhase(footPlantUpdateTimeLeft, -5f) + 1) / 2f + .2f);
+        
+        }
+        else{
+            vertLeft = vertRight = Vector3.zero;
+        }
+        targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertRight;
+        targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertLeft;
+        targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down;
+        targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward + Vector3.down;
+
+    
+
+
+        float GetRunCycleVerticality(float updateTime){
+            return .021f * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
+        }
+
+        // .5 is stance phase, -.5 is swing phase
+        float GetRunCyclePhase(float updateTime, float offset){
+            return Mathf.Cos(updateTime * 2f * Mathf.PI + offset) + 1;
+        }
+
+        
+    }
+
+
+
+    public void ResetFootPlantPoint(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime){
+
+        float forwardReachDistance = .8f * (GetHorizVelocity().magnitude / maxSpeed_sprint);
+
+        plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
+        RaycastHit hit;
+        if(Physics.Raycast(plantPos, Vector3.up, out hit, 1f, layerMask_terrain)){
+            Vector3 pt = hit.point;
+            plantPos = new Vector3(pt.x, Mathf.Min(pt.y, kneeHeightT.position.y), pt.z);
+        }
+        updateTime = 0f + (Mathf.Max(updateTime, 1f) - 1f);
+    }
+    public void AdjustFootPlantPoint(Transform targetIk, Transform baseTransform, ref Vector3 plantPos){
+        // move platPos down until hits terrain
+        RaycastHit hit;
+        if(Physics.Raycast(plantPos, Vector3.down, out hit, 100f, layerMask_terrain)){
+            plantPos.y = hit.point.y;
+        }
+        else{
+            if(Physics.Raycast(plantPos, Vector3.up + GetHorizVelocity().normalized, out hit, 1f, layerMask_terrain)){
+                plantPos = new Vector3(plantPos.x, Mathf.Min(hit.point.x, kneeHeightT.position.y), plantPos.z);
+            }
+        }
+    }
+
+    public void SetPlantPosition(Transform targetIk, Transform targetTransform, ref Vector3 positionPointer){
+        RaycastHit hit;
+        if(Physics.Raycast(targetTransform.position, Vector3.up, out hit, 1f, layerMask_terrain)){
+            positionPointer = hit.point;
+        }
+        else{
+            positionPointer = targetTransform.position;
+        }
+        positionPointer = targetTransform.position;
+        
+    }
+
+    public void AdjustFreeHandPosition(Transform ikTarget, Transform ikBasePositionTransform, float updateTime, bool moving){
+        if(moving){ 
+            // character is moving
+
+            Log("swinging arm");
+
+            float swingDistance = .17f;
+            float armBendDistance = .2f;
+
+            // empty hand movement
+            float awayFromBase = Mathf.Sin(updateTime * 2f * Mathf.PI);
+            float y = ikBasePositionTransform.position.y + Mathf.Abs(awayFromBase) * armBendDistance;
+            ikTarget.position = ikBasePositionTransform.position + GetHorizVelocity().normalized * awayFromBase * swingDistance + Vector3.up * Mathf.Abs(awayFromBase) * armBendDistance + (entityAnimation.bodyT.right * Mathf.Sin(footPlantUpdateTimeRight * 2f * Mathf.PI) * .1f);
+            
+        }
+        else{
+            // character is not moving
+            float moveSpeed = 5f * Time.deltaTime;
+            ikTarget.position = Vector3.Lerp(ikTarget.position, ikBasePositionTransform.position, moveSpeed);
+        }
+    }
+
+    public void UpdateIKForCarryingItems(){
+
+        var itemRight = entityItems.weaponEquipped;
+        var itemLeft = entityItems.holding;
+
+
+        handFree_left = (itemLeft == null);
+
+        // right hand
+        if(itemRight != null){
+            handFree_right = false;
+            targetHandRight = itemRight.Item2.transform.Find("IKTargetT_Right");
+        }
+        else{
+            targetHandRight = ikParent.Find("TargetHandRight");
+            handFree_right = true;
+        }
+        
+        // left hand
+        if(itemLeft != null){
+            handFree_left = false;
+            targetHandLeft = itemRight.Item2.transform.Find("IKTargetT_Left");
+        }
+        else{
+            // if hand is free, support right hand with holding the weapon, if equipped
+            if(!handFree_right){
+                targetHandLeft = itemRight.Item2.transform.Find("IKTargetT_Left");
+            }
+            else{
+                targetHandLeft = ikParent.transform.Find("TargetHandLeft");
+            }
+            handFree_left = true;
+        }
+
+
+        // iKPackage.ikTarget.position = ... set ik target to handle on holding item
+    }
+
+
+    // ----------
+
+    public void OnItemSwitch(){
+        UpdateIKForCarryingItems();
+    }
+
+
 
 
     public void Move(Vector3 direction, float speed){
@@ -121,7 +399,7 @@ public class EntityPhysics : EntityComponent
     }
 
     public bool CanJump(){
-        if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_noWater)){
+        if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_terrain)){
             return true;
         }
         return false;
@@ -144,7 +422,7 @@ public class EntityPhysics : EntityComponent
     
             yield return new WaitForSeconds(.2f);
 
-            GameObject projectile = GameObject.Instantiate(projectilePrefab, rightHand.position, Quaternion.identity);
+            GameObject projectile = GameObject.Instantiate(projectilePrefab, handRight.position, Quaternion.identity);
             Physics.IgnoreCollision(projectile.GetComponent<Collider>(), hitbox);
             Vector3 targetPos, throwDir;
 
@@ -172,13 +450,43 @@ public class EntityPhysics : EntityComponent
         
     }
 
+    public void Attack(){
+        if(entityItems.weaponEquipped == null){
+            LaunchProjectile(Item.SmallStone.gameobject);
+        }
+        else{
+            Item weap = entityItems.weaponEquipped.Item1;
+            switch (weap.holdStyle)
+            {
+                case Item.HoldStyle.Spear:
+                    StartCoroutine("SetWeaponTrajectoryThrust");
+                    break;
+
+                case Item.HoldStyle.Axe:
+                    StartCoroutine("SetWeaponTrajectorySwing");
+                    break;
+                default:
+
+                    Log("Trying to attack with a weapon with no specified hold style!!!");
+                    break;
+                }
+            
+        }
+    }
+    IEnumerator SetWeaponTrajectoryThrust(){
+        yield return null;
+    }
+    IEnumerator SetWeaponTrajectorySwing(){
+        yield return null;
+    }
+
 
 
 
 
     void CheckGround(){
         Vector3 vel = rb.velocity;
-        if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far, layerMask_noWater)){
+        if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far, layerMask_terrain)){
             if(Vector3.Distance(groundInfo.point, transform.position) < groundCastDistance){
                 if(!GROUNDTOUCH){
                     GROUNDTOUCH = true;
@@ -323,6 +631,16 @@ public class EntityPhysics : EntityComponent
         return horvel;
     }
 
+    bool IsMoving(){
+        return GetHorizVelocity().magnitude > .1f;
+    }
+
+    bool GroundIsClose(){
+
+        return Physics.OverlapSphere(groundSense.position, .5f, layerMask_terrain).Length > 0;
+
+    }
+
     void FixedUpdate()
     {
        ROTATION_Y_LAST = transform.rotation.y;
@@ -354,6 +672,6 @@ public class EntityPhysics : EntityComponent
             maxSpeed_run /= 2f;
         }
         
-        
+        IKUpdate();
     }
 }

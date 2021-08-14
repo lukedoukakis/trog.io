@@ -52,7 +52,7 @@ public class CameraController : MonoBehaviour
         // static camera
         if (mode == 0)
         {
-            Vector3 targetPos = playerT.position + (Vector3.forward * .07f) + (Vector3.up * .09f);
+            Vector3 targetPos = playerT.position + (Vector3.forward * .07f) + (Vector3.up * .08f);
             Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPos, 50f * Time.deltaTime);
             Camera.main.transform.rotation = Quaternion.Euler(new Vector3(45f, 0f, 0f));
         }
