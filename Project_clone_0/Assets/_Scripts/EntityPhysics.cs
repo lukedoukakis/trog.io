@@ -16,7 +16,7 @@ public class EntityPhysics : EntityComponent
     public Rigidbody rb;
     public Transform gyro;
     public Transform[] bodyPartTs, bodyPartTs_legs, bodyPartTs_upperBody;
-    public Transform handRight, handLeft, footRight, footLeft, toeRight, toeLeft;
+    public Transform hips, head, handRight, handLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
     public static float groundCastDistance_player = .1f;
@@ -51,11 +51,11 @@ public class EntityPhysics : EntityComponent
 
     // ik
     public bool ikEnabled;
-    public FastIKFabric ikScript_footLeft, ikScript_footRight, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft;
+    public FastIKFabric ikScript_hips, ikScript_head, ikScript_footLeft, ikScript_footRight, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft;
     public FastIKFabric[] ikScripts, ikScripts_legs, ikScripts_upperBody;
     public Transform ikParent;
-    public Transform basePositionFootRight, basePositionFootLeft, basePositionHandRight, basePositionHandLeft;
-    public Transform targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft;
+    public Transform basePositionHips, basePositionHead, basePositionFootRight, basePositionFootLeft, basePositionHandRight, basePositionHandLeft;
+    public Transform targetHips, targetHead, targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft;
     public Vector3 plantPosFootLeft, plantPosFootRight;
     public float footPlantUpdateTimeRight, footPlantUpdateTimeLeft;
 
@@ -73,6 +73,9 @@ public class EntityPhysics : EntityComponent
         layerMask_terrain = LayerMask.GetMask("Terrain");
         rb = GetComponent<Rigidbody>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
+
+        hips = Utility.FindDeepChild(this.transform, "B-hips");
+        head = Utility.FindDeepChild(this.transform, "B-head");
         handRight = Utility.FindDeepChild(this.transform, "B-hand_R");
         handLeft = Utility.FindDeepChild(this.transform, "B-hand_L");
         footRight = Utility.FindDeepChild(this.transform, "B-foot_R");
@@ -95,8 +98,12 @@ public class EntityPhysics : EntityComponent
 
         ikEnabled = true;
         ikParent = Utility.FindDeepChild(transform, "IKTargets");
+        basePositionHips = ikParent.Find("BasePositionHips");
+        basePositionHead = ikParent.Find("BasePositionHead");
         basePositionFootRight = ikParent.Find("BasePositionFootRight");
         basePositionFootLeft = ikParent.Find("BasePositionFootLeft");
+        targetHips = ikParent.Find("TargetHips");
+        targetHead = ikParent.Find("TargetHead");
         targetFootRight = ikParent.Find("TargetFootRight");
         targetFootLeft = ikParent.Find("TargetFootLeft");
         targetToeRight = ikParent.Find("TargetToeRight");
@@ -105,6 +112,8 @@ public class EntityPhysics : EntityComponent
         targetHandLeft = ikParent.Find("TargetHandLeft");
         basePositionHandRight = ikParent.Find("BasePositionHandRight");
         basePositionHandLeft = ikParent.Find("BasePositionHandLeft");
+        ikScript_hips = hips.GetComponent<FastIKFabric>();
+        ikScript_head = head.GetComponent<FastIKFabric>();
         ikScript_footRight = footRight.GetComponent<FastIKFabric>();
         ikScript_footLeft = footLeft.GetComponent<FastIKFabric>();
         ikScript_toeRight = toeRight.GetComponent<FastIKFabric>();
@@ -142,6 +151,9 @@ public class EntityPhysics : EntityComponent
         if (ikEnabled)
         {
 
+            UpdateLimbPositions();
+
+
             bool moving = IsMoving();
 
             if (GroundIsClose())
@@ -178,8 +190,8 @@ public class EntityPhysics : EntityComponent
                     AdjustFreeHandPosition(targetHandLeft, basePositionHandLeft, footPlantUpdateTimeRight, moving);
                 }
 
-                // update foot positions with plant points;
-                UpdateLimbPositions();
+        
+                
             }
 
 
@@ -195,6 +207,10 @@ public class EntityPhysics : EntityComponent
 
     public void UpdateLimbPositions(){
 
+        // hips
+        targetHips.position = basePositionHips.position + Vector3.up * GetRunCyclePhase(footPlantUpdateTimeRight, 0f) * .1f;
+
+
         // feet and toes
         float changePositionSpeed = 5f * Time.deltaTime;
         Vector3 vertLeft, vertRight;
@@ -205,8 +221,8 @@ public class EntityPhysics : EntityComponent
             vertLeft = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(footPlantUpdateTimeLeft));
             vertRight = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(footPlantUpdateTimeRight));
             
-            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward * .5f + Vector3.down * ((GetRunCycleDistanceFromBase(footPlantUpdateTimeRight) + 1) / 2f + .2f);
-            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward * .5f + Vector3.down * ((GetRunCycleDistanceFromBase(footPlantUpdateTimeLeft) + 1) / 2f + .2f);
+            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward * .2f + Vector3.down * ((GetRunCyclePhase(footPlantUpdateTimeRight, -5f) + 1) / 2f + .2f);
+            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward * .2f + Vector3.down * ((GetRunCyclePhase(footPlantUpdateTimeLeft, -5f) + 1) / 2f + .2f);
         
         }
         else{
@@ -215,18 +231,21 @@ public class EntityPhysics : EntityComponent
         targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertRight;
         targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertLeft;
         targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down;
-            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward + Vector3.down;
+        targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward + Vector3.down;
 
     
 
 
         float GetRunCycleVerticality(float updateTime){
-            return .021f * Mathf.Pow((GetRunCycleDistanceFromBase(updateTime) + 1f), .7f);
+            return .021f * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
         }
 
-        float GetRunCycleDistanceFromBase(float updateTime){
-            return Mathf.Cos(updateTime * 2f * Mathf.PI - .3f);
+        // .5 is stance phase, -.5 is swing phase
+        float GetRunCyclePhase(float updateTime, float offset){
+            return Mathf.Cos(updateTime * 2f * Mathf.PI + offset) + 1;
         }
+
+        
     }
 
 
