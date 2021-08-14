@@ -217,7 +217,8 @@ public class EntityPhysics : EntityComponent
         if(IsMoving()){
 
 
-            float vertMin = Mathf.Lerp(GetRunCycleVerticality(.5f), GetRunCycleVerticality(1f), Mathf.InverseLerp(0f, 5f, rb.velocity.y));
+            float vertMin = Mathf.Lerp(GetRunCycleVerticality(.5f), GetRunCycleVerticality(.75f), Mathf.InverseLerp(0f, 5f, rb.velocity.y));
+            //vertMin = 0f;
             vertLeft = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(footPlantUpdateTimeLeft));
             vertRight = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(footPlantUpdateTimeRight));
             
@@ -252,7 +253,7 @@ public class EntityPhysics : EntityComponent
 
     public void ResetFootPlantPoint(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime){
 
-        float forwardReachDistance = .8f * (GetHorizVelocity().magnitude / maxSpeed_sprint) * Mathf.Pow((Mathf.InverseLerp(0f, 2f, rb.velocity.y) + .1f), .05f);
+        float forwardReachDistance = .8f * (GetHorizVelocity().magnitude / maxSpeed_sprint);
 
         plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
         RaycastHit hit;
@@ -269,7 +270,7 @@ public class EntityPhysics : EntityComponent
             plantPos.y = hit.point.y;
         }
         else{
-            if(Physics.Raycast(plantPos, Vector3.up, out hit, 1f, layerMask_terrain)){
+            if(Physics.Raycast(plantPos, Vector3.up + GetHorizVelocity().normalized, out hit, 1f, layerMask_terrain)){
                 plantPos = new Vector3(plantPos.x, Mathf.Min(hit.point.x, kneeHeightT.position.y), plantPos.z);
             }
         }
