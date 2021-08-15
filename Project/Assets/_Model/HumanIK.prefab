@@ -412,7 +412,7 @@ Rigidbody:
   m_AngularDrag: 0.5
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!144 &4719348253421298441
@@ -936,7 +936,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1912865733024412964}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.102, y: 0.39500007, z: 1.312}
+  m_LocalPosition: {x: 0.707, y: 0.39500007, z: 1.312}
   m_LocalScale: {x: 0.049999997, y: 0.05, z: 0.05}
   m_Children: []
   m_Father: {fileID: 3641712512417169868}
@@ -1272,7 +1272,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &2385599701034485678
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -2661,7 +2661,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &1225391663462864089
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -2680,22 +2680,22 @@ CharacterJoint:
     spring: 0
     damper: 0
   m_LowTwistLimit:
-    limit: -177
+    limit: -20
     bounciness: 0
     contactDistance: 0
   m_HighTwistLimit:
-    limit: 177
+    limit: 150.43806
     bounciness: 0
     contactDistance: 0
   m_SwingLimitSpring:
     spring: 0
     damper: 0
   m_Swing1Limit:
-    limit: 177
+    limit: 62.869186
     bounciness: 0
     contactDistance: 0
   m_Swing2Limit:
-    limit: 177
+    limit: 40
     bounciness: 0
     contactDistance: 0
   m_EnableProjection: 0
@@ -3078,9 +3078,9 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 126
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!136 &5867117844372185839
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3183,7 +3183,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6013226863221295133}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.11, z: 0.849}
+  m_LocalPosition: {x: 0, y: 2.694, z: 0.849}
   m_LocalScale: {x: 0.049999997, y: 0.05, z: 0.05}
   m_Children: []
   m_Father: {fileID: 3641712512417169868}
@@ -3346,7 +3346,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &5267177779208060956
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -3365,22 +3365,22 @@ CharacterJoint:
     spring: 0
     damper: 0
   m_LowTwistLimit:
-    limit: -177
+    limit: -20
     bounciness: 0
     contactDistance: 0
   m_HighTwistLimit:
-    limit: 177
+    limit: 150.43806
     bounciness: 0
     contactDistance: 0
   m_SwingLimitSpring:
     spring: 0
     damper: 0
   m_Swing1Limit:
-    limit: 177
+    limit: 62.869186
     bounciness: 0
     contactDistance: 0
   m_Swing2Limit:
-    limit: 177
+    limit: 40
     bounciness: 0
     contactDistance: 0
   m_EnableProjection: 0
@@ -3790,15 +3790,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6908606357329083993}
-  m_LocalRotation: {x: 0.000000003958439, y: 0.036746792, z: 1.4555517e-10, w: 0.9993246}
-  m_LocalPosition: {x: 0.013568414, y: -0.000000085830656, z: 0.0049538016}
+  m_LocalRotation: {x: 0.0074500004, y: -0.14391625, z: 0.005508729, w: 0.98954654}
+  m_LocalPosition: {x: -0.008250476, y: 0.0022807554, z: 0.11542513}
   m_LocalScale: {x: 1.0000001, y: 1, z: 1}
   m_Children:
   - {fileID: 7423571456888413236}
   - {fileID: 8683700490358774125}
   m_Father: {fileID: 1091904539235423325}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0.93600005, y: -16.546001, z: 0.50200003}
 --- !u!1 &6962320154313436577
 GameObject:
   m_ObjectHideFlags: 0
@@ -4032,8 +4032,8 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 5589353078028230979}
   m_AABB:
-    m_Center: {x: -0.008560911, y: 0.18458655, z: 0.68545526}
-    m_Extent: {x: 0.1559283, y: 0.10077062, z: 0.08756912}
+    m_Center: {x: -0.08682853, y: 0.14834669, z: 0.6356275}
+    m_Extent: {x: 0.15892673, y: 0.17326647, z: 0.13739693}
   m_DirtyAABB: 0
 --- !u!183 &2078147216617457281
 Cloth:
@@ -4435,7 +4435,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &6134754364901943990
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -4537,8 +4537,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7825220955434005583}
-  m_LocalRotation: {x: -0.0133688385, y: 0.9113701, z: -0.021932175, w: 0.41078582}
-  m_LocalPosition: {x: -0.2196394, y: -0.011855559, z: 0.57957155}
+  m_LocalRotation: {x: -0.21191637, y: 0.8864907, z: 0.06823415, w: 0.4056722}
+  m_LocalPosition: {x: -0.20612049, y: -0.100849606, z: 0.57957155}
   m_LocalScale: {x: 0.9999999, y: 1.0000002, z: 0.99999994}
   m_Children:
   - {fileID: 1718410373733080786}
@@ -4547,7 +4547,7 @@ Transform:
   - {fileID: 4334095376318479282}
   m_Father: {fileID: 6110298026884664032}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 1.6610001, y: 131.43901, z: -2.43}
+  m_LocalEulerAnglesHint: {x: -17.033, y: 133.78, z: -19.576}
 --- !u!54 &2948781535334213119
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4561,9 +4561,9 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 1
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 126
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!114 &6911466797686503306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4576,7 +4576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03ca45bb53dc94f478358a1b6475653d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChainLength: 0
+  ChainLength: 1
   Target: {fileID: 5074144649810265954}
   Pole: {fileID: 4649320360209363611}
   Iterations: 10
@@ -4628,9 +4628,9 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 126
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!136 &6500889563000486977
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -5037,7 +5037,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8377293816335451414}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.102, y: 0.3, z: -0.1}
+  m_LocalPosition: {x: 0.102, y: 0.3, z: -0.143}
   m_LocalScale: {x: 0.049999997, y: 0.05, z: 0.05}
   m_Children: []
   m_Father: {fileID: 3641712512417169868}
@@ -5299,7 +5299,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &3832276993889054768
 CharacterJoint:
   m_ObjectHideFlags: 0

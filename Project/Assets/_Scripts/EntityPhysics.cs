@@ -57,7 +57,7 @@ public class EntityPhysics : EntityComponent
     public Transform basePositionHips, basePositionHead, basePositionFootRight, basePositionFootLeft, basePositionHandRight, basePositionHandLeft;
     public Transform targetHips, targetHead, targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft;
     public Vector3 plantPosFootLeft, plantPosFootRight;
-    public float footPlantUpdateTimeRight, footPlantUpdateTimeLeft;
+    public float updateTime_footRight, updateTime_footLeft, updateTime_hips;
 
 
 
@@ -139,8 +139,9 @@ public class EntityPhysics : EntityComponent
 
         plantPosFootRight = targetFootRight.position;
         plantPosFootLeft = targetFootLeft.position;
-        footPlantUpdateTimeRight = 0f;
-        footPlantUpdateTimeLeft = .5f;
+        updateTime_footRight = 0f;
+        updateTime_footLeft = .5f;
+        updateTime_hips = 0f;
 
         handFree_right = handFree_left = true;
     }
@@ -162,32 +163,32 @@ public class EntityPhysics : EntityComponent
                 if (moving)
                 {
                     // check if plant points need update
-                    if (footPlantUpdateTimeRight >= 1f)
+                    if (updateTime_footRight >= 1f)
                     {
-                        ResetFootPlantPoint(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref footPlantUpdateTimeRight);
+                        ResetFootPlantPoint(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight);
                     }
-                    if (footPlantUpdateTimeLeft >= 1f)
+                    if (updateTime_footLeft >= 1f)
                     {
-                        ResetFootPlantPoint(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, ref footPlantUpdateTimeLeft);
+                        ResetFootPlantPoint(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, ref updateTime_footLeft);
                     }
                     AdjustFootPlantPoint(targetFootRight, basePositionFootRight, ref plantPosFootRight);
                     AdjustFootPlantPoint(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft);
                 }
                 else
                 {
-                    SetPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft);
-                    SetPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight);
+                    SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.zero, ref plantPosFootLeft);
+                    SetPlantPosition(targetFootRight, basePositionFootRight, entityAnimation.bodyT.forward * -.2f, ref plantPosFootRight);
                 }
 
                 // hand movement if free
                 if (handFree_right)
                 {
-                    AdjustFreeHandPosition(targetHandRight, basePositionHandRight, footPlantUpdateTimeLeft, moving);
+                    AdjustFreeHandPosition(targetHandRight, basePositionHandRight, updateTime_footLeft, moving);
                 }
 
                 if (handFree_left)
                 {
-                    AdjustFreeHandPosition(targetHandLeft, basePositionHandLeft, footPlantUpdateTimeRight, moving);
+                    AdjustFreeHandPosition(targetHandLeft, basePositionHandLeft, updateTime_footRight, moving);
                 }
 
         
@@ -199,8 +200,10 @@ public class EntityPhysics : EntityComponent
         }
         
         float footPlantTimeUpdateSpeed = 3f * Time.deltaTime;
-        footPlantUpdateTimeRight += footPlantTimeUpdateSpeed;
-        footPlantUpdateTimeLeft += footPlantTimeUpdateSpeed;
+        float hipsUpdateSpeed = footPlantTimeUpdateSpeed / 2f;
+        updateTime_footRight += footPlantTimeUpdateSpeed;
+        updateTime_footLeft += footPlantTimeUpdateSpeed;
+        updateTime_hips += hipsUpdateSpeed;
 
 
     }
@@ -208,7 +211,7 @@ public class EntityPhysics : EntityComponent
     public void UpdateLimbPositions(){
 
         // hips
-        targetHips.position = basePositionHips.position + Vector3.up * GetRunCyclePhase(footPlantUpdateTimeRight, 0f) * .1f;
+        targetHips.position = basePositionHips.position + Vector3.up * GetRunCyclePhase(updateTime_hips, 0f) * .1f;
 
 
         // feet and toes
@@ -219,11 +222,11 @@ public class EntityPhysics : EntityComponent
 
             float vertMin = Mathf.Lerp(GetRunCycleVerticality(.5f), GetRunCycleVerticality(.75f), Mathf.InverseLerp(0f, 5f, rb.velocity.y));
             //vertMin = 0f;
-            vertLeft = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(footPlantUpdateTimeLeft));
-            vertRight = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(footPlantUpdateTimeRight));
+            vertLeft = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(updateTime_footLeft));
+            vertRight = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(updateTime_footRight));
             
-            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward * .2f + Vector3.down * ((GetRunCyclePhase(footPlantUpdateTimeRight, -5f) + 1) / 2f + .2f);
-            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward * .2f + Vector3.down * ((GetRunCyclePhase(footPlantUpdateTimeLeft, -5f) + 1) / 2f + .2f);
+            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward * .2f + Vector3.down * ((GetRunCyclePhase(updateTime_footRight, -5f) + 1) / 2f + .2f);
+            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward * .2f + Vector3.down * ((GetRunCyclePhase(updateTime_footLeft, -5f) + 1) / 2f + .2f);
         
         }
         else{
@@ -238,7 +241,7 @@ public class EntityPhysics : EntityComponent
 
 
         float GetRunCycleVerticality(float updateTime){
-            return .021f * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
+            return .018f * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
         }
 
         // .5 is stance phase, -.5 is swing phase
@@ -256,35 +259,39 @@ public class EntityPhysics : EntityComponent
         float forwardReachDistance = .8f * (GetHorizVelocity().magnitude / maxSpeed_sprint);
 
         plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
-        RaycastHit hit;
-        if(Physics.Raycast(plantPos, Vector3.up, out hit, 1f, layerMask_terrain)){
-            Vector3 pt = hit.point;
-            plantPos = new Vector3(pt.x, Mathf.Min(pt.y, kneeHeightT.position.y), pt.z);
-        }
+        // RaycastHit hit;
+        // if(Physics.Raycast(plantPos, Vector3.up + GetHorizVelocity().normalized, out hit, 1f, layerMask_terrain)){
+        //     Vector3 pt = hit.point;
+        //     plantPos = new Vector3(pt.x, Mathf.Min(pt.y, kneeHeightT.position.y), pt.z);
+        // }
         updateTime = 0f + (Mathf.Max(updateTime, 1f) - 1f);
     }
     public void AdjustFootPlantPoint(Transform targetIk, Transform baseTransform, ref Vector3 plantPos){
-        // move platPos down until hits terrain
+        // move plantPos down until hits terrain
         RaycastHit hit;
         if(Physics.Raycast(plantPos, Vector3.down, out hit, 100f, layerMask_terrain)){
             plantPos.y = hit.point.y;
         }
-        else{
-            if(Physics.Raycast(plantPos, Vector3.up + GetHorizVelocity().normalized, out hit, 1f, layerMask_terrain)){
-                plantPos = new Vector3(plantPos.x, Mathf.Min(hit.point.x, kneeHeightT.position.y), plantPos.z);
-            }
-        }
+        // else{
+        //     if(Physics.Raycast(plantPos, Vector3.up + GetHorizVelocity().normalized, out hit, 1f, layerMask_terrain)){
+        //         plantPos = new Vector3(plantPos.x, Mathf.Min(hit.point.x, kneeHeightT.position.y), plantPos.z);
+        //     }
+        // }
+        Vector3 pos = targetIk.position;
+        pos.y = Mathf.Max(pos.y, baseTransform.position.y);
+        targetIk.position = pos;
     }
 
-    public void SetPlantPosition(Transform targetIk, Transform targetTransform, ref Vector3 positionPointer){
+    public void SetPlantPosition(Transform targetIk, Transform targetTransform, Vector3 offset, ref Vector3 positionPointer){
+        Vector3 pos = targetTransform.position + offset;
         RaycastHit hit;
-        if(Physics.Raycast(targetTransform.position, Vector3.up, out hit, 1f, layerMask_terrain)){
+        if(Physics.Raycast(pos, Vector3.up, out hit, 1f, layerMask_terrain)){
             positionPointer = hit.point;
         }
         else{
-            positionPointer = targetTransform.position;
+            positionPointer = pos;
         }
-        positionPointer = targetTransform.position;
+        positionPointer = pos;
         
     }
 
@@ -300,7 +307,7 @@ public class EntityPhysics : EntityComponent
             // empty hand movement
             float awayFromBase = Mathf.Sin(updateTime * 2f * Mathf.PI);
             float y = ikBasePositionTransform.position.y + Mathf.Abs(awayFromBase) * armBendDistance;
-            ikTarget.position = ikBasePositionTransform.position + GetHorizVelocity().normalized * awayFromBase * swingDistance + Vector3.up * Mathf.Abs(awayFromBase) * armBendDistance + (entityAnimation.bodyT.right * Mathf.Sin(footPlantUpdateTimeRight * 2f * Mathf.PI) * .1f);
+            ikTarget.position = ikBasePositionTransform.position + GetHorizVelocity().normalized * awayFromBase * swingDistance + Vector3.up * Mathf.Abs(awayFromBase) * armBendDistance + (entityAnimation.bodyT.right * Mathf.Sin(updateTime_footRight * 2f * Mathf.PI) * .1f);
             
         }
         else{
@@ -602,6 +609,9 @@ public class EntityPhysics : EntityComponent
                 }
             }
         }
+        if(!jumping){
+            max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y);
+        }
 
         if(horvel.magnitude > max){
             horvel = horvel.normalized * max;
@@ -619,6 +629,7 @@ public class EntityPhysics : EntityComponent
     void SetGravity(){
         if((GROUNDTOUCH || WALLTOUCH) && !IN_WATER && moveDir.magnitude > 0f){
             rb.useGravity = false;
+            rb.useGravity = true;
         }
         else{ rb.useGravity = true; }
     }

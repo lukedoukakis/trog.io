@@ -30,7 +30,7 @@ public class LightingController : MonoBehaviour
         moonLight = moon.GetComponent<Light>();
         
 
-        time = 100f;
+        time = 200f;
     }
 
 
@@ -41,7 +41,7 @@ public class LightingController : MonoBehaviour
         SetCelestialBodies(time);
         SetSkyboxColor(time);
 
-        time += Time.deltaTime;
+        //time += Time.deltaTime;
     }
 
     void SetCelestialBodies(float time){

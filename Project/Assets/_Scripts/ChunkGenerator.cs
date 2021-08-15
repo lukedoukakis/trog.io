@@ -10,7 +10,7 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = -1;
     public static int ChunkSize = 50;
     public static int ChunkRenderDistance = 3;
-    public static float Scale = 800f;
+    public static float Scale = 1200f;
     public static float ElevationAmplitude = 1800f * 3f;
     public static float MinElevation = -.292893219f;
     public static float MaxElevation = .224744871f;
@@ -452,7 +452,7 @@ public class ChunkGenerator : MonoBehaviour
                 // create flatland
                 float psgScale, psgNoise, psgSteps, psgStepHeight, psg, oldPsg;
                 psgScale = 200f;
-                psgSteps = 50f;
+                psgSteps = 40f;
                 psgStepHeight = (1f - FlatLevel) / psgSteps;
                 
         
