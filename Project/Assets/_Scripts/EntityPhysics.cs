@@ -211,6 +211,9 @@ public class EntityPhysics : EntityComponent
     public void UpdateLimbPositions(){
 
         // hips
+        if(updateTime_hips > 1f){
+            updateTime_hips = updateTime_hips - 1f;
+        }
         targetHips.position = basePositionHips.position + Vector3.up * GetRunCyclePhase(updateTime_hips, 0f) * .1f;
 
 
