@@ -182,8 +182,8 @@ public class EntityPhysics : EntityComponent
             else
             {
                 // not on ground
-                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .6f + GetHorizVelocity().normalized * 0f, ref plantPosFootLeft);
-                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + GetHorizVelocity().normalized * .5f, ref plantPosFootRight);
+                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .2f + entityAnimation.bodyT.forward * 0f, ref plantPosFootLeft);
+                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .6f + entityAnimation.bodyT.forward * .5f, ref plantPosFootRight);
                 updateTime_footRight = .2f;
                 updateTime_footLeft = .7f;
             }
