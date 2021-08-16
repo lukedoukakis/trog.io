@@ -265,7 +265,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.2531607, y: -0.18077965, z: 0.07096824}
+  m_ConnectedAnchor: {x: -0.25316072, y: -0.18078004, z: 0.07096817}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -489,7 +489,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.23595186, y: 0.14720099, z: 0.04297474}
+  m_ConnectedAnchor: {x: -0.23595154, y: 0.14720078, z: 0.042974453}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -1135,24 +1135,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &1026899800919818469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4118384294023002160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03ca45bb53dc94f478358a1b6475653d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ChainLength: 1
-  Target: {fileID: 1540433824942076415}
-  Pole: {fileID: 4649320360209363611}
-  Iterations: 10
-  Delta: 0.001
-  SnapBackStrength: 1
 --- !u!54 &4099780748436054598
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1180,7 +1162,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.2221028, y: -0.0066259485, z: 0.1602395}
+  m_ConnectedAnchor: {x: -0.22210304, y: -0.0066259205, z: 0.1602395}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -1214,6 +1196,24 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &1026899800919818469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4118384294023002160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03ca45bb53dc94f478358a1b6475653d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ChainLength: 1
+  Target: {fileID: 1540433824942076415}
+  Pole: {fileID: 4649320360209363611}
+  Iterations: 10
+  Delta: 0.001
+  SnapBackStrength: 1
 --- !u!54 &3017010344874638777
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1241,7 +1241,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.2534901, y: 0.00000035390246, z: 0.00000078976126}
+  m_ConnectedAnchor: {x: -0.25349024, y: 0.00000006519259, z: 0.00000085681654}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -1381,7 +1381,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.06463175, y: -0.07962759, z: 0.0051341658}
+  m_ConnectedAnchor: {x: -0.06463179, y: -0.07962761, z: 0.005134203}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2134,7 +2134,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.13649969, y: 0.000000040978183, z: 0.016005294}
+  m_ConnectedAnchor: {x: -0.13649942, y: -0.00000035669646, z: 0.01600519}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2444,7 +2444,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.25349098, y: 0.0000006742765, z: 0.00000006332988}
+  m_ConnectedAnchor: {x: -0.25349104, y: 0.00000081024916, z: 0.000000111758624}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -3020,6 +3020,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.z
       value: -2.6460083e-15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6126078227500701053, guid: ca7f7ef907f9c4442884708b46618d7d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8091596514283419423, guid: ca7f7ef907f9c4442884708b46618d7d,
         type: 3}
