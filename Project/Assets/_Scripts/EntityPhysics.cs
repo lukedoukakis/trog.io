@@ -76,8 +76,8 @@ public class EntityPhysics : EntityComponent
 
         hips = Utility.FindDeepChild(this.transform, "B-hips");
         head = Utility.FindDeepChild(this.transform, "B-head");
-        handRight = Utility.FindDeepChild(this.transform, "B-hand_R");
-        handLeft = Utility.FindDeepChild(this.transform, "B-hand_L");
+        handRight = Utility.FindDeepChild(this.transform, "B-palm_01_R");
+        handLeft = Utility.FindDeepChild(this.transform, "B-palm_01_L");
         footRight = Utility.FindDeepChild(this.transform, "B-foot_R");
         footLeft = Utility.FindDeepChild(this.transform, "B-foot_L");
         toeRight = Utility.FindDeepChild(this.transform, "B-toe_R");
@@ -144,6 +144,7 @@ public class EntityPhysics : EntityComponent
         updateTime_hips = 0f;
 
         handFree_right = handFree_left = true;
+        UpdateIKForCarryingItems();
     }
 
 
@@ -190,18 +191,6 @@ public class EntityPhysics : EntityComponent
             AdjustFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, groundIsClose);
             AdjustFootPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, groundIsClose);
             ApplyFootPositionRestraints();
-
-
-            // hand movement if free
-            if (handFree_right)
-            {
-                AdjustFreeHandPosition(targetHandRight, basePositionHandRight, updateTime_footLeft, moving);
-            }
-
-            if (handFree_left)
-            {
-                AdjustFreeHandPosition(targetHandLeft, basePositionHandLeft, updateTime_footRight, moving);
-            }
 
         }
         
@@ -318,56 +307,41 @@ public class EntityPhysics : EntityComponent
         
     }
 
-    public void AdjustFreeHandPosition(Transform ikTarget, Transform ikBasePositionTransform, float updateTime, bool moving){
-        if(moving){ 
-            // character is moving
-
-            float swingDistance = .17f;
-            float armBendDistance = .2f;
-
-            // empty hand movement
-            float awayFromBase = Mathf.Sin(updateTime * 2f * Mathf.PI);
-            float y = ikBasePositionTransform.position.y + Mathf.Abs(awayFromBase) * armBendDistance;
-            ikTarget.position = ikBasePositionTransform.position + GetHorizVelocity().normalized * awayFromBase * swingDistance + Vector3.up * Mathf.Abs(awayFromBase) * armBendDistance + (entityAnimation.bodyT.right * Mathf.Sin(updateTime_footRight * 2f * Mathf.PI) * .1f);
-            
-        }
-        else{
-            // character is not moving
-            float moveSpeed = 5f * Time.deltaTime;
-            ikTarget.position = Vector3.Lerp(ikTarget.position, ikBasePositionTransform.position, moveSpeed);
-        }
-    }
-
     public void UpdateIKForCarryingItems(){
 
         var itemRight = entityItems.weaponEquipped;
         var itemLeft = entityItems.holding;
 
 
-        handFree_left = (itemLeft == null);
-
         // right hand
         if(itemRight != null){
+            ikScript_handRight.enabled = true;
             handFree_right = false;
-            targetHandRight = itemRight.Item2.transform.Find("IKTargetT_Right");
+            Log("setting target to weapon");
+            ikScript_handRight.Target = itemRight.Item2.transform.Find("IKTargetT_Right");
         }
         else{
-            targetHandRight = ikParent.Find("TargetHandRight");
+            ikScript_handRight.enabled = false;
+            ikScript_handRight.Target = ikParent.Find("TargetHandRight");
             handFree_right = true;
         }
         
         // left hand
         if(itemLeft != null){
+            ikScript_handLeft.enabled = true;
             handFree_left = false;
             targetHandLeft = itemRight.Item2.transform.Find("IKTargetT_Left");
         }
         else{
+            
+            ikScript_handLeft.enabled = false;
+
             // if hand is free, support right hand with holding the weapon, if equipped
             if(!handFree_right){
-                targetHandLeft = itemRight.Item2.transform.Find("IKTargetT_Left");
+                ikScript_handLeft.Target = itemRight.Item2.transform.Find("IKTargetT_Left");
             }
             else{
-                targetHandLeft = ikParent.transform.Find("TargetHandLeft");
+                ikScript_handLeft.Target = ikParent.transform.Find("TargetHandLeft");
             }
             handFree_left = true;
         }

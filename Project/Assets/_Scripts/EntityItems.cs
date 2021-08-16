@@ -18,11 +18,12 @@ public class EntityItems : EntityComponent
     public ItemCollection pockets;
 
 
-    // TODO: assign these in inspector
-    public Transform equippedWeaponT_spear;
-    public Transform equippedWeaponT_axe;
-    public Transform unequippedWeaponT;
-    public Transform entityBackT;
+    
+    // orientations in space for items
+    public Transform orientationParent;
+    public Transform orientation_weaponEquipped_spear;
+    public Transform orientation_weaponEquipped_axe;
+    public Transform orientation_weaponUnequipped;
     
 
 
@@ -32,12 +33,10 @@ public class EntityItems : EntityComponent
      
         base.Awake();
 
-
-        entityBackT = Utility.FindDeepChild(transform, "BackT");
-
-
-        //Log(t_hand_right.name);
-
+        orientationParent = Utility.FindDeepChild(transform, "ItemOrientations");
+        orientation_weaponEquipped_spear = orientationParent.Find("WeaponEquippedSpear");
+        orientation_weaponEquipped_axe = orientationParent.Find("WeaponEquippedAxe");
+        orientation_weaponUnequipped = orientationParent.Find("WeaponUnequipped");
     }
 
 
@@ -63,6 +62,8 @@ public class EntityItems : EntityComponent
         Faction.RemoveItemOwned(holding.Item2, entityInfo.faction);
         
         holding = null;
+
+        entityPhysics.OnItemSwitch();
     }
 
     public void SetWeapon(Tuple<Item, GameObject> itemObjectPair){
@@ -82,6 +83,7 @@ public class EntityItems : EntityComponent
         TogglePhysics(weaponEquipped.Item2, true);
         Faction.RemoveItemOwned(weaponEquipped.Item2, entityInfo.faction);
         weaponUnequipped = null;
+
     }
     public void SetUnequippedWeapon(Tuple<Item, GameObject> itemObjectPair){
         weaponUnequipped = itemObjectPair;
@@ -112,17 +114,23 @@ public class EntityItems : EntityComponent
         //     hold.transform.position = t_hand_left.position + t_hand_left.forward*hold.GetComponent<BoxCollider>().size.z/4f;
         //     hold.transform.rotation = t_hand_left.rotation;
         // }
-        // if(weapon_equipped != null){
-        //     GameObject weap_on = weapon_equipped.Item2;
-        //     weap_on.transform.position = t_hand_right.position;
-        //     weap_on.transform.rotation = t_hand_right.rotation;
-        // }
-        // if(weapon_unequipped != null){
-        //     GameObject weap_off = weapon_unequipped.Item2;
-        //     weap_off.transform.position = t_back.position;
-        //     weap_off.transform.rotation = t_back.rotation;
+        if(weaponEquipped != null){
+            GameObject weap_on = weaponEquipped.Item2;
+            if(weaponUnequipped.Item1.holdStyle.Equals(Item.HoldStyle.Spear)){
+                weap_on.transform.position = orientation_weaponEquipped_spear.position;
+                weap_on.transform.rotation = orientation_weaponEquipped_spear.rotation;
+            }
+            else{
+                weap_on.transform.position = orientation_weaponEquipped_axe.position;
+                weap_on.transform.rotation = orientation_weaponEquipped_axe.rotation;
+            }
+        }
+        if(weaponUnequipped != null){
+            GameObject weap_off = weaponUnequipped.Item2;
+            weap_off.transform.position = orientation_weaponUnequipped.position;
+            weap_off.transform.rotation = orientation_weaponUnequipped.rotation;
 
-        // }
+        }
 
         //weap_on.transform.position = Vector3.Lerp(weap_on.transform.position, , objSpeed);
 
