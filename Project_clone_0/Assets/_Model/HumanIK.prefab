@@ -2440,11 +2440,11 @@ CharacterJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8500120811289837541}
-  m_ConnectedBody: {fileID: 8845254585399580945}
+  m_ConnectedBody: {fileID: 1697296029015065282}
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5347043, y: 0.19845796, z: -0.092860416}
+  m_ConnectedAnchor: {x: -0.25349155, y: 0.0000011082716, z: 0.00000032409991}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -3426,6 +3426,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7064602360985020552, guid: ca7f7ef907f9c4442884708b46618d7d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 66eff06ca3f70944296b23a6d6e04777, type: 2}
     - target: {fileID: 8091596514283419423, guid: ca7f7ef907f9c4442884708b46618d7d,
         type: 3}
       propertyPath: m_LocalScale.x
