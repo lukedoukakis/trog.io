@@ -377,32 +377,32 @@ public class EntityAnimation : EntityComponent
 
     public void OnAttack(){
 
-        string trigger;
-        Item weap;
+        // string trigger;
+        // Item weap;
 
-        if(entityItems.weaponEquipped == null){
-            trigger = "Throw";
-            entityPhysics.LaunchProjectile(Item.SmallStone.gameobject);
-        }
-        else{
-            weap = entityItems.weaponEquipped.Item1;
-            switch (weap.holdStyle)
-            {
-                case Item.HoldStyle.Spear:
-                    trigger = "Thrust";
-                    break;
-                case Item.HoldStyle.Axe:
-                    trigger = "Swing";
-                    break;
-                default:
-                    trigger = "Thrust";
-                    Log("Trying to swing a weapon with no specified hold style");
-                    break;
-                }
+        // if(entityItems.weaponEquipped == null){
+        //     trigger = "Throw";
+        //     entityPhysics.LaunchProjectile(Item.SmallStone.gameobject);
+        // }
+        // else{
+        //     weap = entityItems.weaponEquipped.Item1;
+        //     switch (weap.holdStyle)
+        //     {
+        //         case Item.HoldStyle.Spear:
+        //             trigger = "Thrust";
+        //             break;
+        //         case Item.HoldStyle.Axe:
+        //             trigger = "Swing";
+        //             break;
+        //         default:
+        //             trigger = "Thrust";
+        //             Log("Trying to swing a weapon with no specified hold style");
+        //             break;
+        //         }
             
-        }
+        // }
         
-        SetAnimationTrigger(trigger);
+        // SetAnimationTrigger(trigger);
         //DisableAnimationLayer("LeftArm", .5f);
         //MaximizeAnimationLayer("RightArm", .5f);
     }

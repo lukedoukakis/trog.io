@@ -450,21 +450,21 @@ public class EntityBehavior : EntityComponent
     public void TakeFromGround(GameObject o){
         //Log("TakeFromGround()");
         Item item = Item.GetItemByName(o.name);
-        Tuple<Item, GameObject> pair = new Tuple<Item, GameObject>(item, o);
         switch(item.type){
             case Item.Type.Misc:
-                entityItems.SetHolding(pair);
+                entityItems.SetHolding(item, o);
                 break;
             case Item.Type.Weapon:
-                entityItems.SetWeapon(pair);
+                entityItems.PickUpWeapon(item, o);
                 break;
             case Item.Type.Container:
-                entityItems.SetHolding(pair);
+                entityItems.SetHolding(item, o);
                 break;
             case Item.Type.Pocket:
                 entityItems.PocketItem(item);
                 break;
         }
+        entityPhysics.OnItemSwitch();
         entityAnimation.Pickup(item);
         //o.transform.position = o.transform.position += new Vector3(UnityEngine.Random.Range(-30f, 30f), 1f, UnityEngine.Random.Range(-30f, 30f));
     }

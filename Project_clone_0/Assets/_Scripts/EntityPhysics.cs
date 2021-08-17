@@ -309,16 +309,15 @@ public class EntityPhysics : EntityComponent
 
     public void UpdateIKForCarryingItems(){
 
-        var itemRight = entityItems.weaponEquipped;
-        var itemLeft = entityItems.holding;
+        GameObject itemRight = entityItems.weaponEquipped_object;
+        GameObject itemLeft = entityItems.holding_object;
 
 
         // right hand
         if(itemRight != null){
             ikScript_handRight.enabled = true;
             handFree_right = false;
-            Log("setting target to weapon");
-            ikScript_handRight.Target = itemRight.Item2.transform.Find("IKTargetT_Right");
+            ikScript_handRight.Target = itemRight.transform.Find("IKTargetT_Right");
         }
         else{
             ikScript_handRight.enabled = false;
@@ -327,20 +326,25 @@ public class EntityPhysics : EntityComponent
         }
         
         // left hand
+        Log("Figuring out left hand.");
         if(itemLeft != null){
             ikScript_handLeft.enabled = true;
+            Log("Left hand not free");
             handFree_left = false;
-            targetHandLeft = itemRight.Item2.transform.Find("IKTargetT_Left");
+            targetHandLeft = itemRight.transform.Find("IKTargetT_Left");
         }
         else{
             
-            ikScript_handLeft.enabled = false;
+            Log("Left hand free");
 
             // if hand is free, support right hand with holding the weapon, if equipped
             if(!handFree_right){
-                ikScript_handLeft.Target = itemRight.Item2.transform.Find("IKTargetT_Left");
+                Log("Right hand not free- help right hand");
+                ikScript_handLeft.enabled = true;
+                ikScript_handLeft.Target = itemRight.transform.Find("IKTargetT_Left");
             }
             else{
+                ikScript_handLeft.enabled = false;
                 ikScript_handLeft.Target = ikParent.transform.Find("TargetHandLeft");
             }
             handFree_left = true;
@@ -454,12 +458,12 @@ public class EntityPhysics : EntityComponent
     }
 
     public void Attack(){
-        if(entityItems.weaponEquipped == null){
+        if(entityItems.weaponEquipped_item == null){
             LaunchProjectile(Item.SmallStone.gameobject);
         }
         else{
-            Item weap = entityItems.weaponEquipped.Item1;
-            switch (weap.holdStyle)
+            Item weapItem = entityItems.weaponEquipped_item;
+            switch (weapItem.holdStyle)
             {
                 case Item.HoldStyle.Spear:
                     StartCoroutine("SetWeaponTrajectoryThrust");

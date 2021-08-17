@@ -8,11 +8,13 @@ public class EntityItems : EntityComponent
 
 
     // Item the entity is currently holding - can only hold one item at a time - if held item is switched out, move to pockets if pocketable
-    public Tuple<Item, GameObject> holding;
+    public Item holding_item;
+    public GameObject holding_object;
 
     // currently equipped weapon - when not holding, attached to character model
-    public Tuple<Item, GameObject> weaponEquipped;
-    public Tuple<Item, GameObject> weaponUnequipped;
+    public Item weaponEquipped_item;
+    public Item weaponUnequipped_item;
+    public GameObject weaponEquipped_object, weaponUnequipped_object;
 
     // items in the entity's pockets
     public ItemCollection pockets;
@@ -37,6 +39,9 @@ public class EntityItems : EntityComponent
         orientation_weaponEquipped_spear = orientationParent.Find("WeaponEquippedSpear");
         orientation_weaponEquipped_axe = orientationParent.Find("WeaponEquippedAxe");
         orientation_weaponUnequipped = orientationParent.Find("WeaponUnequipped");
+
+        weaponEquipped_item = weaponUnequipped_item = holding_item = null;
+        weaponEquipped_object = weaponUnequipped_object = holding_object = null;
     }
 
 
@@ -46,52 +51,51 @@ public class EntityItems : EntityComponent
     }
 
 
-    public void SetHolding(Tuple<Item, GameObject> itemObjectPair){
-        if(holding != null){
+    public void SetHolding(Item item, GameObject obj){
+        if(holding_item != null){
             DropHolding();
         }
-        holding = itemObjectPair;
-        TogglePhysics(holding.Item2, false);
-        
-        entityPhysics.OnItemSwitch();
+        holding_item = item;
+        holding_object = obj;
+        TogglePhysics(holding_object, false);
     }
     public void DropHolding(){
-        GameObject hold = holding.Item2;
-        hold.GetComponent<Rigidbody>().AddForce(transform.forward*900f + transform.up*900f);
-        TogglePhysics(hold, true);
-        Faction.RemoveItemOwned(holding.Item2, entityInfo.faction);
+        if(holding_item == null) { return; }
+        holding_object.GetComponent<Rigidbody>().AddForce(transform.forward + transform.up);
+        TogglePhysics(holding_object, true);
+        Faction.RemoveItemOwned(holding_object, entityInfo.faction);
         
-        holding = null;
-
-        entityPhysics.OnItemSwitch();
+        holding_item = null;
+        holding_object = null;
     }
 
-    public void SetWeapon(Tuple<Item, GameObject> itemObjectPair){
-        if(weaponEquipped != null){
-            if(weaponUnequipped != null){
-                DropUnequippedWeapon();
-            }
-            SetUnequippedWeapon(itemObjectPair);
+    public void PickUpWeapon(Item item, GameObject obj){
+        if(weaponEquipped_item == null){
+            SetEquippedWeapon(item, obj);
         }
         else{
-            SetEquippedWeapon(itemObjectPair);
+            if(weaponUnequipped_item != null){
+                DropUnequippedWeapon();
+            }
+            SetUnequippedWeapon(item, obj);
         }
-
-        entityPhysics.OnItemSwitch();
     }
     public void DropUnequippedWeapon(){
-        TogglePhysics(weaponEquipped.Item2, true);
-        Faction.RemoveItemOwned(weaponEquipped.Item2, entityInfo.faction);
-        weaponUnequipped = null;
+        TogglePhysics(weaponEquipped_object, true);
+        Faction.RemoveItemOwned(weaponEquipped_object, entityInfo.faction);
+        weaponEquipped_item = null;
+        weaponUnequipped_object = null;
 
     }
-    public void SetUnequippedWeapon(Tuple<Item, GameObject> itemObjectPair){
-        weaponUnequipped = itemObjectPair;
-        TogglePhysics(itemObjectPair.Item2, false);
+    public void SetUnequippedWeapon(Item item, GameObject obj){
+        weaponUnequipped_item = item;
+        weaponUnequipped_object = obj;
+        TogglePhysics(weaponEquipped_object, false);
     }
-    public void SetEquippedWeapon(Tuple<Item, GameObject> itemObjectPair){
-        weaponEquipped = itemObjectPair;
-        TogglePhysics(itemObjectPair.Item2, false);
+    public void SetEquippedWeapon(Item item, GameObject obj){
+        weaponEquipped_item = item;
+        weaponEquipped_object = obj;
+        TogglePhysics(weaponEquipped_object, false);
     }
 
     public void PocketItem(Item i){
@@ -114,21 +118,19 @@ public class EntityItems : EntityComponent
         //     hold.transform.position = t_hand_left.position + t_hand_left.forward*hold.GetComponent<BoxCollider>().size.z/4f;
         //     hold.transform.rotation = t_hand_left.rotation;
         // }
-        if(weaponEquipped != null){
-            GameObject weap_on = weaponEquipped.Item2;
-            if(weaponUnequipped.Item1.holdStyle.Equals(Item.HoldStyle.Spear)){
-                weap_on.transform.position = orientation_weaponEquipped_spear.position;
-                weap_on.transform.rotation = orientation_weaponEquipped_spear.rotation;
+        if(weaponEquipped_object != null){
+            if(weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Spear)){
+                weaponEquipped_object.transform.position = orientation_weaponEquipped_spear.position;
+                weaponEquipped_object.transform.rotation = orientation_weaponEquipped_spear.rotation;
             }
             else{
-                weap_on.transform.position = orientation_weaponEquipped_axe.position;
-                weap_on.transform.rotation = orientation_weaponEquipped_axe.rotation;
+                weaponEquipped_object.transform.position = orientation_weaponEquipped_axe.position;
+                weaponEquipped_object.transform.rotation = orientation_weaponEquipped_axe.rotation;
             }
         }
-        if(weaponUnequipped != null){
-            GameObject weap_off = weaponUnequipped.Item2;
-            weap_off.transform.position = orientation_weaponUnequipped.position;
-            weap_off.transform.rotation = orientation_weaponUnequipped.rotation;
+        if(weaponUnequipped_object != null){
+            weaponUnequipped_object.transform.position = orientation_weaponUnequipped.position;
+            weaponUnequipped_object.transform.rotation = orientation_weaponUnequipped.rotation;
 
         }
 
