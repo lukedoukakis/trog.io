@@ -86,12 +86,12 @@ public class TreeInfo : MonoBehaviour
                 spread = 2f;
                 break;
             case string str when name.StartsWith("Grass"):
-                scale = 1.0f;
-                density = 5f;
-                normal_min = .7f;
+                scale = 1f;
+                density = 60f;
+                normal_min = .97f;
                 normal_max = 1f;
                 slant = .5f;
-                spread = .5f;
+                spread = 10f;
                 break;
             case string str when name.StartsWith("Reed"):
                 scale = 1f;;
