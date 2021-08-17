@@ -25,7 +25,7 @@ public class TreeInfo : MonoBehaviour
         switch (name)
         {
             case "Acacia Tree":
-                scale = 1.3f * ChunkGenerator.current.treeScale;
+                scale = 1.7f * ChunkGenerator.current.treeScale;
                 density = .1f;
                 normal_min = .998f;
                 normal_max = 1f;
@@ -70,7 +70,7 @@ public class TreeInfo : MonoBehaviour
                 spread = 1f;
                 break;
             case "Oak Tree":
-                scale = 2f * ChunkGenerator.current.treeScale;
+                scale = 3f * ChunkGenerator.current.treeScale;
                 density = 1f;
                 normal_min = .25f;
                 normal_max = 1f;
@@ -78,7 +78,7 @@ public class TreeInfo : MonoBehaviour
                 spread = 2f;
                 break;
             case "Plains Oak Tree":
-                scale = 2f * ChunkGenerator.current.treeScale;
+                scale = 3f * ChunkGenerator.current.treeScale;
                 density = 1f;
                 normal_min = .25f;
                 normal_max = 1f;
@@ -139,9 +139,9 @@ public class TreeInfo : MonoBehaviour
                 spread = 5f;
                 break;
             case string str when name.StartsWith("Rock"):
-                scale = 3f;
-                density = .2f;
-                normal_min = .5f;
+                scale = .5f;
+                density = 4f;
+                normal_min = .3f;
                 normal_max = .8f;
                 slant = 0f;
                 spread = 5f;

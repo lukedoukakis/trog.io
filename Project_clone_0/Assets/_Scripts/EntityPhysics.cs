@@ -26,7 +26,7 @@ public class EntityPhysics : EntityComponent
     float groundCastDistance;
     public static float JumpForce = 2800f;
     public static float ThrowForce = 200f;
-    public static float AccelerationScale = 30f;
+    public static float AccelerationScale = 24f;
     public static float MaxSpeedScale = 15f;
     public static float JumpCoolDown = .15f;
 
@@ -183,8 +183,8 @@ public class EntityPhysics : EntityComponent
             else
             {
                 // not on ground
-                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .2f + entityAnimation.bodyT.forward * 0f, ref plantPosFootLeft);
-                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .6f + entityAnimation.bodyT.forward * .5f, ref plantPosFootRight);
+                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * -.2f + entityAnimation.bodyT.forward * 0f + entityAnimation.bodyT.right * 0f, ref plantPosFootLeft);
+                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .6f + entityAnimation.bodyT.forward * .5f + entityAnimation.bodyT.right * .1f, ref plantPosFootRight);
                 updateTime_footRight = .2f;
                 updateTime_footLeft = .7f;
             }
