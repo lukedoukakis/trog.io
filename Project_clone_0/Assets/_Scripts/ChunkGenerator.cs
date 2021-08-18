@@ -682,12 +682,9 @@ public class ChunkGenerator : MonoBehaviour
             
                 if (TreeMap[x, z])
                 {
-                    if(SeaLevel >= height-.00025f){
-                        onWater = height <= WaterFeatureLevel;
-                        //onWater = false;
-                    }
-                    else{ onWater = false; }
 
+                    onWater = height <= WaterFeatureLevel;
+                    
                     // tree placement
                     var treeTuple = Biome.GetTree(biome, wetness, fw);
                     if (treeTuple != null && treeTuple.Item2.Item2 > 0f)

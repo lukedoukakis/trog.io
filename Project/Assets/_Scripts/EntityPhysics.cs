@@ -215,6 +215,7 @@ public class EntityPhysics : EntityComponent
             if(!IN_WATER){
                 ToggleIK(true);
                 IKUpdate();
+                UpdateIKForCarryingItems();
             }
         }
         
@@ -350,20 +351,15 @@ public class EntityPhysics : EntityComponent
         }
         
         // left hand
-        Log("Figuring out left hand.");
         if(itemLeft != null){
             ikScript_handLeft.enabled = true;
-            Log("Left hand not free");
             handFree_left = false;
             targetHandLeft = itemRight.transform.Find("IKTargetT_Left");
         }
         else{
-            
-            Log("Left hand free");
 
             // if hand is free, support right hand with holding the weapon, if equipped
             if(!handFree_right){
-                Log("Right hand not free- help right hand");
                 ikScript_handLeft.enabled = true;
                 ikScript_handLeft.Target = itemRight.transform.Find("IKTargetT_Left");
             }

@@ -105,7 +105,7 @@ public class EntityItems : EntityComponent
 
     void TogglePhysics(GameObject o, bool value){
         o.GetComponent<BoxCollider>().enabled = value;
-        //o.GetComponent<Rigidbody>().isKinematic = !value;
+        o.GetComponent<Rigidbody>().isKinematic = !value;
     }
 
 
@@ -119,14 +119,25 @@ public class EntityItems : EntityComponent
         //     hold.transform.rotation = t_hand_left.rotation;
         // }
         if(weaponEquipped_object != null){
+            Vector3 targetPos;
+            Quaternion targetRot;
             if(weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Spear)){
-                weaponEquipped_object.transform.position = orientation_weaponEquipped_spear.position;
-                weaponEquipped_object.transform.rotation = orientation_weaponEquipped_spear.rotation;
+                targetPos = orientation_weaponEquipped_spear.position;
+                targetRot = orientation_weaponEquipped_spear.rotation;
             }
             else{
-                weaponEquipped_object.transform.position = orientation_weaponEquipped_axe.position;
-                weaponEquipped_object.transform.rotation = orientation_weaponEquipped_axe.rotation;
+                targetPos = orientation_weaponEquipped_axe.position;
+                targetRot = orientation_weaponEquipped_axe.rotation;
             }
+            Vector3 currentPos = weaponEquipped_object.transform.position;
+            float x = Mathf.Lerp(currentPos.x, targetPos.x, 30f * Time.deltaTime);
+            float y = Mathf.Lerp(currentPos.y, targetPos.y, 25f * Time.deltaTime);
+            float z = Mathf.Lerp(currentPos.z, targetPos.z, 30f * Time.deltaTime);
+            weaponEquipped_object.transform.position = new Vector3(x, y, z);
+            weaponEquipped_object.transform.rotation = Quaternion.Slerp(weaponEquipped_object.transform.rotation, targetRot, 18f * Time.deltaTime);
+
+            // weaponEquipped_object.transform.position = targetPos.position;
+            // weaponEquipped_object.transform.rotation = targetRot.rotation;
         }
         if(weaponUnequipped_object != null){
             weaponUnequipped_object.transform.position = orientation_weaponUnequipped.position;
