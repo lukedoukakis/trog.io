@@ -15,7 +15,7 @@ public class EntityAnimation : EntityComponent
     // rotation
     public int bodyRotationMode;
     Transform bodyRotationTarget;
-    public static float bodyRotationSpeed_player = .0625f;
+    public static float bodyRotationSpeed_player = .04f; //.0625
     public static float bodyRotationSpeed_ai = .0625f;
     float bodyRotationSpeed;
     Quaternion bodyRotation;

@@ -14,8 +14,8 @@ public class Item : ScriptableObject
     public static Item Torch = InitiailizeItem("Torch", Type.Misc, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
     public static Item Stone = InitiailizeItem("Stone", Type.Misc, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject/Stone"), Resources.Load<Image>("Items/Stone/Image"));
     public static Item SmallStone = InitiailizeItem("SmallStone", Type.Misc, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/SmallStone/Gameobject/SmallStone"), Resources.Load<Image>("Items/SmallStone/Image"));
-    public static Item Spear = InitiailizeItem("Spear", Type.Weapon, HoldStyle.Spear, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Spear/Image"));
-
+    public static Item Spear = InitiailizeItem("Spear", Type.Weapon, HoldStyle.Spear, DamageType.Pierce, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Spear/Image"));
+    public static Item Axe = InitiailizeItem("Axe", Type.Weapon, HoldStyle.Axe, DamageType.Slash, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Axe/Gameobject/Axe"), Resources.Load<Image>("Items/Axe/Image"));
 
     public static Dictionary<string, Item> Items = new Dictionary<string, Item>
     {
@@ -23,8 +23,12 @@ public class Item : ScriptableObject
         { "Stone", Stone },
         { "SmallStone", SmallStone },
         { "Spear", Spear },
+        { "Axe", Axe },
     };
     public static Item GetItemByName(string _nme){
+
+        Debug.Log("searching for key: " + _nme);
+
         return Items[_nme];
        
     }

@@ -61,7 +61,7 @@ public class EntityItems : EntityComponent
     }
     public void DropHolding(){
         if(holding_item == null) { return; }
-        holding_object.GetComponent<Rigidbody>().AddForce(transform.forward + transform.up);
+        holding_object.GetComponent<Rigidbody>().AddForce(transform.forward + Vector3.up);
         TogglePhysics(holding_object, true);
         Faction.RemoveItemOwned(holding_object, entityInfo.faction);
         
@@ -82,8 +82,9 @@ public class EntityItems : EntityComponent
     }
     public void DropUnequippedWeapon(){
         TogglePhysics(weaponEquipped_object, true);
+        weaponEquipped_object.GetComponent<Rigidbody>().AddForce(transform.forward * -30f);
         Faction.RemoveItemOwned(weaponEquipped_object, entityInfo.faction);
-        weaponEquipped_item = null;
+        weaponUnequipped_item = null;
         weaponUnequipped_object = null;
 
     }
@@ -140,8 +141,10 @@ public class EntityItems : EntityComponent
             // weaponEquipped_object.transform.rotation = targetRot.rotation;
         }
         if(weaponUnequipped_object != null){
-            weaponUnequipped_object.transform.position = orientation_weaponUnequipped.position;
-            weaponUnequipped_object.transform.rotation = orientation_weaponUnequipped.rotation;
+            weaponUnequipped_object.transform.position = Vector3.Lerp(weaponUnequipped_object.transform.position, orientation_weaponUnequipped.position, 30000000f * Time.deltaTime);
+            weaponUnequipped_object.transform.rotation = Quaternion.Slerp(weaponUnequipped_object.transform.rotation, orientation_weaponUnequipped.rotation, 18f * Time.deltaTime);
+            // weaponUnequipped_object.transform.position = orientation_weaponUnequipped.position;
+            // weaponUnequipped_object.transform.rotation = orientation_weaponUnequipped.rotation;
 
         }
 

@@ -27,7 +27,7 @@ public class EntityPhysics : EntityComponent
     float groundCastDistance;
     public static float JumpForce = 2800f;
     public static float ThrowForce = 200f;
-    public static float AccelerationScale = 30f;
+    public static float AccelerationScale = 20f;
     public static float MaxSpeedScale = 15f;
     public static float JumpCoolDown = .15f;
 
@@ -630,8 +630,8 @@ public class EntityPhysics : EntityComponent
             }
         }
         if(!jumping){
-            //max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y);
-            max *= 2f - Mathf.InverseLerp(-3f, 0f, rb.velocity.y);
+            max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y);
+            //max *= 2f - Mathf.InverseLerp(-3f, 0f, rb.velocity.y);
         }
 
         if(horvel.magnitude > max){
