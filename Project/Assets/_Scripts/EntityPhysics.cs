@@ -201,8 +201,8 @@ public class EntityPhysics : EntityComponent
             else
             {
                 // not on ground
-                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * -.2f + entityAnimation.bodyT.forward * 0f + entityAnimation.bodyT.right * 0f, ref plantPosFootLeft);
-                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .6f + entityAnimation.bodyT.forward * .5f + entityAnimation.bodyT.right * .1f, ref plantPosFootRight);
+                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + entityAnimation.bodyT.forward * 0f + entityAnimation.bodyT.right * 0f, ref plantPosFootLeft);
+                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityAnimation.bodyT.forward * .5f + entityAnimation.bodyT.right * .1f, ref plantPosFootRight);
                 updateTime_footRight = .2f;
                 updateTime_footLeft = .7f;
             }
@@ -245,23 +245,24 @@ public class EntityPhysics : EntityComponent
             float vertMin = Mathf.Lerp(GetRunCycleVerticality(.5f), GetRunCycleVerticality(.75f), Mathf.InverseLerp(0f, 5f, rb.velocity.y));
             vertLeft = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(updateTime_footLeft));
             vertRight = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(updateTime_footRight));
-            // targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward * .2f + Vector3.down * ((GetRunCyclePhase(updateTime_footRight, -5f) + 1) / 2f + .2f);
-            // targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward * .2f + Vector3.down * ((GetRunCyclePhase(updateTime_footLeft, -5f) + 1) / 2f + .2f);
+            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) +.2f);
+            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) +.2f);
         }
         else{
             // not moving
             vertLeft = vertRight = Vector3.zero;
+            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down;
+            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward + Vector3.down;
         }
         targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertRight;
         targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertLeft;
-        targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down;
-        targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward + Vector3.down;
+        
 
     
 
 
         float GetRunCycleVerticality(float updateTime){
-            return .018f * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
+            return .015f * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
         }
 
         // .5 is stance phase, -.5 is swing phase
