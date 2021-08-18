@@ -8,10 +8,11 @@ public class EntityPhysics : EntityComponent
 {
 
     public Collider hitbox;
+    public Collider obstacleHitbox;
     public PhysicMaterial highFrictionMat;
     public PhysicMaterial noFrictionMat;
     public LayerMask layerMask_water;
-    public LayerMask layerMask_terrain;
+    public LayerMask layerMask_walkable;
 
     public Rigidbody rb;
     public Transform gyro;
@@ -26,7 +27,7 @@ public class EntityPhysics : EntityComponent
     float groundCastDistance;
     public static float JumpForce = 2800f;
     public static float ThrowForce = 200f;
-    public static float AccelerationScale = 24f;
+    public static float AccelerationScale = 30f;
     public static float MaxSpeedScale = 15f;
     public static float JumpCoolDown = .15f;
 
@@ -66,11 +67,12 @@ public class EntityPhysics : EntityComponent
 
         base.Awake();
 
-        hitbox = GetComponentInChildren<CapsuleCollider>();
+        hitbox = transform.Find("HumanIK").GetComponent<CapsuleCollider>();
+        obstacleHitbox = transform.Find("HumanIK").GetComponent<BoxCollider>();
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         layerMask_water = LayerMask.GetMask("Water");
-        layerMask_terrain = LayerMask.GetMask("Terrain");
+        layerMask_walkable = LayerMask.GetMask("Terrain", "Feature");
         rb = GetComponent<Rigidbody>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
 
@@ -266,7 +268,7 @@ public class EntityPhysics : EntityComponent
         if (onGround)
         {
             RaycastHit hit;
-            if (Physics.Raycast(plantPos, Vector3.down, out hit, 100f, layerMask_terrain))
+            if (Physics.Raycast(plantPos, Vector3.down, out hit, 100f, layerMask_walkable))
             {
                 plantPos.y = hit.point.y;
             }
@@ -297,7 +299,7 @@ public class EntityPhysics : EntityComponent
     public void SetPlantPosition(Transform targetIk, Transform targetTransform, Vector3 offset, ref Vector3 positionPointer){
         Vector3 pos = targetTransform.position + offset;
         RaycastHit hit;
-        if(Physics.Raycast(pos, Vector3.up, out hit, 1f, layerMask_terrain)){
+        if(Physics.Raycast(pos, Vector3.up, out hit, 1f, layerMask_walkable)){
             positionPointer = hit.point;
         }
         else{
@@ -406,7 +408,7 @@ public class EntityPhysics : EntityComponent
     }
 
     public bool CanJump(){
-        if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_terrain)){
+        if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_walkable)){
             return true;
         }
         return false;
@@ -493,7 +495,7 @@ public class EntityPhysics : EntityComponent
 
     void CheckGround(){
         Vector3 vel = rb.velocity;
-        if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far, layerMask_terrain)){
+        if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far, layerMask_walkable)){
             if(Vector3.Distance(groundInfo.point, transform.position) < groundCastDistance){
                 if(!GROUNDTOUCH){
                     GROUNDTOUCH = true;
@@ -629,7 +631,7 @@ public class EntityPhysics : EntityComponent
     void SetGravity(){
         if((GROUNDTOUCH || WALLTOUCH) && !IN_WATER && moveDir.magnitude > 0f){
             rb.useGravity = false;
-            rb.useGravity = true;
+            //rb.useGravity = true;
         }
         else{ rb.useGravity = true; }
     }
@@ -648,7 +650,7 @@ public class EntityPhysics : EntityComponent
 
     bool GroundIsClose(){
 
-        return Physics.OverlapSphere(groundSense.position, .5f, layerMask_terrain).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, .5f, layerMask_walkable).Length > 0;
 
     }
 
@@ -685,4 +687,18 @@ public class EntityPhysics : EntityComponent
         
         IKUpdate();
     }
+
+
+    void OnTriggerEnter(Collider col){
+        if(col.gameObject.layer == LayerMask.NameToLayer("Feature")){
+            hitbox.sharedMaterial = noFrictionMat;
+        }
+        
+    }
+    void OnTriggerExit(Collider col){
+        if(col.gameObject.layer == LayerMask.NameToLayer("Feature")){
+            hitbox.sharedMaterial = highFrictionMat;
+        }
+    }
 }
+

@@ -11,7 +11,7 @@ public class TreeInfo : MonoBehaviour
 
 
 
-    public static Tuple<float, float, float, float, float, float> GetPlacementParameters(string name, float wetness, float fw)
+    public static Tuple<float, float, float, float, float, float, float> GetPlacementParameters(string name, float wetness, float fw)
     {
         //Debug.Log("TreeInfo: type is: " + type);
 
@@ -21,6 +21,7 @@ public class TreeInfo : MonoBehaviour
         float normal_max;
         float slant;
         float spread;
+        float vertOffset;
 
         switch (name)
         {
@@ -31,6 +32,7 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = 0f;
                 spread = 2f;
+                vertOffset = 0f;
                 break;
             case "Jungle Tree":
                 scale = 2.2f * ChunkGenerator.current.treeScale;
@@ -39,6 +41,7 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = .5f;
                 spread = 1.5f;
+                vertOffset = 0f;
                 break;
             case "Fir Tree":
                 scale = 1.5f * ChunkGenerator.current.treeScale;
@@ -47,6 +50,7 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = .12f;
                 spread = 2f;
+                vertOffset = 0f;
                 break;
             case "Snowy Fir Tree":
                 scale = 1.5f * ChunkGenerator.current.treeScale;
@@ -55,6 +59,7 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = .12f;
                 spread = 2f;
+                vertOffset = 0f;
                 break;
             case "Palm Tree":
                 scale = 1.2f * ChunkGenerator.current.treeScale;
@@ -68,6 +73,7 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = 0f;
                 spread = 1f;
+                vertOffset = 0f;
                 break;
             case "Oak Tree":
                 scale = 3f * ChunkGenerator.current.treeScale;
@@ -76,6 +82,7 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = .12f;
                 spread = 2f;
+                vertOffset = 0f;
                 break;
             case "Plains Oak Tree":
                 scale = 3f * ChunkGenerator.current.treeScale;
@@ -84,6 +91,7 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = .12f;
                 spread = 2f;
+                vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Grass"):
                 scale = 1f;
@@ -92,6 +100,7 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = .5f;
                 spread = 10f;
+                vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Reed"):
                 scale = 1f;;
@@ -100,6 +109,7 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = .5f;
                 spread = .65f;
+                vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Mushroom"):
                 scale = 1.2f;
@@ -108,6 +118,7 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = 1f;
                 spread = .5f;
+                vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Bush"):
                 scale = .4f;
@@ -116,6 +127,7 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = .8f;
                 spread = .7f;
+                vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Dead Bush"):
                 scale = 2f;
@@ -124,6 +136,7 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = .8f;
                 spread = 5f;
+                vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Cactus"):
                 scale = 1f;
@@ -137,14 +150,16 @@ public class TreeInfo : MonoBehaviour
                 normal_max = 1f;
                 slant = .18f;
                 spread = 5f;
+                vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Rock"):
-                scale = .5f;
-                density = 4f;
-                normal_min = .3f;
-                normal_max = .8f;
+                scale = 2f;
+                density = .01f;
+                normal_min = .95f;
+                normal_max = 1f;
                 slant = 0f;
-                spread = 5f;
+                spread = 10f;
+                vertOffset = -.5f;
                 break;
             default:
                 scale = -1f;
@@ -153,12 +168,13 @@ public class TreeInfo : MonoBehaviour
                 normal_max = -1f;
                 slant = -1f;
                 spread = -1f;
+                vertOffset = 0f;
                 break;
         }
 
         density *= (wetness + .5f);
 
-        return Tuple.Create(scale, density, normal_min, normal_max, slant, spread);
+        return Tuple.Create(scale, density, normal_min, normal_max, slant, spread, vertOffset);
 
 
     }

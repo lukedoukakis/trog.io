@@ -111,7 +111,7 @@ public class Biome : MonoBehaviour
 
     }
 
-    public static Tuple<GameObject, Tuple<float, float, float, float, float, float>> GetTree(int biomeType, float wetness, float fw)
+    public static Tuple<GameObject, Tuple<float, float, float, float, float, float, float>> GetTree(int biomeType, float wetness, float fw)
     {
         //Debug.Log(((BiomeType)biomeType).ToString());
         GameObject[] trees = TreePool[biomeType];
@@ -124,7 +124,7 @@ public class Biome : MonoBehaviour
     }
 
 
-    public static Tuple<GameObject, Tuple<float, float, float, float, float, float>> GetFeature(int biomeType, float wetness, float fw, bool onWater){
+    public static Tuple<GameObject, Tuple<float, float, float, float, float, float, float>> GetFeature(int biomeType, float wetness, float fw, bool onWater){
         
         GameObject[] features;
         if(onWater){ features = WaterFeaturePool[biomeType]; }

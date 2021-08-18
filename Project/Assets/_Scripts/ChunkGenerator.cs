@@ -707,7 +707,7 @@ public class ChunkGenerator : MonoBehaviour
         }
     }
 
-    void PlaceFeatureBundle(Tuple<GameObject, Tuple<float, float, float, float, float, float>> featureTuple, float wetness, bool onWater, int x, int z)
+    void PlaceFeatureBundle(Tuple<GameObject, Tuple<float, float, float, float, float, float, float>> featureTuple, float wetness, bool onWater, int x, int z)
     {
         GameObject feature = featureTuple.Item1;
         float scale = featureTuple.Item2.Item1;
@@ -716,6 +716,7 @@ public class ChunkGenerator : MonoBehaviour
         float yNormal_max = featureTuple.Item2.Item4;
         float angleMultiplier = featureTuple.Item2.Item5;
         float spreadMultiplier = featureTuple.Item2.Item6;
+        float vertOffset = featureTuple.Item2.Item7;
         Quaternion uprightRot;
         Quaternion slantedRot;
         Vector3 castVec, point;
@@ -749,7 +750,7 @@ public class ChunkGenerator : MonoBehaviour
                     yNorm = hit.normal.y;
                     if (point.y >= minY && point.y <= maxY && yNorm > yNormal_min && yNorm < yNormal_max)
                     {
-                        point.y -= 1.5f * (1f - yNorm);
+                        point.y += -1.5f * (1f - yNorm) + vertOffset;
                         uprightRot = Quaternion.AngleAxis(UnityEngine.Random.value * 360f, Vector3.up);
                         slantedRot = Quaternion.FromToRotation(transform.up, hit.normal);
                         feature = GameObject.Instantiate(feature, point, Quaternion.Slerp(uprightRot, slantedRot, angleMultiplier), Trees.transform);
