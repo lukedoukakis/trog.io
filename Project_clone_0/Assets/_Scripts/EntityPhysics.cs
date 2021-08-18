@@ -122,7 +122,7 @@ public class EntityPhysics : EntityComponent
         ikScript_toeLeft = toeLeft.GetComponent<FastIKFabric>();
         ikScript_handRight = handRight.GetComponent<FastIKFabric>();
         ikScript_handLeft = handLeft.GetComponent<FastIKFabric>();
-        ikScripts = new FastIKFabric[]{ ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft };
+        ikScripts = new FastIKFabric[]{ ikScript_hips, ikScript_head, ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft };
         ikScripts_legs = new FastIKFabric[]{ ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft };
         ikScripts_upperBody = new FastIKFabric[]{ ikScript_handRight, ikScript_handLeft };
 
@@ -146,7 +146,20 @@ public class EntityPhysics : EntityComponent
         updateTime_hips = 0f;
 
         handFree_right = handFree_left = true;
+        ToggleIK(true);
         UpdateIKForCarryingItems();
+    }
+
+    public void ToggleIK(bool value){
+        if(ikEnabled != value){
+            ikEnabled = value;
+            entityAnimation.ToggleAnimation(!value);
+            foreach(FastIKFabric script in ikScripts){
+                script.enabled = value;
+            }
+        }
+        
+
     }
 
 
@@ -155,12 +168,15 @@ public class EntityPhysics : EntityComponent
         if (ikEnabled)
         {
 
-            UpdateLimbPositions();
+            if(IN_WATER){
+                ToggleIK(false);
+                return;
+            }
 
+            UpdateLimbPositions();
 
             bool moving = IsMoving();
             bool groundIsClose = GroundIsClose();
-
             if (groundIsClose)
             {
                 // on ground
@@ -194,6 +210,12 @@ public class EntityPhysics : EntityComponent
             AdjustFootPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, groundIsClose);
             ApplyFootPositionRestraints();
 
+        }
+        else{
+            if(!IN_WATER){
+                ToggleIK(true);
+                IKUpdate();
+            }
         }
         
         float footPlantTimeUpdateSpeed = 3f * Time.deltaTime;
@@ -612,7 +634,8 @@ public class EntityPhysics : EntityComponent
             }
         }
         if(!jumping){
-            max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y);
+            //max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y);
+            max *= 2f - Mathf.InverseLerp(-3f, 0f, rb.velocity.y);
         }
 
         if(horvel.magnitude > max){

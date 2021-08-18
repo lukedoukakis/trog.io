@@ -94,16 +94,16 @@ public class TreeInfo : MonoBehaviour
                 vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Grass"):
-                scale = 1f;
-                density = 60f;
-                normal_min = .97f;
+                scale = .75f;
+                density = 50f;
+                normal_min = .995f;
                 normal_max = 1f;
                 slant = .5f;
-                spread = 10f;
+                spread = 2f;
                 vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Reed"):
-                scale = 1f;;
+                scale = 1f;
                 density = 4f;
                 normal_min = .99f;
                 normal_max = 1f;
@@ -153,13 +153,22 @@ public class TreeInfo : MonoBehaviour
                 vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Rock"):
-                scale = 2f;
-                density = .01f;
-                normal_min = .95f;
-                normal_max = 1f;
-                slant = 0f;
-                spread = 10f;
+                scale = 1f;
+                density = 2f;
+                normal_min = .9f;
+                normal_max = .92f;
+                slant = 1f;
+                spread = 2f;
                 vertOffset = -.5f;
+                break;
+            case string str when name.StartsWith("RockShore"):
+                scale = .75f;
+                density = 5f;
+                normal_min = .5f;
+                normal_max = .7f;
+                slant = 1f;
+                spread = 2f;
+                vertOffset = 0f;
                 break;
             default:
                 scale = -1f;

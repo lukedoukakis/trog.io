@@ -21,6 +21,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float MountainPolarity = 1f;
     public static float FlatLevel = .85f;
     public static float SeaLevel = 0.849985f;
+    public static float WaterFeatureLevel = .845f;
     public static float SnowLevel = .86f;
     public static bool LoadingChunks, DeloadingChunks;
     static GameObject Chunk;
@@ -295,8 +296,8 @@ public class ChunkGenerator : MonoBehaviour
                 mountainValue = Mathf.InverseLerp(0f, Mathf.Pow(.75f, 2f), mountainValue);
                 mountainValue *= Mathf.InverseLerp(minE, maxE+1f, elevationValue);
                 mountainValue *= .5f;
-                if(mountainValue > .1f){
-                    mountainValue = .1f;
+                if(mountainValue > .3f){
+                    mountainValue = .3f;
                 }
                 //Debug.Log(mountainValue);
 
@@ -305,8 +306,9 @@ public class ChunkGenerator : MonoBehaviour
 
                 // TemperatureMap [0, 1]
                 //temperatureValue = Mathf.PerlinNoise((x + xOffset + .01f) / TemperatureMapScale, (z + zOffset + .01f) / TemperatureMapScale);
-                temperatureValue = 1f - (mountainValue * 8.5f);
-                // temperatureValue = Mathf.Clamp01(temperatureValue);
+                temperatureValue = 1.5f - (mountainValue * 8.5f);
+                temperatureValue *=  Mathf.PerlinNoise((x + xOffset) / TemperatureMapScale, (z + zOffset) / MountainMapScale);
+                temperatureValue = Mathf.Clamp01(temperatureValue);
                 //temperatureValue = Mathf.InverseLerp(.4f, .6f, temperatureValue);
 
                 //temperatureValue = .3f;
@@ -535,17 +537,14 @@ public class ChunkGenerator : MonoBehaviour
 
         // overgrowth
         Color c = new Color();
-        c.a = 255f * humidity * Mathf.Pow(1f - rockiness, 2f);
+        //c.a = 255f * humidity * Mathf.Pow(1f - rockiness, 2f);
         c.a = 128f;
 
         if (height > SeaLevel)
         {
 
             // snow (c.b)
-            float tempFactor = 1f - Mathf.InverseLerp(0f, 3/11f, temperature);
-            float heightFactor = Mathf.InverseLerp(SnowLevel, SnowLevel + .1f, height);
-            heightFactor = 0;
-            c.b = 255f * Mathf.Max(tempFactor, heightFactor);
+            c.b = 255f * (1f - Mathf.InverseLerp(0f, 3/11f, temperature));
 
             // wetness/darkness (c.g)
             c.g = 230f * (1f - temperature);
@@ -684,8 +683,8 @@ public class ChunkGenerator : MonoBehaviour
                 if (TreeMap[x, z])
                 {
                     if(SeaLevel >= height-.00025f){
-                        onWater = SeaLevel - height <= .0018f;
-                        onWater = false;
+                        onWater = height <= WaterFeatureLevel;
+                        //onWater = false;
                     }
                     else{ onWater = false; }
 
@@ -731,8 +730,9 @@ public class ChunkGenerator : MonoBehaviour
             {
                 castVec = new Vector3(x + xOffset + (UnityEngine.Random.value * 2f - 1f) * spreadMultiplier * 10, ElevationAmplitude, z + zOffset + (UnityEngine.Random.value * 2f - 1f) * spreadMultiplier * 10);
                 
-                if(onWater){ castLength = ElevationAmplitude - ((SeaLevel - .003f)* ElevationAmplitude); }
-                else{ castLength = ElevationAmplitude - ((SeaLevel + .002f)* ElevationAmplitude); }
+                if(onWater){ castLength = ElevationAmplitude + ((SeaLevel - WaterFeatureLevel) * ElevationAmplitude); }
+                else{ castLength = ElevationAmplitude - ((SeaLevel - WaterFeatureLevel) * ElevationAmplitude); }
+                //castLength = ElevationAmplitude;
                 if (Physics.Raycast(castVec, Vector3.down, out RaycastHit hit, castLength, layerMask_terrain))
                 {
 

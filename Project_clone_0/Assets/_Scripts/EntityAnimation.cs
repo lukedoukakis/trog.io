@@ -94,6 +94,10 @@ public class EntityAnimation : EntityComponent
         keysList = new List<string>(animBools.Keys);
     }
 
+    public void ToggleAnimation(bool value){
+        animator.enabled = value;
+    }
+
 
     public void SetAnimationBool(string movement, bool value){
         if(animBools[movement] != value){
@@ -223,139 +227,139 @@ public class EntityAnimation : EntityComponent
 
     }
     void UpdateMovement(){
-        // Vector3 velRaw = rb.velocity;
-        // Vector3 velHoriz = velRaw; velHoriz.y = 0;
+        Vector3 velRaw = rb.velocity;
+        Vector3 velHoriz = velRaw; velHoriz.y = 0;
 
-        // bool ground = entityPhysics.GROUNDTOUCH;
-        // bool wall = entityPhysics.WALLTOUCH;
-        // bool water = entityPhysics.IN_WATER;
+        bool ground = entityPhysics.GROUNDTOUCH;
+        bool wall = entityPhysics.WALLTOUCH;
+        bool water = entityPhysics.IN_WATER;
 
-        // foreach(string mvmt in keysList){
-        //     SetAnimationBool(mvmt, false);
-        // }
+        foreach(string mvmt in keysList){
+            SetAnimationBool(mvmt, false);
+        }
 
-        // if(ground && !wall && !water){
-        //     if(velHoriz.magnitude > .05f){
-        //         if(entityPhysics.sprinting){
-        //             SetAnimationBool("Sprint", true);
-        //             SetAnimationFloat("LegSpeed", 1.22f);
-        //         }
-        //         else{
-        //             SetAnimationBool("Run", true);
-        //             SetAnimationFloat("LegSpeed", 1f);
-        //         }
-        //     }
-        //     else{
-        //         if(isLocalPlayer){
-        //             if(Mathf.Abs(entityUserInputMovement.mouseY) > .5f){
-        //                 SetAnimationBool("Rotate", true);
-        //             }
-        //             else{
-        //                 SetAnimationBool("Stand", true);
-        //             }
-        //         }
-        //         else{
-        //             SetAnimationBool("Stand", true);
-        //         }
-        //     }
-        // }
-        // else{
-        //     if(wall){
-        //         SetAnimationBool("Climb", true);
-        //         if(entityPhysics.moveDir.magnitude > 0f){
-        //             SetAnimationFloat("ClimbSpeed", 1f);
-        //         }
-        //         else{
-        //             SetAnimationFloat("ClimbSpeed", 0f);
-        //         }
+        if(ground && !wall && !water){
+            if(velHoriz.magnitude > .05f){
+                if(entityPhysics.sprinting){
+                    SetAnimationBool("Sprint", true);
+                    SetAnimationFloat("LegSpeed", 1.22f);
+                }
+                else{
+                    SetAnimationBool("Run", true);
+                    SetAnimationFloat("LegSpeed", 1f);
+                }
+            }
+            else{
+                if(isLocalPlayer){
+                    if(Mathf.Abs(entityUserInputMovement.mouseY) > .5f){
+                        SetAnimationBool("Rotate", true);
+                    }
+                    else{
+                        SetAnimationBool("Stand", true);
+                    }
+                }
+                else{
+                    SetAnimationBool("Stand", true);
+                }
+            }
+        }
+        else{
+            if(wall){
+                SetAnimationBool("Climb", true);
+                if(entityPhysics.moveDir.magnitude > 0f){
+                    SetAnimationFloat("ClimbSpeed", 1f);
+                }
+                else{
+                    SetAnimationFloat("ClimbSpeed", 0f);
+                }
             
-        //     }
-        //     else{
-        //         if(water){
-        //             if(entityPhysics.moveDir.magnitude > 0f){
-        //                 SetAnimationBool("Swim", true);
-        //             }
-        //             else if(isLocalPlayer && entityUserInputMovement.move.magnitude > 0){
-        //                 SetAnimationBool("Swim", true);
-        //             }
-        //             else{
-        //                 SetAnimationBool("Tread", true);
-        //             }
-        //         }
-        //         else{
-        //             if(entityPhysics.jumpTime < .3f || entityPhysics.offWallTime < .3f){
-        //                 SetAnimationBool("Jump", true);
-        //             }
-        //         }
+            }
+            else{
+                if(water){
+                    if(entityPhysics.moveDir.magnitude > 0f){
+                        SetAnimationBool("Swim", true);
+                    }
+                    else if(isLocalPlayer && entityUserInputMovement.move.magnitude > 0){
+                        SetAnimationBool("Swim", true);
+                    }
+                    else{
+                        SetAnimationBool("Tread", true);
+                    }
+                }
+                else{
+                    if(entityPhysics.jumpTime < .3f || entityPhysics.offWallTime < .3f){
+                        SetAnimationBool("Jump", true);
+                    }
+                }
                 
-        //     }
-        // }
-        // SetAnimationBool("Jump Opposite", entityPhysics.jumpOpposite);
-        // if(isLocalPlayer){
-        //     SetAnimationBool("Rotate Opposite", entityUserInputMovement.mouseY > .5f);
-        // }
+            }
+        }
+        SetAnimationBool("Jump Opposite", entityPhysics.jumpOpposite);
+        if(isLocalPlayer){
+            SetAnimationBool("Rotate Opposite", entityUserInputMovement.mouseY > .5f);
+        }
 
-        // // calculate run
-        // //Log(entityPhysics.moveDir.magnitude.ToString());
-        // if(entityPhysics.moveDir.magnitude > 0){
+        // calculate run
+        //Log(entityPhysics.moveDir.magnitude.ToString());
+        if(entityPhysics.moveDir.magnitude > 0){
 
-        //     if(entityPhysics.GROUNDTOUCH){
-        //         bodySkew = Mathf.Lerp(bodySkew, Mathf.InverseLerp(0f, 180f, Vector3.Angle(velHoriz, bodyT.forward)), .05f);
-        //         //Log(bodySkew.ToString());
-        //     }
-        //     else{
-        //         bodySkew = Mathf.Lerp(bodySkew, 0f, .01f);
-        //     }
-        // }
-        // else{
-        //     bodySkew = Mathf.Lerp(bodySkew, 0f, .01f);
-        // }
+            if(entityPhysics.GROUNDTOUCH){
+                bodySkew = Mathf.Lerp(bodySkew, Mathf.InverseLerp(0f, 180f, Vector3.Angle(velHoriz, bodyT.forward)), .05f);
+                //Log(bodySkew.ToString());
+            }
+            else{
+                bodySkew = Mathf.Lerp(bodySkew, 0f, .01f);
+            }
+        }
+        else{
+            bodySkew = Mathf.Lerp(bodySkew, 0f, .01f);
+        }
 
-        // slowness = 1f - Mathf.InverseLerp(0f, entityPhysics.maxSpeed_run, velHoriz.magnitude);
-        // runMagnitude = 1f - Mathf.Max(bodySkew, slowness);
-        // SetAnimationLayerWeight("Legs_full", runMagnitude);
-        // if (bodyRotationMode == (int)BodyRotationMode.Normal)
-        // {
-        //     if (angularVelocityY < 0)
-        //     {
-        //         SetAnimationLayerWeight("Turn Left Position", bodySkew / 10f);
-        //         SetAnimationLayerWeight("Turn Right Position", 0f);
-        //     }
-        //     else
-        //     {
-        //         SetAnimationLayerWeight("Turn Left Position", 0f);
-        //         SetAnimationLayerWeight("Turn Right Position", bodySkew / 10f);
-        //     }
-        //     SetAnimationLayerWeight("Hips Right", 0f);
-        //     SetAnimationLayerWeight("Hips Left", 0f);
-        // }
-        // else if (bodyRotationMode == (int)BodyRotationMode.Target)
-        // {
-        //     if (Vector3.SignedAngle(velHoriz, bodyT.forward, Vector3.up) < -90f){
-        //         SetAnimationLayerWeight("Hips Right", bodySkew);
-        //         SetAnimationLayerWeight("Hips Left", 0f);
-        //     }
-        //     else
-        //     {
-        //         SetAnimationLayerWeight("Hips Right", 0f);
-        //         SetAnimationLayerWeight("Hips Left", bodySkew);
-        //     }
-        //     SetAnimationLayerWeight("Turn Left Position", 0f);
-        //     SetAnimationLayerWeight("Turn Right Position", 0f);
-        // }
+        slowness = 1f - Mathf.InverseLerp(0f, entityPhysics.maxSpeed_run, velHoriz.magnitude);
+        runMagnitude = 1f - Mathf.Max(bodySkew, slowness);
+        SetAnimationLayerWeight("Legs_full", runMagnitude);
+        if (bodyRotationMode == (int)BodyRotationMode.Normal)
+        {
+            if (angularVelocityY < 0)
+            {
+                SetAnimationLayerWeight("Turn Left Position", bodySkew / 10f);
+                SetAnimationLayerWeight("Turn Right Position", 0f);
+            }
+            else
+            {
+                SetAnimationLayerWeight("Turn Left Position", 0f);
+                SetAnimationLayerWeight("Turn Right Position", bodySkew / 10f);
+            }
+            SetAnimationLayerWeight("Hips Right", 0f);
+            SetAnimationLayerWeight("Hips Left", 0f);
+        }
+        else if (bodyRotationMode == (int)BodyRotationMode.Target)
+        {
+            if (Vector3.SignedAngle(velHoriz, bodyT.forward, Vector3.up) < -90f){
+                SetAnimationLayerWeight("Hips Right", bodySkew);
+                SetAnimationLayerWeight("Hips Left", 0f);
+            }
+            else
+            {
+                SetAnimationLayerWeight("Hips Right", 0f);
+                SetAnimationLayerWeight("Hips Left", bodySkew);
+            }
+            SetAnimationLayerWeight("Turn Left Position", 0f);
+            SetAnimationLayerWeight("Turn Right Position", 0f);
+        }
         
         
         
     
 
 
-        // // calculate backpedal
-        // float backMagnitude = (1f - runMagnitude) * Mathf.Lerp(0f, .2f, bodySkew);
-        // SetAnimationLayerWeight("Legs_backpedal", backMagnitude);
-        // SetAnimationLayerWeight("Legs_shuffle", 1f - backMagnitude - runMagnitude);
+        // calculate backpedal
+        float backMagnitude = (1f - runMagnitude) * Mathf.Lerp(0f, .2f, bodySkew);
+        SetAnimationLayerWeight("Legs_backpedal", backMagnitude);
+        SetAnimationLayerWeight("Legs_shuffle", 1f - backMagnitude - runMagnitude);
 
-        // // calculate posture
-        // SetAnimationLayerWeight("Squat Position", posture_squat + squat_activity + entityPhysics.landScrunch);
+        // calculate posture
+        SetAnimationLayerWeight("Squat Position", posture_squat + squat_activity + entityPhysics.landScrunch);
 
 
     }
@@ -423,7 +427,9 @@ public class EntityAnimation : EntityComponent
 
 
     void FixedUpdate(){
-        UpdateMovement();
+        if(animator.enabled){
+            UpdateMovement();
+        }
         UpdateBodyRotation();
         bodyRotationLast = bodyT.rotation;
         angularVelocityY_last = angularVelocityY;
