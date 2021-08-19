@@ -52,11 +52,11 @@ public class EntityPhysics : EntityComponent
 
     // ik
     public bool ikEnabled;
-    public FastIKFabric ikScript_hips, ikScript_head, ikScript_footLeft, ikScript_footRight, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft;
+    public FastIKFabric ikScript_hips, ikScript_footLeft, ikScript_footRight, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft;
     public FastIKFabric[] ikScripts, ikScripts_legs, ikScripts_upperBody;
     public Transform ikParent;
-    public Transform basePositionHips, basePositionHead, basePositionFootRight, basePositionFootLeft, basePositionHandRight, basePositionHandLeft;
-    public Transform targetHips, targetHead, targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft;
+    public Transform basePositionHips, basePositionFootRight, basePositionFootLeft, basePositionHandRight, basePositionHandLeft;
+    public Transform targetHips, targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft;
     public Vector3 plantPosFootLeft, plantPosFootRight;
     public float updateTime_footRight, updateTime_footLeft, updateTime_hips;
 
@@ -101,11 +101,9 @@ public class EntityPhysics : EntityComponent
         ikEnabled = true;
         ikParent = Utility.FindDeepChild(transform, "IKTargets");
         basePositionHips = ikParent.Find("BasePositionHips");
-        basePositionHead = ikParent.Find("BasePositionHead");
         basePositionFootRight = ikParent.Find("BasePositionFootRight");
         basePositionFootLeft = ikParent.Find("BasePositionFootLeft");
         targetHips = ikParent.Find("TargetHips");
-        targetHead = ikParent.Find("TargetHead");
         targetFootRight = ikParent.Find("TargetFootRight");
         targetFootLeft = ikParent.Find("TargetFootLeft");
         targetToeRight = ikParent.Find("TargetToeRight");
@@ -115,14 +113,13 @@ public class EntityPhysics : EntityComponent
         basePositionHandRight = ikParent.Find("BasePositionHandRight");
         basePositionHandLeft = ikParent.Find("BasePositionHandLeft");
         ikScript_hips = hips.GetComponent<FastIKFabric>();
-        ikScript_head = head.GetComponent<FastIKFabric>();
         ikScript_footRight = footRight.GetComponent<FastIKFabric>();
         ikScript_footLeft = footLeft.GetComponent<FastIKFabric>();
         ikScript_toeRight = toeRight.GetComponent<FastIKFabric>();
         ikScript_toeLeft = toeLeft.GetComponent<FastIKFabric>();
         ikScript_handRight = handRight.GetComponent<FastIKFabric>();
         ikScript_handLeft = handLeft.GetComponent<FastIKFabric>();
-        ikScripts = new FastIKFabric[]{ ikScript_hips, ikScript_head, ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft };
+        ikScripts = new FastIKFabric[]{ ikScript_hips, ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft };
         ikScripts_legs = new FastIKFabric[]{ ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft };
         ikScripts_upperBody = new FastIKFabric[]{ ikScript_handRight, ikScript_handLeft };
 
@@ -242,9 +239,8 @@ public class EntityPhysics : EntityComponent
         Vector3 vertLeft, vertRight;
         if(IsMoving()){
             // moving
-            float vertMin = Mathf.Lerp(GetRunCycleVerticality(.5f), GetRunCycleVerticality(.75f), Mathf.InverseLerp(0f, 5f, rb.velocity.y));
-            vertLeft = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(updateTime_footLeft));
-            vertRight = Vector3.up * Mathf.Max(vertMin, GetRunCycleVerticality(updateTime_footRight));
+            vertLeft = Vector3.up * GetRunCycleVerticality(updateTime_footLeft);
+            vertRight = Vector3.up * GetRunCycleVerticality(updateTime_footRight);
             targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) +.2f);
             targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) +.2f);
         }
@@ -262,7 +258,7 @@ public class EntityPhysics : EntityComponent
 
 
         float GetRunCycleVerticality(float updateTime){
-            return .015f * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
+            return (.015f + .025f * Mathf.InverseLerp(0f, 2f, rb.velocity.y)) * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
         }
 
         // .5 is stance phase, -.5 is swing phase
@@ -383,8 +379,6 @@ public class EntityPhysics : EntityComponent
     }
 
 
-
-
     public void Move(Vector3 direction, float speed){
         float speedStat = speed * entityStats.GetStat("speed");
         sprinting = entityBehavior.urgent || (isLocalPlayer && entityUserInputMovement.pressSprint);
@@ -431,6 +425,10 @@ public class EntityPhysics : EntityComponent
             return true;
         }
         return false;
+    }
+
+    public void SetHeadTarget(Vector3 position){
+        head.rotation = Quaternion.LookRotation(position, Vector3.up);
     }
 
     public void LaunchProjectile(GameObject projectilePrefab){
@@ -631,8 +629,8 @@ public class EntityPhysics : EntityComponent
             }
         }
         if(!jumping){
-            max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y);
-            //max *= 2f - Mathf.InverseLerp(-3f, 0f, rb.velocity.y);
+            //max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y);
+            max = Mathf.Lerp(max, max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y), 30f * Time.deltaTime);
         }
 
         if(horvel.magnitude > max){
@@ -704,6 +702,8 @@ public class EntityPhysics : EntityComponent
             acceleration /= 2f;
             maxSpeed_run /= 2f;
         }
+
+        SetHeadTarget(Camera.main.transform.position + Camera.main.transform.forward * 1000f);
         
         IKUpdate();
     }
