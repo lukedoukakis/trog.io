@@ -27,7 +27,7 @@ public class EntityPhysics : EntityComponent
     float groundCastDistance;
     public static float JumpForce = 2800f;
     public static float ThrowForce = 200f;
-    public static float AccelerationScale = 20f;
+    public static float AccelerationScale = 30f;
     public static float MaxSpeedScale = 15f;
     public static float JumpCoolDown = .15f;
 
@@ -668,7 +668,7 @@ public class EntityPhysics : EntityComponent
 
     bool GroundIsClose(){
 
-        return Physics.OverlapSphere(groundSense.position, .5f, layerMask_walkable).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, .75f, layerMask_walkable).Length > 0;
 
     }
 

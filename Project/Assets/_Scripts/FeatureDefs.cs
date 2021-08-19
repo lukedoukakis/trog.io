@@ -84,15 +84,6 @@ public class TreeInfo : MonoBehaviour
                 spread = 2f;
                 vertOffset = 0f;
                 break;
-            case "Plains Oak Tree":
-                scale = 3f * ChunkGenerator.current.treeScale;
-                density = 1f;
-                normal_min = .25f;
-                normal_max = 1f;
-                slant = .12f;
-                spread = 2f;
-                vertOffset = 0f;
-                break;
             case string str when name.StartsWith("Grass"):
                 scale = .75f;
                 density = 50f;
@@ -123,7 +114,7 @@ public class TreeInfo : MonoBehaviour
             case string str when name.StartsWith("Bush"):
                 scale = .4f;
                 density = 7f;
-                normal_min = .99f;
+                normal_min = .6f;
                 normal_max = 1f;
                 slant = .8f;
                 spread = .7f;

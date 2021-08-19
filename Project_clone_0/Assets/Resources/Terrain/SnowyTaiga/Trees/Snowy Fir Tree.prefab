@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4149566187594456988
+--- !u!1 &1748134734945535157
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4149566187594814930}
-  - component: {fileID: 4149566187597650742}
-  - component: {fileID: 4149566187596676974}
+  - component: {fileID: 1748134734945767163}
+  - component: {fileID: 1748134734942404639}
+  - component: {fileID: 1748134734943396935}
   m_Layer: 10
   m_Name: Snowy Fir Tree
   m_TagString: Untagged
@@ -18,35 +18,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
---- !u!4 &4149566187594814930
+--- !u!4 &1748134734945767163
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4149566187594456988}
+  m_GameObject: {fileID: 1748134734945535157}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1748134735663486235}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4149566187597650742
+--- !u!33 &1748134734942404639
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4149566187594456988}
+  m_GameObject: {fileID: 1748134734945535157}
   m_Mesh: {fileID: 2198865961058174444, guid: fad1a842370be854b9018c3655d05ff9, type: 3}
---- !u!23 &4149566187596676974
+--- !u!23 &1748134734943396935
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4149566187594456988}
+  m_GameObject: {fileID: 1748134734945535157}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -79,3 +80,78 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1001 &8340622794577454429
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1748134734945767163}
+    m_Modifications:
+    - target: {fileID: 7781454320727980552, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+        type: 3}
+      propertyPath: m_Name
+      value: Snowy Fir Tree
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781454320728207430, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781454320728207430, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781454320728207430, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781454320728207430, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781454320728207430, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781454320728207430, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781454320728207430, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781454320728207430, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781454320728207430, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781454320728207430, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781454320728207430, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e8fb64e45a6a93540a5a5d7774e77f4f, type: 3}
+--- !u!4 &1748134735663486235 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7781454320728207430, guid: e8fb64e45a6a93540a5a5d7774e77f4f,
+    type: 3}
+  m_PrefabInstance: {fileID: 8340622794577454429}
+  m_PrefabAsset: {fileID: 0}
