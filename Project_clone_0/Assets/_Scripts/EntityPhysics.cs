@@ -703,7 +703,7 @@ public class EntityPhysics : EntityComponent
             maxSpeed_run /= 2f;
         }
 
-        SetHeadTarget(Camera.main.transform.position + Camera.main.transform.forward * 1000f);
+        //SetHeadTarget(Camera.main.transform.position + Camera.main.transform.forward * 1000f);
         
         IKUpdate();
     }
