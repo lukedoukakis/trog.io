@@ -282,7 +282,7 @@ public class EntityPhysics : EntityComponent
 
     public void CycleFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime){
 
-        float forwardReachDistance = .8f * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityAnimation.bodyLean * -.1f);
+        float forwardReachDistance = .8f * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityAnimation.bodyLean * .1f);
 
         plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
         // RaycastHit hit;
@@ -478,7 +478,7 @@ public class EntityPhysics : EntityComponent
 
             yield return new WaitForSeconds(.075f);
             if(notTargeting){
-                entityAnimation.SetBodyRotationMode((int)EntityAnimation.BodyRotationMode.Normal, null);
+                entityAnimation.SetBodyRotationMode((int)EntityAnimation.BodyRotationMode.Target, null);
             }
             GameObject.Destroy(temp);
 

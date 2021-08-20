@@ -8,7 +8,7 @@ public class ChunkGenerator : MonoBehaviour
 {
     public static ChunkGenerator current;
     public static int Seed = -1;
-    public static int ChunkSize = 50;
+    public static int ChunkSize = 20;
     public static int ChunkRenderDistance = 3;
     public static float Scale = 1200f;
     public static float ElevationAmplitude = 1800f * 3f;

@@ -17,8 +17,8 @@ public class EntityAnimation : EntityComponent
     Transform bodyRotationTarget;
     public static float bodyRotationSpeed_player = .04f; //.0625
     public static float bodyRotationSpeed_ai = .0625f;
-    public static float leanBoundMin = -10f;
-    public static float leanBoundMax = 11f;
+    public static float leanBoundMin = -.4f;
+    public static float leanBoundMax = 1.05f;
     float bodyRotationSpeed;
     Quaternion bodyRotation;
     Quaternion bodyRotationLast;
@@ -78,8 +78,8 @@ public class EntityAnimation : EntityComponent
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
         headT = Utility.FindDeepChild(transform, "B-head");
-        //bodyT = Utility.FindDeepChild(transform, "HumanIK");
-        bodyT = Utility.FindDeepChild(transform, "Human Model 2");
+        bodyT = Utility.FindDeepChild(transform, "HumanIK");
+        //bodyT = Utility.FindDeepChild(transform, "Human Model 2");
         if(tag == "Player"){
             bodyRotationSpeed = bodyRotationSpeed_player;
         }
@@ -89,6 +89,10 @@ public class EntityAnimation : EntityComponent
         posture_squat = .1f;
 
         keysList = new List<string>(animBools.Keys);
+    }
+
+    void Start(){
+        SetBodyRotationMode((int)EntityAnimation.BodyRotationMode.Target, null);
     }
 
     public void ToggleAnimation(bool value){
@@ -169,18 +173,21 @@ public class EntityAnimation : EntityComponent
 
     void UpdateBodyRotation(){
 
+
+        if (isLocalPlayer)
+        {
+            bodyLean = Mathf.InverseLerp(leanBoundMin, leanBoundMax, Mathf.Sin(Camera.main.transform.rotation.eulerAngles.x * Mathf.Deg2Rad)) * 2f - 1f;
+        }
+        else
+        {
+            bodyLean = 0f;
+        }
+
         switch (bodyRotationMode)
         {
 
             // normal rotation
             case (int)BodyRotationMode.Normal:
-
-                if(isLocalPlayer){
-                    bodyLean = Mathf.InverseLerp(leanBoundMin, leanBoundMax, Mathf.Sin(Camera.main.transform.rotation.eulerAngles.x * Mathf.Deg2Rad)) * 2f - 1f;
-                }
-                else{
-                    bodyLean = 0f;
-                }
 
 
                 bool moving = entityPhysics.IsMoving();
@@ -216,7 +223,14 @@ public class EntityAnimation : EntityComponent
 
             // targeting rotation
             case (int)BodyRotationMode.Target:
-                Vector3 dir = bodyRotationTarget.position - bodyT.position;
+                Vector3 dir;
+                if(bodyRotationTarget != null){
+                    dir = (bodyRotationTarget.position - bodyT.position).normalized;
+                }
+                else{
+                    dir = transform.forward;
+                }
+                dir += (Vector3.up * bodyLean * -1f);
                 Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
                 bodyT.rotation = Quaternion.Slerp(bodyT.rotation, rot, .1f);
                 break;
