@@ -28,7 +28,9 @@ public class EntityItems : EntityComponent
     public Transform orientation_weaponUnequipped;
 
     public Transform anchor_weaponEquipped_spear;
+    public Transform anchor_weaponEquipped_axe;
     public Transform basePosition_anchor_weaponEquipped_spear;
+    public Transform basePosition_anchor_weaponEquipped_axe;
 
     public Animator itemOrientationAnimator;
 
@@ -49,7 +51,9 @@ public class EntityItems : EntityComponent
         orientation_weaponUnequipped = orientationParent.Find("WeaponUnequipped");
 
         anchor_weaponEquipped_spear = orientationParent.Find("AnchorWeaponEquippedSpear");
+        anchor_weaponEquipped_axe = orientationParent.Find("AnchorWeaponEquippedAxe");
         basePosition_anchor_weaponEquipped_spear = orientationParent.Find("BasePositionAnchorWeaponEquippedSpear");
+        basePosition_anchor_weaponEquipped_axe = orientationParent.Find("BasePositionAnchorWeaponEquippedAxe");
 
         weaponEquipped_item = weaponUnequipped_item = holding_item = null;
         weaponEquipped_object = weaponUnequipped_object = holding_object = null;
@@ -127,6 +131,7 @@ public class EntityItems : EntityComponent
 
 
         anchor_weaponEquipped_spear.position = basePosition_anchor_weaponEquipped_spear.position;
+        anchor_weaponEquipped_axe.position = basePosition_anchor_weaponEquipped_axe.position;
         
         //float objSpeed = .15f;
 
@@ -142,22 +147,22 @@ public class EntityItems : EntityComponent
                 targetPos = orientation_weaponEquipped_spear.position;
                 targetRot = orientation_weaponEquipped_spear.rotation;
             }
+            else if(weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Axe)){
+                targetPos = orientation_weaponEquipped_axe.position;
+                targetRot = orientation_weaponEquipped_axe.rotation;
+            }
             else{
                 targetPos = orientation_weaponEquipped_axe.position;
                 targetRot = orientation_weaponEquipped_axe.rotation;
             }
             Vector3 currentPos = weaponEquipped_object.transform.position;
-            // float x = Mathf.Lerp(currentPos.x, targetPos.x, 100f * Time.deltaTime);
-            // float y = Mathf.Lerp(currentPos.y, targetPos.y, 60f * Time.deltaTime);
-            // float z = Mathf.Lerp(currentPos.z, targetPos.z, 100f * Time.deltaTime);
             // weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, 100f * Time.deltaTime);
             // weaponEquipped_object.transform.rotation = Quaternion.Slerp(weaponEquipped_object.transform.rotation, targetRot, 18f * Time.deltaTime);
-
             weaponEquipped_object.transform.position = targetPos;
             weaponEquipped_object.transform.rotation = targetRot;
         }
         if(weaponUnequipped_object != null){
-            weaponUnequipped_object.transform.position = Vector3.Lerp(weaponUnequipped_object.transform.position, orientation_weaponUnequipped.position, 30000000f * Time.deltaTime);
+            weaponUnequipped_object.transform.position = Vector3.Lerp(weaponUnequipped_object.transform.position, orientation_weaponUnequipped.position, float.MaxValue * Time.deltaTime);
             weaponUnequipped_object.transform.rotation = Quaternion.Slerp(weaponUnequipped_object.transform.rotation, orientation_weaponUnequipped.rotation, 18f * Time.deltaTime);
             // weaponUnequipped_object.transform.position = orientation_weaponUnequipped.position;
             // weaponUnequipped_object.transform.rotation = orientation_weaponUnequipped.rotation;

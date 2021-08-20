@@ -489,6 +489,9 @@ public class EntityPhysics : EntityComponent
 
 
     public void Attack(){
+
+        Animator a = entityItems.itemOrientationAnimator;
+
         if(entityItems.weaponEquipped_item == null){
             LaunchProjectile(Item.SmallStone.gameobject);
         }
@@ -518,7 +521,7 @@ public class EntityPhysics : EntityComponent
             triggerName += rangedMode ? "Ranged" : "Melee";
 
 
-            Animator a = entityItems.itemOrientationAnimator;
+            
             a.SetTrigger(triggerName);
         }
     }
@@ -533,7 +536,7 @@ public class EntityPhysics : EntityComponent
 
     void BeginWeaponChargeTime(){
         weaponCharging = true;
-        weaponChargeAmount = 0f;
+        weaponChargeAmount = .001f;
     }
     void StopWeaponChargeTime(){
         weaponCharging = false;
@@ -736,6 +739,10 @@ public class EntityPhysics : EntityComponent
         if(Input.GetKeyUp(KeyCode.O)){
             acceleration /= 2f;
             maxSpeed_run /= 2f;
+        }
+
+        if(weaponCharging){
+            weaponChargeTime += Time.deltaTime;
         }
 
         //SetHeadTarget(Camera.main.transform.position + Camera.main.transform.forward * 1000f);
