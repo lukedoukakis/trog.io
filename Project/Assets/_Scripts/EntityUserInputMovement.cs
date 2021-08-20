@@ -93,7 +93,10 @@ public class EntityUserInputMovement : EntityComponent
 
     void HandleAttack(){
         if(Input.GetKeyDown(KeyCode.Mouse0)){
-            entityAnimation.OnAttack();
+            entityPhysics.Attack();
+        }
+        else if(Input.GetKeyUp(KeyCode.Mouse0)){
+            entityPhysics.Attack();
         }
     }
 

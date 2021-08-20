@@ -30,6 +30,7 @@ public class EntityPhysics : EntityComponent
     public static float AccelerationScale = 30f;
     public static float MaxSpeedScale = 15f;
     public static float JumpCoolDown = .15f;
+    public static float weaponChargeTime_max = 3f;
 
 
     public Vector3 moveDir;
@@ -59,6 +60,13 @@ public class EntityPhysics : EntityComponent
     public Transform targetHips, targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft;
     public Vector3 plantPosFootLeft, plantPosFootRight;
     public float updateTime_footRight, updateTime_footLeft, updateTime_hips;
+
+    // other settings
+    bool rangedMode;
+    float weaponChargeTime;
+    bool weaponCharging;
+    float weaponChargeAmount;
+
 
 
 
@@ -192,14 +200,14 @@ public class EntityPhysics : EntityComponent
                 else
                 {
                     SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.zero, ref plantPosFootLeft);
-                    SetPlantPosition(targetFootRight, basePositionFootRight, entityAnimation.bodyT.forward * -.2f, ref plantPosFootRight);
+                    SetPlantPosition(targetFootRight, basePositionFootRight, GetHorizVelocity().normalized * -.2f, ref plantPosFootRight);
                 }
             }
             else
             {
                 // not on ground
-                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + entityAnimation.bodyT.forward * 0f + entityAnimation.bodyT.right * 0f, ref plantPosFootLeft);
-                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityAnimation.bodyT.forward * .5f + entityAnimation.bodyT.right * .1f, ref plantPosFootRight);
+                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + GetHorizVelocity().normalized * 0f + entityAnimation.bodyT.right * 0f, ref plantPosFootLeft);
+                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + GetHorizVelocity().normalized * .5f + entityAnimation.bodyT.right * .1f, ref plantPosFootRight);
                 updateTime_footRight = .2f;
                 updateTime_footLeft = .7f;
             }
@@ -241,14 +249,15 @@ public class EntityPhysics : EntityComponent
             // moving
             vertLeft = Vector3.up * GetRunCycleVerticality(updateTime_footLeft);
             vertRight = Vector3.up * GetRunCycleVerticality(updateTime_footRight);
-            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) +.2f);
-            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) +.2f);
+            Vector3 toeForward = (entityAnimation.bodyT.forward + transform.forward).normalized;
+            targetToeRight.position = targetFootRight.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) +.2f);
+            targetToeLeft.position = targetFootLeft.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) +.2f);
         }
         else{
             // not moving
             vertLeft = vertRight = Vector3.zero;
-            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down;
-            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward + Vector3.down;
+            targetToeRight.position = targetFootRight.position + transform.forward + Vector3.down;
+            targetToeLeft.position = targetFootLeft.position + transform.forward.normalized + Vector3.down;
         }
         targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertRight;
         targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertLeft;
@@ -273,7 +282,7 @@ public class EntityPhysics : EntityComponent
 
     public void CycleFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime){
 
-        float forwardReachDistance = .8f * (GetHorizVelocity().magnitude / maxSpeed_sprint);
+        float forwardReachDistance = .8f * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityAnimation.bodyLean * -.1f);
 
         plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
         // RaycastHit hit;
@@ -431,6 +440,8 @@ public class EntityPhysics : EntityComponent
         head.rotation = Quaternion.LookRotation(position, Vector3.up);
     }
 
+    // attacking
+
     public void LaunchProjectile(GameObject projectilePrefab){
 
         StartCoroutine(_LaunchProjectile());
@@ -476,39 +487,63 @@ public class EntityPhysics : EntityComponent
         
     }
 
+
     public void Attack(){
         if(entityItems.weaponEquipped_item == null){
             LaunchProjectile(Item.SmallStone.gameobject);
         }
         else{
             Item weapItem = entityItems.weaponEquipped_item;
+            string triggerName;
+            if(weaponChargeTime == 0f){
+                BeginWeaponChargeTime();
+                triggerName = "Charge";
+            }
+            else{
+                StopWeaponChargeTime();
+                triggerName = "Release";
+            }
             switch (weapItem.holdStyle)
             {
                 case Item.HoldStyle.Spear:
-                    StartCoroutine("SetWeaponTrajectoryThrust");
+                    triggerName += "Spear";
                     break;
-
                 case Item.HoldStyle.Axe:
-                    StartCoroutine("SetWeaponTrajectorySwing");
+                    triggerName += "Axe";
                     break;
                 default:
-
                     Log("Trying to attack with a weapon with no specified hold style!!!");
                     break;
-                }
-            
+            }
+            triggerName += rangedMode ? "Ranged" : "Melee";
+
+
+            Animator a = entityItems.itemOrientationAnimator;
+            a.SetTrigger(triggerName);
         }
     }
-    IEnumerator SetWeaponTrajectoryThrust(){
+
+
+    IEnumerator ReleaseSpearStyle(){
         yield return null;
     }
-    IEnumerator SetWeaponTrajectorySwing(){
+    IEnumerator ReleaseAxeStyle(){
         yield return null;
+    }
+
+    void BeginWeaponChargeTime(){
+        weaponCharging = true;
+        weaponChargeAmount = 0f;
+    }
+    void StopWeaponChargeTime(){
+        weaponCharging = false;
+        weaponChargeAmount = Mathf.InverseLerp(0f, weaponChargeTime_max, weaponChargeTime);
+        weaponChargeTime = 0f;
     }
 
 
 
-
+    // ----------------------------------------------------------
 
     void CheckGround(){
         Vector3 vel = rb.velocity;
@@ -662,7 +697,7 @@ public class EntityPhysics : EntityComponent
         return horvel;
     }
 
-    bool IsMoving(){
+    public bool IsMoving(){
         return GetHorizVelocity().magnitude > .1f;
     }
 

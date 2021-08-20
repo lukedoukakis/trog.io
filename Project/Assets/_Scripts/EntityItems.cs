@@ -29,6 +29,11 @@ public class EntityItems : EntityComponent
 
     public Transform anchor_weaponEquipped_spear;
     public Transform basePosition_anchor_weaponEquipped_spear;
+
+    public Animator itemOrientationAnimator;
+
+
+
     
 
 
@@ -48,6 +53,8 @@ public class EntityItems : EntityComponent
 
         weaponEquipped_item = weaponUnequipped_item = holding_item = null;
         weaponEquipped_object = weaponUnequipped_object = holding_object = null;
+
+        itemOrientationAnimator = orientationParent.GetComponent<Animator>();
     }
 
 

@@ -17,10 +17,13 @@ public class EntityAnimation : EntityComponent
     Transform bodyRotationTarget;
     public static float bodyRotationSpeed_player = .04f; //.0625
     public static float bodyRotationSpeed_ai = .0625f;
+    public static float leanBoundMin = -10f;
+    public static float leanBoundMax = 11f;
     float bodyRotationSpeed;
     Quaternion bodyRotation;
     Quaternion bodyRotationLast;
     Vector3 bodyAngularVelocity;
+    public float bodyLean;
     public float angularVelocityY;
     float angularVelocityY_last;
     public static float angularVelocityY_maxDelta = .1f;
@@ -75,14 +78,7 @@ public class EntityAnimation : EntityComponent
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
         headT = Utility.FindDeepChild(transform, "B-head");
-        foreach(Transform tr in transform)
-        {
-            if(tr.tag == "Body")
-            {
-                bodyT =  tr;
-                break;
-            }
-        }
+        bodyT = Utility.FindDeepChild(transform, "Human Model 2");
         if(tag == "Player"){
             bodyRotationSpeed = bodyRotationSpeed_player;
         }
@@ -178,28 +174,41 @@ public class EntityAnimation : EntityComponent
             // normal rotation
             case (int)BodyRotationMode.Normal:
 
-                if(entityPhysics.moveDir.magnitude > 0){
-                    Vector3 velRaw = rb.velocity;
-                    Vector3 velHoriz = velRaw; velHoriz.y = 0;
-                    Vector3 direction = Vector3.RotateTowards(bodyT.forward, velHoriz, bodyRotationSpeed, 0f);
-                    Quaternion rotation = Quaternion.LookRotation(direction);
-                    if (entityPhysics.GROUNDTOUCH)
-                    {
-                        Vector3 v = (rotation.eulerAngles) - (bodyRotationLast.eulerAngles);
-                        angularVelocityY = Mathf.Lerp(bodyAngularVelocity.y, v.y, .5f);
-                        angularVelocityY = Mathf.Clamp(angularVelocityY, -5f, 5f);
-                        float dif = angularVelocityY - angularVelocityY_last;
-                        if (Math.Abs(dif) > angularVelocityY_maxDelta)
-                        {
-                            angularVelocityY = angularVelocityY_last + (angularVelocityY_maxDelta * Mathf.Sign(dif));
-                        }
-                    }
-                    else
-                    {
-                        angularVelocityY = 0f;
-                    }
-                bodyT.rotation = rotation * Quaternion.Euler(Vector3.forward * angularVelocityY * -1f);
+                if(isLocalPlayer){
+                    bodyLean = Mathf.InverseLerp(leanBoundMin, leanBoundMax, Mathf.Sin(Camera.main.transform.rotation.eulerAngles.x * Mathf.Deg2Rad)) * 2f - 1f;
                 }
+                else{
+                    bodyLean = 0f;
+                }
+
+
+                bool moving = entityPhysics.IsMoving();
+                Vector3 dirHoriz = moving ? rb.velocity : bodyT.forward;
+                dirHoriz.y = 0;
+                dirHoriz = dirHoriz.normalized;
+                Vector3 direction = Vector3.RotateTowards(bodyT.forward, dirHoriz, bodyRotationSpeed, 0f).normalized;
+                
+                direction += Vector3.up * (bodyLean * -1f);
+
+                Quaternion rotation = Quaternion.LookRotation(direction);
+                if (entityPhysics.GROUNDTOUCH)
+                {
+                    Vector3 v = (rotation.eulerAngles) - (bodyRotationLast.eulerAngles);
+                    angularVelocityY = Mathf.Lerp(bodyAngularVelocity.y, v.y, .5f);
+                    angularVelocityY = Mathf.Clamp(angularVelocityY, -5f, 5f);
+                    float dif = angularVelocityY - angularVelocityY_last;
+                    if (Math.Abs(dif) > angularVelocityY_maxDelta)
+                    {
+                        angularVelocityY = angularVelocityY_last + (angularVelocityY_maxDelta * Mathf.Sign(dif));
+                    }
+                }
+                else
+                {
+                    angularVelocityY = 0f;
+                }
+                rotation *= Quaternion.Euler(Vector3.forward * angularVelocityY * -1f);
+                bodyT.rotation = rotation;
+      
             
 
                 break;
