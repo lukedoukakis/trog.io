@@ -78,6 +78,7 @@ public class EntityAnimation : EntityComponent
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
         headT = Utility.FindDeepChild(transform, "B-head");
+        //bodyT = Utility.FindDeepChild(transform, "HumanIK");
         bodyT = Utility.FindDeepChild(transform, "Human Model 2");
         if(tag == "Player"){
             bodyRotationSpeed = bodyRotationSpeed_player;

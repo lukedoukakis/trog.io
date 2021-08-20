@@ -131,7 +131,9 @@ public class EntityItems : EntityComponent
 
 
         anchor_weaponEquipped_spear.position = basePosition_anchor_weaponEquipped_spear.position;
+        anchor_weaponEquipped_spear.rotation = basePosition_anchor_weaponEquipped_spear.rotation;
         anchor_weaponEquipped_axe.position = basePosition_anchor_weaponEquipped_axe.position;
+        anchor_weaponEquipped_axe.rotation = basePosition_anchor_weaponEquipped_axe.rotation;
         
         //float objSpeed = .15f;
 
@@ -145,15 +147,17 @@ public class EntityItems : EntityComponent
             Quaternion targetRot;
             if(weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Spear)){
                 targetPos = orientation_weaponEquipped_spear.position;
-                targetRot = orientation_weaponEquipped_spear.rotation;
+                //targetRot = orientation_weaponEquipped_spear.rotation;
+                targetRot = anchor_weaponEquipped_spear.rotation;
             }
             else if(weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Axe)){
                 targetPos = orientation_weaponEquipped_axe.position;
-                targetRot = orientation_weaponEquipped_axe.rotation;
+                //targetRot = orientation_weaponEquipped_axe.rotation;
+                targetRot = anchor_weaponEquipped_axe.rotation;
             }
             else{
-                targetPos = orientation_weaponEquipped_axe.position;
-                targetRot = orientation_weaponEquipped_axe.rotation;
+                targetPos = Vector3.zero;
+                targetRot = Quaternion.identity;
             }
             Vector3 currentPos = weaponEquipped_object.transform.position;
             // weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, 100f * Time.deltaTime);
