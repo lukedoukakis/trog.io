@@ -269,7 +269,7 @@ public class ChunkGenerator : MonoBehaviour
         HeightMap = new float[ChunkSize + 2, ChunkSize + 2];
         TreeMap = new bool[ChunkSize + 2, ChunkSize + 2];
 
-        float temperatureValue, humidityValue, elevationValue, mountainValue, freshWaterValue, wetnessValue, heightValue;
+        float temperatureValue, humidityValue, elevationValue, mountainValue, freshWaterValue, wetnessValue, heightValue, heightValue_water;
         int biomeValue;
         bool treeValue;
 
@@ -360,7 +360,7 @@ public class ChunkGenerator : MonoBehaviour
                 }
                 else
                 {
-                    //freshWaterValue = Mathf.Pow(freshWaterValue, .1f * (1f - mountainValue*8.5f)) * .95f;
+                    //freshWaterValue = Mathf.Pow(freshWaterValue, 3f);
                 }
 
 
@@ -439,11 +439,13 @@ public class ChunkGenerator : MonoBehaviour
                 // create ocean and rivers
                 if (heightValue < FlatLevel)
                 {
+                    heightValue_water = SeaLevel;
                     float ocean = Mathf.InverseLerp(0f, .004f, FlatLevel - heightValue);
                     freshWaterValue = ocean;
                 }
                 else
                 {
+                    heightValue_water = Mathf.Max(SeaLevel, Mathf.Lerp(SeaLevel, heightValue - .0001f, .5f));
                     heightValue = Mathf.Lerp(heightValue, SeaLevel - .0001f, freshWaterValue);
                     //heightValue = Mathf.Lerp(heightValue, heightValue - .01f, freshWaterValue);
                 }
