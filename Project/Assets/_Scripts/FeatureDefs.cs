@@ -62,7 +62,7 @@ public class TreeInfo : MonoBehaviour
                 vertOffset = 0f;
                 break;
             case "Palm Tree":
-                scale = 1.2f * ChunkGenerator.current.treeScale;
+                scale = 2f * ChunkGenerator.current.treeScale;
                 if(fw > .9f){
                     density = .2f;
                 }
