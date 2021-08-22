@@ -131,13 +131,8 @@ public class TreeInfo : MonoBehaviour
                 break;
             case string str when name.StartsWith("Cactus"):
                 scale = 1f;
-                if(fw > .92f){
-                    density = 0f;
-                }
-                else{
-                    density = .01f;
-                }
-                normal_min = .996f;
+                density = .1f;
+                normal_min = .98f;
                 normal_max = 1f;
                 slant = .18f;
                 spread = 5f;

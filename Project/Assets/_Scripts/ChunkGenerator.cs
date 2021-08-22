@@ -8,20 +8,20 @@ public class ChunkGenerator : MonoBehaviour
 {
     public static ChunkGenerator current;
     public static int Seed = -1;
-    public static int ChunkSize = 20;
+    public static int ChunkSize = 200;
     public static int ChunkRenderDistance = 3;
     public static float Scale = 1200f;
     public static float ElevationAmplitude = 1800f * 3f;
     public static float MinElevation = -.292893219f;
     public static float MaxElevation = .224744871f;
-    public static int MountainMapScale = 800;
+    public static int MountainMapScale = 800 * 1;
     public static float ElevationMapScale = 2000;
     public static int TemperatureMapScale = 500;
     public static int HumidityMapScale = 500;
     public static float MountainPolarity = 1f;
     public static float FlatLevel = .85f;
     public static float SeaLevel = 0.849985f;
-    public static float WaterFeatureLevel = .845f;
+    public static float WaterFeatureLevel = .85f;
     public static float SnowLevel = .86f;
     public static bool LoadingChunks, DeloadingChunks;
     static GameObject Chunk;
@@ -272,6 +272,7 @@ public class ChunkGenerator : MonoBehaviour
         float temperatureValue, humidityValue, elevationValue, mountainValue, freshWaterValue, wetnessValue, heightValue, heightValue_water;
         int biomeValue;
         bool treeValue;
+        float mtnCap;
 
         // loop start
         for (int z = 0; z < ChunkSize + 2; z++)
@@ -296,8 +297,9 @@ public class ChunkGenerator : MonoBehaviour
                 mountainValue = Mathf.InverseLerp(0f, Mathf.Pow(.75f, 2f), mountainValue);
                 mountainValue *= Mathf.InverseLerp(minE, maxE+1f, elevationValue);
                 mountainValue *= .5f;
-                if(mountainValue > .3f){
-                    mountainValue = .3f;
+                mtnCap = .3f;
+                if(mountainValue > mtnCap){
+                    mountainValue = mtnCap;
                 }
                 //Debug.Log(mountainValue);
 
@@ -306,12 +308,12 @@ public class ChunkGenerator : MonoBehaviour
 
                 // TemperatureMap [0, 1]
                 //temperatureValue = Mathf.PerlinNoise((x + xOffset + .01f) / TemperatureMapScale, (z + zOffset + .01f) / TemperatureMapScale);
-                temperatureValue = 1.5f - (mountainValue * 8.5f);
+                temperatureValue = 1.43f - (mountainValue * 8.5f);
                 temperatureValue *=  Mathf.PerlinNoise((x + xOffset) / TemperatureMapScale, (z + zOffset) / MountainMapScale);
                 temperatureValue = Mathf.Clamp01(temperatureValue);
                 //temperatureValue = Mathf.InverseLerp(.4f, .6f, temperatureValue);
 
-                //temperatureValue = .3f;
+                //temperatureValue = .1f;
 
 
                 // -------------------------------------------------------
@@ -340,8 +342,8 @@ public class ChunkGenerator : MonoBehaviour
                 freshWaterValue = Mathf.Clamp01(freshWaterValue);
 
 
-                float thresh1 = .6f + .05f * (Mathf.PerlinNoise((x + xOffset + Seed + .01f) / 1f, (z + zOffset + Seed + .01f) / 1f) * 2f - 1f);
-                float thresh2 = .75f + .04f * (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 1f, (z + zOffset - Seed + .01f) / 1f) * 2f - 1f);
+                float thresh1 = .7f + .1f * (Mathf.PerlinNoise((x + xOffset + Seed + .01f) / 20f, (z + zOffset + Seed + .01f) / 20f) * 2f - 1f);
+                float thresh2 = .85f + .1f * (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 20f, (z + zOffset - Seed + .01f) / 20f) * 2f - 1f);
                 if (freshWaterValue > thresh1)
                 {
                     float emod = Mathf.PerlinNoise((x + xOffset + Seed + .01f) / riverScale, (z + zOffset + Seed + .01f) / riverScale) * 2f - 1f;
@@ -360,10 +362,12 @@ public class ChunkGenerator : MonoBehaviour
                 }
                 else
                 {
-                    //freshWaterValue = Mathf.Pow(freshWaterValue, 3f);
+                    freshWaterValue = Mathf.InverseLerp(0f, Mathf.Pow(thresh1, 3f), Mathf.Pow(freshWaterValue, 3f)) * thresh1;
+                    //freshWaterValue = 0f;
                 }
 
-
+                freshWaterValue = Mathf.Pow(freshWaterValue, .9f);
+                freshWaterValue *= Mathf.Pow(1f - Mathf.InverseLerp(.25f, .5f, mountainValue / mtnCap), 1f);      
                 //freshWaterValue = 0f;
 
 
@@ -383,12 +387,11 @@ public class ChunkGenerator : MonoBehaviour
                 //         wetnessValue = Mathf.Max(wetnessValue, fwThreshhold);
                 //     }
                 // }
-                // float mtnMod = Mathf.Pow(mountainValue + .5f, 1f) - 1f;
-                // wetnessValue += mtnMod;
+                // // float mtnMod = Mathf.Pow((mountainValue / mtnCap) + .5f, 1f) - 1f;
+                // // wetnessValue += mtnMod;
 
-                // wetnessValue = Mathf.Clamp01(wetnessValue);
+                //wetnessValue = Mathf.Clamp01(wetnessValue);
 
-                // //wetnessValue = 1f;
                 wetnessValue = 1f;
 
                 // -------------------------------------------------------
@@ -559,7 +562,7 @@ public class ChunkGenerator : MonoBehaviour
             c.b = 255f * (1f - Mathf.InverseLerp(0f, 3/11f, temperature));
 
             // wetness/darkness (c.g)
-            c.g = 230f * (1f - temperature);
+            c.g = 230f * (1f - temperature) * (wetness);
         }
         
         // yellowness (c.r)
@@ -677,6 +680,8 @@ public class ChunkGenerator : MonoBehaviour
         float height;
         float fw;
 
+        float minFeatureHeight = SeaLevel - .0001f;
+
         int step = (int)(5f * (1f - treeDensity)) + 1;
 
         for (int z = 0; z < ChunkSize + 2; z += 10)
@@ -692,10 +697,11 @@ public class ChunkGenerator : MonoBehaviour
                 bool onWater;
 
             
-                if (TreeMap[x, z])
+                if (height >= minFeatureHeight)
                 {
 
                     onWater = height <= WaterFeatureLevel;
+                    if(onWater){ Debug.Log("ON WATER");}
                     
                     // tree placement
                     var treeTuple = Biome.GetTree(biome, wetness, fw);
@@ -750,7 +756,7 @@ public class ChunkGenerator : MonoBehaviour
                     float seaY = SeaLevel * ElevationAmplitude;
                     if(onWater){
                         minY = seaY - .1f;
-                        maxY = seaY + .1f;
+                        maxY = seaY + .15f;
                     }
                     else{
                         minY = seaY + .001f;
