@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 595997955340704279}
   - component: {fileID: 595997955340704278}
   - component: {fileID: 595997955340704277}
+  - component: {fileID: 1951531859331500362}
   m_Layer: 10
   m_Name: Snowy Fir Tree
   m_TagString: Untagged
@@ -80,3 +81,17 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!136 &1951531859331500362
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 595997955340704276}
+  m_Material: {fileID: 13400000, guid: 3c2720acdc0ef2d43aeb89dd00e2bb70, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.52723867
+  m_Height: 8.515666
+  m_Direction: 1
+  m_Center: {x: -0.08636862, y: 4.192923, z: 0.077340305}

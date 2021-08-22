@@ -701,7 +701,6 @@ public class ChunkGenerator : MonoBehaviour
                 {
 
                     onWater = height <= WaterFeatureLevel;
-                    if(onWater){ Debug.Log("ON WATER");}
                     
                     // tree placement
                     var treeTuple = Biome.GetTree(biome, wetness, fw);
