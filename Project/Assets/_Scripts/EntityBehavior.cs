@@ -236,7 +236,7 @@ public class EntityBehavior : EntityComponent
         Item i_target = a.item_target;
         //Log("target name: " + i_target.nme);
 
-        List<GameObject> foundObjects = SenseSurroundingItems(i_target.type, i_target.nme, senseDistance_infinite, entityInfo.faction.warringFactions);
+        List<GameObject> foundObjects = SenseSurroundingItems(i_target.type, i_target.nme, senseDistance_infinite);
         foundObjects = foundObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
         if(foundObjects.Count == 0){
             // TODO: search in new area if nothing found
@@ -261,12 +261,18 @@ public class EntityBehavior : EntityComponent
         BeginActionLayer("Hands", a, _Pickup());
 
         IEnumerator _Pickup(){
-            GameObject target = a.obj;
-            Faction.AddItemOwned(target, entityInfo.faction);
-            Faction.RemoveItemTargeted(target, entityInfo.faction);
-            yield return new WaitForSecondsRealtime(.25f);
-            TakeFromGround(target);
-            yield return new WaitForSecondsRealtime(.25f);
+            Item i = a.item_target;
+            GameObject o = a.obj;
+            if(i.type.Equals(Item.Type.Weapon)){
+                yield return new WaitForSecondsRealtime(.25f);
+                TakeFromGround(o);
+                yield return new WaitForSecondsRealtime(.25f);
+            }
+            else{
+                Faction.OnItemPickup(i, o, entityInfo.faction);
+            }
+            Faction.RemoveItemTargeted(o, entityInfo.faction);
+            
             NextAction();
         }
 
@@ -450,48 +456,26 @@ public class EntityBehavior : EntityComponent
     public void TakeFromGround(GameObject o){
         //Log("TakeFromGround()");
         Item item = Item.GetItemByName(o.name);
-        switch(item.type){
-            case Item.Type.Misc:
-                entityItems.SetHolding(item, o);
-                break;
-            case Item.Type.Weapon:
-                entityItems.PickUpWeapon(item, o);
-                break;
-            case Item.Type.Container:
-                entityItems.SetHolding(item, o);
-                break;
-            case Item.Type.Pocket:
-                entityItems.PocketItem(item);
-                break;
-        }
+        entityItems.PickUpWeapon(item, o);
         entityPhysics.OnItemSwitch();
         entityAnimation.Pickup(item);
         //o.transform.position = o.transform.position += new Vector3(UnityEngine.Random.Range(-30f, 30f), 1f, UnityEngine.Random.Range(-30f, 30f));
     }
-    public List<GameObject> SenseSurroundingItems(Enum type, string name, float distance, List<Faction> forbiddenFacs){
+    public List<GameObject> SenseSurroundingItems(Enum type, string name, float distance){
         Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Item"));
        
         string sur = "";
         List<GameObject> foundObjects = new List<GameObject>();
         GameObject o;
         Item i;
-        bool forbid;
         foreach(Collider col in colliders){
             o = col.gameObject;
             i = Item.GetItemByName(o.name);
-            forbid = false;
             if(type == null || i.type == type){
                 if(name == null || o.name == name){
-                    if(!Faction.ItemIsTargetedByFaction(o, entityInfo.faction)){
-                        foreach(Faction fac in forbiddenFacs){
-                            if(Faction.ItemIsOwnedByFaction(o, fac)){
-                                forbid = true;
-                            }
-                        }
-                        if(!forbid){
-                            foundObjects.Add(o);
-                            sur += o.name + ", ";
-                        }
+                    if(!Faction.ItemIsTargetedByFaction(o, entityInfo.faction)){  
+                        foundObjects.Add(o);
+                        sur += o.name + ", ";
                     }
                 }
             }

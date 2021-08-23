@@ -56,6 +56,8 @@ public class EntityCommandServer : EntityComponent
         Faction faction = Faction.GenerateFaction("Faction " + (Random.Range(0, 10000f)).ToString(), true);
         faction.AddMember(handle);
         handle.entityInfo.faction = faction;
+
+        Testing.instance.OnFactionCreation();
     }
 
 

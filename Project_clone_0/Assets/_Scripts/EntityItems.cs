@@ -74,13 +74,12 @@ public class EntityItems : EntityComponent
         }
         holding_item = item;
         holding_object = obj;
-        TogglePhysics(holding_object, false);
+        Utility.ToggleObjectPhysics(holding_object, false);
     }
     public void DropHolding(){
         if(holding_item == null) { return; }
         holding_object.GetComponent<Rigidbody>().AddForce(transform.forward + Vector3.up);
-        TogglePhysics(holding_object, true);
-        Faction.RemoveItemOwned(holding_object, entityInfo.faction);
+        Utility.ToggleObjectPhysics(holding_object, true);
         
         holding_item = null;
         holding_object = null;
@@ -98,9 +97,8 @@ public class EntityItems : EntityComponent
         }
     }
     public void DropUnequippedWeapon(){
-        TogglePhysics(weaponEquipped_object, true);
+        Utility.ToggleObjectPhysics(weaponEquipped_object, true);
         weaponEquipped_object.GetComponent<Rigidbody>().AddForce(transform.forward * -30f);
-        Faction.RemoveItemOwned(weaponEquipped_object, entityInfo.faction);
         weaponUnequipped_item = null;
         weaponUnequipped_object = null;
 
@@ -108,24 +106,17 @@ public class EntityItems : EntityComponent
     public void SetUnequippedWeapon(Item item, GameObject obj){
         weaponUnequipped_item = item;
         weaponUnequipped_object = obj;
-        TogglePhysics(weaponEquipped_object, false);
+        Utility.ToggleObjectPhysics(weaponEquipped_object, false);
     }
     public void SetEquippedWeapon(Item item, GameObject obj){
         weaponEquipped_item = item;
         weaponEquipped_object = obj;
-        TogglePhysics(weaponEquipped_object, false);
+        Utility.ToggleObjectPhysics(weaponEquipped_object, false);
     }
 
     public void PocketItem(Item i){
-        pockets.AddItem(i);
+        pockets.AddItem(i, 1);
     }
-
-
-    void TogglePhysics(GameObject o, bool value){
-        o.GetComponent<BoxCollider>().enabled = value;
-        o.GetComponent<Rigidbody>().isKinematic = !value;
-    }
-
 
     void Update(){
 

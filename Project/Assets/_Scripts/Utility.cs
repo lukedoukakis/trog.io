@@ -25,4 +25,16 @@ public class Utility : MonoBehaviour
         GameObject.Destroy(gameObject);
     }
 
+
+    public static void ToggleObjectPhysics(GameObject o, bool value){
+        Collider col = o.GetComponent<BoxCollider>();
+        Rigidbody rb = o.GetComponent<Rigidbody>();
+        if(col != null){
+            col.enabled = value;
+        }
+        if(rb != null){
+            rb.isKinematic = !value;
+        }
+    }
+
 }

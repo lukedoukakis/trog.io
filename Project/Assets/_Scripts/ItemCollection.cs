@@ -12,14 +12,26 @@ public class ItemCollection
     public ItemCollection(Dictionary<Item, int> _items){
         items = _items;
     }
+    public ItemCollection(){
+        items = new Dictionary<Item, int>();
+    }
 
 
-    public void AddItem(Item i){
+    public void AddItem(Item i, int count){
         if(items.ContainsKey(i)){
-            items[i]++;
+            ++items[i];
         }
         else{
-            items.Add(i, 1);
+            items.Add(i, count);
+        }
+    }
+
+    public int GetItemCount(Item i){
+        if(items.ContainsKey(i)){
+            return items[i];
+        }
+        else{
+            return 0;
         }
     }
 
