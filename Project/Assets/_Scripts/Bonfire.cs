@@ -5,8 +5,8 @@ using UnityEngine;
 public class Bonfire : MonoBehaviour
 {
 
-    public static GameObject Prefab_bonfireUnlit;
-    public static GameObject Prefab_bonfireLit;
+    public static GameObject Prefab_bonfireUnlit = Resources.Load<GameObject>("Camp/Bonfire");
+    public static GameObject Prefab_bonfireLit = Resources.Load<GameObject>("Camp/Bonfire");
 
 
     public Camp camp;

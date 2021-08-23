@@ -7,7 +7,7 @@ public class Camp : MonoBehaviour
 {
 
 
-    public static GameObject CAMP_LAYOUT_PREFAB;
+    public static GameObject CAMP_LAYOUT_PREFAB = Resources.Load<GameObject>("Camp/Camp Layout");
     public static LayerMask LAYERMASK_TERRAIN = LayerMask.GetMask("Terrain");
 
 
@@ -143,25 +143,25 @@ public class Camp : MonoBehaviour
 
         switch (componentType) {
             case ComponentType.Bonfire :
-                search = "Bonfire";
+                search = "OrientationBonfire";
                 break;
             case ComponentType.FoodRack :
-                search = "FoodRack" + foodRacks.Count;
+                search = "OrientationFoodRack" + foodRacks.Count;
                 break;
             case ComponentType.WeaponsRack :
-                search = "WeaponsRack" + weaponsRacks.Count;
+                search = "OrientationWeaponsRack" + weaponsRacks.Count;
                 break;
             case ComponentType.ClothingRack :
-                search = "ClothingRack" + clothingRacks.Count;
+                search = "OrientationClothingRack" + clothingRacks.Count;
                 break;
             case ComponentType.Tent :
-                search = "Tent" + tents.Count;
+                search = "OrientationTent" + tents.Count;
                 break;
             case ComponentType.Anvil :
-                search = "Anvil";
+                search = "OrientationAnvil";
                 break;
             default:
-                search = "Bonfire";
+                search = "OrientationBonfire";
                 Debug.Log("Getting component position for unsupported component type");
                 break;
         }

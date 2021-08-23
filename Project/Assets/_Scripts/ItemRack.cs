@@ -6,9 +6,9 @@ using UnityEngine;
 public class ItemRack : MonoBehaviour
 {
     
-    public static GameObject Rack_Food;
-    public static GameObject Rack_Weapons;
-    public static GameObject Rack_Clothing;
+    public static GameObject FoodRack = Resources.Load<GameObject>("Camp/Food Rack");
+    public static GameObject WeaponsRack = Resources.Load<GameObject>("Camp/Weapons Rack");
+    public static GameObject ClothingRack = Resources.Load<GameObject>("Camp/Clothing Rack");
     public static int RackCapacity_Food = 6;
     public static int RackCapacity_Weapons = 6;
     public static int RackCapacity_Clothing = 6;
@@ -28,15 +28,15 @@ public class ItemRack : MonoBehaviour
         switch(itemType){
             case Item.Type.Food :
                 this.capacity = RackCapacity_Food;
-                this.worldObject = Instantiate(Rack_Food);
+                this.worldObject = Instantiate(FoodRack);
                 break;
             case Item.Type.Weapon :
                 this.capacity = RackCapacity_Weapons;
-                this.worldObject = Instantiate(Rack_Weapons);
+                this.worldObject = Instantiate(WeaponsRack);
                 break;
             case Item.Type.Clothing : 
                 this.capacity = RackCapacity_Clothing;
-                this.worldObject = Instantiate(Rack_Clothing);
+                this.worldObject = Instantiate(ClothingRack);
                 break;
             default:
                 Debug.Log("unsupported itemType for ItemRack");

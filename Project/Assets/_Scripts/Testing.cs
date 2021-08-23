@@ -24,4 +24,12 @@ public class Testing : MonoBehaviour
 
 
 
+
+
+
+    void Update(){
+        if(Input.GetKeyUp(KeyCode.C)){
+            Camp.TryPlaceCamp(GameManager.current.localPlayer.GetComponent<EntityInfo>().faction, GameManager.current.localPlayer.transform.position);
+        }
+    }
 }
