@@ -5,8 +5,8 @@ using UnityEngine;
 public class Bonfire : MonoBehaviour
 {
 
-    public static GameObject Prefab_bonfireUnlit = Resources.Load<GameObject>("Camp/Bonfire");
-    public static GameObject Prefab_bonfireLit = Resources.Load<GameObject>("Camp/Bonfire");
+    public static GameObject Prefab_BonfireUnlit = Resources.Load<GameObject>("Camp/Bonfire");
+    public static GameObject Prefab_BonfireLit = Resources.Load<GameObject>("Camp/Bonfire");
 
 
     public Camp camp;
@@ -19,7 +19,7 @@ public class Bonfire : MonoBehaviour
     public void SetBonfire(Camp camp, bool lit, float intensity, float scale){
         this.camp = camp;
         this.lit = lit;
-        this.worldObject = lit ? Prefab_bonfireLit : Prefab_bonfireUnlit;
+        this.worldObject = lit ? Instantiate(Prefab_BonfireLit) : Instantiate(Prefab_BonfireUnlit);
         this.intensity = intensity;
         this.scale = scale;
     }

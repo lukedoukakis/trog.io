@@ -27,15 +27,15 @@ public class Camp : MonoBehaviour
     public List<ItemRack> foodRacks;
     public List<ItemRack> weaponsRacks;
     public List<ItemRack> clothingRacks;
-    public List<GameObject> tents;
-    public GameObject anvil;
+    public List<Tent> tents;
+    public Anvil anvil;
 
 
 
 
 
 
-
+    // client method to place a Camp
     public static void TryPlaceCamp(Faction faction, Vector3 position){
         if(CanPlaceCamp(position)){
             PlaceCamp(faction, position);
@@ -53,7 +53,7 @@ public class Camp : MonoBehaviour
         camp.SetOrigin(position);
         camp.SetRadius(faction.population);
         camp.SetCampLayout(position, Quaternion.identity);
-        camp.PlaceCampComponents(faction.ownedItems);
+        camp.PlaceCampComponents();
         camp.faction = faction;
         faction.camp = camp;
         return camp;
@@ -67,6 +67,7 @@ public class Camp : MonoBehaviour
         this.radius = BASE_CAMP_RADIUS + (BASE_CAMP_RADIUS * population * 05f);
     }
 
+    // place and adjust camp layout for component placement
     public void SetCampLayout(Vector3 position, Quaternion rotation){
 
         layout = Instantiate(CAMP_LAYOUT_PREFAB, position, Quaternion.identity);
@@ -81,10 +82,10 @@ public class Camp : MonoBehaviour
         }
     }
 
-    public void PlaceCampComponents(ItemCollection factionItems){
+    // place all relevant components (racks, tents, etc) based on faction items
+    public void PlaceCampComponents(){
 
-        // bonfire
-        PlaceBonfire();
+        ItemCollection factionItems = faction.ownedItems;
 
         // create lists for component placement for those that are based on faction's items
         List<GameObject> foodList = new List<GameObject>();
@@ -123,6 +124,9 @@ public class Camp : MonoBehaviour
 
         }
 
+        // place bonfire
+        PlaceBonfire();
+
         // place item racks
         PlaceItemRack(Item.Type.Food, foodList);
         PlaceItemRack(Item.Type.Weapon, weaponsList);
@@ -130,6 +134,11 @@ public class Camp : MonoBehaviour
 
         // place anvil
         PlaceAnvil();
+
+        // place tents
+        for(int i = 0; i < faction.population / 2; ++i){
+            PlaceTent();
+        }
 
         // TODO: place items from miscLarge and miscSmall lists
 
@@ -181,6 +190,7 @@ public class Camp : MonoBehaviour
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Bonfire);
         bonfire.worldObject.transform.position = targetOrientation.position;
         bonfire.worldObject.transform.rotation = targetOrientation.rotation;
+        this.bonfire = bonfire;
     }
 
     public void PlaceItemRack(Enum itemType, List<GameObject> objects){
@@ -190,18 +200,19 @@ public class Camp : MonoBehaviour
         switch (itemType) {
             case Item.Type.Food :
                 componentType = ComponentType.FoodRack;
-                foodRacks.Add(itemRack);
+                this.foodRacks.Add(itemRack);
                 break;
             case Item.Type.Weapon :
                 componentType = ComponentType.WeaponsRack;
-                weaponsRacks.Add(itemRack);
+                this.weaponsRacks.Add(itemRack);
                 break;
             case Item.Type.Clothing :
                 componentType = ComponentType.ClothingRack;
-                clothingRacks.Add(itemRack);
+                this.clothingRacks.Add(itemRack);
                 break;
             default :
                 componentType = ComponentType.FoodRack;
+                this.foodRacks.Add(itemRack);
                 Debug.Log("Placing item rack for unsupported item type: " + itemType);
                 break;
         }
@@ -209,12 +220,58 @@ public class Camp : MonoBehaviour
         itemRack.worldObject.transform.position = targetOrientation.position;
         itemRack.worldObject.transform.rotation = targetOrientation.rotation;
     }
-    public void OnRackCapacityReached(Enum itemType, List<GameObject> objects){
-        PlaceItemRack(itemType, objects);
+    public void OnRackCapacityReached(Enum itemType, List<GameObject> objectsToAdd){
+
+        // search existing racks for spots
+        List<ItemRack> rackList;
+        if (itemType.Equals(Item.Type.Food))
+        {
+            rackList = this.foodRacks;
+        }
+        else if (itemType.Equals(Item.Type.Weapon))
+        {
+            rackList = this.weaponsRacks;
+        }
+        else if (itemType.Equals(Item.Type.Clothing))
+        {
+            rackList = this.clothingRacks;
+        }
+        else{
+            Debug.Log("Unrecognized item type");
+            rackList = this.foodRacks;
+        }
+
+        // iterate through racks and add objects to first one with available slots (potentially recursive)
+        foreach(ItemRack rack in rackList){
+            if(rack.items.Count < rack.capacity){
+                rack.AddItems(objectsToAdd);
+                break;
+            }
+        }
+
+        // if there are still objects to add, place new rack
+        if(objectsToAdd.Count > 0){
+            PlaceItemRack(itemType, objectsToAdd);
+        }
+        
     }
 
     public void PlaceAnvil(){
-        // TODO
+        Anvil anvil = new Anvil();
+        anvil.SetAnvil(this);
+        Transform targetOrientation = GetCampComponentOrientation(ComponentType.Anvil);
+        anvil.worldObject.transform.position = targetOrientation.position;
+        anvil.worldObject.transform.rotation = targetOrientation.rotation;
+        this.anvil = anvil;
+    }
+
+    public void PlaceTent(){
+        Tent tent = new Tent();
+        tent.SetTent(this);
+        Transform targetOrientation = GetCampComponentOrientation(ComponentType.Tent);
+        tent.worldObject.transform.position = targetOrientation.position;
+        tent.worldObject.transform.rotation = targetOrientation.rotation;
+        this.tents.Add(tent);
     }
 
 

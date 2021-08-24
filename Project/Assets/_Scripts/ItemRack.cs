@@ -6,9 +6,9 @@ using UnityEngine;
 public class ItemRack : MonoBehaviour
 {
     
-    public static GameObject FoodRack = Resources.Load<GameObject>("Camp/Food Rack");
-    public static GameObject WeaponsRack = Resources.Load<GameObject>("Camp/Weapons Rack");
-    public static GameObject ClothingRack = Resources.Load<GameObject>("Camp/Clothing Rack");
+    public static GameObject Prefab_FoodRack = Resources.Load<GameObject>("Camp/Food Rack");
+    public static GameObject Prefab_WeaponsRack = Resources.Load<GameObject>("Camp/Weapons Rack");
+    public static GameObject Prefab_ClothingRack = Resources.Load<GameObject>("Camp/Clothing Rack");
     public static int RackCapacity_Food = 6;
     public static int RackCapacity_Weapons = 6;
     public static int RackCapacity_Clothing = 6;
@@ -28,15 +28,15 @@ public class ItemRack : MonoBehaviour
         switch(itemType){
             case Item.Type.Food :
                 this.capacity = RackCapacity_Food;
-                this.worldObject = Instantiate(FoodRack);
+                this.worldObject = Instantiate(Prefab_FoodRack);
                 break;
             case Item.Type.Weapon :
                 this.capacity = RackCapacity_Weapons;
-                this.worldObject = Instantiate(WeaponsRack);
+                this.worldObject = Instantiate(Prefab_WeaponsRack);
                 break;
             case Item.Type.Clothing : 
                 this.capacity = RackCapacity_Clothing;
-                this.worldObject = Instantiate(ClothingRack);
+                this.worldObject = Instantiate(Prefab_ClothingRack);
                 break;
             default:
                 Debug.Log("unsupported itemType for ItemRack");
@@ -66,7 +66,7 @@ public class ItemRack : MonoBehaviour
     public void SetItemPosition(GameObject o){
         Utility.ToggleObjectPhysics(o, false);
         int index = items.Count - 1;
-        Transform orientation = Utility.FindDeepChild(worldObject.transform, "ItemPositionIndex" + index);
+        Transform orientation = Utility.FindDeepChild(worldObject.transform, "ItemOrientation" + index);
         o.transform.position = orientation.position;
         o.transform.rotation = orientation.rotation;
     }
