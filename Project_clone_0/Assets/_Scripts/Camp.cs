@@ -3,17 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Camp : MonoBehaviour
+public class Camp : ScriptableObject
 {
-
-
-    public static GameObject CAMP_LAYOUT_PREFAB = Resources.Load<GameObject>("Camp/Camp Layout");
-    public static LayerMask LAYERMASK_TERRAIN = LayerMask.GetMask("Terrain");
 
 
     public static float BASE_CAMP_RADIUS;
     public enum ComponentType{
-        Bonfire, FoodRack, WeaponsRack, ClothingRack, Tent, Anvil
+        Bonfire, Workbench, FoodRack, WeaponsRack, ClothingRack, Tent, Anvil
     }
 
 
@@ -24,6 +20,7 @@ public class Camp : MonoBehaviour
     public GameObject layout;
 
     public Bonfire bonfire;
+    public Workbench workbench;
     public List<ItemRack> foodRacks;
     public List<ItemRack> weaponsRacks;
     public List<ItemRack> clothingRacks;
@@ -49,13 +46,17 @@ public class Camp : MonoBehaviour
         return true;
     }
     public static Camp PlaceCamp(Faction faction, Vector3 position){
-        Camp camp = new Camp();
+        Camp camp = ScriptableObject.CreateInstance<Camp>();
+        faction.camp = camp;
+        camp.faction = faction;
+        camp.foodRacks = new List<ItemRack>();
+        camp.weaponsRacks = new List<ItemRack>();
+        camp.clothingRacks = new List<ItemRack>();
+        camp.tents = new List<Tent>();
         camp.SetOrigin(position);
-        camp.SetRadius(faction.population);
+        camp.SetRadius(faction.members.Count);
         camp.SetCampLayout(position, Quaternion.identity);
         camp.PlaceCampComponents();
-        camp.faction = faction;
-        faction.camp = camp;
         return camp;
     }
 
@@ -70,15 +71,23 @@ public class Camp : MonoBehaviour
     // place and adjust camp layout for component placement
     public void SetCampLayout(Vector3 position, Quaternion rotation){
 
-        layout = Instantiate(CAMP_LAYOUT_PREFAB, position, Quaternion.identity);
+        layout = Instantiate(CampResources.Prefab_CampLayout, position, Quaternion.identity);
         foreach(Transform orientation in layout.transform){
             Debug.Log("AdjustCampLayout(): adjusting orientation: " + orientation.name);
             Vector3 pos = orientation.position;
             RaycastHit hit;
-            if((Physics.Raycast(pos, Vector3.down, out hit, 10f, LAYERMASK_TERRAIN)) || Physics.Raycast(pos, Vector3.up, out hit, 10f, LAYERMASK_TERRAIN)){
+            if(Physics.Raycast(pos, Vector3.down, out hit, 10f, CampResources.LayerMask_Terrain)){
                 orientation.position = hit.point;
-                orientation.rotation = Quaternion.FromToRotation(transform.up, hit.normal);
+                Debug.Log("moving down");
             }
+            else if(Physics.Raycast(pos, Vector3.up, out hit, 10f, CampResources.LayerMask_Terrain)){
+                orientation.position = hit.point;
+                Debug.Log("moving up");
+                
+            }
+            orientation.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+            //orientation.rotation = Quaternion.LookRotation(GetCampComponentOrientation(ComponentType.Bonfire).position - orientation.position, Vector3.up);
+
         }
     }
 
@@ -127,6 +136,9 @@ public class Camp : MonoBehaviour
         // place bonfire
         PlaceBonfire();
 
+        // place workbench
+        PlaceWorkbench();
+
         // place item racks
         PlaceItemRack(Item.Type.Food, foodList);
         PlaceItemRack(Item.Type.Weapon, weaponsList);
@@ -136,7 +148,7 @@ public class Camp : MonoBehaviour
         PlaceAnvil();
 
         // place tents
-        for(int i = 0; i < faction.population / 2; ++i){
+        for(int i = 0; i < faction.members.Count / 2; ++i){
             PlaceTent();
         }
 
@@ -153,6 +165,9 @@ public class Camp : MonoBehaviour
         switch (componentType) {
             case ComponentType.Bonfire :
                 search = "OrientationBonfire";
+                break;
+            case ComponentType.Workbench :
+                search = "OrientationWorkbench";
                 break;
             case ComponentType.FoodRack :
                 search = "OrientationFoodRack" + foodRacks.Count;
@@ -185,7 +200,7 @@ public class Camp : MonoBehaviour
 
 
     public void PlaceBonfire(){
-        Bonfire bonfire = new Bonfire();
+        Bonfire bonfire = ScriptableObject.CreateInstance<Bonfire>();
         bonfire.SetBonfire(this, faction.ownedItems.GetItemCount(Item.Wood) > 1f, 1f, 1f);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Bonfire);
         bonfire.worldObject.transform.position = targetOrientation.position;
@@ -193,8 +208,17 @@ public class Camp : MonoBehaviour
         this.bonfire = bonfire;
     }
 
+    public void PlaceWorkbench(){
+        Workbench workbench = ScriptableObject.CreateInstance<Workbench>();
+        workbench.SetWorkbench(this);
+        Transform targetOrientation = GetCampComponentOrientation(ComponentType.Workbench);
+        workbench.worldObject.transform.position = targetOrientation.position;
+        workbench.worldObject.transform.rotation = targetOrientation.rotation;
+        this.workbench = workbench;
+    }
+
     public void PlaceItemRack(Enum itemType, List<GameObject> objects){
-        ItemRack itemRack = new ItemRack();
+        ItemRack itemRack =  ScriptableObject.CreateInstance<ItemRack>();
         itemRack.SetItemRack(this, itemType, objects);
         Enum componentType;
         switch (itemType) {
@@ -257,7 +281,7 @@ public class Camp : MonoBehaviour
     }
 
     public void PlaceAnvil(){
-        Anvil anvil = new Anvil();
+        Anvil anvil = ScriptableObject.CreateInstance<Anvil>();
         anvil.SetAnvil(this);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Anvil);
         anvil.worldObject.transform.position = targetOrientation.position;
@@ -266,7 +290,7 @@ public class Camp : MonoBehaviour
     }
 
     public void PlaceTent(){
-        Tent tent = new Tent();
+        Tent tent = ScriptableObject.CreateInstance<Tent>();
         tent.SetTent(this);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Tent);
         tent.worldObject.transform.position = targetOrientation.position;

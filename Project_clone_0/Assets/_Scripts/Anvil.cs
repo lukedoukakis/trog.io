@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Anvil : MonoBehaviour
+public class Anvil : ScriptableObject
 {
-    public static GameObject Prefab_Anvil = Resources.Load<GameObject>("Camp/Anvil");
-
-    // --
-
+    
     public Camp camp;
     public GameObject worldObject;
 
@@ -15,7 +12,7 @@ public class Anvil : MonoBehaviour
 
     public void SetAnvil(Camp camp){
         this.camp = camp;
-        this.worldObject = Instantiate(Prefab_Anvil);
+        this.worldObject = Instantiate(CampResources.Prefab_Anvil);
     }
 
 }

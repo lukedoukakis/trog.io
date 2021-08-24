@@ -10,22 +10,16 @@ public class Faction : ScriptableObject
     public bool isPlayerFaction;
     public int id;
     public string factionName;
-    public int population;
+    public List<EntityHandle> members;
     public ItemCollection ownedItems;
     public Camp camp;
-    public List<EntityHandle> members;
-    public List<GameObject> targetedObjects; // items being pursued by members of this factio
+    public List<GameObject> targetedObjects; // items being pursued by members of this faction
 
 
 
-
-    void Init(){
-        members = new List<EntityHandle>();
-    }
     public void AddMember(EntityHandle handle){
         members.Add(handle);
         handle.entityInfo.faction = this;
-        ++population;
     }
 
     public static void AddItemTargeted(GameObject o, Faction fac){
@@ -60,11 +54,10 @@ public class Faction : ScriptableObject
         Faction f = ScriptableObject.CreateInstance<Faction>();
         f.id = UnityEngine.Random.Range(0, int.MaxValue);
         f.factionName = _factionName;
-        f.population = 0;
+        f.members = new List<EntityHandle>();
         f.ownedItems = new ItemCollection();
         f.isPlayerFaction = _isPlayerFaction;
         f.targetedObjects = new List<GameObject>();
-        f.Init();
         return f;
     }
 }

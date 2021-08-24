@@ -3,12 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemRack : MonoBehaviour
+public class ItemRack : ScriptableObject
 {
     
-    public static GameObject Prefab_FoodRack = Resources.Load<GameObject>("Camp/Food Rack");
-    public static GameObject Prefab_WeaponsRack = Resources.Load<GameObject>("Camp/Weapons Rack");
-    public static GameObject Prefab_ClothingRack = Resources.Load<GameObject>("Camp/Clothing Rack");
+    
     public static int RackCapacity_Food = 6;
     public static int RackCapacity_Weapons = 6;
     public static int RackCapacity_Clothing = 6;
@@ -28,15 +26,15 @@ public class ItemRack : MonoBehaviour
         switch(itemType){
             case Item.Type.Food :
                 this.capacity = RackCapacity_Food;
-                this.worldObject = Instantiate(Prefab_FoodRack);
+                this.worldObject = Instantiate(CampResources.Prefab_FoodRack);
                 break;
             case Item.Type.Weapon :
                 this.capacity = RackCapacity_Weapons;
-                this.worldObject = Instantiate(Prefab_WeaponsRack);
+                this.worldObject = Instantiate(CampResources.Prefab_WeaponsRack);
                 break;
             case Item.Type.Clothing : 
                 this.capacity = RackCapacity_Clothing;
-                this.worldObject = Instantiate(Prefab_ClothingRack);
+                this.worldObject = Instantiate(CampResources.Prefab_ClothingRack);
                 break;
             default:
                 Debug.Log("unsupported itemType for ItemRack");

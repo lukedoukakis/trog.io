@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tent : MonoBehaviour
+public class Tent : ScriptableObject
 {
-    public static GameObject Prefab_Tent = Resources.Load<GameObject>("Camp/Tent");
-
-    // --
-
+    
     public Camp camp;
     public GameObject worldObject;
 
@@ -15,7 +12,7 @@ public class Tent : MonoBehaviour
 
     public void SetTent(Camp camp){
         this.camp = camp;
-        this.worldObject = Instantiate(Prefab_Tent);
+        this.worldObject = Instantiate(CampResources.Prefab_Tent);
     }
 
 }

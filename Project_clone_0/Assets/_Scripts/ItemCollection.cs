@@ -5,15 +5,13 @@ using UnityEngine;
 public class ItemCollection
 {
     
-
-
     public Dictionary<Item, int> items;
 
     public ItemCollection(Dictionary<Item, int> _items){
-        items = _items;
+        this.items = _items;
     }
     public ItemCollection(){
-        items = new Dictionary<Item, int>();
+        this.items = new Dictionary<Item, int>();
     }
 
 
