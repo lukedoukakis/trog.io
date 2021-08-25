@@ -195,6 +195,7 @@ public class Camp : ScriptableObject
                 break;
         }
 
+        Debug.Log("GetCampComponentOrientation(): orientation name: " + search);
         return FindOrientationInCampLayout(search);
 
     }
@@ -224,30 +225,33 @@ public class Camp : ScriptableObject
 
     public void PlaceItemRack(Enum itemType, List<GameObject> objects){
         ItemRack itemRack =  ScriptableObject.CreateInstance<ItemRack>();
-        itemRack.SetItemRack(this, itemType, objects);
+        itemRack.SetItemRack(this, itemType);
         Enum componentType;
+        List<ItemRack> rackList;
         switch (itemType) {
             case Item.Type.Food :
                 componentType = ComponentType.FoodRack;
-                this.foodRacks.Add(itemRack);
+                rackList = this.foodRacks;
                 break;
             case Item.Type.Weapon :
                 componentType = ComponentType.WeaponsRack;
-                this.weaponsRacks.Add(itemRack);
+                rackList = this.weaponsRacks;
                 break;
             case Item.Type.Clothing :
                 componentType = ComponentType.ClothingRack;
-                this.clothingRacks.Add(itemRack);
+                rackList = this.clothingRacks;
                 break;
             default :
                 componentType = ComponentType.FoodRack;
-                this.foodRacks.Add(itemRack);
+                rackList = this.foodRacks;
                 Debug.Log("Placing item rack for unsupported item type: " + itemType);
                 break;
         }
         Transform targetOrientation = GetCampComponentOrientation(componentType);
         itemRack.worldObject.transform.position = targetOrientation.position;
         itemRack.worldObject.transform.rotation = targetOrientation.rotation;
+        rackList.Add(itemRack);
+        itemRack.AddItems(objects);
     }
     public void OnRackCapacityReached(Enum itemType, List<GameObject> objectsToAdd){
 

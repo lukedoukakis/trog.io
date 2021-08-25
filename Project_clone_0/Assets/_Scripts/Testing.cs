@@ -19,7 +19,7 @@ public class Testing : MonoBehaviour
 
     void AddItemsToFaction(){
         faction = GameManager.current.localPlayer.GetComponent<EntityInfo>().faction;
-        //faction.ownedItems.AddItem(Item.TestClothing, 5);
+        faction.ownedItems.AddItem(Item.TestClothing, 42);
     }
 
 

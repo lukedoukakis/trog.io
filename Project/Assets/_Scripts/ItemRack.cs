@@ -20,7 +20,7 @@ public class ItemRack : ScriptableObject
     public GameObject worldObject;
 
 
-    public void SetItemRack(Camp camp, Enum itemType, List<GameObject> objects){
+    public void SetItemRack(Camp camp, Enum itemType){
         this.camp = camp;
         this.itemType = itemType;
         switch(itemType){
@@ -40,19 +40,19 @@ public class ItemRack : ScriptableObject
                 Debug.Log("unsupported itemType for ItemRack");
                 break;
         }
-
         items = new List<GameObject>();
-        AddItems(objects);
     }
 
     public void AddItems(List<GameObject> objectsToAdd){
-        foreach(GameObject o in objectsToAdd){
-            
+
+        foreach(GameObject o in objectsToAdd.ToArray()){
+
             bool fit = items.Count < capacity;
             if(fit){
+                //Debug.Log("AddItems(): Adding item: " + o.name);
                 items.Add(o);
                 objectsToAdd.Remove(o);
-                SetItemPosition(o);
+                SetItemOrientation(o);
             }
             else{
                 camp.OnRackCapacityReached(this.itemType, objectsToAdd);
@@ -61,9 +61,11 @@ public class ItemRack : ScriptableObject
         }
     }
 
-    public void SetItemPosition(GameObject o){
+    public void SetItemOrientation(GameObject o){
         Utility.ToggleObjectPhysics(o, false);
         int index = items.Count - 1;
+        string orientationName = "ItemOrientation" + index;
+        Debug.Log("SetItemOrientation(): orientation name: " + orientationName);
         Transform orientation = Utility.FindDeepChild(worldObject.transform, "ItemOrientation" + index);
         o.transform.position = orientation.position;
         o.transform.rotation = orientation.rotation;
