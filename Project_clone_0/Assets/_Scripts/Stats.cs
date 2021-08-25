@@ -6,10 +6,10 @@ using UnityEngine;
 public class Stats : ScriptableObject
 {
     public enum StatType{
-        Health, Attack, Speed, Swim, Agility, ArmorBase, ArmorBlunt, armorSlash, armorPierce
+        Health, Attack, AttackSpeed, Speed, Swim, Agility, ArmorBase, ArmorBlunt, armorSlash, armorPierce
     }
 
-    public float health, attack, speed, swim, agility, armorBase, armorBlunt, armorSlash, armorPierce;
+    public float health, attack, attackSpeed, speed, swim, agility, armorBase, armorBlunt, armorSlash, armorPierce;
 }
 
 public class StatsHandler : MonoBehaviour{
@@ -19,6 +19,7 @@ public class StatsHandler : MonoBehaviour{
     // ----
     // definitions
     public static Stats BASE_HUMAN = InitializeStats(
+        .5f,
         .5f,
         .5f,
         .5f,
@@ -41,6 +42,8 @@ public class StatsHandler : MonoBehaviour{
                 return stats.health;
             case Stats.StatType.Attack:
                 return stats.attack;
+            case Stats.StatType.AttackSpeed:
+                return stats.attackSpeed;
             case Stats.StatType.Speed:
                 return stats.speed;
             case Stats.StatType.Swim:
@@ -66,6 +69,8 @@ public class StatsHandler : MonoBehaviour{
                 return "Health";
             case Stats.StatType.Attack:
                 return "Attack";
+            case Stats.StatType.AttackSpeed:
+                return "Attack Speed";
             case Stats.StatType.Speed:
                 return "Speed";
             case Stats.StatType.Swim:
@@ -93,6 +98,9 @@ public class StatsHandler : MonoBehaviour{
                 break;
             case Stats.StatType.Attack:
                 stats.attack = value;
+                break;
+            case Stats.StatType.AttackSpeed:
+                stats.attackSpeed = value;
                 break;
             case Stats.StatType.Speed:
                 stats.speed = value;
@@ -123,10 +131,11 @@ public class StatsHandler : MonoBehaviour{
 
     }
 
-    public static Stats InitializeStats(float health, float attack, float speed, float swim, float agility, float armorBase, float armorBlunt, float armorSlash, float armorPierce){
+    public static Stats InitializeStats(float health, float attack, float attackSpeed, float speed, float swim, float agility, float armorBase, float armorBlunt, float armorSlash, float armorPierce){
         Stats stats = ScriptableObject.CreateInstance<Stats>();
         stats.health = health;
         stats.attack = attack;
+        stats.attackSpeed = attackSpeed;
         stats.speed = speed;
         stats.swim = swim;
         stats.agility = agility;
