@@ -1,89 +1,72 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EntityStats : EntityComponent
 {
 
-    Dictionary<string, float> stats_base;
-    Dictionary<string, float> stats_modifiers;
-    Dictionary<string, float> stats_current;
 
-
-
-    public static float modifierRange = .15f;
+    public List<Stats> statsModifiers;
+    public Stats statsCombined;
 
 
     protected override void Awake(){
 
         base.Awake();
 
-        Init();
+        statsModifiers = new List<Stats>();
+        statsCombined = ScriptableObject.CreateInstance<Stats>();
+        AddStatsModifier(StatsHandler.GetEntityBaseStats(entityInfo.species));
+        UpdateCombinedStats();
+
+
     }
 
 
-    public void Init(){
-
-        bool CREATENEW = true;
-        // TODO: createNew if doesnt exist in memory
-
-
-        stats_base = new Dictionary<string, float>(EntityStatsDefs.current.GetStats(entityInfo.species));
-
-        if(CREATENEW){
-            stats_modifiers = CreateModifiers(stats_base);
+    public void AddStatsModifier(Stats stats){
+        statsModifiers.Add(stats);
+        Debug.Log("Added stats modifier");
+    }
+    public void RemoveStatsModifier(Stats stats){
+        bool removed = statsModifiers.Remove(stats);
+        if(!removed){
+            Debug.Log("Error: couldn't find specified stats modifier to remove from stats modifiers");
         }
-        else{
-            //stats_modifiers = SavesManager.GetStatsModifiers(info.ID);
-            // init from memory
-        }
-        
     }
 
-    public Dictionary<string, float> GetStats(){
-        return stats_base;
+    void UpdateCombinedStats(Enum statType){
+        float calc = 1f;
+        foreach(Stats stats in statsModifiers){
+            calc *= StatsHandler.GetStatValue(stats, statType);
+        }
+        StatsHandler.SetStatValue(statsCombined, statType, calc);
     }
 
-    public float GetStat(string stat){
-        float value;
-        //Debug.Log(stats_base == null);
-        if(stats_base.TryGetValue(stat, out value))
-        {
-            return value;
-        }
-        else{
-            Debug.Log("ObjectStats: no dictionary entry for stat: " + stat);
-            return -1;
-        }
 
+    void UpdateCombinedStats(){
+        foreach(int i in Enum.GetValues(typeof(Stats.StatType))){
+            UpdateCombinedStats((Stats.StatType)i);
+        }
     }
 
-    public Dictionary<string, float> CreateModifiers(Dictionary<string, float> bas){
-        Dictionary<string, float> mod = new Dictionary<string, float>();
-        foreach(KeyValuePair<string, float> kvp in bas){
-            mod.Add(kvp.Key, Random.Range(1f - modifierRange, 1f + modifierRange));
-        }
-        return mod;
-    }
 
-    public string CreateStatsList(){
+
+    public string CreateStatsList()
+    {
         string list = "";
         string _name = entityInfo.nickname;
         string _type = entityInfo.species;
-        if(_name != ""){ list += _name + " (" + _type + ")"; }
-        else{ list += _type; }
+        if (_name != "") { list += _name + " (" + _type + ")"; }
+        else { list += _type; }
         list += "\n";
-        if(stats_base != null){
-            foreach(KeyValuePair<string, float> kvp in stats_base){
-                if(kvp.Value != -1){
-                    list += kvp.Key + ": " + kvp.Value + "\n";
-                }
-            }
+
+        foreach (int i in Enum.GetValues(typeof(Stats.StatType)))
+        {
+            Enum statType = (Stats.StatType)i;
+            list += StatsHandler.GetStatName(statsCombined, statType) + ": " + StatsHandler.GetStatValue(statsCombined, statType);
         }
-        else{
-            Debug.Log("ObjectStats: can't create stats list, stats is null");
-            list = "STATS IS NULL";
-        }
+        
         return list;
     }
 

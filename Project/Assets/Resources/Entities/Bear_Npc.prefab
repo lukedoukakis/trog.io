@@ -115,8 +115,8 @@ MonoBehaviour:
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   id: 0
-  species: bear
-  nickname: bear
+  species: Bear
+  nickname: Barry
   faction: {fileID: 0}
 --- !u!114 &7223609859536449621
 MonoBehaviour:
@@ -142,6 +142,8 @@ MonoBehaviour:
   entityItems: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
+  statsModifiers: []
+  statsCombined: {fileID: 0}
 --- !u!114 &7223609859536449620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,6 +202,10 @@ MonoBehaviour:
   headT: {fileID: 0}
   animator: {fileID: 0}
   bodyRotationMode: 0
+  bodyLean: 0
+  angularVelocityY: 0
+  bodySkew: 0
+  slowness: 0
   keysList: []
 --- !u!114 &7223609859536449626
 MonoBehaviour:
@@ -226,21 +232,33 @@ MonoBehaviour:
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   hitbox: {fileID: 0}
+  obstacleHitbox: {fileID: 0}
   highFrictionMat: {fileID: 0}
   noFrictionMat: {fileID: 0}
   layerMask_water:
     serializedVersion: 2
     m_Bits: 0
-  layerMask_noWater:
+  layerMask_walkable:
     serializedVersion: 2
     m_Bits: 0
   rb: {fileID: 0}
   gyro: {fileID: 0}
-  rightHand: {fileID: 0}
+  bodyPartTs: []
+  bodyPartTs_legs: []
+  bodyPartTs_upperBody: []
+  hips: {fileID: 0}
+  head: {fileID: 0}
+  handRight: {fileID: 0}
+  handLeft: {fileID: 0}
+  footRight: {fileID: 0}
+  footLeft: {fileID: 0}
+  toeRight: {fileID: 0}
+  toeLeft: {fileID: 0}
   groundSense: {fileID: 0}
   wallSense: {fileID: 0}
   waterSense: {fileID: 0}
   obstacleHeightSense: {fileID: 0}
+  kneeHeightT: {fileID: 0}
   moveDir: {x: 0, y: 0, z: 0}
   jumping: 0
   jumpOpposite: 0
@@ -256,11 +274,42 @@ MonoBehaviour:
   maxSpeed_climb: 0
   maxSpeed_swim: 0
   landScrunch: 0
+  handFree_right: 0
+  handFree_left: 0
   ROTATION_Y_THIS: 0
   ROTATION_Y_LAST: 0
   GROUNDTOUCH: 0
   WALLTOUCH: 0
   IN_WATER: 0
+  ikEnabled: 0
+  ikScript_hips: {fileID: 0}
+  ikScript_footLeft: {fileID: 0}
+  ikScript_footRight: {fileID: 0}
+  ikScript_toeRight: {fileID: 0}
+  ikScript_toeLeft: {fileID: 0}
+  ikScript_handRight: {fileID: 0}
+  ikScript_handLeft: {fileID: 0}
+  ikScripts: []
+  ikScripts_legs: []
+  ikScripts_upperBody: []
+  ikParent: {fileID: 0}
+  basePositionHips: {fileID: 0}
+  basePositionFootRight: {fileID: 0}
+  basePositionFootLeft: {fileID: 0}
+  basePositionHandRight: {fileID: 0}
+  basePositionHandLeft: {fileID: 0}
+  targetHips: {fileID: 0}
+  targetFootRight: {fileID: 0}
+  targetFootLeft: {fileID: 0}
+  targetToeRight: {fileID: 0}
+  targetToeLeft: {fileID: 0}
+  targetHandRight: {fileID: 0}
+  targetHandLeft: {fileID: 0}
+  plantPosFootLeft: {x: 0, y: 0, z: 0}
+  plantPosFootRight: {x: 0, y: 0, z: 0}
+  updateTime_footRight: 0
+  updateTime_footLeft: 0
+  updateTime_hips: 0
 --- !u!114 &7223609859536449625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,13 +360,21 @@ MonoBehaviour:
   entityItems: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
-  t_hand_left: {fileID: 0}
-  t_upperArm_left: {fileID: 0}
-  t_shoulder_left: {fileID: 0}
-  t_back: {fileID: 0}
-  t_left_current: {fileID: 0}
-  itemT: {fileID: 0}
-  t_hand_right: {fileID: 0}
+  holding_item: {fileID: 0}
+  holding_object: {fileID: 0}
+  weaponEquipped_item: {fileID: 0}
+  weaponUnequipped_item: {fileID: 0}
+  weaponEquipped_object: {fileID: 0}
+  weaponUnequipped_object: {fileID: 0}
+  orientationParent: {fileID: 0}
+  orientation_weaponEquipped_spear: {fileID: 0}
+  orientation_weaponEquipped_axe: {fileID: 0}
+  orientation_weaponUnequipped: {fileID: 0}
+  anchor_weaponEquipped_spear: {fileID: 0}
+  anchor_weaponEquipped_axe: {fileID: 0}
+  basePosition_anchor_weaponEquipped_spear: {fileID: 0}
+  basePosition_anchor_weaponEquipped_axe: {fileID: 0}
+  itemOrientationAnimator: {fileID: 0}
 --- !u!114 &4761202945426959485
 MonoBehaviour:
   m_ObjectHideFlags: 0

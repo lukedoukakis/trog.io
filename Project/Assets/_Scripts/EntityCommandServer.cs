@@ -17,7 +17,7 @@ public class EntityCommandServer : EntityComponent
     {
         base.Awake();
         npcPrefab = Resources.Load<GameObject>("Entities/NpcIK");
-        Debug.Log("npcPrefab: " + npcPrefab.name);
+        //Debug.Log("npcPrefab: " + npcPrefab.name);
     }
 
     public IEnumerator SpawnNpcWhenReady(GameObject owningPlayer){

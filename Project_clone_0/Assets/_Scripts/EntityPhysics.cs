@@ -137,8 +137,8 @@ public class EntityPhysics : EntityComponent
     }
 
     void Start(){
-        acceleration = entityStats.GetStat("speed") * AccelerationScale;
-        maxSpeed_run = entityStats.GetStat("speed") * MaxSpeedScale;
+        acceleration = StatsHandler.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * AccelerationScale;
+        maxSpeed_run = StatsHandler.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * MaxSpeedScale;
         maxSpeed_sprint = maxSpeed_run * 1.5f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * .75f;
@@ -389,7 +389,7 @@ public class EntityPhysics : EntityComponent
 
 
     public void Move(Vector3 direction, float speed){
-        float speedStat = speed * entityStats.GetStat("speed");
+        float speedStat = speed * StatsHandler.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed);
         sprinting = entityBehavior.urgent || (isLocalPlayer && entityUserInputMovement.pressSprint);
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
         rb.AddForce(move * speedStat, ForceMode.Force);
