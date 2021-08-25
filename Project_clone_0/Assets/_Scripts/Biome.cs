@@ -85,8 +85,16 @@ public class Biome : MonoBehaviour
     }
 
 
-    public static int GetBiome(float temp, float humid)
+    public static int GetBiome(float temp, float humid, float mtn)
     {
+        // if(mtn >= .75f){
+        //     if(humid >= .5f){
+        //         return (int)BiomeType.SnowyTaiga;
+        //     }
+        //     else{
+        //         return (int)BiomeType.Tundra;
+        //     }
+        // }
 
         int temperature = (int)((temp * 10f) + 0.5f);
         int humidity = (int)((humid * 10f) + 0.5f);

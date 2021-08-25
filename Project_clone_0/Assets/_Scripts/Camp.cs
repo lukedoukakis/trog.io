@@ -75,18 +75,23 @@ public class Camp : ScriptableObject
         foreach(Transform orientation in layout.transform){
             Debug.Log("AdjustCampLayout(): adjusting orientation: " + orientation.name);
             Vector3 pos = orientation.position;
+            pos.y = ChunkGenerator.ElevationAmplitude;
             RaycastHit hit;
-            if(Physics.Raycast(pos, Vector3.down, out hit, 10f, CampResources.LayerMask_Terrain)){
+            if(Physics.Raycast(pos, Vector3.down, out hit, ChunkGenerator.ElevationAmplitude, CampResources.LayerMask_Terrain)){
                 orientation.position = hit.point;
-                Debug.Log("moving down");
             }
-            else if(Physics.Raycast(pos, Vector3.up, out hit, 10f, CampResources.LayerMask_Terrain)){
-                orientation.position = hit.point;
-                Debug.Log("moving up");
-                
+            else{
+                orientation.position = Vector3.one * float.MaxValue;
             }
-            orientation.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
             //orientation.rotation = Quaternion.LookRotation(GetCampComponentOrientation(ComponentType.Bonfire).position - orientation.position, Vector3.up);
+            Vector3 toCenterEulers = Quaternion.LookRotation(GetCampComponentOrientation(ComponentType.Bonfire).position - orientation.position, Vector3.up).eulerAngles;
+            Vector3 normalEulers = Quaternion.FromToRotation(Vector3.up, hit.normal).eulerAngles;
+            Vector3 orientationEulers = orientation.rotation.eulerAngles;
+            //orientationEulers.z = normalEulers.z;
+            orientationEulers.x = normalEulers.x;
+            orientationEulers.y = toCenterEulers.y;
+            orientation.rotation = Quaternion.Euler(orientationEulers);
+
 
         }
     }

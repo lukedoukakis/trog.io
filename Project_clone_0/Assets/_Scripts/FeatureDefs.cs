@@ -46,7 +46,7 @@ public class TreeInfo : MonoBehaviour
             case "Fir Tree":
                 scale = 1.5f * ChunkGenerator.current.treeScale;
                 density = 1f;
-                normal_min = .25f;
+                normal_min = .7f;
                 normal_max = 1f;
                 slant = .12f;
                 spread = 2f;
@@ -55,7 +55,7 @@ public class TreeInfo : MonoBehaviour
             case "Snowy Fir Tree":
                 scale = 1.5f * ChunkGenerator.current.treeScale;
                 density = 1f;
-                normal_min = .6f;
+                normal_min = .7f;
                 normal_max = 1f;
                 slant = .12f;
                 spread = 2f;
@@ -78,7 +78,7 @@ public class TreeInfo : MonoBehaviour
             case "Oak Tree":
                 scale = 3f * ChunkGenerator.current.treeScale;
                 density = 1f;
-                normal_min = .25f;
+                normal_min = .7f;
                 normal_max = 1f;
                 slant = .12f;
                 spread = 2f;
@@ -131,7 +131,7 @@ public class TreeInfo : MonoBehaviour
                 break;
             case string str when name.StartsWith("Dead Bush"):
                 scale = 2f;
-                density = .02f;
+                density = .3f;
                 normal_min = .6f;
                 normal_max = 1f;
                 slant = .8f;
@@ -141,7 +141,7 @@ public class TreeInfo : MonoBehaviour
             case string str when name.StartsWith("Cactus"):
                 scale = 1f;
                 density = .1f;
-                normal_min = .98f;
+                normal_min = .85f;
                 normal_max = 1f;
                 slant = .18f;
                 spread = 5f;
