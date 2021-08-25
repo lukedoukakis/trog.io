@@ -247,7 +247,7 @@ Rigidbody:
   m_GameObject: {fileID: 442845706075700885}
   serializedVersion: 2
   m_Mass: 50
-  m_Drag: 0
+  m_Drag: 5
   m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -272,18 +272,18 @@ CharacterJoint:
     spring: 0
     damper: 0
   m_LowTwistLimit:
-    limit: -20
+    limit: 35.01971
     bounciness: 0
     contactDistance: 0
   m_HighTwistLimit:
-    limit: 150.43806
+    limit: 72.5054
     bounciness: 0
     contactDistance: 0
   m_SwingLimitSpring:
     spring: 0
     damper: 0
   m_Swing1Limit:
-    limit: 62.869186
+    limit: 43.90044
     bounciness: 0
     contactDistance: 0
   m_Swing2Limit:
@@ -565,7 +565,7 @@ Rigidbody:
   m_GameObject: {fileID: 1675704912960651531}
   serializedVersion: 2
   m_Mass: 50
-  m_Drag: 0
+  m_Drag: 5
   m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -590,18 +590,18 @@ CharacterJoint:
     spring: 0
     damper: 0
   m_LowTwistLimit:
-    limit: -20
+    limit: 35.01971
     bounciness: 0
     contactDistance: 0
   m_HighTwistLimit:
-    limit: 150.43806
+    limit: 72.5054
     bounciness: 0
     contactDistance: 0
   m_SwingLimitSpring:
     spring: 0
     damper: 0
   m_Swing1Limit:
-    limit: 62.869186
+    limit: 43.90044
     bounciness: 0
     contactDistance: 0
   m_Swing2Limit:

@@ -62,13 +62,17 @@ public class ItemRack : ScriptableObject
     }
 
     public void SetItemOrientation(GameObject o){
-        Utility.ToggleObjectPhysics(o, false);
         int index = items.Count - 1;
         string orientationName = "ItemOrientation" + index;
         Debug.Log("SetItemOrientation(): orientation name: " + orientationName);
         Transform orientation = Utility.FindDeepChild(worldObject.transform, "ItemOrientation" + index);
         o.transform.position = orientation.position;
         o.transform.rotation = orientation.rotation;
+
+        //Utility.ToggleObjectPhysics(o, false);
+        SpringJoint joint = o.AddComponent<SpringJoint>();
+        joint.spring = 1000f;
+        joint.damper = .2f;
     }
 
 }
