@@ -15,4 +15,9 @@ public class Tent : ScriptableObject
         this.worldObject = Instantiate(CampResources.Prefab_Tent);
     }
 
+    public void DeleteSelf(){
+        GameObject.Destroy(worldObject);
+        ScriptableObject.Destroy(this);
+    }
+
 }

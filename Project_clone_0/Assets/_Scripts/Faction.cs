@@ -26,13 +26,12 @@ public class Faction : ScriptableObject
         fac.targetedObjects.Add(o);
     }
 
-    public static void AddItemOwned(Faction fac, GameObject o, int count){
-        fac.ownedItems.AddItem(Item.GetItemByName(o.name), count);
+    public static void AddItemOwned(Faction fac, Item item, int count){
+        fac.ownedItems.AddItem(item, count);
+        ItemCollection newItems = new ItemCollection();
+        newItems.AddItem(item, count);
+        fac.camp.UpdateCampComponents(newItems);
     }
-    public static void AddItemOwned(Faction fac, string itemName, int count){
-        fac.ownedItems.AddItem(Item.GetItemByName(itemName), count);
-    }
-
 
     public static void RemoveItemTargeted(GameObject o, Faction fac){
         fac.targetedObjects.Remove(o);
@@ -55,6 +54,10 @@ public class Faction : ScriptableObject
 
     public static bool ItemIsTargetedByFaction(GameObject o, Faction fac){
         return fac.targetedObjects.Contains(o);
+    }
+
+    public static void OnPopulationChange(Faction fac){
+        fac.camp.UpdateTentCount();
     }
 
 

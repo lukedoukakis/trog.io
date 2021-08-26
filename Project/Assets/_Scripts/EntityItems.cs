@@ -146,7 +146,7 @@ public class EntityItems : EntityComponent
 
         // if a clothing is currently equipped, unequip it and add associated item to faction items
         if(clothingEquippedName != null){
-            Faction.AddItemOwned(entityInfo.faction, clothingEquippedName, 1);
+            Faction.AddItemOwned(entityInfo.faction, Item.GetItemByName(clothingEquippedName), 1);
             meshParentT.Find(clothingEquippedName).gameObject.SetActive(false);
         }
     }

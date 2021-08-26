@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemRack : ScriptableObject
+public class ObjectRack : ScriptableObject
 {
     
     
@@ -16,11 +16,11 @@ public class ItemRack : ScriptableObject
     public Camp camp;
     public Enum itemType;
     public int capacity;
-    public List<GameObject> items;
+    public List<GameObject> objects;
     public GameObject worldObject;
 
 
-    public void SetItemRack(Camp camp, Enum itemType){
+    public void SetObjectRack(Camp camp, Enum itemType){
         this.camp = camp;
         this.itemType = itemType;
         switch(itemType){
@@ -40,19 +40,18 @@ public class ItemRack : ScriptableObject
                 Debug.Log("unsupported itemType for ItemRack");
                 break;
         }
-        items = new List<GameObject>();
+        objects = new List<GameObject>();
     }
 
-    public void AddItems(List<GameObject> objectsToAdd){
+    public void AddObjects(List<GameObject> objectsToAdd){
 
         foreach(GameObject o in objectsToAdd.ToArray()){
 
-            bool fit = items.Count < capacity;
-            if(fit){
+            if(!IsFull()){
                 //Debug.Log("AddItems(): Adding item: " + o.name);
-                items.Add(o);
+                objects.Add(o);
                 objectsToAdd.Remove(o);
-                SetItemOrientation(o);
+                SetObjectOrientation(o);
             }
             else{
                 camp.OnRackCapacityReached(this.itemType, objectsToAdd);
@@ -61,8 +60,9 @@ public class ItemRack : ScriptableObject
         }
     }
 
-    public void SetItemOrientation(GameObject o){
-        int index = items.Count - 1;
+    // set a given object's orientation to fit properly in the rack
+    public void SetObjectOrientation(GameObject o){
+        int index = objects.Count - 1;
         string orientationName = "ItemOrientation" + index;
         Debug.Log("SetItemOrientation(): orientation name: " + orientationName);
         Transform orientation = Utility.FindDeepChild(worldObject.transform, "ItemOrientation" + index);
@@ -73,6 +73,11 @@ public class ItemRack : ScriptableObject
         SpringJoint joint = o.AddComponent<SpringJoint>();
         joint.spring = 1000f;
         joint.damper = .2f;
+    }
+
+
+    public bool IsFull(){
+        return objects.Count >= capacity;
     }
 
 }

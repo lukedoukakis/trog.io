@@ -21,9 +21,9 @@ public class Camp : ScriptableObject
 
     public Bonfire bonfire;
     public Workbench workbench;
-    public List<ItemRack> foodRacks;
-    public List<ItemRack> weaponsRacks;
-    public List<ItemRack> clothingRacks;
+    public List<ObjectRack> foodRacks;
+    public List<ObjectRack> weaponsRacks;
+    public List<ObjectRack> clothingRacks;
     public List<Tent> tents;
     public Anvil anvil;
 
@@ -49,15 +49,71 @@ public class Camp : ScriptableObject
         Camp camp = ScriptableObject.CreateInstance<Camp>();
         faction.camp = camp;
         camp.faction = faction;
-        camp.foodRacks = new List<ItemRack>();
-        camp.weaponsRacks = new List<ItemRack>();
-        camp.clothingRacks = new List<ItemRack>();
+        camp.foodRacks = new List<ObjectRack>();
+        camp.weaponsRacks = new List<ObjectRack>();
+        camp.clothingRacks = new List<ObjectRack>();
         camp.tents = new List<Tent>();
         camp.SetOrigin(position);
         camp.SetRadius(faction.members.Count);
         camp.SetCampLayout(position, Quaternion.identity);
-        camp.PlaceCampComponents();
+        camp.PlaceBonfire();
+        camp.PlaceWorkbench();
+        camp.PlaceAnvil();
+        camp.UpdateTentCount();
+        camp.UpdateCampComponents(faction.ownedItems);
         return camp;
+    }
+
+    // update camp components with new items
+    public void UpdateCampComponents(ItemCollection newItems){
+
+        // create lists from new items to add to racks
+        List<GameObject> foodList = new List<GameObject>();
+        List<GameObject> weaponsList = new List<GameObject>();
+        List<GameObject> clothingList = new List<GameObject>();
+        List<GameObject> miscLargeList = new List<GameObject>();
+        List<GameObject> miscSmallList = new List<GameObject>();
+
+        // create lists from item collection
+        Enum itemType;
+        int itemCount;
+        foreach(Item item in newItems.items.Keys){
+            itemType = item.type;
+            itemCount = newItems.GetItemCount(item);
+            List<GameObject> list;
+            switch (itemType) {
+                case Item.Type.Food :
+                    list = foodList;
+                    break;
+                case Item.Type.Weapon :
+                    list = weaponsList;
+                    break;
+                case Item.Type.Clothing :
+                    list = clothingList;
+                    break;
+                case Item.Type.MiscLarge :
+                    list = miscLargeList;
+                    break;
+                case Item.Type.MiscSmall :
+                    list = miscSmallList;
+                    break;
+                default:
+                    Debug.Log("unsupported item type: " + itemType);
+                    list = foodList;
+                    break;
+            }
+
+            for(int i = 0; i < itemCount; ++i){
+                list.Add(Instantiate(item.gameobject));
+            }
+        }
+
+        // place object racks with contents from lists
+        AddObjectsAnyRack(Item.Type.Food, foodList);
+        AddObjectsAnyRack(Item.Type.Weapon, weaponsList);
+        AddObjectsAnyRack(Item.Type.Clothing, clothingList);
+        // todo: misclarge and miscsmall items
+
     }
 
     public void SetOrigin(Vector3 position){
@@ -94,72 +150,6 @@ public class Camp : ScriptableObject
 
 
         }
-    }
-
-    // place all relevant components (racks, tents, etc) based on faction items
-    public void PlaceCampComponents(){
-
-        ItemCollection factionItems = faction.ownedItems;
-
-        // create lists for component placement for those that are based on faction's items
-        List<GameObject> foodList = new List<GameObject>();
-        List<GameObject> weaponsList = new List<GameObject>();
-        List<GameObject> clothingList = new List<GameObject>();
-        List<GameObject> miscLargeList = new List<GameObject>();
-        List<GameObject> miscSmallList = new List<GameObject>();
-        foreach(Item item in factionItems.items.Keys){
-            Enum type = item.type;
-            int itemCount = factionItems.GetItemCount(item);
-            List<GameObject> list;
-        
-            if(type.Equals(Item.Type.Food)){
-                list = foodList;
-            }
-            else if(type.Equals(Item.Type.Weapon)){
-                list = weaponsList;
-            }
-            else if(type.Equals(Item.Type.Clothing)){
-                list = clothingList;
-            }
-            else if(type.Equals(Item.Type.MiscLarge)){
-                list = miscLargeList;
-            }
-            else if(type.Equals(Item.Type.MiscSmall)){
-                list = miscSmallList;
-            }
-            else{
-                list = miscLargeList;
-                Debug.Log("Unrecognized item type");
-            }
-
-            for(int i = 0; i < itemCount; ++i){
-                list.Add(Instantiate(item.gameobject));
-            }
-
-        }
-
-        // place bonfire
-        PlaceBonfire();
-
-        // place workbench
-        PlaceWorkbench();
-
-        // place item racks
-        PlaceItemRack(Item.Type.Food, foodList);
-        PlaceItemRack(Item.Type.Weapon, weaponsList);
-        PlaceItemRack(Item.Type.Clothing, clothingList);
-
-        // place anvil
-        PlaceAnvil();
-
-        // place tents
-        for(int i = 0; i < faction.members.Count / 2; ++i){
-            PlaceTent();
-        }
-
-        // TODO: place items from miscLarge and miscSmall lists
-
-
     }
 
 
@@ -223,70 +213,34 @@ public class Camp : ScriptableObject
         this.workbench = workbench;
     }
 
-    public void PlaceItemRack(Enum itemType, List<GameObject> objects){
-        ItemRack itemRack =  ScriptableObject.CreateInstance<ItemRack>();
-        itemRack.SetItemRack(this, itemType);
+    public void PlaceObjectRack(Enum itemType, List<GameObject> objects){
+        ObjectRack objectRack =  ScriptableObject.CreateInstance<ObjectRack>();
+        objectRack.SetObjectRack(this, itemType);
+        List<ObjectRack> rackList = GetRackListForItemType(itemType);
         Enum componentType;
-        List<ItemRack> rackList;
         switch (itemType) {
             case Item.Type.Food :
                 componentType = ComponentType.FoodRack;
-                rackList = this.foodRacks;
                 break;
             case Item.Type.Weapon :
                 componentType = ComponentType.WeaponsRack;
-                rackList = this.weaponsRacks;
                 break;
             case Item.Type.Clothing :
                 componentType = ComponentType.ClothingRack;
-                rackList = this.clothingRacks;
                 break;
             default :
                 componentType = ComponentType.FoodRack;
-                rackList = this.foodRacks;
                 Debug.Log("Placing item rack for unsupported item type: " + itemType);
                 break;
         }
         Transform targetOrientation = GetCampComponentOrientation(componentType);
-        itemRack.worldObject.transform.position = targetOrientation.position;
-        itemRack.worldObject.transform.rotation = targetOrientation.rotation;
-        rackList.Add(itemRack);
-        itemRack.AddItems(objects);
+        objectRack.worldObject.transform.position = targetOrientation.position;
+        objectRack.worldObject.transform.rotation = targetOrientation.rotation;
+        rackList.Add(objectRack);
+        objectRack.AddObjects(objects);
     }
     public void OnRackCapacityReached(Enum itemType, List<GameObject> objectsToAdd){
-
-        // search existing racks for spots
-        List<ItemRack> rackList;
-        if (itemType.Equals(Item.Type.Food))
-        {
-            rackList = this.foodRacks;
-        }
-        else if (itemType.Equals(Item.Type.Weapon))
-        {
-            rackList = this.weaponsRacks;
-        }
-        else if (itemType.Equals(Item.Type.Clothing))
-        {
-            rackList = this.clothingRacks;
-        }
-        else{
-            Debug.Log("Unrecognized item type");
-            rackList = this.foodRacks;
-        }
-
-        // iterate through racks and add objects to first one with available slots (potentially recursive)
-        foreach(ItemRack rack in rackList){
-            if(rack.items.Count < rack.capacity){
-                rack.AddItems(objectsToAdd);
-                break;
-            }
-        }
-
-        // if there are still objects to add, place new rack
-        if(objectsToAdd.Count > 0){
-            PlaceItemRack(itemType, objectsToAdd);
-        }
-        
+        AddObjectsAnyRack(itemType, objectsToAdd);
     }
 
     public void PlaceAnvil(){
@@ -298,6 +252,22 @@ public class Camp : ScriptableObject
         this.anvil = anvil;
     }
 
+    public void UpdateTentCount(){
+        int properTentCount = faction.members.Count / 2;
+        int currentTentCount = tents.Count;
+        int tentDeficit = properTentCount - currentTentCount;
+
+        if(tentDeficit > 0){
+            for(int i = 0; i < tentDeficit; ++i){
+                PlaceTent();
+            }
+        }
+        else if(tentDeficit < 0){
+            for(int i = 0; i < tentDeficit * -1; ++i){
+                RemoveTent();
+            }
+        }
+    }
     public void PlaceTent(){
         Tent tent = ScriptableObject.CreateInstance<Tent>();
         tent.SetTent(this);
@@ -306,9 +276,55 @@ public class Camp : ScriptableObject
         tent.worldObject.transform.rotation = targetOrientation.rotation;
         this.tents.Add(tent);
     }
+    public void RemoveTent(){
+        Tent tent = tents[tents.Count - 1];
+        tents.Remove(tent);
+        tent.DeleteSelf();
+    }
 
 
+    public void AddObjectsAnyRack(Enum itemType, List<GameObject> objectsToAdd){
+        List<ObjectRack> rackList = GetRackListForItemType(itemType);
+        foreach(ObjectRack rack in rackList){
+            if(!rack.IsFull()){
+                rack.AddObjects(objectsToAdd);
+                break;
+            }
+        }
 
+        // if still objects to add, place a new rack
+        if(objectsToAdd.Count > 0){
+            PlaceObjectRack(itemType, objectsToAdd);
+        }
+    }
+
+    
+    public List<ObjectRack> GetRackListForItemType(Enum itemType){
+        List<ObjectRack> rackList;
+        rackList = foodRacks;
+        switch(itemType){
+            case Item.Type.Food :
+                rackList = foodRacks;
+                break;
+            case Item.Type.Weapon :
+                rackList = weaponsRacks;
+                break;
+            case Item.Type.Clothing :
+                rackList = clothingRacks;
+                break;
+            case Item.Type.MiscLarge :
+                // todo
+                break;
+            case Item.Type.MiscSmall :
+                // todo
+                break;
+            default:
+                Debug.Log("Unrecognized item type");
+                break;
+        }
+
+        return rackList;
+    }
 
 
 }
