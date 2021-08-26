@@ -26,7 +26,7 @@ public class EntityStats : EntityComponent
 
     public void AddStatsModifier(Stats stats){
         statsModifiers.Add(stats);
-        Debug.Log("Added stats modifier");
+        //Debug.Log("Added stats modifier");
     }
     public void RemoveStatsModifier(Stats stats){
         bool removed = statsModifiers.Remove(stats);

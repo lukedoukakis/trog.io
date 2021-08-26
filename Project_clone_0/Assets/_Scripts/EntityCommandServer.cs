@@ -30,7 +30,7 @@ public class EntityCommandServer : EntityComponent
 
     [Command]
     public void SpawnNpc(GameObject owningPlayer){
-        Debug.Log("SPAWNING");
+        //Debug.Log("SPAWNING");
         GameObject npc = GameObject.Instantiate(npcPrefab, owningPlayer.transform.position, Quaternion.identity);
         EntityHandle playerHandle = owningPlayer.GetComponent<EntityHandle>();
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
@@ -51,7 +51,7 @@ public class EntityCommandServer : EntityComponent
 
     [Command]
     public void SetNewFaction(GameObject entity){
-         Debug.Log("SETTING FACTION");
+        //Debug.Log("SETTING FACTION");
         EntityHandle handle = entity.GetComponent<EntityHandle>();
         Faction faction = Faction.GenerateFaction("Faction " + (Random.Range(0, 10000f)).ToString(), true);
         faction.AddMember(handle);

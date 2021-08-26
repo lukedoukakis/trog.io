@@ -245,7 +245,7 @@ public class EntityBehavior : EntityComponent
         else{
             //Log("Collect: picking up object");
             GameObject target = foundObjects[0];
-            Faction.AddItemTargeted(target, entityInfo.faction);
+            Faction.AddItemTargeted(entityInfo.faction, target);
             Action goToObject = Action.GenerateAction((int)(Action.ActionTypes.GoTo), target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, (int)EntityAnimation.BodyRotationMode.Normal, false);
             Action pickupObject = Action.GenerateAction((int)(Action.ActionTypes.Pickup), target, -1, Item.GetItemByName(target.name), null, -1, -1f, (int)EntityAnimation.BodyRotationMode.Normal, false);
             Action followPlayer = Action.GenerateAction("Follow Player", handle);

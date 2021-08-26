@@ -365,7 +365,7 @@ public class EntityPhysics : EntityComponent
         else{
 
             // if hand is free, support right hand with holding the weapon, if equipped
-            if(!handFree_right && false){
+            if(!handFree_right && entityItems.weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Axe)){
                 ikScript_handLeft.enabled = true;
                 ikScript_handLeft.Target = itemRight.transform.Find("IKTargetT_Left");
             }

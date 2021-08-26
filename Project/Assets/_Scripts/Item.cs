@@ -17,11 +17,13 @@ public class Item : ScriptableObject
     public static Item Spear = InitiailizeItem("Spear", Type.Weapon, HoldStyle.Spear, DamageType.Pierce, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Spear/Image"));
     public static Item Axe = InitiailizeItem("Axe", Type.Weapon, HoldStyle.Axe, DamageType.Slash, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Axe/Gameobject/Axe"), Resources.Load<Image>("Items/Axe/Image"));
     
+
+    // testing purposes
+    public static Item ClothingTest = InitiailizeItem("ClothingTest", Type.Clothing, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/ClothingTest/Gameobject/ClothingTest"), Resources.Load<Image>("Items/ClothingTest/Image"));
+
     
     // Not implemented int files yet
     public static Item Wood = InitiailizeItem("Wood", Type.MiscLarge, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Wood/Gameobject/Wood"), Resources.Load<Image>("Items/Wood/Image"));
-    public static Item TestClothing = InitiailizeItem("TestClothing", Type.Clothing, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/TestClothing/Gameobject/TestClothing"), Resources.Load<Image>("Items/TestClothing/Image"));
-
 
 
 
@@ -37,11 +39,11 @@ public class Item : ScriptableObject
 
     
         { "Wood", Wood },
-        { "TestClothing", TestClothing },
+        { "ClothingTest", ClothingTest },
     };
     public static Item GetItemByName(string _nme){
 
-        Debug.Log("searching for key: " + _nme);
+        //Debug.Log("searching for key: " + _nme);
 
         return Items[_nme];
        

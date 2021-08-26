@@ -22,9 +22,18 @@ public class Faction : ScriptableObject
         handle.entityInfo.faction = this;
     }
 
-    public static void AddItemTargeted(GameObject o, Faction fac){
+    public static void AddItemTargeted(Faction fac, GameObject o){
         fac.targetedObjects.Add(o);
     }
+
+    public static void AddItemOwned(Faction fac, GameObject o, int count){
+        fac.ownedItems.AddItem(Item.GetItemByName(o.name), count);
+    }
+    public static void AddItemOwned(Faction fac, string itemName, int count){
+        fac.ownedItems.AddItem(Item.GetItemByName(itemName), count);
+    }
+
+
     public static void RemoveItemTargeted(GameObject o, Faction fac){
         fac.targetedObjects.Remove(o);
     }

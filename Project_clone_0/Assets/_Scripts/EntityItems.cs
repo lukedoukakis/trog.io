@@ -19,6 +19,10 @@ public class EntityItems : EntityComponent
     // items in the entity's pockets
     public ItemCollection pockets;
 
+    // clothing
+    public Transform meshParentT;
+    public string clothingEquippedName;
+
 
     
     // orientations in space for items
@@ -57,6 +61,9 @@ public class EntityItems : EntityComponent
 
         weaponEquipped_item = weaponUnequipped_item = holding_item = null;
         weaponEquipped_object = weaponUnequipped_object = holding_object = null;
+
+        meshParentT = Utility.FindDeepChild(transform, "Human Model 2");
+        clothingEquippedName = null; // TODO: initialize to something
 
         itemOrientationAnimator = orientationParent.GetComponent<Animator>();
     }
@@ -118,6 +125,34 @@ public class EntityItems : EntityComponent
         pockets.AddItem(i, 1);
     }
 
+
+    // clothing
+    // ---
+
+    public void EquipClothing(string clothingName){
+
+        // unequip current clothing and equip new clothing
+        UnequipClothing();
+        try{
+            meshParentT.Find(clothingName).gameObject.SetActive(true);
+            this.clothingEquippedName = clothingName;
+        }
+        catch(Exception){
+            Debug.Log("No clothing found on model for clothing name: " + clothingName);
+        }
+
+    }
+    public void UnequipClothing(){
+
+        // if a clothing is currently equipped, unequip it and add associated item to faction items
+        if(clothingEquippedName != null){
+            Faction.AddItemOwned(entityInfo.faction, clothingEquippedName, 1);
+            meshParentT.Find(clothingEquippedName).gameObject.SetActive(false);
+        }
+    }
+
+    // ---
+
     void Update(){
 
 
@@ -151,8 +186,8 @@ public class EntityItems : EntityComponent
                 targetRot = Quaternion.identity;
             }
             Vector3 currentPos = weaponEquipped_object.transform.position;
-            // weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, 100f * Time.deltaTime);
-            // weaponEquipped_object.transform.rotation = Quaternion.Slerp(weaponEquipped_object.transform.rotation, targetRot, 18f * Time.deltaTime);
+            // weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, 60f * Time.deltaTime);
+            // weaponEquipped_object.transform.rotation = Quaternion.Slerp(weaponEquipped_object.transform.rotation, targetRot, 60f * Time.deltaTime);
             weaponEquipped_object.transform.position = targetPos;
             weaponEquipped_object.transform.rotation = targetRot;
         }

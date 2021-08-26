@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Testing : MonoBehaviour
 {
-    
+
+
+    EntityHandle playerHandle;
     public Faction faction;
 
     public static Testing instance;
@@ -19,17 +21,26 @@ public class Testing : MonoBehaviour
 
     void AddItemsToFaction(){
         faction = GameManager.current.localPlayer.GetComponent<EntityInfo>().faction;
-        faction.ownedItems.AddItem(Item.TestClothing, 42);
+        faction.ownedItems.AddItem(Item.ClothingTest, 42);
     }
 
 
-
-
-
-
     void Update(){
+
+
+        playerHandle = GameManager.current.localPlayer.GetComponent<EntityHandle>();
+
+
         if(Input.GetKeyUp(KeyCode.C)){
-            Camp.TryPlaceCamp(GameManager.current.localPlayer.GetComponent<EntityInfo>().faction, GameManager.current.localPlayer.transform.position);
+            Camp.TryPlaceCamp(playerHandle.entityInfo.faction, GameManager.current.localPlayer.transform.position);
+        }
+
+        if(Input.GetKeyUp(KeyCode.V)){
+            playerHandle.entityItems.EquipClothing("ClothingTest");
+        }
+
+        if(Input.GetKeyUp(KeyCode.B)){
+            playerHandle.entityItems.UnequipClothing();
         }
     }
 }
