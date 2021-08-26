@@ -8,7 +8,7 @@ public class ChunkGenerator : MonoBehaviour
 {
     public static ChunkGenerator current;
     public static int Seed = -1;
-    public static int ChunkSize = 200;
+    public static int ChunkSize = 20;
     public static int ChunkRenderDistance = 3;
     public static float Scale = 1200f;
     public static float ElevationAmplitude = 1800f * 3f;
@@ -308,7 +308,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // TemperatureMap [0, 1]
                 temperatureValue = Mathf.Pow((1f - (mountainValue / mtnCap)), 2f);
-                temperatureValue +=  (Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale) * 2f - 1f) * (.8f * (1f - mountainValue/mtnCap));
+                temperatureValue +=  (Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale) * 2f - 1f) * (1.5f * (1f - mountainValue/mtnCap));
 
                 //temperatureValue = Mathf.InverseLerp(.4f, .6f, temperatureValue);
                 temperatureValue = Mathf.Clamp01(temperatureValue);
@@ -518,6 +518,9 @@ public class ChunkGenerator : MonoBehaviour
                     heightValue = Mathf.Lerp(heightValue, postHeight, badland);
                 }
 
+                // posterize all land
+                heightValue = Posterize(SeaLevel + .0001f, 1f, heightValue, 250, .5f);
+
 
                 // // create slight roughness in terrain
                 // if (biomeValue == (int)Biome.BiomeType.Desert)
@@ -590,7 +593,7 @@ public class ChunkGenerator : MonoBehaviour
         // overgrowth
         Color c = new Color();
         //c.a = 255f * humidity * Mathf.Pow(1f - rockiness, 2f);
-        c.a = 128f;
+        c.a = 64f;
 
         if (height > SeaLevel)
         {

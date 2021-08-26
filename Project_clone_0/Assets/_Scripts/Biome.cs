@@ -87,21 +87,32 @@ public class Biome : MonoBehaviour
 
     public static int GetBiome(float temp, float humid, float mtn)
     {
-        // if(mtn >= .75f){
-        //     if(humid >= .5f){
-        //         return (int)BiomeType.SnowyTaiga;
-        //     }
-        //     else{
-        //         return (int)BiomeType.Tundra;
-        //     }
-        // }
+        if(mtn >= .75f){
+            if(humid >= .5f){
+                return (int)BiomeType.SnowyTaiga;
+            }
+            else{
+                return (int)BiomeType.SnowyTaiga;
+            }
+        }
 
         int temperature = (int)((temp * 10f) + 0.5f);
         int humidity = (int)((humid * 10f) + 0.5f);
         //Debug.Log(temp);
         int biome = BiomeTable[temperature][humidity];
 
+
+        if(mtn < .75f){
+            if(biome == (int)BiomeType.SnowyTaiga){
+                biome = (int)BiomeType.Taiga;
+            }
+            else if(biome == (int)BiomeType.Tundra){
+                biome = (int)BiomeType.Plains;
+            }
+        }
+
         return biome;
+
 
     }
 

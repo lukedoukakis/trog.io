@@ -272,22 +272,22 @@ CharacterJoint:
     spring: 0
     damper: 0
   m_LowTwistLimit:
-    limit: 35.01971
+    limit: -177
     bounciness: 0
     contactDistance: 0
   m_HighTwistLimit:
-    limit: 72.5054
+    limit: 177
     bounciness: 0
     contactDistance: 0
   m_SwingLimitSpring:
     spring: 0
     damper: 0
   m_Swing1Limit:
-    limit: 43.90044
+    limit: 177
     bounciness: 0
     contactDistance: 0
   m_Swing2Limit:
-    limit: 16.261229
+    limit: 177
     bounciness: 0
     contactDistance: 0
   m_EnableProjection: 0
@@ -590,22 +590,22 @@ CharacterJoint:
     spring: 0
     damper: 0
   m_LowTwistLimit:
-    limit: 35.01971
+    limit: -177
     bounciness: 0
     contactDistance: 0
   m_HighTwistLimit:
-    limit: 72.5054
+    limit: 177
     bounciness: 0
     contactDistance: 0
   m_SwingLimitSpring:
     spring: 0
     damper: 0
   m_Swing1Limit:
-    limit: 43.90044
+    limit: 177
     bounciness: 0
     contactDistance: 0
   m_Swing2Limit:
-    limit: 16.261229
+    limit: 177
     bounciness: 0
     contactDistance: 0
   m_EnableProjection: 0
@@ -1525,7 +1525,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4118384294023002160}
   serializedVersion: 2
-  m_Mass: 10
+  m_Mass: 100
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 1
@@ -1586,7 +1586,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4382853551925318238}
   serializedVersion: 2
-  m_Mass: 100
+  m_Mass: 50
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 1
@@ -3038,7 +3038,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8500120811289837541}
   serializedVersion: 2
-  m_Mass: 100
+  m_Mass: 50
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 1
@@ -3589,6 +3589,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 34.512
       objectReference: {fileID: 0}
+    - target: {fileID: -6051234975735507453, guid: ca7f7ef907f9c4442884708b46618d7d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -4991066326210859903, guid: ca7f7ef907f9c4442884708b46618d7d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4084,6 +4089,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -0.102000006
       objectReference: {fileID: 0}
+    - target: {fileID: 4225025677620766137, guid: ca7f7ef907f9c4442884708b46618d7d,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4225025677620766137, guid: ca7f7ef907f9c4442884708b46618d7d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 535bd86cedbdd9a4f8650817684cb8a4, type: 2}
+    - target: {fileID: 4225025677620766137, guid: ca7f7ef907f9c4442884708b46618d7d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 085bd567c94e32e4baff40e9c779db84, type: 2}
     - target: {fileID: 5373028219447152756, guid: ca7f7ef907f9c4442884708b46618d7d,
         type: 3}
       propertyPath: m_LocalPosition.x
