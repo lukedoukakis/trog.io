@@ -16,9 +16,6 @@ public class EntityItems : EntityComponent
     public Item weaponUnequipped_item;
     public GameObject weaponEquipped_object, weaponUnequipped_object;
 
-    // items in the entity's pockets
-    public ItemCollection pockets;
-
     // clothing
     public Transform meshParentT;
     public string clothingEquippedName;
@@ -74,15 +71,47 @@ public class EntityItems : EntityComponent
         
     }
 
+    // client method when an object is interacted with
+    public void OnObjectInteract(GameObject o, GameObject attachedObject){
+        Item i = Item.GetItemByName(o.name);
+        switch (i.type) {
+            case Item.Type.Weapon :
+                PickUpWeapon(i, o, attachedObject);
+                break;
+            case Item.Type.Clothing :
+                EquipClothing(o.name, attachedObject);
+                break;
+            default:
+                PickUpNonFoodOrClothing(i, o, attachedObject);
+                break;
+            
+        }
+    }
 
-    public void SetHolding(Item item, GameObject obj){
+
+    public void PickUpWeapon(Item i, GameObject o, GameObject attachedObject){
+        if(weaponEquipped_item == null){
+            SetEquippedWeapon(i, o);
+        }
+        else{
+            if(weaponUnequipped_item != null){
+                DropUnequippedWeapon(attachedObject);
+            }
+            SetUnequippedWeapon(i, o);
+        }
+    }
+
+    public void PickUpNonFoodOrClothing(Item i, GameObject o, GameObject attachedObject){
         if(holding_item != null){
             DropHolding();
         }
-        holding_item = item;
-        holding_object = obj;
+        holding_item = i;
+        holding_object = o;
         Utility.ToggleObjectPhysics(holding_object, false);
     }
+
+
+    // holding
     public void DropHolding(){
         if(holding_item == null) { return; }
         holding_object.GetComponent<Rigidbody>().AddForce(transform.forward + Vector3.up);
@@ -92,61 +121,76 @@ public class EntityItems : EntityComponent
         holding_object = null;
     }
 
-    public void PickUpWeapon(Item item, GameObject obj){
-        if(weaponEquipped_item == null){
-            SetEquippedWeapon(item, obj);
+    public void DropUnequippedWeapon(GameObject targetAttachedObject){
+
+        switch (targetAttachedObject.tag) {
+            case "ItemRack" :
+                // get rack reference from attached object and add the item to faction items with specified rack
+                ObjectRack rack = (ObjectRack)targetAttachedObject.GetComponent<ScriptableObjectReference>().scriptableObject;
+                rack.AddObjects(new List<GameObject>(){ weaponEquipped_object });
+                Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1, rack);
+                break;
+            case "Human" :
+                // todo: give to human
+            default :
+                Debug.Log("No place to drop object... targetAttachedObject tag: " + targetAttachedObject.tag);
+                break;
         }
-        else{
-            if(weaponUnequipped_item != null){
-                DropUnequippedWeapon();
-            }
-            SetUnequippedWeapon(item, obj);
-        }
-    }
-    public void DropUnequippedWeapon(){
-        Utility.ToggleObjectPhysics(weaponEquipped_object, true);
-        weaponEquipped_object.GetComponent<Rigidbody>().AddForce(transform.forward * -30f);
+
+        // destroy gameobject of unequipped weapon and set references to null
+        GameObject.Destroy(weaponUnequipped_object);
         weaponUnequipped_item = null;
         weaponUnequipped_object = null;
 
+        
+        // Utility.ToggleObjectPhysics(weaponUnequipped_object, true);
+        // weaponEquipped_object.GetComponent<Rigidbody>().AddForce(transform.forward * -30f);
+        // weaponUnequipped_item = null;
+        // weaponUnequipped_object = null;
     }
-    public void SetUnequippedWeapon(Item item, GameObject obj){
-        weaponUnequipped_item = item;
-        weaponUnequipped_object = obj;
+
+    public void SetUnequippedWeapon(Item i, GameObject o){
+        weaponUnequipped_item = i;
+        weaponUnequipped_object = o;
         Utility.ToggleObjectPhysics(weaponEquipped_object, false);
     }
-    public void SetEquippedWeapon(Item item, GameObject obj){
-        weaponEquipped_item = item;
-        weaponEquipped_object = obj;
+    public void SetEquippedWeapon(Item i, GameObject o){
+        weaponEquipped_item = i;
+        weaponEquipped_object = o;
         Utility.ToggleObjectPhysics(weaponEquipped_object, false);
     }
 
-    public void PocketItem(Item i){
-        pockets.AddItem(i, 1);
-    }
+    // ---
 
 
     // clothing
     // ---
 
-    public void EquipClothing(string clothingName){
+    public void EquipClothing(string clothingName, GameObject attachedObject){
 
-        // unequip current clothing and equip new clothing
-        UnequipClothing();
+        // unequip current clothing
+        UnequipCurrentClothing(attachedObject);
+
         try{
+
+            // set clothing on model
             meshParentT.Find(clothingName).gameObject.SetActive(true);
             this.clothingEquippedName = clothingName;
+
+            // remove clothing from attached object
+            Faction.
         }
         catch(Exception){
             Debug.Log("No clothing found on model for clothing name: " + clothingName);
         }
 
     }
-    public void UnequipClothing(){
+    public void UnequipCurrentClothing(GameObject targetAttachedObject){
 
         // if a clothing is currently equipped, unequip it and add associated item to faction items
         if(clothingEquippedName != null){
-            Faction.AddItemOwned(entityInfo.faction, Item.GetItemByName(clothingEquippedName), 1);
+            ObjectRack rack = (ObjectRack)targetAttachedObject.GetComponent<ScriptableObjectReference>().scriptableObject;
+            Faction.AddItemOwned(entityInfo.faction, Item.GetItemByName(clothingEquippedName), 1, rack);
             meshParentT.Find(clothingEquippedName).gameObject.SetActive(false);
         }
     }

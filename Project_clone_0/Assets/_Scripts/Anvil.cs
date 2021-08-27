@@ -12,7 +12,7 @@ public class Anvil : ScriptableObject
 
     public void SetAnvil(Camp camp){
         this.camp = camp;
-        this.worldObject = Instantiate(CampResources.Prefab_Anvil);
+        this.worldObject = Utility.InstantiatePrefabSameName(CampResources.Prefab_Anvil);
     }
 
 }

@@ -11,7 +11,12 @@ public class EntityUserInputMovement : EntityComponent
     public float mouseX, mouseY, mouseZ;
 
     Quaternion targetRot;
+    public GameObject hoveredInteractable;
     public List<GameObject> interactableObjects;
+
+
+
+
     public Vector3 move;
 
 
@@ -103,22 +108,38 @@ public class EntityUserInputMovement : EntityComponent
 
     void CheckInteraction(){
         if(Input.GetKeyUp(KeyCode.E)){
-            CheckInteractableItems();
             Interact();
         }
     }
-    void CheckInteractableItems(){
-        interactableObjects = entityBehavior.SenseSurroundingItems(null, null, EntityBehavior.senseDistance_immediate);
-    }
+   
     void Interact(){
-        
-        if(interactableObjects.Count != 0){
-            interactableObjects = interactableObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
-            GameObject obj = interactableObjects[0];
-            entityBehavior.TakeFromGround(obj);            
-        }
-        
+        if(hoveredInteractable != null){
+            switch (hoveredInteractable.tag) {
+                case "Item" :
+                    entityItems.OnObjectInteract(hoveredInteractable, hoveredInteractable.GetComponent<InteractableObject>().attachedObject);
+                    break;
+                case "Human" :
+                    // todo: human interact
+                    break;
+            }   
+        }      
     }
+
+
+    public void UpdateHoveredInteractable(){
+        Transform cameraT = Camera.main.transform;
+        RaycastHit hit;
+
+        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LayerMask.GetMask("Item", "Entity"))){
+            hoveredInteractable = hit.collider.gameObject;
+            Log(hoveredInteractable.name);
+        }
+        else{
+            hoveredInteractable = null;
+            Log("NO HOVERED INTERACTABLE GAMEOBJECT");
+        }
+    }
+
 
     void Update(){
 
@@ -137,6 +158,8 @@ public class EntityUserInputMovement : EntityComponent
     void FixedUpdate()
     {
         entityPhysics.moveDir = move;
+
+        UpdateHoveredInteractable();
     }
 
 

@@ -12,7 +12,7 @@ public class Workbench : ScriptableObject
 
     public void SetWorkbench(Camp camp){
         this.camp = camp;
-        this.worldObject = Instantiate(CampResources.Prefab_Workbench);
+        this.worldObject = Utility.InstantiatePrefabSameName(CampResources.Prefab_Workbench);
     }
 
 }

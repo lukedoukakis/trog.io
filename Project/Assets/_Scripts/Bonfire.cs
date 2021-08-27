@@ -15,7 +15,7 @@ public class Bonfire : ScriptableObject
     public void SetBonfire(Camp camp, bool lit, float intensity, float scale){
         this.camp = camp;
         this.lit = lit;
-        this.worldObject = lit ? Instantiate(CampResources.Prefab_BonfireLit) : Instantiate(CampResources.Prefab_BonfireUnlit);
+        this.worldObject = lit ? Utility.InstantiatePrefabSameName(CampResources.Prefab_BonfireLit) : Utility.InstantiatePrefabSameName(CampResources.Prefab_BonfireUnlit);
         this.intensity = intensity;
         this.scale = scale;
     }

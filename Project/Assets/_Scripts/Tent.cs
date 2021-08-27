@@ -12,7 +12,7 @@ public class Tent : ScriptableObject
 
     public void SetTent(Camp camp){
         this.camp = camp;
-        this.worldObject = Instantiate(CampResources.Prefab_Tent);
+        this.worldObject = Utility.InstantiatePrefabSameName(CampResources.Prefab_Tent);
     }
 
     public void DeleteSelf(){

@@ -38,12 +38,13 @@ public class Testing : MonoBehaviour
             Camp.TryPlaceCamp(playerHandle.entityInfo.faction, GameManager.current.localPlayer.transform.position);
         }
 
-        if(Input.GetKeyUp(KeyCode.V)){
-            playerHandle.entityItems.EquipClothing("ClothingTest");
-        }
+        // if(Input.GetKeyUp(KeyCode.V)){
+        //     GameObject o = new GameObject();
+        //     playerHandle.entityItems.EquipClothing("ClothingTest", o);
+        // }
 
-        if(Input.GetKeyUp(KeyCode.B)){
-            playerHandle.entityItems.UnequipClothing();
-        }
+        // if(Input.GetKeyUp(KeyCode.B)){
+        //     playerHandle.entityItems.UnequipCurrentClothing();
+        // }
     }
 }

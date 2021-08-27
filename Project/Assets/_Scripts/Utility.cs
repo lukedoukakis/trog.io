@@ -20,6 +20,12 @@ public class Utility : MonoBehaviour
         return null;
     }
 
+    public static GameObject InstantiatePrefabSameName(GameObject prefab){
+        GameObject instance = Instantiate(prefab);
+        instance.name = prefab.name;
+        return instance;
+    }
+
     public static IEnumerator DespawnObject(GameObject gameObject, float delay){
         yield return new WaitForSeconds(delay);
         GameObject.Destroy(gameObject);

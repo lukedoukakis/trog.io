@@ -265,7 +265,7 @@ public class EntityBehavior : EntityComponent
             GameObject o = a.obj;
             if(i.type.Equals(Item.Type.Weapon)){
                 yield return new WaitForSecondsRealtime(.25f);
-                TakeFromGround(o);
+                TakeObject(o);
                 yield return new WaitForSecondsRealtime(.25f);
             }
             else{
@@ -453,13 +453,10 @@ public class EntityBehavior : EntityComponent
         }
 	}
 
-    public void TakeFromGround(GameObject o){
-        //Log("TakeFromGround()");
-        Item item = Item.GetItemByName(o.name);
-        entityItems.PickUpWeapon(item, o);
+    public void TakeObject(GameObject o){
+        //Log("TakeObject()");
+        entityItems.OnObjectInteract(o, o.GetComponent<InteractableObject>().attachedObject);
         entityPhysics.OnItemSwitch();
-        entityAnimation.Pickup(item);
-        //o.transform.position = o.transform.position += new Vector3(UnityEngine.Random.Range(-30f, 30f), 1f, UnityEngine.Random.Range(-30f, 30f));
     }
     public List<GameObject> SenseSurroundingItems(Enum type, string name, float distance){
         Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Item"));

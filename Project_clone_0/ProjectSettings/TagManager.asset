@@ -11,6 +11,9 @@ TagManager:
   - Home
   - Body
   - Npc
+  - ItemRack
+  - Human
+  - Item
   layers:
   - Default
   - TransparentFX

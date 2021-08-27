@@ -369,6 +369,8 @@ MonoBehaviour:
   weaponUnequipped_item: {fileID: 0}
   weaponEquipped_object: {fileID: 0}
   weaponUnequipped_object: {fileID: 0}
+  meshParentT: {fileID: 0}
+  clothingEquippedName: 
   orientationParent: {fileID: 0}
   orientation_weaponEquipped_spear: {fileID: 0}
   orientation_weaponEquipped_axe: {fileID: 0}
@@ -423,6 +425,7 @@ MonoBehaviour:
   mouseX: 0
   mouseY: 0
   mouseZ: 0
+  hoveredInteractable: {fileID: 0}
   interactableObjects: []
   move: {x: 0, y: 0, z: 0}
 --- !u!114 &8374234257668663390

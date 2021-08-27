@@ -17,10 +17,20 @@ public class ItemCollection
 
     public void AddItem(Item i, int count){
         if(items.ContainsKey(i)){
-            ++items[i];
+            items[i] += count;
+            // ++items[i]
         }
         else{
             items.Add(i, count);
+        }
+    }
+
+    public void RemoveItem(Item i, int count){
+        if(items.ContainsKey(i)){
+            items[i] -= count;
+        }
+        else{
+            Debug.Log("Removing item that isn't present in this item collection");
         }
     }
 

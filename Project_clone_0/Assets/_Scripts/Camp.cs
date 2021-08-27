@@ -60,12 +60,12 @@ public class Camp : ScriptableObject
         camp.PlaceWorkbench();
         camp.PlaceAnvil();
         camp.UpdateTentCount();
-        camp.UpdateCampComponents(faction.ownedItems);
+        camp.AddItemsToCamp(faction.ownedItems);
         return camp;
     }
 
     // update camp components with new items
-    public void UpdateCampComponents(ItemCollection newItems){
+    public void AddItemsToCamp(ItemCollection newItems){
 
         // create lists from new items to add to racks
         List<GameObject> foodList = new List<GameObject>();
@@ -104,7 +104,7 @@ public class Camp : ScriptableObject
             }
 
             for(int i = 0; i < itemCount; ++i){
-                list.Add(Instantiate(item.gameobject));
+                list.Add(Utility.InstantiatePrefabSameName(item.gameobject));
             }
         }
 
@@ -115,6 +115,16 @@ public class Camp : ScriptableObject
         // todo: misclarge and miscsmall items
 
     }
+
+
+    public void RemoveItemsFromCamp(ItemCollection itemsToRemove){
+        foreach(Item item in itemsToRemove.items.Keys){
+            RemoveObjectsAnyRack(item, itemsToRemove.GetItemCount(item));
+        }
+    }
+
+
+
 
     public void SetOrigin(Vector3 position){
         this.origin = position;
@@ -239,9 +249,6 @@ public class Camp : ScriptableObject
         rackList.Add(objectRack);
         objectRack.AddObjects(objects);
     }
-    public void OnRackCapacityReached(Enum itemType, List<GameObject> objectsToAdd){
-        AddObjectsAnyRack(itemType, objectsToAdd);
-    }
 
     public void PlaceAnvil(){
         Anvil anvil = ScriptableObject.CreateInstance<Anvil>();
@@ -295,6 +302,13 @@ public class Camp : ScriptableObject
         // if still objects to add, place a new rack
         if(objectsToAdd.Count > 0){
             PlaceObjectRack(itemType, objectsToAdd);
+        }
+    }
+
+    public void RemoveObjectsAnyRack(Item item, int count){
+        List<ObjectRack> rackList = GetRackListForItemType(item.type);
+        for(int i = rackList.Count - 1; i >= 0; --i){
+            rackList[i].RemoveObjects(item, count);
         }
     }
 

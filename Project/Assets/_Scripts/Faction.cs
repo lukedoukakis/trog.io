@@ -26,11 +26,38 @@ public class Faction : ScriptableObject
         fac.targetedObjects.Add(o);
     }
 
-    public static void AddItemOwned(Faction fac, Item item, int count){
+    public static void AddItemOwned(Faction fac, Item item, int count, ObjectRack rack){
         fac.ownedItems.AddItem(item, count);
-        ItemCollection newItems = new ItemCollection();
-        newItems.AddItem(item, count);
-        fac.camp.UpdateCampComponents(newItems);
+
+        if(rack == null){
+            ItemCollection newItems = new ItemCollection();
+            newItems.AddItem(item, count);
+            fac.camp.AddItemsToCamp(newItems);
+        }
+        else{
+            List<GameObject> objectsToAdd = new List<GameObject>();
+            for(int i = 0; i < count; ++i){
+                objectsToAdd.Add(Utility.InstantiatePrefabSameName(item.gameobject));
+            }
+            rack.AddObjects(objectsToAdd);
+        }
+    }
+
+    public static void RemoveItemOwned(Faction fac, Item item, int count, ObjectRack rack){
+        fac.ownedItems.RemoveItem(item, count);
+
+        if(rack == null){
+            ItemCollection itemsToRemove = new ItemCollection();
+            itemsToRemove.AddItem(item, count);
+            fac.camp.RemoveItemsFromCamp(itemsToRemove);
+        }
+        else{
+            List<GameObject> objectsToRemove = new List<GameObject>();
+            for(int i = 0; i < count; ++i){
+                objectsToRemove.Add(Utility.InstantiatePrefabSameName(item.gameobject));
+            }
+            rack.RemoveObjects(item, count);
+        }
     }
 
     public static void RemoveItemTargeted(GameObject o, Faction fac){
