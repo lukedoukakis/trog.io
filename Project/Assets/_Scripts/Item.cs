@@ -21,7 +21,8 @@ public class Item : ScriptableObject
     // testing purposes
     public static Item ClothingTest = InitiailizeItem("ClothingTest", Type.Clothing, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/ClothingTest/Gameobject/ClothingTest"), Resources.Load<Image>("Items/ClothingTest/Image"));
 
-    
+    public static Item FoodTest = InitiailizeItem("FoodTest", Type.Food, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/FoodTest/Gameobject/FoodTest"), Resources.Load<Image>("Items/FoodTest/Image"));
+
     // Not implemented int files yet
     public static Item Wood = InitiailizeItem("Wood", Type.MiscLarge, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Wood/Gameobject/Wood"), Resources.Load<Image>("Items/Wood/Image"));
 
@@ -40,6 +41,7 @@ public class Item : ScriptableObject
     
         { "Wood", Wood },
         { "ClothingTest", ClothingTest },
+        { "FoodTest", FoodTest },
     };
     public static Item GetItemByName(string _nme){
 

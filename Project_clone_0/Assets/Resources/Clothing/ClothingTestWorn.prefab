@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3496063145827307895}
   - component: {fileID: -1741999335518579861}
-  - component: {fileID: 1023391289503401975}
   m_Layer: 0
   m_Name: ClothingTestWorn
   m_TagString: Untagged
@@ -84,16 +83,3 @@ SkinnedMeshRenderer:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
   m_DirtyAABB: 1
---- !u!114 &1023391289503401975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3775729212744096401}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9888c06f2c0ee704b85f5a621c58ebaa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  associatedItemName: ClothingTest
