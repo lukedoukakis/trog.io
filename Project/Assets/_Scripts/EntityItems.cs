@@ -18,7 +18,7 @@ public class EntityItems : EntityComponent
 
     // clothing
     public Transform meshParentT;
-    public string clothingEquippedName;
+    public Item clothingEquipped;
 
 
     
@@ -60,7 +60,7 @@ public class EntityItems : EntityComponent
         weaponEquipped_object = weaponUnequipped_object = holding_object = null;
 
         meshParentT = Utility.FindDeepChild(transform, "Human Model 2");
-        clothingEquippedName = null; // TODO: initialize to something
+        clothingEquipped = null; // TODO: initialize to something
 
         itemOrientationAnimator = orientationParent.GetComponent<Animator>();
     }
@@ -72,7 +72,7 @@ public class EntityItems : EntityComponent
     }
 
     // client method when an object is interacted with
-    public void OnObjectInteract(GameObject o, GameObject attachedObject){
+    public void OnObjectInteract(GameObject o, ScriptableObject attachedObject){
         Item i = Item.GetItemByName(o.name);
         switch (i.type) {
             case Item.Type.Weapon :
@@ -89,7 +89,7 @@ public class EntityItems : EntityComponent
     }
 
 
-    public void PickUpWeapon(Item i, GameObject o, GameObject attachedObject){
+    public void PickUpWeapon(Item i, GameObject o, ScriptableObject attachedObject){
         if(weaponEquipped_item == null){
             SetEquippedWeapon(i, o);
         }
@@ -101,7 +101,7 @@ public class EntityItems : EntityComponent
         }
     }
 
-    public void PickUpNonFoodOrClothing(Item i, GameObject o, GameObject attachedObject){
+    public void PickUpNonFoodOrClothing(Item i, GameObject o, ScriptableObject attachedObject){
         if(holding_item != null){
             DropHolding();
         }
@@ -121,20 +121,18 @@ public class EntityItems : EntityComponent
         holding_object = null;
     }
 
-    public void DropUnequippedWeapon(GameObject targetAttachedObject){
+    public void DropUnequippedWeapon(ScriptableObject targetAttachedObject){
 
-        switch (targetAttachedObject.tag) {
-            case "ItemRack" :
-                // get rack reference from attached object and add the item to faction items with specified rack
-                ObjectRack rack = (ObjectRack)targetAttachedObject.GetComponent<ScriptableObjectReference>().GetScriptableObject();
-                Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1, rack);
-                break;
-            case "Human" :
-                // todo: give to human
-            default :
-                Debug.Log("No place to drop object... targetAttachedObject tag: " + targetAttachedObject.tag);
-                break;
+
+        if(targetAttachedObject is ObjectRack){
+            // get rack reference from attached object and add the item to faction items with specified rack
+            ObjectRack rack = (ObjectRack)targetAttachedObject;
+            Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1, rack);
         }
+        else{
+            Debug.Log("No attached object match");
+        }
+        // todo: case human
 
         // destroy gameobject of unequipped weapon and set references to null
         GameObject.Destroy(weaponUnequipped_object);
@@ -165,33 +163,50 @@ public class EntityItems : EntityComponent
     // clothing
     // ---
 
-    public void EquipClothing(Item i, GameObject attachedObject){
+    public void EquipClothing(Item i, ScriptableObject attachedObject){
 
         // unequip current clothing
         UnequipCurrentClothing(attachedObject);
 
-        try{
+        // set clothing on model
+        meshParentT.Find(i.nme).gameObject.SetActive(true);
+        this.clothingEquipped = i;
 
-            // set clothing on model
-            meshParentT.Find(i.nme).gameObject.SetActive(true);
-            this.clothingEquippedName = i.nme;
-
-            // remove clothing from attached object
-            ObjectRack rack = (ObjectRack)attachedObject.GetComponent<ScriptableObjectReference>().GetScriptableObject();
+        // remove clothing from attached object
+        if (attachedObject is ObjectRack)
+        {
+            // get rack reference from attached object and add the item to faction items with specified rack
+            ObjectRack rack = (ObjectRack)attachedObject;
             Faction.RemoveItemOwned(entityInfo.faction, i, 1, rack);
         }
-        catch(Exception){
-            Debug.Log("No clothing found on model for clothing name: " + i.nme);
+        // todo: case human
+        else
+        {
+            Debug.Log("No clothing attached object match");
         }
-
     }
-    public void UnequipCurrentClothing(GameObject targetAttachedObject){
+    public void UnequipCurrentClothing(ScriptableObject targetAttachedObject){
 
         // if a clothing is currently equipped, unequip it and add associated item to faction items
-        if(clothingEquippedName != null){
-            ObjectRack rack = (ObjectRack)targetAttachedObject.GetComponent<ScriptableObjectReference>().GetScriptableObject();
-            Faction.AddItemOwned(entityInfo.faction, Item.GetItemByName(clothingEquippedName), 1, rack);
-            meshParentT.Find(clothingEquippedName).gameObject.SetActive(false);
+        if (clothingEquipped != null)
+        {
+            if (targetAttachedObject is ObjectRack)
+            {
+
+                // get rack reference from attached object and add the item to faction items with specified rack
+                ObjectRack rack = (ObjectRack)targetAttachedObject;
+                Faction.AddItemOwned(entityInfo.faction, clothingEquipped, 1, rack);
+            }
+
+            // todo: case human
+            else
+            {
+                Debug.Log("No clothing attached object match");
+            }
+
+
+            meshParentT.Find(clothingEquipped.nme).gameObject.SetActive(false);
+            clothingEquipped = null;
         }
     }
 

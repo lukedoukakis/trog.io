@@ -455,7 +455,7 @@ public class EntityBehavior : EntityComponent
 
     public void TakeObject(GameObject o){
         //Log("TakeObject()");
-        entityItems.OnObjectInteract(o, o.GetComponent<InteractableObject>().attachedObject);
+        entityItems.OnObjectInteract(o, o.GetComponent<ScriptableObjectReference>().GetScriptableObject());
         entityPhysics.OnItemSwitch();
     }
     public List<GameObject> SenseSurroundingItems(Enum type, string name, float distance){

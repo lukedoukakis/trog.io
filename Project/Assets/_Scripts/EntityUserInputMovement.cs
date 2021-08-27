@@ -11,7 +11,7 @@ public class EntityUserInputMovement : EntityComponent
     public float mouseX, mouseY, mouseZ;
 
     Quaternion targetRot;
-    public GameObject hoveredInteractable;
+    public GameObject hoveredInteractableObject;
     public List<GameObject> interactableObjects;
 
 
@@ -113,10 +113,11 @@ public class EntityUserInputMovement : EntityComponent
     }
    
     void Interact(){
-        if(hoveredInteractable != null){
-            switch (hoveredInteractable.tag) {
+        if(hoveredInteractableObject != null){
+            switch (hoveredInteractableObject.tag) {
                 case "Item" :
-                    entityItems.OnObjectInteract(hoveredInteractable, hoveredInteractable.GetComponent<InteractableObject>().attachedObject);
+                    Log(entityItems.Equals(null).ToString());
+                    entityItems.OnObjectInteract(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
                     break;
                 case "Human" :
                     // todo: human interact
@@ -130,12 +131,12 @@ public class EntityUserInputMovement : EntityComponent
         Transform cameraT = Camera.main.transform;
         RaycastHit hit;
 
-        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LayerMask.GetMask("Item", "Entity"))){
-            hoveredInteractable = hit.collider.gameObject;
-            //Log(hoveredInteractable.name);
+        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LayerMask.GetMask("Item"))){ //todo: add "Entity" layer
+            hoveredInteractableObject = hit.collider.gameObject;
+            //Log(hoveredInteractableObject.name);
         }
         else{
-            hoveredInteractable = null;
+            hoveredInteractableObject = null;
             //Log("NO HOVERED INTERACTABLE GAMEOBJECT");
         }
     }

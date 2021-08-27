@@ -41,11 +41,6 @@ public class Faction : ScriptableObject
             }
             else
             {
-                List<GameObject> objectsToAdd = new List<GameObject>();
-                for (int i = 0; i < count; ++i)
-                {
-                    objectsToAdd.Add(Utility.InstantiatePrefabSameName(item.gameobject));
-                }
                 rack.AddObjects(item, ref count);
             }
         }
@@ -66,11 +61,6 @@ public class Faction : ScriptableObject
             }
             else
             {
-                List<GameObject> objectsToRemove = new List<GameObject>();
-                for (int i = 0; i < count; ++i)
-                {
-                    objectsToRemove.Add(Utility.InstantiatePrefabSameName(item.gameobject));
-                }
                 rack.RemoveObjects(item, ref count);
             }
         }

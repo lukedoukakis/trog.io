@@ -46,7 +46,7 @@ public class ObjectRack : ScriptableObject
         }
         this.worldObject = Utility.InstantiatePrefabSameName(worldObjectPrefab);
         ScriptableObjectReference reference = this.worldObject.AddComponent<ScriptableObjectReference>();
-        reference.SetScriptableObject(this);
+        reference.SetScriptableObjectReference(this);
 
         objects = new List<GameObject>();
     }
@@ -59,11 +59,10 @@ public class ObjectRack : ScriptableObject
             if(!IsFull()){
 
                 // if room in the rack, add the item to it
-                Debug.Log("Count to add: " + countToAdd);
                 GameObject o = Utility.InstantiatePrefabSameName(item.gameobject);
                 objects.Add(o);
                 SetObjectOrientation(o);
-                InteractableObject.SetAttachedObject(o, this.worldObject);
+                o.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(this);
                 --countToAdd;
             }
             else{
@@ -77,15 +76,28 @@ public class ObjectRack : ScriptableObject
 
     public void RemoveObjects(Item item, ref int countToRemove){
 
+
+        Debug.Log("Removing " + countToRemove + " " + item.nme);
+
         // count the number of occurences of the item, and remove that many from the objects
         int occurences = objects.Where(o => o.name == item.nme).Count();
-        for(int i = 0; i < occurences; ++i){
-            objects.RemoveAt(objects.FindLastIndex(x => x.name.Equals(item.name)));
-            --countToRemove;
+        if (occurences > 0)
+        {
+            int c = countToRemove;
+            for (int i = 0; i < Math.Min(occurences, c); ++i)
+            {
+                GameObject o = objects.FindLast(x => x.name.Equals(item.name));
+                objects.Remove(o);
+                Debug.Log("Destroying");
+                GameObject.Destroy(o);
+                --countToRemove;
+            }
         }
-
-        // call to remove remaining count
-        camp.RemoveObjectsAnyRack(item, ref countToRemove);
+    
+        if(countToRemove > 0){
+            // call to remove remaining count
+            camp.RemoveObjectsAnyRack(item, ref countToRemove);
+        }
     }   
 
     // set a given object's orientation to fit properly in the rack
