@@ -46,30 +46,36 @@ public class ObjectRack : ScriptableObject
         }
         this.worldObject = Utility.InstantiatePrefabSameName(worldObjectPrefab);
         ScriptableObjectReference reference = this.worldObject.AddComponent<ScriptableObjectReference>();
-        reference.scriptableObject = this;
+        reference.SetScriptableObject(this);
 
         objects = new List<GameObject>();
     }
 
-    public void AddObjects(List<GameObject> objectsToAdd){
 
-        foreach(GameObject o in objectsToAdd.ToArray()){
-            
+
+    public void AddObjects(Item item, ref int countToAdd){
+        int c = countToAdd;
+        for(int i = 0; i < c; ++i){ 
             if(!IsFull()){
-                //Debug.Log("AddItems(): Adding item: " + o.name);
+
+                // if room in the rack, add the item to it
+                Debug.Log("Count to add: " + countToAdd);
+                GameObject o = Utility.InstantiatePrefabSameName(item.gameobject);
                 objects.Add(o);
-                objectsToAdd.Remove(o);
                 SetObjectOrientation(o);
                 InteractableObject.SetAttachedObject(o, this.worldObject);
+                --countToAdd;
             }
             else{
-                camp.AddObjectsAnyRack(itemType, objectsToAdd);
+
+                // else, call to add remaining count to other racks
+                camp.AddObjectsAnyRack(item, ref countToAdd);
                 break;
             }
         }
     }
 
-    public void RemoveObjects(Item item, int countToRemove){
+    public void RemoveObjects(Item item, ref int countToRemove){
 
         // count the number of occurences of the item, and remove that many from the objects
         int occurences = objects.Where(o => o.name == item.nme).Count();
@@ -78,7 +84,8 @@ public class ObjectRack : ScriptableObject
             --countToRemove;
         }
 
-        camp.RemoveObjectsAnyRack(item, countToRemove);
+        // call to remove remaining count
+        camp.RemoveObjectsAnyRack(item, ref countToRemove);
     }   
 
     // set a given object's orientation to fit properly in the rack
@@ -89,8 +96,6 @@ public class ObjectRack : ScriptableObject
         Transform orientation = Utility.FindDeepChild(worldObject.transform, "ItemOrientation" + index);
         o.transform.position = orientation.position;
         o.transform.rotation = orientation.rotation;
-
-        //Utility.ToggleObjectPhysics(o, false);
         SpringJoint joint = o.AddComponent<SpringJoint>();
         joint.spring = 1000f;
         joint.damper = .2f;

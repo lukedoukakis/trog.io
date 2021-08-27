@@ -6,6 +6,14 @@ public class ScriptableObjectReference : MonoBehaviour
 {
 
 
-    public ScriptableObject scriptableObject;
+    ScriptableObject scriptableObject;
+
+    public ScriptableObject GetScriptableObject(){
+        return scriptableObject;
+    }
+
+    public void SetScriptableObject(ScriptableObject s){
+        this.scriptableObject = s;
+    }
 
 }

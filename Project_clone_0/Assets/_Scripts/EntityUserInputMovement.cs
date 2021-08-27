@@ -132,11 +132,11 @@ public class EntityUserInputMovement : EntityComponent
 
         if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LayerMask.GetMask("Item", "Entity"))){
             hoveredInteractable = hit.collider.gameObject;
-            Log(hoveredInteractable.name);
+            //Log(hoveredInteractable.name);
         }
         else{
             hoveredInteractable = null;
-            Log("NO HOVERED INTERACTABLE GAMEOBJECT");
+            //Log("NO HOVERED INTERACTABLE GAMEOBJECT");
         }
     }
 

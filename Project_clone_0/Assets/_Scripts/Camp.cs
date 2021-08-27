@@ -64,67 +64,6 @@ public class Camp : ScriptableObject
         return camp;
     }
 
-    // update camp components with new items
-    public void AddItemsToCamp(ItemCollection newItems){
-
-        // create lists from new items to add to racks
-        List<GameObject> foodList = new List<GameObject>();
-        List<GameObject> weaponsList = new List<GameObject>();
-        List<GameObject> clothingList = new List<GameObject>();
-        List<GameObject> miscLargeList = new List<GameObject>();
-        List<GameObject> miscSmallList = new List<GameObject>();
-
-        // create lists from item collection
-        Enum itemType;
-        int itemCount;
-        foreach(Item item in newItems.items.Keys){
-            itemType = item.type;
-            itemCount = newItems.GetItemCount(item);
-            List<GameObject> list;
-            switch (itemType) {
-                case Item.Type.Food :
-                    list = foodList;
-                    break;
-                case Item.Type.Weapon :
-                    list = weaponsList;
-                    break;
-                case Item.Type.Clothing :
-                    list = clothingList;
-                    break;
-                case Item.Type.MiscLarge :
-                    list = miscLargeList;
-                    break;
-                case Item.Type.MiscSmall :
-                    list = miscSmallList;
-                    break;
-                default:
-                    Debug.Log("unsupported item type: " + itemType);
-                    list = foodList;
-                    break;
-            }
-
-            for(int i = 0; i < itemCount; ++i){
-                list.Add(Utility.InstantiatePrefabSameName(item.gameobject));
-            }
-        }
-
-        // place object racks with contents from lists
-        AddObjectsAnyRack(Item.Type.Food, foodList);
-        AddObjectsAnyRack(Item.Type.Weapon, weaponsList);
-        AddObjectsAnyRack(Item.Type.Clothing, clothingList);
-        // todo: misclarge and miscsmall items
-
-    }
-
-
-    public void RemoveItemsFromCamp(ItemCollection itemsToRemove){
-        foreach(Item item in itemsToRemove.items.Keys){
-            RemoveObjectsAnyRack(item, itemsToRemove.GetItemCount(item));
-        }
-    }
-
-
-
 
     public void SetOrigin(Vector3 position){
         this.origin = position;
@@ -161,7 +100,6 @@ public class Camp : ScriptableObject
 
         }
     }
-
 
     public Transform GetCampComponentOrientation(Enum componentType){
 
@@ -223,7 +161,8 @@ public class Camp : ScriptableObject
         this.workbench = workbench;
     }
 
-    public void PlaceObjectRack(Enum itemType, List<GameObject> objects){
+
+    public void PlaceObjectRack(Enum itemType, Item item, ref int count){
         ObjectRack objectRack =  ScriptableObject.CreateInstance<ObjectRack>();
         objectRack.SetObjectRack(this, itemType);
         List<ObjectRack> rackList = GetRackListForItemType(itemType);
@@ -247,7 +186,7 @@ public class Camp : ScriptableObject
         objectRack.worldObject.transform.position = targetOrientation.position;
         objectRack.worldObject.transform.rotation = targetOrientation.rotation;
         rackList.Add(objectRack);
-        objectRack.AddObjects(objects);
+        objectRack.AddObjects(item, ref count);
     }
 
     public void PlaceAnvil(){
@@ -290,25 +229,51 @@ public class Camp : ScriptableObject
     }
 
 
-    public void AddObjectsAnyRack(Enum itemType, List<GameObject> objectsToAdd){
-        List<ObjectRack> rackList = GetRackListForItemType(itemType);
-        foreach(ObjectRack rack in rackList){
+    public void AddItemsToCamp(ItemCollection itemsToAdd){
+        Item item;
+        int countToRemove;
+        foreach(KeyValuePair<Item, int> kvp in itemsToAdd.items){
+            item = kvp.Key;
+            countToRemove = kvp.Value;
+            AddObjectsAnyRack(item, ref countToRemove);
+        }
+    }
+
+    public void RemoveItemsFromCamp(ItemCollection itemsToRemove){
+        Item item;
+        int countToRemove;
+        foreach(KeyValuePair<Item, int> kvp in itemsToRemove.items){
+            item = kvp.Key;
+            countToRemove = kvp.Value;
+            RemoveObjectsAnyRack(item, ref countToRemove);
+        }
+    }
+
+    public void AddObjectsAnyRack(Item item, ref int count){
+        List<ObjectRack> rackList = GetRackListForItemType(item.type);
+         foreach(ObjectRack rack in rackList){
             if(!rack.IsFull()){
-                rack.AddObjects(objectsToAdd);
+                rack.AddObjects(item, ref count);
                 break;
             }
         }
 
         // if still objects to add, place a new rack
-        if(objectsToAdd.Count > 0){
-            PlaceObjectRack(itemType, objectsToAdd);
+        if(count > 0){
+            PlaceObjectRack(item.type, item, ref count);
         }
-    }
+    }   
 
-    public void RemoveObjectsAnyRack(Item item, int count){
+
+    public void RemoveObjectsAnyRack(Item item, ref int count){
         List<ObjectRack> rackList = GetRackListForItemType(item.type);
         for(int i = rackList.Count - 1; i >= 0; --i){
-            rackList[i].RemoveObjects(item, count);
+            if(count > 0){
+                rackList[i].RemoveObjects(item, ref count);
+            }
+            else{
+                break;
+            }
         }
     }
 

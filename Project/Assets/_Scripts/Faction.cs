@@ -26,37 +26,53 @@ public class Faction : ScriptableObject
         fac.targetedObjects.Add(o);
     }
 
-    public static void AddItemOwned(Faction fac, Item item, int count, ObjectRack rack){
+    public static void AddItemOwned(Faction fac, Item item, int count, ObjectRack rack)
+    {
+
         fac.ownedItems.AddItem(item, count);
 
-        if(rack == null){
-            ItemCollection newItems = new ItemCollection();
-            newItems.AddItem(item, count);
-            fac.camp.AddItemsToCamp(newItems);
-        }
-        else{
-            List<GameObject> objectsToAdd = new List<GameObject>();
-            for(int i = 0; i < count; ++i){
-                objectsToAdd.Add(Utility.InstantiatePrefabSameName(item.gameobject));
+        if (fac.camp != null)
+        {
+            if (rack == null)
+            {
+                ItemCollection newItems = new ItemCollection();
+                newItems.AddItem(item, count);
+                fac.camp.AddItemsToCamp(newItems);
             }
-            rack.AddObjects(objectsToAdd);
+            else
+            {
+                List<GameObject> objectsToAdd = new List<GameObject>();
+                for (int i = 0; i < count; ++i)
+                {
+                    objectsToAdd.Add(Utility.InstantiatePrefabSameName(item.gameobject));
+                }
+                rack.AddObjects(item, ref count);
+            }
         }
     }
 
-    public static void RemoveItemOwned(Faction fac, Item item, int count, ObjectRack rack){
+    public static void RemoveItemOwned(Faction fac, Item item, int count, ObjectRack rack)
+    {
+
         fac.ownedItems.RemoveItem(item, count);
 
-        if(rack == null){
-            ItemCollection itemsToRemove = new ItemCollection();
-            itemsToRemove.AddItem(item, count);
-            fac.camp.RemoveItemsFromCamp(itemsToRemove);
-        }
-        else{
-            List<GameObject> objectsToRemove = new List<GameObject>();
-            for(int i = 0; i < count; ++i){
-                objectsToRemove.Add(Utility.InstantiatePrefabSameName(item.gameobject));
+        if (fac.camp != null)
+        {
+            if (rack == null)
+            {
+                ItemCollection itemsToRemove = new ItemCollection();
+                itemsToRemove.AddItem(item, count);
+                fac.camp.RemoveItemsFromCamp(itemsToRemove);
             }
-            rack.RemoveObjects(item, count);
+            else
+            {
+                List<GameObject> objectsToRemove = new List<GameObject>();
+                for (int i = 0; i < count; ++i)
+                {
+                    objectsToRemove.Add(Utility.InstantiatePrefabSameName(item.gameobject));
+                }
+                rack.RemoveObjects(item, ref count);
+            }
         }
     }
 
