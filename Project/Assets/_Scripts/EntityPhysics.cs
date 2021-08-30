@@ -256,8 +256,9 @@ public class EntityPhysics : EntityComponent
         else{
             // not moving
             vertLeft = vertRight = Vector3.zero;
-            targetToeRight.position = targetFootRight.position + transform.forward + Vector3.down;
-            targetToeLeft.position = targetFootLeft.position + transform.forward.normalized + Vector3.down;
+            vertLeft = vertRight = Vector3.up * GetRunCycleVerticality(.65f);
+            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down;
+            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward.normalized + Vector3.down;
         }
         targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertRight;
         targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertLeft;

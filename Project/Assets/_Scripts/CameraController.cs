@@ -52,6 +52,13 @@ public class CameraController : MonoBehaviour
         // static camera
         if (mode == 0)
         {
+
+
+            if(!UIController.UImode){
+                posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
+                ZoomInput();
+            }
+
             Vector3 targetPos = playerT.position + (Vector3.forward * -6f) + (Vector3.up * 4f);
             Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPos, 50f * Time.deltaTime);
             Camera.main.transform.rotation = Quaternion.Euler(new Vector3(30f, 0f, 0f));
@@ -90,6 +97,39 @@ public class CameraController : MonoBehaviour
             Camera.main.transform.LookAt(targetLookAt);
         
         
+        }
+
+        else if(mode == 2){
+            float pi = Mathf.PI;
+
+            if(!UIController.UImode){
+                posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
+                ZoomInput();
+            }
+
+            float max = .48f;
+            float min = -.3f;
+
+            // above
+            if (posModifier > max)
+            {
+                posModifier = max;
+            }
+
+            // below
+            if (posModifier < min)
+            {
+                posModifier = min;
+            }
+
+            cameraDistance_baked = 1.5f;
+            float cameraDistance_combined = cameraDistance_baked * cameraDistance_input;
+
+            followT.position = Vector3.Lerp(followT.position, playerT.position + Vector3.up * 3.7f * cameraDistance_combined, 18f * Time.deltaTime);
+            targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f * cameraDistance_combined) + (Mathf.Sin(posModifier * pi) * Vector3.up * 4f * cameraDistance_combined), 50f * Time.deltaTime);
+            Camera.main.transform.position = targetPos;
+            targetLookAt = Vector3.Lerp(targetLookAt, followT.position, 50f * Time.deltaTime);
+            Camera.main.transform.LookAt(targetLookAt);
         }
     }
 
