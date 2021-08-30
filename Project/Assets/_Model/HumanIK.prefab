@@ -287,7 +287,7 @@ CharacterJoint:
     bounciness: 0
     contactDistance: 0
   m_Swing2Limit:
-    limit: 177
+    limit: 6.795811
     bounciness: 0
     contactDistance: 0
   m_EnableProjection: 0
@@ -605,7 +605,7 @@ CharacterJoint:
     bounciness: 0
     contactDistance: 0
   m_Swing2Limit:
-    limit: 177
+    limit: 6.795811
     bounciness: 0
     contactDistance: 0
   m_EnableProjection: 0

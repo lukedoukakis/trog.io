@@ -107,6 +107,8 @@ public class EntityItems : EntityComponent
         }
 
 
+        ToggleWeaponEquipped();
+
         if(weaponEquipped_item == null){
 
             // if no equipped weapon, set equipped weapon
