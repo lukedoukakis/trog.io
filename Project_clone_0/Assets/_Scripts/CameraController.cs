@@ -75,38 +75,6 @@ public class CameraController : MonoBehaviour
                 ZoomInput();
             }
 
-            // above
-            if (posModifier > .48f)
-            {
-                posModifier = .48f;
-            }
-
-            // below
-            if (posModifier < -.48f)
-            {
-                posModifier = -.48f;
-            }
-
-            cameraDistance_baked = 1f - (Mathf.Min(0f, posModifier) * -1.5f);
-            float cameraDistance_combined = cameraDistance_baked * cameraDistance_input;
-
-            followT.position = Vector3.Lerp(followT.position, playerT.position + Vector3.up * 3.7f * cameraDistance_combined, 18f * Time.deltaTime);
-            targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f * cameraDistance_combined) + (Mathf.Sin(posModifier * pi) * Vector3.up * 4f * cameraDistance_combined), 50f * Time.deltaTime);
-            Camera.main.transform.position = targetPos;
-            targetLookAt = Vector3.Lerp(targetLookAt, followT.position, 50f * Time.deltaTime);
-            Camera.main.transform.LookAt(targetLookAt);
-        
-        
-        }
-
-        else if(mode == 2){
-            float pi = Mathf.PI;
-
-            if(!UIController.UImode){
-                posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
-                ZoomInput();
-            }
-
             float max = .48f;
             float min = -.3f;
 
@@ -130,6 +98,8 @@ public class CameraController : MonoBehaviour
             Camera.main.transform.position = targetPos;
             targetLookAt = Vector3.Lerp(targetLookAt, followT.position, 50f * Time.deltaTime);
             Camera.main.transform.LookAt(targetLookAt);
+        
+        
         }
     }
 

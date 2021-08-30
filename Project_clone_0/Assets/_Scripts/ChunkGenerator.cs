@@ -307,7 +307,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // TemperatureMap [0, 1]
-                temperatureValue = Mathf.Pow((1f - (mountainValue / mtnCap)), 2f);
+                temperatureValue = Mathf.Pow((1f - (mountainValue / mtnCap)), 2f) - .1f;
                 temperatureValue +=  (Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale) * 2f - 1f) * (1.5f * (1f - mountainValue/mtnCap));
 
                 //temperatureValue = Mathf.InverseLerp(.4f, .6f, temperatureValue);
@@ -519,7 +519,13 @@ public class ChunkGenerator : MonoBehaviour
                 }
 
                 // posterize all land
-                heightValue = Posterize(SeaLevel + .0001f, 1f, heightValue, 250, .5f);
+                float postNes = Mathf.PerlinNoise((x + xOffset) / 100f, (z + zOffset) / 100f);
+                postNes = Mathf.InverseLerp(.49f, .51f, postNes);
+
+                heightValue = Posterize(SeaLevel + .0001f, 1f, heightValue, 250, .9f + postNes);
+                heightValue = Posterize(SeaLevel + .0001f, 1f, heightValue, 750, 0f + postNes);
+
+
 
 
                 // // create slight roughness in terrain
@@ -562,6 +568,7 @@ public class ChunkGenerator : MonoBehaviour
     float Posterize(float min, float max, float val, int steps, float softness)
     {
         float stepHeight = (max - min) / steps;
+
         float level = min;
         while (level < max)
         {
@@ -571,7 +578,7 @@ public class ChunkGenerator : MonoBehaviour
                 float nextLevel = level;
                 level -= stepHeight;
                 float midpt = (level + nextLevel) / 2f;
-                float compliance = 1f - (Mathf.Pow(Mathf.Abs(midpt - val) / (stepHeight / 2f), .8f));
+                float compliance = 1f - (Mathf.Pow(Mathf.Abs(midpt - val) / (stepHeight / 2f), Mathf.Lerp(0f, 20f, 1f - softness)));
                 val = Mathf.Lerp(val, level, compliance);
 
 

@@ -255,7 +255,6 @@ public class EntityPhysics : EntityComponent
         }
         else{
             // not moving
-            vertLeft = vertRight = Vector3.zero;
             vertLeft = vertRight = Vector3.up * GetRunCycleVerticality(.65f);
             targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down;
             targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward.normalized + Vector3.down;
