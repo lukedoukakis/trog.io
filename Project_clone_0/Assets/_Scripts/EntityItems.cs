@@ -76,32 +76,56 @@ public class EntityItems : EntityComponent
         Item i = Item.GetItemByName(o.name);
         switch (i.type) {
             case Item.Type.Weapon :
-                PickUpWeapon(i, o, attachedObject);
+                PickUpWeapon(i, attachedObject);
                 break;
             case Item.Type.Clothing :
                 EquipClothing(i, attachedObject);
                 break;
             default:
-                PickUpNonFoodOrClothing(i, o, attachedObject);
+                PickUpNonFoodOrClothing(i, attachedObject);
                 break;
             
         }
+        entityPhysics.OnItemSwitch();
     }
 
 
-    public void PickUpWeapon(Item i, GameObject o, ScriptableObject attachedObject){
+    public void PickUpWeapon(Item i, ScriptableObject attachedObject){
+
+        Debug.Log("Picking up weapon: " + i.nme);
+
+        if (attachedObject is ObjectRack)
+        {
+            // get rack reference from attached object and add the item to faction items with specified rack
+            ObjectRack rack = (ObjectRack)attachedObject;
+            Faction.RemoveItemOwned(entityInfo.faction, i, 1, rack);
+        }
+        // todo: if getting from another human
+        else
+        {
+            Debug.Log("No attached object match");
+        }
+
+
         if(weaponEquipped_item == null){
-            SetEquippedWeapon(i, o);
+
+            // if no equipped weapon, set equipped weapon
+            SetEquippedWeapon(i);
+
         }
         else{
             if(weaponUnequipped_item != null){
                 DropUnequippedWeapon(attachedObject);
+                
             }
-            SetUnequippedWeapon(i, o);
+            SetUnequippedWeapon(i);
         }
     }
 
-    public void PickUpNonFoodOrClothing(Item i, GameObject o, ScriptableObject attachedObject){
+    public void PickUpNonFoodOrClothing(Item i, ScriptableObject attachedObject){
+
+        GameObject o = Utility.InstantiatePrefabSameName(i.gameobject);
+
         if(holding_item != null){
             DropHolding();
         }
@@ -141,20 +165,37 @@ public class EntityItems : EntityComponent
 
         
         // Utility.ToggleObjectPhysics(weaponUnequipped_object, true);
-        // weaponEquipped_object.GetComponent<Rigidbody>().AddForce(transform.forward * -30f);
-        // weaponUnequipped_item = null;
-        // weaponUnequipped_object = null;
     }
 
-    public void SetUnequippedWeapon(Item i, GameObject o){
+    public void SetUnequippedWeapon(Item i){
+
+        GameObject o = Utility.InstantiatePrefabSameName(i.gameobject);
+
         weaponUnequipped_item = i;
         weaponUnequipped_object = o;
         Utility.ToggleObjectPhysics(weaponEquipped_object, false);
     }
-    public void SetEquippedWeapon(Item i, GameObject o){
+    public void SetEquippedWeapon(Item i){
+
+        GameObject o = Utility.InstantiatePrefabSameName(i.gameobject);
+
         weaponEquipped_item = i;
         weaponEquipped_object = o;
         Utility.ToggleObjectPhysics(weaponEquipped_object, false);
+    }
+
+    public void ToggleWeaponEquipped(){
+        if(weaponEquipped_item != null && weaponUnequipped_item != null){
+            Item tempItem = weaponEquipped_item;
+            GameObject tempObject = weaponEquipped_object;
+
+            weaponEquipped_item = weaponUnequipped_item;
+            weaponEquipped_object = weaponUnequipped_object;
+            weaponUnequipped_item = tempItem;
+            weaponUnequipped_object = tempObject;
+
+            entityPhysics.OnItemSwitch();
+        }
     }
 
     // ---
@@ -179,7 +220,7 @@ public class EntityItems : EntityComponent
             ObjectRack rack = (ObjectRack)attachedObject;
             Faction.RemoveItemOwned(entityInfo.faction, i, 1, rack);
         }
-        // todo: case human
+        // todo: if equipping from another human
         else
         {
             Debug.Log("No clothing attached object match");
@@ -193,18 +234,18 @@ public class EntityItems : EntityComponent
             if (targetAttachedObject is ObjectRack)
             {
 
-                // get rack reference from attached object and add the item to faction items with specified rack
+                // if unequipping to object rack, get rack reference from attached object and add the item to faction items with specified rack
                 ObjectRack rack = (ObjectRack)targetAttachedObject;
                 Faction.AddItemOwned(entityInfo.faction, clothingEquipped, 1, rack);
             }
 
-            // todo: case human
+            // todo: if unequipping onto another human
             else
             {
                 Debug.Log("No clothing attached object match");
             }
 
-
+            // unequip clothing on model
             meshParentT.Find(clothingEquipped.nme).gameObject.SetActive(false);
             clothingEquipped = null;
         }

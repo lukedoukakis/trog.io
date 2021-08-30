@@ -77,18 +77,18 @@ public class ObjectRack : ScriptableObject
     public void RemoveObjects(Item item, ref int countToRemove){
 
 
-        Debug.Log("Removing " + countToRemove + " " + item.nme);
+        //Debug.Log("Removing " + countToRemove + " " + item.nme);
 
         // count the number of occurences of the item, and remove that many from the objects
-        int occurences = objects.Where(o => o.name == item.nme).Count();
+        GameObject[] matches = objects.Where(o => o.name == item.nme).ToArray();
+        int occurences = matches.Length;
         if (occurences > 0)
         {
             int c = countToRemove;
             for (int i = 0; i < Math.Min(occurences, c); ++i)
             {
-                GameObject o = objects.FindLast(x => x.name.Equals(item.name));
+                GameObject o = matches[occurences - 1];
                 objects.Remove(o);
-                Debug.Log("Destroying");
                 GameObject.Destroy(o);
                 --countToRemove;
             }

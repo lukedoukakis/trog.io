@@ -107,16 +107,23 @@ public class EntityUserInputMovement : EntityComponent
 
 
     void CheckInteraction(){
+
         if(Input.GetKeyUp(KeyCode.E)){
             Interact();
+        }
+
+        if(Input.GetKeyUp(KeyCode.Alpha1)){
+            entityItems.ToggleWeaponEquipped();
         }
     }
    
     void Interact(){
+
+        //Log("Hovered object: " + hoveredInteractableObject.name);
+
         if(hoveredInteractableObject != null){
             switch (hoveredInteractableObject.tag) {
                 case "Item" :
-                    Log(entityItems.Equals(null).ToString());
                     entityItems.OnObjectInteract(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
                     break;
                 case "Human" :
