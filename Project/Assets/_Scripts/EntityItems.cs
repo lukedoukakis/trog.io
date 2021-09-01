@@ -81,7 +81,7 @@ public class EntityItems : EntityComponent
                 PickUpWeapon(i, attachedObject);
                 break;
             case Item.Type.Clothing :
-                EquipClothing(i, attachedObject);
+                PickUpHolding(i, attachedObject);
                 break;
             default:
                 PickUpHolding(i, attachedObject);
@@ -175,14 +175,40 @@ public class EntityItems : EntityComponent
         holding_object = null;
     }
 
+    public void ConsumeHolding(Item item)
+    {
+        entityStats.AddStatsModifier(holding_item.stats);
+        GameObject.Destroy(holding_object);
+        holding_item = null;
+        holding_object = null;
+    }
+
 
     public void OnHoldingUse(){
 
         if(holding_item != null){
-            // todo: animation
 
-            // add stats
-            entityStats.AddStatsModifier(holding_item.stats);
+            switch (holding_item.type) {
+                case Item.Type.Food :
+                    // todo: eating animation
+                    ConsumeHolding(holding_item);
+                    break;
+                
+                case Item.Type.Clothing :
+                    // todo: clothing animation
+                    Item i = holding_item;
+                    EquipClothing(holding_item);
+                    ConsumeHolding(i);
+                    break;
+
+                default:
+                    break;
+
+
+            }
+
+
+            
         }
 
 
@@ -263,49 +289,25 @@ public class EntityItems : EntityComponent
     // clothing
     // ---
 
-    public void EquipClothing(Item i, ScriptableObject attachedObject){
+    public void EquipClothing(Item i){
 
         // unequip current clothing
-        UnequipCurrentClothing(attachedObject);
+        UnequipCurrentClothing();
 
         // set clothing on model
+        Debug.Log("Equipping clothing of name: " + i.nme);
         meshParentT.Find(i.nme).gameObject.SetActive(true);
         this.clothing = i;
 
-        // add stats
-        entityStats.AddStatsModifier(i.stats);
 
-        // remove clothing from attached object
-        if (attachedObject is ObjectRack)
-        {
-            // get rack reference from attached object and add the item to faction items with specified rack
-            ObjectRack rack = (ObjectRack)attachedObject;
-            Faction.RemoveItemOwned(entityInfo.faction, i, 1, rack);
-        }
-        // todo: if equipping from another human
-        else
-        {
-            Debug.Log("No clothing attached object match");
-        }
     }
-    public void UnequipCurrentClothing(ScriptableObject targetAttachedObject){
+    public void UnequipCurrentClothing(){
 
         // if a clothing is currently equipped, unequip it and add associated item to faction items
         if (clothing != null)
         {
-            if (targetAttachedObject is ObjectRack)
-            {
 
-                // if unequipping to object rack, get rack reference from attached object and add the item to faction items with specified rack
-                ObjectRack rack = (ObjectRack)targetAttachedObject;
-                Faction.AddItemOwned(entityInfo.faction, clothing, 1, rack);
-            }
-
-            // todo: if unequipping onto another human
-            else
-            {
-                Debug.Log("No clothing attached object match");
-            }
+            Faction.AddItemOwned(entityInfo.faction, clothing, 1, null);
 
             // unequip clothing on model
             meshParentT.Find(clothing.nme).gameObject.SetActive(false);

@@ -33,11 +33,25 @@ public class EntityStats : EntityComponent
         OnStatsChange();
         //Debug.Log("Added stats modifier");
     }
-    public void RemoveStatsModifier(Stats stats){
-        bool removed = statsModifiers.Remove(stats);
-        if(!removed){
+    public void RemoveStatsModifier(Stats statsToRemove){
+        bool removed = statsModifiers.Remove(statsToRemove);
+        if (removed)
+        {
+            Enum statType;
+            foreach (int statNum in Enum.GetValues(typeof(Stats.StatType)))
+            {
+                statType = (Stats.StatType)statNum;
+                StatsHandler.SetStatValue(statsCombined, statType, StatsHandler.GetStatValue(statsCombined, statType) - StatsHandler.GetStatValue(statsToRemove, statType));
+            }
+        }
+        else
+        {
             Debug.Log("Error: couldn't find specified stats modifier to remove from stats modifiers");
         }
+
+        OnStatsChange();
+        //Debug.Log("Removed stats modifier");
+
     }
 
     void OnStatsChange(){
