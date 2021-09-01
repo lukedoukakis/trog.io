@@ -27,9 +27,6 @@ public class EntityItems : EntityComponent
     public Transform orientation_weaponEquipped_spear;
     public Transform orientation_weaponEquipped_axe;
     public Transform orientation_weaponUnequipped;
-
-    public Transform anchor_weaponEquipped_spear;
-    public Transform anchor_weaponEquipped_axe;
     public Transform basePosition_anchor_weaponEquipped_spear;
     public Transform basePosition_anchor_weaponEquipped_axe;
 
@@ -50,9 +47,6 @@ public class EntityItems : EntityComponent
         orientation_weaponEquipped_spear = orientationParent.Find("WeaponEquippedSpear");
         orientation_weaponEquipped_axe = orientationParent.Find("WeaponEquippedAxe");
         orientation_weaponUnequipped = orientationParent.Find("WeaponUnequipped");
-
-        anchor_weaponEquipped_spear = orientationParent.Find("AnchorWeaponEquippedSpear");
-        anchor_weaponEquipped_axe = orientationParent.Find("AnchorWeaponEquippedAxe");
         basePosition_anchor_weaponEquipped_spear = orientationParent.Find("BasePositionAnchorWeaponEquippedSpear");
         basePosition_anchor_weaponEquipped_axe = orientationParent.Find("BasePositionAnchorWeaponEquippedAxe");
 
@@ -98,7 +92,8 @@ public class EntityItems : EntityComponent
         {
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)attachedObject;
-            Faction.RemoveItemOwned(entityInfo.faction, i, 1, rack);
+            Faction rackFac = rack.camp.faction;
+            Faction.RemoveItemOwned(rackFac, i, 1, rack);
         }
         // todo: if getting from another human
         else
@@ -153,7 +148,7 @@ public class EntityItems : EntityComponent
         if(targetAttachedObject is ObjectRack){
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)targetAttachedObject;
-            Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1, rack);
+            Faction.AddItemOwned(entityInfo.faction, weaponUnequipped_item, 1, rack);
         }
         else{
             Debug.Log("No attached object match");
@@ -195,6 +190,10 @@ public class EntityItems : EntityComponent
             weaponEquipped_object = weaponUnequipped_object;
             weaponUnequipped_item = tempItem;
             weaponUnequipped_object = tempObject;
+
+            Utility.ToggleObjectPhysics(weaponEquipped_object, false);
+            Utility.ToggleObjectPhysics(weaponUnequipped_object, false);
+            
 
             entityPhysics.OnItemSwitch();
         }
@@ -258,12 +257,13 @@ public class EntityItems : EntityComponent
     void Update(){
 
 
-        anchor_weaponEquipped_spear.position = basePosition_anchor_weaponEquipped_spear.position;
-        anchor_weaponEquipped_spear.rotation = basePosition_anchor_weaponEquipped_spear.rotation;
-        anchor_weaponEquipped_axe.position = basePosition_anchor_weaponEquipped_axe.position;
-        anchor_weaponEquipped_axe.rotation = basePosition_anchor_weaponEquipped_axe.rotation;
+        orientation_weaponEquipped_spear.position = basePosition_anchor_weaponEquipped_spear.position;
+        orientation_weaponEquipped_spear.rotation = basePosition_anchor_weaponEquipped_spear.rotation;
+        orientation_weaponEquipped_axe.position = basePosition_anchor_weaponEquipped_axe.position;
+        orientation_weaponEquipped_axe.rotation = basePosition_anchor_weaponEquipped_axe.rotation;
+
         
-        //float objSpeed = .15f;
+        float objSpeed = 20f * Time.deltaTime;
 
         // if(holding != null){
         //     GameObject hold = holding.Item2;
@@ -275,33 +275,27 @@ public class EntityItems : EntityComponent
             Quaternion targetRot;
             if(weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Spear)){
                 targetPos = orientation_weaponEquipped_spear.position;
-                //targetRot = orientation_weaponEquipped_spear.rotation;
-                targetRot = anchor_weaponEquipped_spear.rotation;
+                targetRot = orientation_weaponEquipped_spear.rotation;
             }
             else if(weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Axe)){
                 targetPos = orientation_weaponEquipped_axe.position;
-                //targetRot = orientation_weaponEquipped_axe.rotation;
-                targetRot = anchor_weaponEquipped_axe.rotation;
+                targetRot = orientation_weaponEquipped_axe.rotation;
             }
             else{
                 targetPos = Vector3.zero;
                 targetRot = Quaternion.identity;
             }
             Vector3 currentPos = weaponEquipped_object.transform.position;
-            // weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, 60f * Time.deltaTime);
-            // weaponEquipped_object.transform.rotation = Quaternion.Slerp(weaponEquipped_object.transform.rotation, targetRot, 60f * Time.deltaTime);
-            weaponEquipped_object.transform.position = targetPos;
-            weaponEquipped_object.transform.rotation = targetRot;
+            Quaternion currentRot = weaponEquipped_object.transform.rotation;
+            weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, objSpeed);
+            weaponEquipped_object.transform.rotation = Quaternion.Slerp(currentRot, targetRot, objSpeed);
         }
         if(weaponUnequipped_object != null){
-            weaponUnequipped_object.transform.position = Vector3.Lerp(weaponUnequipped_object.transform.position, orientation_weaponUnequipped.position, float.MaxValue * Time.deltaTime);
-            weaponUnequipped_object.transform.rotation = Quaternion.Slerp(weaponUnequipped_object.transform.rotation, orientation_weaponUnequipped.rotation, 18f * Time.deltaTime);
-            // weaponUnequipped_object.transform.position = orientation_weaponUnequipped.position;
-            // weaponUnequipped_object.transform.rotation = orientation_weaponUnequipped.rotation;
+            weaponUnequipped_object.transform.position = Vector3.Lerp(weaponUnequipped_object.transform.position, orientation_weaponUnequipped.position, float.MaxValue);
+            weaponUnequipped_object.transform.rotation = Quaternion.Slerp(weaponUnequipped_object.transform.rotation, orientation_weaponUnequipped.rotation, float.MaxValue);
 
         }
 
-        //weap_on.transform.position = Vector3.Lerp(weap_on.transform.position, , objSpeed);
 
     }
 

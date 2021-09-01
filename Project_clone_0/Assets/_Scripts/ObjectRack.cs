@@ -108,9 +108,10 @@ public class ObjectRack : ScriptableObject
         Transform orientation = Utility.FindDeepChild(worldObject.transform, "ItemOrientation" + index);
         o.transform.position = orientation.position;
         o.transform.rotation = orientation.rotation;
+        Utility.ToggleObjectPhysics(o, true);
         SpringJoint joint = o.AddComponent<SpringJoint>();
         joint.spring = 1000f;
-        joint.damper = .2f;
+        joint.damper = 20000f;
     }
 
 

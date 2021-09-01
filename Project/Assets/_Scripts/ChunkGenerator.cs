@@ -7,7 +7,7 @@ using System.Linq;
 public class ChunkGenerator : MonoBehaviour
 {
     public static ChunkGenerator current;
-    public static int Seed = -1;
+    public static int Seed = 455;
     public static int ChunkSize = 20;
     public static int ChunkRenderDistance = 3;
     public static float Scale = 1200f;
