@@ -26,7 +26,7 @@ public class TreeInfo : MonoBehaviour
         switch (name)
         {
             case "Acacia Tree":
-                scale = 1.7f * ChunkGenerator.current.treeScale;
+                scale = 2f * ChunkGenerator.current.treeScale;
                 density = .1f;
                 normal_min = .95f;
                 normal_max = 1f;
@@ -85,12 +85,12 @@ public class TreeInfo : MonoBehaviour
                 vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Grass"):
-                scale = .75f;
+                scale = .4f;
                 density = 50f;
-                normal_min = .95f;
+                normal_min = .995f;
                 normal_max = 1f;
                 slant = .5f;
-                spread = 1f;
+                spread = 2f;
                 vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Plant"):

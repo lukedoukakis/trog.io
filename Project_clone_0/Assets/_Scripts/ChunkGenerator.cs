@@ -308,7 +308,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // TemperatureMap [0, 1]
 
-                temperatureValue = Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale);
+                temperatureValue = .25f + Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale);
                 temperatureValue -= .7f * (mountainValue / mtnCap);
                 // temperatureValue = Mathf.Pow((1f - (mountainValue / mtnCap)), 2f);
                 // temperatureValue +=  (Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale) * 2f - 1f) * (3f * (1f - mountainValue/mtnCap));
@@ -686,9 +686,9 @@ public class ChunkGenerator : MonoBehaviour
             vert++;
         }
 
-        for (int i = 0, z = 0; z < ChunkSize + 1; z++)
+        for (int i = 0, z = 0; z < ChunkSize + 2; z++)
         {
-            for (int x = 0; x < ChunkSize + 1; x++)
+            for (int x = 0; x < ChunkSize + 2; x++)
             {
                 TerrainUvs[i] = new Vector2((float)x + xOffset, (float)z + zOffset);
                 WaterUvs[i] = TerrainUvs[i];
