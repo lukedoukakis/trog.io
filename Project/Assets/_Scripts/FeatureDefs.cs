@@ -87,10 +87,10 @@ public class TreeInfo : MonoBehaviour
             case string str when name.StartsWith("Grass"):
                 scale = .75f;
                 density = 50f;
-                normal_min = .995f;
+                normal_min = .95f;
                 normal_max = 1f;
                 slant = .5f;
-                spread = 2f;
+                spread = 1f;
                 vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Plant"):
@@ -104,7 +104,7 @@ public class TreeInfo : MonoBehaviour
                 break;
             case string str when name.StartsWith("Reed"):
                 scale = 1f;
-                density = 2f;
+                density = 1f;
                 normal_min = .99f;
                 normal_max = 1f;
                 slant = .5f;
@@ -123,7 +123,7 @@ public class TreeInfo : MonoBehaviour
             case string str when name.StartsWith("Bush"):
                 scale = .4f;
                 density = 7f;
-                normal_min = .95f;
+                normal_min = .9f;
                 normal_max = 1f;
                 slant = .8f;
                 spread = .7f;
@@ -141,20 +141,20 @@ public class TreeInfo : MonoBehaviour
             case string str when name.StartsWith("Cactus"):
                 scale = 1f;
                 density = .1f;
-                normal_min = .95f;
+                normal_min = .9f;
                 normal_max = 1f;
                 slant = .18f;
                 spread = 5f;
                 vertOffset = 0f;
                 break;
             case string str when name.StartsWith("Rock"):
-                scale = 1f;
+                scale = .5f;
                 density = .1f;
                 normal_min = .95f;
                 normal_max = 1f;
                 slant = 1f;
                 spread = 2f;
-                vertOffset = -.5f;
+                vertOffset = -.15f;
                 break;
             case string str when name.StartsWith("RockShore"):
                 scale = .75f;
