@@ -6,10 +6,10 @@ using UnityEngine;
 public class Stats : ScriptableObject
 {
     public enum StatType{
-        Health, Attack, AttackSpeed, Speed, Swim, Agility, ArmorBase, ArmorBlunt, armorSlash, armorPierce
+        Health, Stamina, Attack, AttackSpeed, Speed, Swim, Agility, ArmorBase, ArmorBlunt, armorSlash, armorPierce, ColdResist
     }
 
-    public float health, attack, attackSpeed, speed, swim, agility, armorBase, armorBlunt, armorSlash, armorPierce;
+    public float health, stamina, attack, attackSpeed, speed, swim, agility, armorBase, armorBlunt, armorSlash, armorPierce, coldResist;
 }
 
 public class StatsHandler : MonoBehaviour{
@@ -19,6 +19,8 @@ public class StatsHandler : MonoBehaviour{
     // ----
     // definitions
     public static Stats BASE_HUMAN = InitializeStats(
+        .5f,
+        .5f,
         .5f,
         .5f,
         .5f,
@@ -40,6 +42,8 @@ public class StatsHandler : MonoBehaviour{
         switch (statType) {
             case Stats.StatType.Health:
                 return stats.health;
+            case Stats.StatType.Stamina:
+                return stats.health;
             case Stats.StatType.Attack:
                 return stats.attack;
             case Stats.StatType.AttackSpeed:
@@ -58,6 +62,8 @@ public class StatsHandler : MonoBehaviour{
                 return stats.armorSlash;
             case Stats.StatType.armorPierce:
                 return stats.armorPierce;
+            case Stats.StatType.ColdResist:
+                return stats.health;
             default:
                 Debug.Log("Invalid stat type");
                 return -1;
@@ -67,6 +73,8 @@ public class StatsHandler : MonoBehaviour{
         switch (statType) {
             case Stats.StatType.Health:
                 return "Health";
+            case Stats.StatType.Stamina:
+                return "Stamina";
             case Stats.StatType.Attack:
                 return "Attack";
             case Stats.StatType.AttackSpeed:
@@ -85,6 +93,8 @@ public class StatsHandler : MonoBehaviour{
                 return "Slash Damage Resistance";
             case Stats.StatType.armorPierce:
                 return "Pierce Armor Resistance";
+            case Stats.StatType.ColdResist:
+                return "Cold Resistance";
             default:
                 Debug.Log("Invalid stat type");
                return "ERROR: INVALID STAT TYPE";
@@ -95,6 +105,9 @@ public class StatsHandler : MonoBehaviour{
         switch (statType) {
             case Stats.StatType.Health:
                 stats.health = value;
+                break;
+            case Stats.StatType.Stamina:
+                stats.stamina = value;
                 break;
             case Stats.StatType.Attack:
                 stats.attack = value;
@@ -123,6 +136,9 @@ public class StatsHandler : MonoBehaviour{
             case Stats.StatType.armorPierce:
                 stats.armorPierce = value;
                 break;
+            case Stats.StatType.ColdResist:
+                stats.coldResist = value;
+                break;
             default:
                 Debug.Log("Invalid stat type");
                 break;
@@ -131,9 +147,10 @@ public class StatsHandler : MonoBehaviour{
 
     }
 
-    public static Stats InitializeStats(float health, float attack, float attackSpeed, float speed, float swim, float agility, float armorBase, float armorBlunt, float armorSlash, float armorPierce){
+    public static Stats InitializeStats(float health, float stamina, float attack, float attackSpeed, float speed, float swim, float agility, float armorBase, float armorBlunt, float armorSlash, float armorPierce, float coldResist){
         Stats stats = ScriptableObject.CreateInstance<Stats>();
         stats.health = health;
+        stats.stamina = stamina;
         stats.attack = attack;
         stats.attackSpeed = attackSpeed;
         stats.speed = speed;
@@ -143,6 +160,7 @@ public class StatsHandler : MonoBehaviour{
         stats.armorBlunt = armorBlunt;
         stats.armorSlash = armorSlash;
         stats.armorPierce = armorPierce;
+        stats.coldResist = coldResist;
         return stats;
     }
 
