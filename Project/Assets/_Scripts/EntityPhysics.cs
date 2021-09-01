@@ -137,8 +137,8 @@ public class EntityPhysics : EntityComponent
     }
 
     void Start(){
-        acceleration = StatsHandler.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * AccelerationScale;
-        maxSpeed_run = StatsHandler.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * MaxSpeedScale;
+        acceleration = StatsHandler.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * AccelerationScale;
+        maxSpeed_run = StatsHandler.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * MaxSpeedScale;
         maxSpeed_sprint = maxSpeed_run * 1.5f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * .75f;
@@ -382,10 +382,6 @@ public class EntityPhysics : EntityComponent
 
 
     // ----------
-
-    public void OnItemSwitch(){
-        UpdateIKForCarryingItems();
-    }
 
 
     public void Move(Vector3 direction, float speed){

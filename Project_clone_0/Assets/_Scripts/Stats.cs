@@ -16,22 +16,100 @@ public class StatsHandler : MonoBehaviour{
 
 
 
+
+    public static Stats NONE = InitializeStats(
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f
+    );
+
     // ----
     // definitions
     public static Stats BASE_HUMAN = InitializeStats(
-        .5f,
-        .5f,
-        .5f,
-        .5f,
-        .5f,
-        .5f,
-        .5f,
-        .5f,
-        .5f,
-        .5f,
-        .5f,
-        .5f
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f
     );
+    
+    public static Stats FOOD_TESTFOOD = InitializeStats(
+        1f,
+        1f,
+        1f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f
+    );
+
+    public static Stats WEAPON_SPEAR = InitializeStats(
+        0f,
+        0f,
+        3f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f
+    );
+
+    public static Stats WEAPON_AXE = InitializeStats(
+        0f,
+        0f,
+        3f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f
+    );
+
+    public static Stats CLOTHING_TESTCLOTHING = InitializeStats(
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        3f,
+        0f,
+        0f,
+        0f,
+        1f
+    );
+
+
 
 
     // ----
@@ -170,6 +248,7 @@ public class StatsHandler : MonoBehaviour{
     static Dictionary<string, Stats> BASE_STATS_MAP = new Dictionary<string, Stats>(){
         { "Human", BASE_HUMAN },
     };
+
 
 
 

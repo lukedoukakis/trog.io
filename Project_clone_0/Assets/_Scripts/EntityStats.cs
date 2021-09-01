@@ -16,16 +16,21 @@ public class EntityStats : EntityComponent
         base.Awake();
 
         statsModifiers = new List<Stats>();
-        statsCombined = ScriptableObject.CreateInstance<Stats>();
+        statsCombined = StatsHandler.InitializeStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         AddStatsModifier(StatsHandler.GetEntityBaseStats(entityInfo.species));
-        UpdateCombinedStats();
 
 
     }
 
 
-    public void AddStatsModifier(Stats stats){
-        statsModifiers.Add(stats);
+    public void AddStatsModifier(Stats statsToAdd){
+        statsModifiers.Add(statsToAdd);
+        Enum statType;
+        foreach(int statNum in Enum.GetValues(typeof(Stats.StatType))){
+            statType = (Stats.StatType)statNum;
+            StatsHandler.SetStatValue(statsCombined, statType, StatsHandler.GetStatValue(statsCombined, statType) + StatsHandler.GetStatValue(statsToAdd, statType));
+        }
+        OnStatsChange();
         //Debug.Log("Added stats modifier");
     }
     public void RemoveStatsModifier(Stats stats){
@@ -35,19 +40,8 @@ public class EntityStats : EntityComponent
         }
     }
 
-    void UpdateCombinedStats(Enum statType){
-        float calc = 1f;
-        foreach(Stats stats in statsModifiers){
-            calc *= StatsHandler.GetStatValue(stats, statType);
-        }
-        StatsHandler.SetStatValue(statsCombined, statType, calc);
-    }
-
-
-    void UpdateCombinedStats(){
-        foreach(int i in Enum.GetValues(typeof(Stats.StatType))){
-            UpdateCombinedStats((Stats.StatType)i);
-        }
+    void OnStatsChange(){
+        // todo: other stuff when entity's stats are changed
     }
 
 

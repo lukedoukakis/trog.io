@@ -121,6 +121,7 @@ public class EntityUserInputMovement : EntityComponent
 
         //Log("Hovered object: " + hoveredInteractableObject.name);
 
+        // if hovering over something, interact with it
         if(hoveredInteractableObject != null){
             switch (hoveredInteractableObject.tag) {
                 case "Item" :
@@ -130,7 +131,14 @@ public class EntityUserInputMovement : EntityComponent
                     // todo: human interact
                     break;
             }   
-        }      
+        }
+        
+    }
+
+    void CheckUse(){
+        if(Input.GetKeyUp(KeyCode.F)){
+            entityItems.OnHoldingUse();
+        }
     }
 
 
@@ -158,6 +166,7 @@ public class EntityUserInputMovement : EntityComponent
             }
             HandleAttack();
             CheckInteraction();
+            CheckUse();
         
         }
 

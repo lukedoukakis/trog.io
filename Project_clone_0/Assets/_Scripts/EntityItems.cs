@@ -18,7 +18,7 @@ public class EntityItems : EntityComponent
 
     // clothing
     public Transform meshParentT;
-    public Item clothingEquipped;
+    public Item clothing;
 
 
     
@@ -59,7 +59,7 @@ public class EntityItems : EntityComponent
         weaponEquipped_object = weaponUnequipped_object = holding_object = null;
 
         meshParentT = Utility.FindDeepChild(transform, "Human Model 2");
-        clothingEquipped = null; // TODO: initialize to something
+        clothing = null; // TODO: initialize to something
 
         itemOrientationAnimator = orientationParent.GetComponent<Animator>();
     }
@@ -88,7 +88,8 @@ public class EntityItems : EntityComponent
                 break;
             
         }
-        entityPhysics.OnItemSwitch();
+
+        OnItemsChange();
     }
 
 
@@ -127,6 +128,9 @@ public class EntityItems : EntityComponent
         }
     }
 
+
+    // holding
+
     public void PickUpHolding(Item i, ScriptableObject attachedObject){
 
         if (attachedObject is ObjectRack)
@@ -152,8 +156,6 @@ public class EntityItems : EntityComponent
         Utility.ToggleObjectPhysics(holding_object, false);
     }
 
-
-    // holding
     public void DropHolding(ScriptableObject targetAttachedObject){
         if(holding_item == null) { return; }
 
@@ -172,6 +174,22 @@ public class EntityItems : EntityComponent
         holding_item = null;
         holding_object = null;
     }
+
+
+    public void OnHoldingUse(){
+
+        if(holding_item != null){
+            // todo: animation
+
+            // add stats
+            entityStats.AddStatsModifier(holding_item.stats);
+        }
+
+
+    }
+
+
+    // weapon
 
     public void DropUnequippedWeapon(ScriptableObject targetAttachedObject){
 
@@ -209,6 +227,11 @@ public class EntityItems : EntityComponent
 
         weaponEquipped_item = i;
         weaponEquipped_object = o;
+
+        // add stats
+        entityStats.AddStatsModifier(i.stats);
+
+        // turn off physics
         Utility.ToggleObjectPhysics(weaponEquipped_object, false);
     }
 
@@ -222,11 +245,15 @@ public class EntityItems : EntityComponent
             weaponUnequipped_item = tempItem;
             weaponUnequipped_object = tempObject;
 
+            // turn off physics
             Utility.ToggleObjectPhysics(weaponEquipped_object, false);
             Utility.ToggleObjectPhysics(weaponUnequipped_object, false);
-            
 
-            entityPhysics.OnItemSwitch();
+            // update stats
+            entityStats.RemoveStatsModifier(weaponUnequipped_item.stats);
+            entityStats.AddStatsModifier(weaponEquipped_item.stats);
+            
+            OnItemsChange();
         }
     }
 
@@ -243,7 +270,10 @@ public class EntityItems : EntityComponent
 
         // set clothing on model
         meshParentT.Find(i.nme).gameObject.SetActive(true);
-        this.clothingEquipped = i;
+        this.clothing = i;
+
+        // add stats
+        entityStats.AddStatsModifier(i.stats);
 
         // remove clothing from attached object
         if (attachedObject is ObjectRack)
@@ -261,14 +291,14 @@ public class EntityItems : EntityComponent
     public void UnequipCurrentClothing(ScriptableObject targetAttachedObject){
 
         // if a clothing is currently equipped, unequip it and add associated item to faction items
-        if (clothingEquipped != null)
+        if (clothing != null)
         {
             if (targetAttachedObject is ObjectRack)
             {
 
                 // if unequipping to object rack, get rack reference from attached object and add the item to faction items with specified rack
                 ObjectRack rack = (ObjectRack)targetAttachedObject;
-                Faction.AddItemOwned(entityInfo.faction, clothingEquipped, 1, rack);
+                Faction.AddItemOwned(entityInfo.faction, clothing, 1, rack);
             }
 
             // todo: if unequipping onto another human
@@ -278,9 +308,18 @@ public class EntityItems : EntityComponent
             }
 
             // unequip clothing on model
-            meshParentT.Find(clothingEquipped.nme).gameObject.SetActive(false);
-            clothingEquipped = null;
+            meshParentT.Find(clothing.nme).gameObject.SetActive(false);
+
+            // remove stats
+            entityStats.RemoveStatsModifier(clothing.stats);
+
+            clothing = null;
         }
+    }
+
+    public void OnItemsChange()
+    {
+        entityPhysics.UpdateIKForCarryingItems();
     }
 
     // ---
