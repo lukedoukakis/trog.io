@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1830408283554421847}
   - component: {fileID: 6834878538942695553}
   - component: {fileID: 8069356996403466961}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: FoodTest
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -35,6 +35,7 @@ Transform:
   - {fileID: 3691550005685132438}
   - {fileID: 5585403966523686151}
   - {fileID: 8121681247041194545}
+  - {fileID: 3308057283228816446}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -175,7 +176,7 @@ GameObject:
   - component: {fileID: 3691550005685132438}
   - component: {fileID: 2294808300411210079}
   - component: {fileID: 5681733610211555196}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,8 +191,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4515086890702603018}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.020042, y: 0, z: 0}
-  m_LocalScale: {x: 0.20184535, y: 0.3107807, z: 0.123095684}
+  m_LocalPosition: {x: 0.023624, y: 0.000041842, z: 0}
+  m_LocalScale: {x: 0.1753283, y: 0.26995248, z: 0.10692421}
   m_Children: []
   m_Father: {fileID: 8224668399275973841}
   m_RootOrder: 0
@@ -223,7 +224,6 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 824be9a18d72ada4fbaec77886920d67, type: 2}
-  - {fileID: 2100000, guid: bb559494fcd815d438ca4c9f4c123435, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -255,7 +255,7 @@ GameObject:
   - component: {fileID: 8121681247041194545}
   - component: {fileID: 4352699680655835185}
   - component: {fileID: 510222106515093660}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -270,8 +270,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4698994670159393901}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.033, y: 0.008, z: 0}
-  m_LocalScale: {x: 0.05377362, y: 0.08279508, z: 0.13762371}
+  m_LocalPosition: {x: 0.034878, y: 0.0069906, z: 0}
+  m_LocalScale: {x: 0.04670921, y: 0.07191803, z: 0.11954366}
   m_Children: []
   m_Father: {fileID: 8224668399275973841}
   m_RootOrder: 2
@@ -323,6 +323,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &8330647553715335593
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3308057283228816446}
+  m_Layer: 13
+  m_Name: IKTargetT_Left
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3308057283228816446
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8330647553715335593}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.034, y: 0, z: 0}
+  m_LocalScale: {x: 0.53893, y: 0.68037, z: 0.53893}
+  m_Children: []
+  m_Father: {fileID: 8224668399275973841}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8964661583597268516
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,7 +364,7 @@ GameObject:
   - component: {fileID: 5585403966523686151}
   - component: {fileID: 3234031583634512865}
   - component: {fileID: 7026516723688988937}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -349,8 +379,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8964661583597268516}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0.051159, y: 0.083, z: 0}
-  m_LocalScale: {x: 0.14604318, y: 0.24862458, z: 0.123095684}
+  m_LocalPosition: {x: 0.050651, y: 0.072136, z: 0}
+  m_LocalScale: {x: 0.12685703, y: 0.21596201, z: 0.10692421}
   m_Children: []
   m_Father: {fileID: 8224668399275973841}
   m_RootOrder: 1
@@ -382,7 +412,6 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 824be9a18d72ada4fbaec77886920d67, type: 2}
-  - {fileID: 2100000, guid: bb559494fcd815d438ca4c9f4c123435, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

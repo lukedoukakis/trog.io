@@ -27,8 +27,10 @@ public class EntityItems : EntityComponent
     public Transform orientation_weaponEquipped_spear;
     public Transform orientation_weaponEquipped_axe;
     public Transform orientation_weaponUnequipped;
-    public Transform basePosition_anchor_weaponEquipped_spear;
-    public Transform basePosition_anchor_weaponEquipped_axe;
+    public Transform orientation_holding;
+    public Transform basePosition_weaponEquipped_spear;
+    public Transform basePosition_weaponEquipped_axe;
+    public Transform basePosition_holding;
 
     public Animator itemOrientationAnimator;
 
@@ -47,8 +49,11 @@ public class EntityItems : EntityComponent
         orientation_weaponEquipped_spear = orientationParent.Find("WeaponEquippedSpear");
         orientation_weaponEquipped_axe = orientationParent.Find("WeaponEquippedAxe");
         orientation_weaponUnequipped = orientationParent.Find("WeaponUnequipped");
-        basePosition_anchor_weaponEquipped_spear = orientationParent.Find("BasePositionAnchorWeaponEquippedSpear");
-        basePosition_anchor_weaponEquipped_axe = orientationParent.Find("BasePositionAnchorWeaponEquippedAxe");
+        orientation_holding = orientationParent.Find("Holding");
+        basePosition_weaponEquipped_spear = orientationParent.Find("BasePositionWeaponEquippedSpear");
+        basePosition_weaponEquipped_axe = orientationParent.Find("BasePositionWeaponEquippedAxe");
+        basePosition_holding = orientationParent.Find("BasePositionHolding");
+
 
         weaponEquipped_item = weaponUnequipped_item = holding_item = null;
         weaponEquipped_object = weaponUnequipped_object = holding_object = null;
@@ -69,6 +74,9 @@ public class EntityItems : EntityComponent
     public void OnObjectInteract(GameObject o, ScriptableObject attachedObject){
         Item i = Item.GetItemByName(o.name);
         switch (i.type) {
+            case Item.Type.Food :
+                PickUpHolding(i, attachedObject);
+                break;
             case Item.Type.Weapon :
                 PickUpWeapon(i, attachedObject);
                 break;
@@ -76,7 +84,7 @@ public class EntityItems : EntityComponent
                 EquipClothing(i, attachedObject);
                 break;
             default:
-                PickUpNonFoodOrClothing(i, attachedObject);
+                PickUpHolding(i, attachedObject);
                 break;
             
         }
@@ -119,12 +127,25 @@ public class EntityItems : EntityComponent
         }
     }
 
-    public void PickUpNonFoodOrClothing(Item i, ScriptableObject attachedObject){
+    public void PickUpHolding(Item i, ScriptableObject attachedObject){
+
+        if (attachedObject is ObjectRack)
+        {
+            // get rack reference from attached object and add the item to faction items with specified rack
+            ObjectRack rack = (ObjectRack)attachedObject;
+            Faction rackFac = rack.camp.faction;
+            Faction.RemoveItemOwned(rackFac, i, 1, rack);
+        }
+        // todo: if getting from another human
+        else
+        {
+            Debug.Log("No attached object match");
+        }
 
         GameObject o = Utility.InstantiatePrefabSameName(i.gameobject);
 
         if(holding_item != null){
-            DropHolding();
+            DropHolding(attachedObject);
         }
         holding_item = i;
         holding_object = o;
@@ -133,11 +154,21 @@ public class EntityItems : EntityComponent
 
 
     // holding
-    public void DropHolding(){
+    public void DropHolding(ScriptableObject targetAttachedObject){
         if(holding_item == null) { return; }
-        holding_object.GetComponent<Rigidbody>().AddForce(transform.forward + Vector3.up);
-        Utility.ToggleObjectPhysics(holding_object, true);
+
+        if(targetAttachedObject is ObjectRack){
+            // get rack reference from attached object and add the item to faction items with specified rack
+            ObjectRack rack = (ObjectRack)targetAttachedObject;
+            if(!rack.itemType.Equals(holding_item.type)){ rack = null; }
+            Faction.AddItemOwned(entityInfo.faction, weaponUnequipped_item, 1, rack);
+        }
+        else{
+            Debug.Log("No attached object match");
+        }
+        // todo: case human
         
+        GameObject.Destroy(holding_object);
         holding_item = null;
         holding_object = null;
     }
@@ -257,19 +288,22 @@ public class EntityItems : EntityComponent
     void Update(){
 
 
-        orientation_weaponEquipped_spear.position = basePosition_anchor_weaponEquipped_spear.position;
-        orientation_weaponEquipped_spear.rotation = basePosition_anchor_weaponEquipped_spear.rotation;
-        orientation_weaponEquipped_axe.position = basePosition_anchor_weaponEquipped_axe.position;
-        orientation_weaponEquipped_axe.rotation = basePosition_anchor_weaponEquipped_axe.rotation;
+        orientation_weaponEquipped_spear.position = basePosition_weaponEquipped_spear.position;
+        orientation_weaponEquipped_spear.rotation = basePosition_weaponEquipped_spear.rotation;
+        orientation_weaponEquipped_axe.position = basePosition_weaponEquipped_axe.position;
+        orientation_weaponEquipped_axe.rotation = basePosition_weaponEquipped_axe.rotation;
+        orientation_holding.position = basePosition_holding.position;
+        orientation_holding.rotation = basePosition_holding.rotation;
 
-        
-        float objSpeed = 20f * Time.deltaTime;
+        float lerpSpeed_weapon = 20f * Time.deltaTime;
+        float lerpSpeed_holding = 20f * Time.deltaTime;
 
-        // if(holding != null){
-        //     GameObject hold = holding.Item2;
-        //     hold.transform.position = t_hand_left.position + t_hand_left.forward*hold.GetComponent<BoxCollider>().size.z/4f;
-        //     hold.transform.rotation = t_hand_left.rotation;
-        // }
+        if(holding_item != null){
+            Vector3 currentPos = holding_object.transform.position;
+            Quaternion currentRot = holding_object.transform.rotation;
+            holding_object.transform.position = Vector3.Lerp(currentPos, orientation_holding.position, lerpSpeed_holding);
+            holding_object.transform.rotation = Quaternion.Slerp(currentRot, orientation_holding.rotation, lerpSpeed_holding);
+        }
         if(weaponEquipped_object != null){
             Vector3 targetPos;
             Quaternion targetRot;
@@ -287,8 +321,8 @@ public class EntityItems : EntityComponent
             }
             Vector3 currentPos = weaponEquipped_object.transform.position;
             Quaternion currentRot = weaponEquipped_object.transform.rotation;
-            weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, objSpeed);
-            weaponEquipped_object.transform.rotation = Quaternion.Slerp(currentRot, targetRot, objSpeed);
+            weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, lerpSpeed_weapon);
+            weaponEquipped_object.transform.rotation = Quaternion.Slerp(currentRot, targetRot, lerpSpeed_weapon);
         }
         if(weaponUnequipped_object != null){
             weaponUnequipped_object.transform.position = Vector3.Lerp(weaponUnequipped_object.transform.position, orientation_weaponUnequipped.position, float.MaxValue);

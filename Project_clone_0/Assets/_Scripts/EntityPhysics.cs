@@ -340,15 +340,15 @@ public class EntityPhysics : EntityComponent
 
     public void UpdateIKForCarryingItems(){
 
-        GameObject itemRight = entityItems.weaponEquipped_object;
-        GameObject itemLeft = entityItems.holding_object;
+        GameObject objectRight = entityItems.weaponEquipped_object;
+        GameObject objectLeft = entityItems.holding_object;
 
 
         // right hand
-        if(itemRight != null){
+        if(objectRight != null){
             ikScript_handRight.enabled = true;
             handFree_right = false;
-            ikScript_handRight.Target = itemRight.transform.Find("IKTargetT_Right");
+            ikScript_handRight.Target = objectRight.transform.Find("IKTargetT_Right");
         }
         else{
             ikScript_handRight.enabled = false;
@@ -357,17 +357,17 @@ public class EntityPhysics : EntityComponent
         }
         
         // left hand
-        if(itemLeft != null){
+        if(objectLeft != null){
             ikScript_handLeft.enabled = true;
+            ikScript_handLeft.Target = objectLeft.transform.Find("IKTargetT_Left");
             handFree_left = false;
-            targetHandLeft = itemRight.transform.Find("IKTargetT_Left");
         }
         else{
 
             // if hand is free, support right hand with holding the weapon, if equipped
             if(!handFree_right && entityItems.weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Axe)){
                 ikScript_handLeft.enabled = true;
-                ikScript_handLeft.Target = itemRight.transform.Find("IKTargetT_Left");
+                ikScript_handLeft.Target = objectRight.transform.Find("IKTargetT_Left");
             }
             else{
                 ikScript_handLeft.enabled = false;
