@@ -29,7 +29,7 @@ public class EntityPhysics : EntityComponent
     public static float JumpForce = 2800f;
     public static float ThrowForce = 200f;
     public static float AccelerationScale = 15f;
-    public static float MaxSpeedScale = 15f;
+    public static float MaxSpeedScale = 11f;
     public static float JumpCoolDown = .15f;
     public static float weaponChargeTime_max = 3f;
 
@@ -292,7 +292,7 @@ public class EntityPhysics : EntityComponent
 
     public void CycleFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime, bool water){
 
-        float forwardReachDistance = water ? 0f : .8f * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityAnimation.bodyLean * .1f);
+        float forwardReachDistance = water ? 0f : .58f * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityAnimation.bodyLean * .1f);
         plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
         updateTime = Mathf.Max(updateTime, 1f) - 1f;
     }
