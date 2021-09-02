@@ -15,6 +15,7 @@ public class EntityPhysics : EntityComponent
     public LayerMask layerMask_walkable;
 
     public Rigidbody rb;
+    public Animator animator;
     public Transform gyro;
     public Transform[] bodyPartTs, bodyPartTs_legs, bodyPartTs_upperBody;
     public Transform hips, head, handRight, handLeft, footRight, footLeft, toeRight, toeLeft;
@@ -27,7 +28,7 @@ public class EntityPhysics : EntityComponent
     float groundCastDistance;
     public static float JumpForce = 2800f;
     public static float ThrowForce = 200f;
-    public static float AccelerationScale = 30f;
+    public static float AccelerationScale = 15f;
     public static float MaxSpeedScale = 15f;
     public static float JumpCoolDown = .15f;
     public static float weaponChargeTime_max = 3f;
@@ -82,6 +83,7 @@ public class EntityPhysics : EntityComponent
         layerMask_water = LayerMask.GetMask("Water");
         layerMask_walkable = LayerMask.GetMask("Terrain", "Feature");
         rb = GetComponent<Rigidbody>();
+        animator = GetComponentInChildren<Animator>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
 
         hips = Utility.FindDeepChild(this.transform, "B-hips");
@@ -158,7 +160,6 @@ public class EntityPhysics : EntityComponent
     public void ToggleIK(bool value){
         if(ikEnabled != value){
             ikEnabled = value;
-            entityAnimation.ToggleAnimation(!value);
             foreach(FastIKFabric script in ikScripts){
                 script.enabled = value;
             }
@@ -173,28 +174,38 @@ public class EntityPhysics : EntityComponent
         if (ikEnabled)
         {
 
-            if(IN_WATER){
-                ToggleIK(false);
-                return;
-            }
 
-            UpdateLimbPositions();
+            if(IN_WATER){
+                ikScript_footLeft.enabled = false;
+                ikScript_footRight.enabled = false;
+                ikScript_toeLeft.enabled = false;
+                ikScript_toeRight.enabled = false;
+            }
+            else{
+                ikScript_footLeft.enabled = true;
+                ikScript_footRight.enabled = true;
+                ikScript_toeLeft.enabled = true;
+                ikScript_toeRight.enabled = true;
+            }
 
             bool moving = IsMoving();
             bool groundIsClose = GroundIsClose();
-            if (groundIsClose)
+
+            UpdateLimbPositions(IN_WATER);
+
+            if (groundIsClose || IN_WATER)
             {
-                // on ground
-                if (moving)
+                // not in the air
+                if (moving || IN_WATER)
                 {
                     // check if plant points need update
                     if (updateTime_footRight >= 1f)
                     {
-                        CycleFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight);
+                        CycleFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight, IN_WATER);
                     }
                     if (updateTime_footLeft >= 1f)
                     {
-                        CycleFootPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, ref updateTime_footLeft);
+                        CycleFootPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, ref updateTime_footLeft, IN_WATER);
                     }
                 }
                 else
@@ -205,7 +216,7 @@ public class EntityPhysics : EntityComponent
             }
             else
             {
-                // not on ground
+                // in the air
                 SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + GetHorizVelocity().normalized * 0f + entityAnimation.bodyT.right * 0f, ref plantPosFootLeft);
                 SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + GetHorizVelocity().normalized * .5f + entityAnimation.bodyT.right * .1f, ref plantPosFootRight);
                 updateTime_footRight = .2f;
@@ -233,7 +244,7 @@ public class EntityPhysics : EntityComponent
 
     }
 
-    public void UpdateLimbPositions(){
+    public void UpdateLimbPositions(bool water){
 
         // hips
         if(updateTime_hips > 1f){
@@ -247,50 +258,43 @@ public class EntityPhysics : EntityComponent
         Vector3 vertLeft, vertRight;
         if(IsMoving()){
             // moving
-            vertLeft = Vector3.up * GetRunCycleVerticality(updateTime_footLeft);
-            vertRight = Vector3.up * GetRunCycleVerticality(updateTime_footRight);
+            vertLeft = Vector3.up * GetRunCycleVerticality(updateTime_footLeft, water);
+            vertRight = Vector3.up * GetRunCycleVerticality(updateTime_footRight, water);
             Vector3 toeForward = (entityAnimation.bodyT.forward + transform.forward).normalized;
             targetToeRight.position = targetFootRight.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) +.2f);
             targetToeLeft.position = targetFootLeft.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) +.2f);
         }
         else{
             // not moving
-            vertLeft = vertRight = Vector3.up * GetRunCycleVerticality(.65f);
+            vertLeft = vertRight = Vector3.up * GetRunCycleVerticality(.65f, water);
             targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down;
             targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward.normalized + Vector3.down;
         }
         targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertRight;
         targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertLeft;
-        
-
-    
-
-
-        float GetRunCycleVerticality(float updateTime){
-            return (.015f + .025f * Mathf.InverseLerp(0f, 2f, rb.velocity.y)) * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
-        }
-
-        // .5 is stance phase, -.5 is swing phase
-        float GetRunCyclePhase(float updateTime, float offset){
-            return Mathf.Cos(updateTime * 2f * Mathf.PI + offset) + 1;
-        }
 
         
     }
 
+    float GetRunCycleVerticality(float updateTime, bool water)
+    {
+        float verticalityBase = water ? .006f : .015f;
+        return (verticalityBase + .025f * Mathf.InverseLerp(0f, 2f, rb.velocity.y)) * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
+    }
+
+    // .5 is stance phase, -.5 is swing phase
+    float GetRunCyclePhase(float updateTime, float offset)
+    {
+        return Mathf.Cos(updateTime * 2f * Mathf.PI + offset) + 1;
+    }
 
 
-    public void CycleFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime){
 
-        float forwardReachDistance = .8f * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityAnimation.bodyLean * .1f);
+    public void CycleFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime, bool water){
 
+        float forwardReachDistance = water ? 0f : .8f * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityAnimation.bodyLean * .1f);
         plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
-        // RaycastHit hit;
-        // if(Physics.Raycast(plantPos, Vector3.up + GetHorizVelocity().normalized, out hit, 1f, layerMask_terrain)){
-        //     Vector3 pt = hit.point;
-        //     plantPos = new Vector3(pt.x, Mathf.Min(pt.y, kneeHeightT.position.y), pt.z);
-        // }
-        updateTime = 0f + (Mathf.Max(updateTime, 1f) - 1f);
+        updateTime = Mathf.Max(updateTime, 1f) - 1f;
     }
     public void AdjustFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, bool onGround){
         // move plantPos down until hits terrain
@@ -302,12 +306,6 @@ public class EntityPhysics : EntityComponent
                 plantPos.y = hit.point.y;
             }
         }
-        
-        // else{
-        //     if(Physics.Raycast(plantPos, Vector3.up + GetHorizVelocity().normalized, out hit, 1f, layerMask_terrain)){
-        //         plantPos = new Vector3(plantPos.x, Mathf.Min(hit.point.x, kneeHeightT.position.y), plantPos.z);
-        //     }
-        // }
         Vector3 pos = targetIk.position;
         pos.y = Mathf.Max(pos.y, baseTransform.position.y);
         targetIk.position = pos;
@@ -448,13 +446,9 @@ public class EntityPhysics : EntityComponent
             GameObject temp = new GameObject();
             temp.transform.position = transform.position + transform.forward;
             temp.transform.SetParent(transform);
-            bool notTargeting = entityAnimation.bodyRotationMode != (int)EntityAnimation.BodyRotationMode.Target;
-            if(notTargeting){
-                entityAnimation.SetBodyRotationMode((int)EntityAnimation.BodyRotationMode.Target, temp.transform);
-            }
-    
+            //entityAnimation.SetBodyRotationMode(EntityAnimation.BodyRotationMode.Target, temp.transform);
+            //entityAnimation.SetFreeBodyRotationMode(false);
             yield return new WaitForSeconds(.2f);
-
             GameObject projectile = GameObject.Instantiate(projectilePrefab, handRight.position, Quaternion.identity);
             Physics.IgnoreCollision(projectile.GetComponent<Collider>(), hitbox);
             Vector3 targetPos, throwDir;
@@ -473,9 +467,9 @@ public class EntityPhysics : EntityComponent
 
 
             yield return new WaitForSeconds(.075f);
-            if(notTargeting){
-                entityAnimation.SetBodyRotationMode((int)EntityAnimation.BodyRotationMode.Target, null);
-            }
+            //entityAnimation.SetFreeBodyRotationMode(true);
+            //entityAnimation.SetBodyRotationMode(EntityAnimation.BodyRotationMode.Target, null);
+
             GameObject.Destroy(temp);
 
         }
@@ -592,26 +586,29 @@ public class EntityPhysics : EntityComponent
     }
 
     void CheckWater(){
-        bool w = false;
         float y = transform.position.y;
         float waterY = ChunkGenerator.SeaLevel*ChunkGenerator.ElevationAmplitude;
-        if(y <= waterY){
-        //if(Physics.Raycast(waterSense.position, Vector3.up, out waterInfo, layerMask_water)){
-            w = true;
-        }
-        if(y <= waterY + .2f){
-            ApplyFlotationForce(waterY - y);    
-        }
-        
-        if(w){
-            IN_WATER = true;
-        }
-        else{
-            if(IN_WATER){
-                offWaterTime = 0f;
+        bool w = y <= waterY - .5f;
+        if(w){    
+            if(!IN_WATER){
+                IN_WATER = true;
+                animator.SetTrigger("Water");
+                entityAnimation.SetBodyRotationMode(EntityAnimation.BodyRotationMode.Target, null);
             }
-            IN_WATER = false;
+            ApplyFlotationForce(waterY - y);
         }
+        else if(y > waterY){
+            if(IN_WATER){
+                IN_WATER = false;
+                offWaterTime = 0f;
+                animator.SetTrigger("Land");
+                entityAnimation.SetBodyRotationMode(EntityAnimation.BodyRotationMode.Target, entityAnimation.bodyRotationTarget);
+            }
+        }
+    }
+
+    public void SetAnimationLayerWeight(string position, float value){
+        animator.SetLayerWeight(animator.GetLayerIndex(position), value);
     }
 
     void CheckScrunch(){
@@ -705,6 +702,7 @@ public class EntityPhysics : EntityComponent
         return Physics.OverlapSphere(groundSense.position, .75f, layerMask_walkable).Length > 0;
 
     }
+
 
     void FixedUpdate()
     {

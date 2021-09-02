@@ -25,7 +25,7 @@ public class Action : ScriptableObject
     public float distanceThreshold;
 
     // body rotation mode
-    public int bodyRotationMode;
+    public Enum bodyRotationMode;
 
     // is urgent, i.e. will the entity sprint to accomplish the action etc.
     public bool urgent;
@@ -34,7 +34,7 @@ public class Action : ScriptableObject
     // maximum time to be spent executing the action
     public int maxSeconds;
 
-    public static Action GenerateAction(int _type, GameObject _obj, int _number, Item _item_target, Item _item_result, int _maxSeconds, float _distanceThreshold, int _bodyRotationMode, bool _urgent){
+    public static Action GenerateAction(int _type, GameObject _obj, int _number, Item _item_target, Item _item_result, int _maxSeconds, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent){
         Action a = ScriptableObject.CreateInstance<Action>();
         a.type = _type;
         a.obj = _obj;
@@ -57,7 +57,7 @@ public class Action : ScriptableObject
         a.item_target = null;
         a.maxSeconds = -1;
         a.distanceThreshold = -1;
-        a.bodyRotationMode = (int)EntityAnimation.BodyRotationMode.Normal;
+        a.bodyRotationMode = EntityAnimation.BodyRotationMode.Normal;
         a.urgent = false;
         return a;
     }
