@@ -6,7 +6,7 @@ using Mirror;
 public class EntityComponent : NetworkBehaviour
 {
 
-    [HideInInspector] public EntityHandle handle;
+    [HideInInspector] public EntityHandle entityHandle;
     [HideInInspector] public EntityInfo entityInfo;
     [HideInInspector] public EntityStats entityStats;
     [HideInInspector] public EntityBehavior entityBehavior;
@@ -19,7 +19,7 @@ public class EntityComponent : NetworkBehaviour
 
 
     protected virtual void Awake(){
-        handle = GetComponent<EntityHandle>();
+        entityHandle = GetComponent<EntityHandle>();
         entityInfo = GetComponent<EntityInfo>();
         entityStats = GetComponent<EntityStats>();
         entityBehavior = GetComponent<EntityBehavior>();

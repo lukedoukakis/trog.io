@@ -97,7 +97,7 @@ public class EntityBehavior : EntityComponent
     public Action NextAction(){
         if(actions.Count == 0){
             Log("Actions empty -> idling");
-            Action idle = Action.GenerateAction("Idle", handle);
+            Action idle = Action.GenerateAction("Idle", entityHandle);
             InsertAction(idle);
         }
         activeAction = actions[0];
@@ -247,7 +247,7 @@ public class EntityBehavior : EntityComponent
             Faction.AddItemTargeted(entityInfo.faction, target);
             Action goToObject = Action.GenerateAction((int)(Action.ActionTypes.GoTo), target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Normal, false);
             Action pickupObject = Action.GenerateAction((int)(Action.ActionTypes.Pickup), target, -1, Item.GetItemByName(target.name), null, -1, -1f, EntityAnimation.BodyRotationMode.Normal, false);
-            Action followPlayer = Action.GenerateAction("Follow Player", handle);
+            Action followPlayer = Action.GenerateAction("Follow Player", entityHandle);
             InsertAction(pickupObject);
             InsertAction(goToObject);
             NextAction();

@@ -27,11 +27,12 @@ public class EntityPhysics : EntityComponent
     public static float wallCastDistance = 1f;
     float groundCastDistance;
     public static float JumpForce = 2800f;
-    public static float ThrowForce = 200f;
-    public static float AccelerationScale = 15f;
+    public static float ThrowForce = 100f;
+    public static float AccelerationScale = 12f;
     public static float MaxSpeedScale = 11f;
     public static float JumpCoolDown = .15f;
     public static float weaponChargeTime_max = 3f;
+    public static float weaponHitTime_max = .25f;
 
 
     public Vector3 moveDir;
@@ -67,6 +68,9 @@ public class EntityPhysics : EntityComponent
     float weaponChargeTime;
     bool weaponCharging;
     float weaponChargeAmount;
+    float weaponHitTime;
+    public bool weaponCanHit;
+    public bool weaponHit;
 
 
 
@@ -482,47 +486,42 @@ public class EntityPhysics : EntityComponent
 
         Animator a = entityItems.itemOrientationAnimator;
 
-        if(entityItems.weaponEquipped_item == null){
-            LaunchProjectile(Item.SmallStone.gameobject);
+
+
+        Item weapItem = entityItems.weaponEquipped_item;
+        string triggerName;
+        if (weaponChargeTime == 0f)
+        {
+            BeginWeaponChargeTime();
+            triggerName = "Charge";
         }
-        else{
-            Item weapItem = entityItems.weaponEquipped_item;
-            string triggerName;
-            if(weaponChargeTime == 0f){
-                BeginWeaponChargeTime();
-                triggerName = "Charge";
+        else
+        {
+            StopWeaponChargeTime();
+            triggerName = "Release";
+            BeginWeaponHitTime();
+            if(entityItems.weaponEquipped_item == null){
+                LaunchProjectile(Item.SmallStone.gameobject);
             }
-            else{
-                StopWeaponChargeTime();
-                triggerName = "Release";
-            }
-            switch (weapItem.holdStyle)
-            {
-                case Item.HoldStyle.Spear:
-                    triggerName += "Spear";
-                    break;
-                case Item.HoldStyle.Axe:
-                    triggerName += "Axe";
-                    break;
-                default:
-                    Log("Trying to attack with a weapon with no specified hold style!!!");
-                    break;
-            }
-            triggerName += rangedMode ? "Ranged" : "Melee";
-
-
-            
-            a.SetTrigger(triggerName);
         }
+        switch (weapItem.holdStyle)
+        {
+            case Item.HoldStyle.Spear:
+                triggerName += "Spear";
+                break;
+            case Item.HoldStyle.Axe:
+                triggerName += "Axe";
+                break;
+            default:
+                Log("Trying to attack with a weapon with no specified hold style!!!");
+                break;
+        }
+
+        triggerName += rangedMode ? "Ranged" : "Melee";
+        a.SetTrigger(triggerName);
+        
     }
 
-
-    IEnumerator ReleaseSpearStyle(){
-        yield return null;
-    }
-    IEnumerator ReleaseAxeStyle(){
-        yield return null;
-    }
 
     void BeginWeaponChargeTime(){
         weaponCharging = true;
@@ -532,6 +531,31 @@ public class EntityPhysics : EntityComponent
         weaponCharging = false;
         weaponChargeAmount = Mathf.InverseLerp(0f, weaponChargeTime_max, weaponChargeTime);
         weaponChargeTime = 0f;
+    }
+
+    void BeginWeaponHitTime(){
+        weaponHitTime = 0f;
+        weaponCanHit = true;
+    }
+    void StopWeaponHitTime(){
+        weaponCanHit = false;
+        if(weaponHit){
+            OnWeaponHitRemove();
+            weaponHit = false;
+        }
+    }
+
+    public void OnWeaponHit(Collider collider){
+        Debug.Log("HIT!!!!");
+        // GameObject weapon = entityItems.weaponEquipped_object;
+        // Utility.ToggleObjectPhysics(weapon, true);
+        // var joint = weapon.AddComponent<FixedJoint>();
+        // joint.connectedAnchor = weapon.transform.position;
+    }
+    public void OnWeaponHitRemove(){
+        // GameObject weapon = entityItems.weaponEquipped_object;
+        // Utility.ToggleObjectPhysics(weapon, false);
+        // Destroy(weapon.GetComponent<FixedJoint>());
     }
 
 
@@ -720,11 +744,11 @@ public class EntityPhysics : EntityComponent
 
     void Update(){
 
+        float dTime = Time.deltaTime;
 
-
-        jumpTime += Time.deltaTime;
-        offWallTime += Time.deltaTime;
-        offWaterTime += Time.deltaTime;
+        jumpTime += dTime;
+        offWallTime += dTime;
+        offWaterTime += dTime;
 
         if(Input.GetKeyUp(KeyCode.P)){
             acceleration *= 2f;
@@ -736,7 +760,15 @@ public class EntityPhysics : EntityComponent
         }
 
         if(weaponCharging){
-            weaponChargeTime += Time.deltaTime;
+            weaponChargeTime += dTime;
+        }
+        if(weaponCanHit){
+            //Log("Weapon can hit");
+            weaponHitTime += dTime;
+            if(weaponHitTime >= weaponHitTime_max){
+                StopWeaponHitTime();
+                //Log("Weapon cannot hit");
+            }
         }
 
         //SetHeadTarget(Camera.main.transform.position + Camera.main.transform.forward * 1000f);

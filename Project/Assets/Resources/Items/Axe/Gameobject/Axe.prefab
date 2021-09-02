@@ -11,8 +11,10 @@ GameObject:
   - component: {fileID: 6927427349583796077}
   - component: {fileID: 946230469479153284}
   - component: {fileID: 4178544445203753893}
+  - component: {fileID: 4805009846168760677}
+  - component: {fileID: 838513332715676099}
   m_Layer: 13
-  m_Name: Cube
+  m_Name: HitZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,6 +81,31 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &4805009846168760677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 123003405812437153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 030cc6c6d5de8424eb7e2e29757e08b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!65 &838513332715676099
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 123003405812437153}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.99999994, y: 0.99999994, z: 0.99999994}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3084935189432340588
 GameObject:
   m_ObjectHideFlags: 0

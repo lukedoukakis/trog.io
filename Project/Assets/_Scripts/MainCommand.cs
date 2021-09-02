@@ -21,7 +21,7 @@ public class MainCommand : MonoBehaviour
         EntityBehavior behavior;
         foreach(EntityHandle handle in GlobalSelectionController.current.SelectedHandles.ToArray()){
             behavior = handle.entityBehavior;
-            behavior.InsertActionImmediate(Action.GenerateAction(c, behavior.handle), true);
+            behavior.InsertActionImmediate(Action.GenerateAction(c, behavior.entityHandle), true);
         }
         //Debug.Log("Commands sent!");
     }

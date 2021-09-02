@@ -50,8 +50,8 @@ public class EntityItems : EntityComponent
         orientation_weaponEquipped_axe = orientationParent.Find("WeaponEquippedAxe");
         orientation_weaponUnequipped = orientationParent.Find("WeaponUnequipped");
         orientation_holding = orientationParent.Find("Holding");
-        basePosition_weaponEquipped_spear = orientationParent.Find("BasePositionWeaponEquippedSpear");
-        basePosition_weaponEquipped_axe = orientationParent.Find("BasePositionWeaponEquippedAxe");
+        basePosition_weaponEquipped_spear = orientationParent.Find("BasePositionAnchorWeaponEquippedSpear");
+        basePosition_weaponEquipped_axe = orientationParent.Find("BasePositionAnchorWeaponEquippedAxe");
         basePosition_holding = orientationParent.Find("BasePositionHolding");
 
 
@@ -245,7 +245,12 @@ public class EntityItems : EntityComponent
 
         weaponUnequipped_item = i;
         weaponUnequipped_object = o;
+
+        // toggle physics
         Utility.ToggleObjectPhysics(weaponEquipped_object, false);
+
+        // remove hit detection owner
+        weaponUnequipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().RemoveOwner();
     }
     public void SetEquippedWeapon(Item i){
 
@@ -259,6 +264,9 @@ public class EntityItems : EntityComponent
 
         // turn off physics
         Utility.ToggleObjectPhysics(weaponEquipped_object, false);
+
+        // set weapon hit detection owner
+        weaponEquipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().SetOwner(entityHandle);
     }
 
     public void ToggleWeaponEquipped(){
@@ -278,6 +286,10 @@ public class EntityItems : EntityComponent
             // update stats
             entityStats.RemoveStatsModifier(weaponUnequipped_item.stats);
             entityStats.AddStatsModifier(weaponEquipped_item.stats);
+
+            // set weapon hit detection owner
+            weaponEquipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().SetOwner(entityHandle);
+            weaponUnequipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().RemoveOwner();
             
             OnItemsChange();
         }
@@ -345,7 +357,7 @@ public class EntityItems : EntityComponent
             holding_object.transform.position = Vector3.Lerp(currentPos, orientation_holding.position, lerpSpeed_holding);
             holding_object.transform.rotation = Quaternion.Slerp(currentRot, orientation_holding.rotation, lerpSpeed_holding);
         }
-        if(weaponEquipped_object != null){
+        if(weaponEquipped_object != null && !entityPhysics.weaponHit){
             Vector3 targetPos;
             Quaternion targetRot;
             if(weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Spear)){
