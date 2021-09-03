@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 8069827555116078480}
   - component: {fileID: 8069827555116078494}
   - component: {fileID: 8069827555116078493}
+  - component: {fileID: 5176456060878539918}
   - component: {fileID: 8374234257668663390}
   - component: {fileID: 2947814671508615466}
   - component: {fileID: 5656550286591847306}
@@ -78,7 +79,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -107,7 +108,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -135,7 +136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -161,7 +162,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -190,7 +191,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -203,13 +204,11 @@ MonoBehaviour:
   rb: {fileID: 0}
   bodyT: {fileID: 0}
   headT: {fileID: 0}
-  animator: {fileID: 0}
-  bodyRotationMode: 0
+  bodyRotationTarget: {fileID: 0}
   bodyLean: 0
   angularVelocityY: 0
   bodySkew: 0
   slowness: 0
-  keysList: []
 --- !u!114 &8069827555116078488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -224,7 +223,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -245,6 +244,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   rb: {fileID: 0}
+  animator: {fileID: 0}
   gyro: {fileID: 0}
   bodyPartTs: []
   bodyPartTs_legs: []
@@ -313,6 +313,8 @@ MonoBehaviour:
   updateTime_footRight: 0
   updateTime_footLeft: 0
   updateTime_hips: 0
+  weaponCanHit: 0
+  weaponHit: 0
 --- !u!114 &8069827555116078495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -327,7 +329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -353,7 +355,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -370,15 +372,15 @@ MonoBehaviour:
   weaponEquipped_object: {fileID: 0}
   weaponUnequipped_object: {fileID: 0}
   meshParentT: {fileID: 0}
-  clothingEquippedName: 
+  clothing: {fileID: 0}
   orientationParent: {fileID: 0}
   orientation_weaponEquipped_spear: {fileID: 0}
   orientation_weaponEquipped_axe: {fileID: 0}
   orientation_weaponUnequipped: {fileID: 0}
-  anchor_weaponEquipped_spear: {fileID: 0}
-  anchor_weaponEquipped_axe: {fileID: 0}
-  basePosition_anchor_weaponEquipped_spear: {fileID: 0}
-  basePosition_anchor_weaponEquipped_axe: {fileID: 0}
+  orientation_holding: {fileID: 0}
+  basePosition_weaponEquipped_spear: {fileID: 0}
+  basePosition_weaponEquipped_axe: {fileID: 0}
+  basePosition_holding: {fileID: 0}
   itemOrientationAnimator: {fileID: 0}
 --- !u!114 &8069827555116078494
 MonoBehaviour:
@@ -406,7 +408,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -425,9 +427,21 @@ MonoBehaviour:
   mouseX: 0
   mouseY: 0
   mouseZ: 0
-  hoveredInteractable: {fileID: 0}
+  hoveredInteractableObject: {fileID: 0}
   interactableObjects: []
   move: {x: 0, y: 0, z: 0}
+--- !u!114 &5176456060878539918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8069827555116078467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15fbd0e55bac06d48ac6e6c193042235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &8374234257668663390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,7 +456,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}

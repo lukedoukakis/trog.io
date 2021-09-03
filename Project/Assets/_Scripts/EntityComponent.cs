@@ -14,6 +14,7 @@ public class EntityComponent : NetworkBehaviour
     [HideInInspector] public EntityPhysics entityPhysics;
     [HideInInspector] public EntityStatus entityStatus;
     [HideInInspector] public EntityItems entityItems;
+    [HideInInspector] public EntityHitDetection entityHitDetection;
     [HideInInspector] public EntityUserInputMovement entityUserInputMovement;
     [HideInInspector] public EntityCommandServer entityCommandServer;
 
@@ -27,6 +28,7 @@ public class EntityComponent : NetworkBehaviour
         entityPhysics = GetComponent<EntityPhysics>();
         entityStatus = GetComponent<EntityStatus>();
         entityItems = GetComponent<EntityItems>();
+        entityHitDetection = GetComponent<EntityHitDetection>();
         entityUserInputMovement = GetComponent<EntityUserInputMovement>();
         entityCommandServer = GetComponent<EntityCommandServer>();
     }

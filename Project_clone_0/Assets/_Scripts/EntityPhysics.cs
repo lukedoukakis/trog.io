@@ -137,8 +137,8 @@ public class EntityPhysics : EntityComponent
         ikScripts_legs = new FastIKFabric[]{ ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft };
         ikScripts_upperBody = new FastIKFabric[]{ ikScript_handRight, ikScript_handLeft };
 
-        //targetFootRight.SetParent(GameObject.Find("Global Object").transform);
-        //targetFootLeft.SetParent(GameObject.Find("Global Object").transform);
+        //targetFootRight.SetParent(null);
+        //targetFootLeft.SetParent(null);
 
     }
 
@@ -177,7 +177,6 @@ public class EntityPhysics : EntityComponent
     public void IKUpdate(){
         if (ikEnabled)
         {
-
 
             if(IN_WATER){
                 ikScript_footLeft.enabled = false;
@@ -221,8 +220,8 @@ public class EntityPhysics : EntityComponent
             else
             {
                 // in the air
-                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + GetHorizVelocity().normalized * 0f + entityAnimation.bodyT.right * 0f, ref plantPosFootLeft);
-                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + GetHorizVelocity().normalized * .5f + entityAnimation.bodyT.right * .1f, ref plantPosFootRight);
+                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + entityAnimation.bodyT.right * 0f, ref plantPosFootLeft);
+                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityAnimation.bodyT.forward * .5f + entityAnimation.bodyT.right * .1f, ref plantPosFootRight);
                 updateTime_footRight = .2f;
                 updateTime_footLeft = .7f;
             }
@@ -251,10 +250,10 @@ public class EntityPhysics : EntityComponent
     public void UpdateLimbPositions(bool water){
 
         // hips
-        if(updateTime_hips > 1f){
-            updateTime_hips = updateTime_hips - 1f;
-        }
-        targetHips.position = basePositionHips.position + Vector3.up * GetRunCyclePhase(updateTime_hips, 0f) * .1f;
+        // if(updateTime_hips > 1f){
+        //     updateTime_hips = updateTime_hips - 1f;
+        // }
+        // targetHips.position = basePositionHips.position + Vector3.up * GetRunCyclePhase(updateTime_hips, 0f) * .1f;
 
 
         // feet and toes
@@ -271,7 +270,7 @@ public class EntityPhysics : EntityComponent
         else{
             // not moving
             vertLeft = vertRight = Vector3.up * GetRunCycleVerticality(.65f, water);
-            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward + Vector3.down;
+            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward.normalized + Vector3.down;
             targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward.normalized + Vector3.down;
         }
         targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertRight;
@@ -546,16 +545,15 @@ public class EntityPhysics : EntityComponent
     }
 
     public void OnWeaponHit(Collider collider){
-        Debug.Log("HIT!!!!");
-        // GameObject weapon = entityItems.weaponEquipped_object;
-        // Utility.ToggleObjectPhysics(weapon, true);
-        // var joint = weapon.AddComponent<FixedJoint>();
-        // joint.connectedAnchor = weapon.transform.position;
+        Log("HIT!!!!");
+        GameObject hitObject = collider.gameObject;
+        collider.gameObject.GetComponent<EntityHitDetection>().OnHit(this.entityStats, this.entityItems.weaponEquipped_item);
+
+        // todo: weapon fixed at hit point
+        
     }
-    public void OnWeaponHitRemove(){
-        // GameObject weapon = entityItems.weaponEquipped_object;
-        // Utility.ToggleObjectPhysics(weapon, false);
-        // Destroy(weapon.GetComponent<FixedJoint>());
+    public void OnWeaponHitRemove(){ 
+        // todo: weapon no longer at fixed point
     }
 
 

@@ -6,7 +6,7 @@ using UnityEngine;
 public class Stats : ScriptableObject
 {
     public enum StatType{
-        Health, Stamina, Attack, AttackSpeed, Speed, Swim, Agility, ArmorBase, ArmorBlunt, armorSlash, armorPierce, ColdResist
+        Health, Stamina, Attack, AttackSpeed, Speed, Swim, Agility, ArmorBase, ArmorBlunt, ArmorSlash, ArmorPierce, ColdResist
     }
 
     public float health, stamina, attack, attackSpeed, speed, swim, agility, armorBase, armorBlunt, armorSlash, armorPierce, coldResist;
@@ -47,6 +47,36 @@ public class StatsHandler : MonoBehaviour{
         1f,
         1f,
         1f
+    );
+
+    public static Stats BASE_TREE = InitializeStats(
+        3f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        8f,
+        0f,
+        8f,
+        0f
+    );
+
+    public static Stats BASE_CACTUS = InitializeStats(
+        2f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        2f,
+        0f,
+        2f,
+        0f
     );
     
     public static Stats FOOD_TESTFOOD = InitializeStats(
@@ -121,7 +151,7 @@ public class StatsHandler : MonoBehaviour{
             case Stats.StatType.Health:
                 return stats.health;
             case Stats.StatType.Stamina:
-                return stats.health;
+                return stats.stamina;
             case Stats.StatType.Attack:
                 return stats.attack;
             case Stats.StatType.AttackSpeed:
@@ -136,12 +166,12 @@ public class StatsHandler : MonoBehaviour{
                 return stats.armorBase;
             case Stats.StatType.ArmorBlunt:
                 return stats.armorBlunt;
-            case Stats.StatType.armorSlash:
+            case Stats.StatType.ArmorSlash:
                 return stats.armorSlash;
-            case Stats.StatType.armorPierce:
+            case Stats.StatType.ArmorPierce:
                 return stats.armorPierce;
             case Stats.StatType.ColdResist:
-                return stats.health;
+                return stats.coldResist;
             default:
                 Debug.Log("Invalid stat type");
                 return -1;
@@ -167,9 +197,9 @@ public class StatsHandler : MonoBehaviour{
                 return "Base Damage Resistance";
             case Stats.StatType.ArmorBlunt:
                 return "Blunt Damage Resistance";
-            case Stats.StatType.armorSlash:
+            case Stats.StatType.ArmorSlash:
                 return "Slash Damage Resistance";
-            case Stats.StatType.armorPierce:
+            case Stats.StatType.ArmorPierce:
                 return "Pierce Armor Resistance";
             case Stats.StatType.ColdResist:
                 return "Cold Resistance";
@@ -208,10 +238,10 @@ public class StatsHandler : MonoBehaviour{
             case Stats.StatType.ArmorBlunt:
                 stats.armorBlunt = value;
                 break;
-            case Stats.StatType.armorSlash:
+            case Stats.StatType.ArmorSlash:
                 stats.armorSlash = value;
                 break;
-            case Stats.StatType.armorPierce:
+            case Stats.StatType.ArmorPierce:
                 stats.armorPierce = value;
                 break;
             case Stats.StatType.ColdResist:
@@ -242,11 +272,17 @@ public class StatsHandler : MonoBehaviour{
         return stats;
     }
 
-    public static Stats GetEntityBaseStats(string species){
-        return BASE_STATS_MAP[species];
+    // get stats from species
+    public static Stats GetEntityBaseStats(string identifier)
+    {
+        return BASE_STATS_MAP[identifier];
     }
+
+
     static Dictionary<string, Stats> BASE_STATS_MAP = new Dictionary<string, Stats>(){
         { "Human", BASE_HUMAN },
+        { "Tree", BASE_TREE },
+        { "Cactus", BASE_CACTUS },
     };
 
 

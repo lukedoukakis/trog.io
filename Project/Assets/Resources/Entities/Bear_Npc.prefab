@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 7223609859536449626}
   - component: {fileID: 7223609859536449625}
   - component: {fileID: 7223609859536449631}
+  - component: {fileID: 167955425329109663}
   - component: {fileID: 4761202945426959485}
   - component: {fileID: 5942197906885696531}
   - component: {fileID: 6257372575738916933}
@@ -75,7 +76,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -104,7 +105,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -132,7 +133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -158,7 +159,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -187,7 +188,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -200,13 +201,11 @@ MonoBehaviour:
   rb: {fileID: 0}
   bodyT: {fileID: 0}
   headT: {fileID: 0}
-  animator: {fileID: 0}
-  bodyRotationMode: 0
+  bodyRotationTarget: {fileID: 0}
   bodyLean: 0
   angularVelocityY: 0
   bodySkew: 0
   slowness: 0
-  keysList: []
 --- !u!114 &7223609859536449626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,7 +220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -242,6 +241,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   rb: {fileID: 0}
+  animator: {fileID: 0}
   gyro: {fileID: 0}
   bodyPartTs: []
   bodyPartTs_legs: []
@@ -310,6 +310,8 @@ MonoBehaviour:
   updateTime_footRight: 0
   updateTime_footLeft: 0
   updateTime_hips: 0
+  weaponCanHit: 0
+  weaponHit: 0
 --- !u!114 &7223609859536449625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -324,7 +326,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -350,7 +352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  handle: {fileID: 0}
+  entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
@@ -366,15 +368,29 @@ MonoBehaviour:
   weaponUnequipped_item: {fileID: 0}
   weaponEquipped_object: {fileID: 0}
   weaponUnequipped_object: {fileID: 0}
+  meshParentT: {fileID: 0}
+  clothing: {fileID: 0}
   orientationParent: {fileID: 0}
   orientation_weaponEquipped_spear: {fileID: 0}
   orientation_weaponEquipped_axe: {fileID: 0}
   orientation_weaponUnequipped: {fileID: 0}
-  anchor_weaponEquipped_spear: {fileID: 0}
-  anchor_weaponEquipped_axe: {fileID: 0}
-  basePosition_anchor_weaponEquipped_spear: {fileID: 0}
-  basePosition_anchor_weaponEquipped_axe: {fileID: 0}
+  orientation_holding: {fileID: 0}
+  basePosition_weaponEquipped_spear: {fileID: 0}
+  basePosition_weaponEquipped_axe: {fileID: 0}
+  basePosition_holding: {fileID: 0}
   itemOrientationAnimator: {fileID: 0}
+--- !u!114 &167955425329109663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7223609859536449630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15fbd0e55bac06d48ac6e6c193042235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4761202945426959485
 MonoBehaviour:
   m_ObjectHideFlags: 0

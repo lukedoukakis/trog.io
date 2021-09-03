@@ -83,6 +83,7 @@ public class Item : ScriptableObject
         i.type = _type;
         i.stats = _stats;
         i.holdStyle = _holdStyle;
+        i.damageType = _damageType;
         i.contents = _contents;
         i.components = _components;
         i.gameobject = _gameobject;

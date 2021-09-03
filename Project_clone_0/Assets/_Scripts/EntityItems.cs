@@ -67,7 +67,7 @@ public class EntityItems : EntityComponent
 
     void Start()
     {
-        
+
     }
 
     // client method when an object is interacted with
@@ -340,7 +340,6 @@ public class EntityItems : EntityComponent
 
     void Update(){
 
-
         orientation_weaponEquipped_spear.position = basePosition_weaponEquipped_spear.position;
         orientation_weaponEquipped_spear.rotation = basePosition_weaponEquipped_spear.rotation;
         orientation_weaponEquipped_axe.position = basePosition_weaponEquipped_axe.position;
@@ -348,8 +347,8 @@ public class EntityItems : EntityComponent
         orientation_holding.position = basePosition_holding.position;
         orientation_holding.rotation = basePosition_holding.rotation;
 
-        float lerpSpeed_weapon = 20f * Time.deltaTime;
-        float lerpSpeed_holding = 20f * Time.deltaTime;
+        float lerpSpeed_weapon = 30f * Time.deltaTime;
+        float lerpSpeed_holding = 30f * Time.deltaTime;
 
         if(holding_item != null){
             Vector3 currentPos = holding_object.transform.position;
@@ -357,7 +356,7 @@ public class EntityItems : EntityComponent
             holding_object.transform.position = Vector3.Lerp(currentPos, orientation_holding.position, lerpSpeed_holding);
             holding_object.transform.rotation = Quaternion.Slerp(currentRot, orientation_holding.rotation, lerpSpeed_holding);
         }
-        if(weaponEquipped_object != null && !entityPhysics.weaponHit){
+        if(weaponEquipped_object != null){
             Vector3 targetPos;
             Quaternion targetRot;
             if(weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Spear)){
@@ -375,7 +374,7 @@ public class EntityItems : EntityComponent
             Vector3 currentPos = weaponEquipped_object.transform.position;
             Quaternion currentRot = weaponEquipped_object.transform.rotation;
             weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, lerpSpeed_weapon);
-            weaponEquipped_object.transform.rotation = Quaternion.Slerp(currentRot, targetRot, lerpSpeed_weapon);
+            weaponEquipped_object.transform.rotation = Quaternion.Slerp(currentRot, targetRot, float.MaxValue);
         }
         if(weaponUnequipped_object != null){
             weaponUnequipped_object.transform.position = Vector3.Lerp(weaponUnequipped_object.transform.position, orientation_weaponUnequipped.position, float.MaxValue);

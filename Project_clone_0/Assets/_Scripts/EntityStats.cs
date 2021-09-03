@@ -11,14 +11,24 @@ public class EntityStats : EntityComponent
     public Stats statsCombined;
 
 
+    public static float hp_base = 100;
+    public float stamina_base = 100;
+    public static float hpLossFromHit_base = 8;
+    public int hp;
+    public int stamina;
+
+
     protected override void Awake(){
 
         base.Awake();
 
         statsModifiers = new List<Stats>();
         statsCombined = StatsHandler.InitializeStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        AddStatsModifier(StatsHandler.GetEntityBaseStats(entityInfo.species));
-
+        EntityInfo info = GetComponent<EntityInfo>();
+        string statsIdentifier = (info == null) ? statsIdentifier = tag : info.species;
+        AddStatsModifier(StatsHandler.GetEntityBaseStats(statsIdentifier));
+        hp = (int)(hp_base * StatsHandler.GetStatValue(statsCombined, Stats.StatType.Health));
+        stamina = (int)(stamina_base * StatsHandler.GetStatValue(statsCombined, Stats.StatType.Stamina));
 
     }
 
@@ -56,6 +66,55 @@ public class EntityStats : EntityComponent
 
     void OnStatsChange(){
         // todo: other stuff when entity's stats are changed
+    }
+
+
+    public void TakeDamage(EntityStats attackerStats, Item attackerWeapon){
+
+        // get attacker's relevant stats
+        float attackerAttack = StatsHandler.GetStatValue(attackerStats.statsCombined, Stats.StatType.Attack);
+
+        // get this entity's relevant stats
+        float armorBase = StatsHandler.GetStatValue(this.statsCombined, Stats.StatType.ArmorBase);
+        Enum armorStatType;
+        switch (attackerWeapon.damageType) {
+            case Item.DamageType.Blunt :
+                armorStatType = Stats.StatType.ArmorBlunt;
+                break;
+            case Item.DamageType.Slash :
+                armorStatType = Stats.StatType.ArmorSlash;
+                break;
+            case Item.DamageType.Pierce :
+                armorStatType = Stats.StatType.ArmorPierce;
+                break;
+            default:
+                armorStatType = Stats.StatType.ArmorBlunt;
+                break;
+        }
+        float armorFromWeaponType = StatsHandler.GetStatValue(this.statsCombined, armorStatType);
+
+        // calculate damage
+        float hpLoss = hpLossFromHit_base;
+        hpLoss *= attackerAttack;
+        hpLoss *= 1f / Mathf.Max(armorBase, 1f);
+        hpLoss *= 1f / Mathf.Max(armorFromWeaponType, 1f);
+        
+        // take away health
+        hp -= (int)hpLoss;
+        // Debug.Log("Attacker Weapon Type: " + attackerWeapon.damageType.ToString());
+        // Debug.Log("Armor Type: " + armorStatType.ToString());
+        // Debug.Log("Armor against this type: " + armorFromWeaponType);
+        // Debug.Log("DAMAGE: " + (int)hpLoss);
+        // Debug.Log("HP: " + hp.ToString());
+        if(hp <= 0){
+            OnDeath();
+        }
+
+    }
+
+    void OnDeath(){
+        Debug.Log("DED");
+        // todo: death stuff
     }
 
 
