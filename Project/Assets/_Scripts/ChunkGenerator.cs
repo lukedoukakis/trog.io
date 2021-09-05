@@ -6,6 +6,10 @@ using System.Linq;
 
 public class ChunkGenerator : MonoBehaviour
 {
+
+
+    public GameObject treeTestPrefab;
+
     public static ChunkGenerator current;
     public static int Seed = 455;
     public static int ChunkSize = 20;
@@ -232,7 +236,7 @@ public class ChunkGenerator : MonoBehaviour
         cd.TreeMap = TreeMap;
 
         PlaceTerrainAndWater();
-        PlaceFeatures();
+        //PlaceFeatures();
 
         yield return null;
 
@@ -517,23 +521,23 @@ public class ChunkGenerator : MonoBehaviour
                 }
 
                 // posterize all land
-                float postNes = Mathf.PerlinNoise((x + xOffset) / 100f, (z + zOffset) / 100f);
-                postNes = Mathf.InverseLerp(.49f, .51f, postNes);
+                //float postNes = Mathf.PerlinNoise((x + xOffset) / 100f, (z + zOffset) / 100f);
+                //postNes = Mathf.InverseLerp(.49f, .51f, postNes);
 
-                heightValue = Posterize(SeaLevel + .0001f, 1f, heightValue, 250, .9f + postNes);
-                heightValue = Posterize(SeaLevel + .0001f, 1f, heightValue, 750, 0f + postNes);
-
-
+                //heightValue = Posterize(SeaLevel + .0001f, 1f, heightValue, 250, .9f + postNes);
+                //heightValue = Posterize(SeaLevel + .0001f, 1f, heightValue, 750, 0f + postNes);
 
 
-                // // create slight roughness in terrain
-                // if (biomeValue == (int)Biome.BiomeType.Desert)
-                // {
-                //     float duneMag = .0002f * (1f - Mathf.Pow(Mathf.Clamp01(freshWaterValue), 1.3f)) * (1f - Mathf.Pow(wetnessValue, 1.2f));
-                //     heightValue += duneMag * (1f - Mathf.Abs(Mathf.Sin((x + xOffset - Seed + .01f + Mathf.Sin(z+zOffset)*8f) / 15f)));
-                // }else{
-                //     heightValue += .0001f * Mathf.PerlinNoise((x + xOffset) / 5f, (z + zOffset) /5f);
-                // }
+
+
+                // create slight roughness in terrain
+                if (biomeValue == (int)Biome.BiomeType.Desert)
+                {
+                    float duneMag = .0002f * (1f - Mathf.Pow(Mathf.Clamp01(freshWaterValue), 1.3f)) * (1f - Mathf.Pow(wetnessValue, 1.2f));
+                    heightValue += duneMag * (1f - Mathf.Abs(Mathf.Sin((x + xOffset - Seed + .01f + Mathf.Sin(z+zOffset)*8f) / 15f)));
+                }else{
+                    heightValue += .0001f * Mathf.PerlinNoise((x + xOffset) / 5f, (z + zOffset) /5f);
+                }
 
 
                 // dip
@@ -546,7 +550,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 TemperatureMap[x, z] = temperatureValue;
                 HumidityMap[x, z] = humidityValue;
-                MountainMap[x, z] = mountainValue;
+                MountainMap[x, z] = mountainValue / mtnCap;
                 ElevationMap[x, z] = elevationValue;
                 BiomeMap[x, z] = biomeValue;
                 FreshWaterMap[x, z] = freshWaterValue;
@@ -620,6 +624,37 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
+    public static List<GameObject> PlaceFeatures(int biome, float wetness, float x, float y, float z){
+
+        float randomness = 5f;
+
+        List<GameObject> features = new List<GameObject>();
+        FeatureAttributes featureAttributes;
+        foreach(GameObject feat in Biome.TreePool[biome]){
+            featureAttributes = FeatureAttributes.GetFeatureAttributes(feat.name, wetness);
+            int divisor = (int)(Mathf.Ceil(Mathf.Lerp(1f, 20f, 1f - featureAttributes.density)) + (UnityEngine.Random.Range(-1f, 1f) * randomness));
+            divisor = Mathf.Clamp(divisor, 1, 20);
+            if(x % divisor == 0 && z % divisor == 0){
+                GameObject o = GameObject.Instantiate(feat, new Vector3(x, y, z), Quaternion.identity, current.Trees.transform);
+                o.transform.localScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
+                features.Add(o);
+            }
+        }
+        foreach(GameObject feat in Biome.FeaturePool[biome]){
+            featureAttributes = FeatureAttributes.GetFeatureAttributes(feat.name, wetness);
+            int divisor = (int)(Mathf.Ceil(Mathf.Lerp(1f, 20f, 1f - featureAttributes.density)) + (UnityEngine.Random.Range(-1f, 1f) * randomness));
+            divisor = Mathf.Clamp(divisor, 1, 20);
+            if(x % divisor == 0 && z % divisor == 0){
+                GameObject o = GameObject.Instantiate(feat, new Vector3(x, y, z), Quaternion.identity, current.Trees.transform);
+                o.transform.localScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
+                features.Add(o);
+            }
+        }
+        return features;
+        
+    }
+
+
     void PlaceTerrainAndWater()
     {
 
@@ -655,9 +690,17 @@ public class ChunkGenerator : MonoBehaviour
                 Color waterColor = new Color();
                 waterColor.a = waterAlpha;
                 WaterColors[i] = waterColor;
+                
+                // place features
+                PlaceFeatures(BiomeMap[x, z], WetnessMap[x, z], x + xOffset, height, z + zOffset);
                 i++;
             }
         }
+
+
+
+
+        
 
 
         // set up triangles
@@ -717,55 +760,8 @@ public class ChunkGenerator : MonoBehaviour
 
     }
 
-    void PlaceFeatures()
-    {
-        int biome;
-        float wetness;
-        float temperature;
-        float height;
-        float fw;
 
-        float minFeatureHeight = SeaLevel - .0001f;
-
-        int step = (int)(5f * (1f - treeDensity)) + 1;
-
-        for (int z = 0; z < ChunkSize + 2; z += 10)
-        {
-            for (int x = 0; x < ChunkSize + 2; x += 10)
-            {
-
-                biome = BiomeMap[x, z];
-                wetness = WetnessMap[x, z];
-                temperature = TemperatureMap[x, z];
-                height = HeightMap[x, z];
-                fw = FreshWaterMap[x, z];
-                bool onWater;
-
-            
-                if (height >= minFeatureHeight)
-                {
-
-                    onWater = height <= WaterFeatureLevel;
-                    
-                    // tree placement
-                    var treeTuple = Biome.GetTree(biome, wetness, fw);
-                    if (treeTuple != null && treeTuple.Item2.Item2 > 0f)
-                    {
-                        PlaceFeatureBundle(treeTuple, wetness, onWater, x, z);
-                    }
-
-                    // feature placement
-                    var featureTuple = Biome.GetFeature(biome, wetness, fw, onWater);
-                    if(featureTuple != null)
-                    {
-                        PlaceFeatureBundle(featureTuple, wetness, onWater, x, z);
-                    }
-                }
-            }
-        }
-    }
-
-    void PlaceFeatureBundle(Tuple<GameObject, Tuple<float, float, float, float, float, float, float>> featureTuple, float wetness, bool onWater, int x, int z)
+    void PlaceFeature(Tuple<GameObject, Tuple<float, float, float, float, float, float, float>> featureTuple, float wetness, bool onWater, int x, int z)
     {
         GameObject feature = featureTuple.Item1;
         float scale = featureTuple.Item2.Item1;

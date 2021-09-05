@@ -116,32 +116,6 @@ public class Biome : MonoBehaviour
 
     }
 
-    public static Tuple<GameObject, Tuple<float, float, float, float, float, float, float>> GetTree(int biomeType, float wetness, float fw)
-    {
-        //Debug.Log(((BiomeType)biomeType).ToString());
-        GameObject[] trees = TreePool[biomeType];
-        if(trees.Length > 0)
-        {
-            GameObject tree = trees[UnityEngine.Random.Range(0, trees.Length)];
-            return Tuple.Create(tree, TreeInfo.GetPlacementParameters(tree.name, wetness, fw));
-        }
-        return null;
-    }
-
-
-    public static Tuple<GameObject, Tuple<float, float, float, float, float, float, float>> GetFeature(int biomeType, float wetness, float fw, bool onWater){
-        
-        GameObject[] features;
-        if(onWater){ features = WaterFeaturePool[biomeType]; }
-        else{ features = FeaturePool[biomeType]; }
-        if(features.Length > 0)
-        {
-            GameObject feature = features[UnityEngine.Random.Range(0, features.Length)];
-            return Tuple.Create(feature, TreeInfo.GetPlacementParameters(feature.name, wetness, fw));
-        }
-        return null;
-    }
-
 
 
 }
