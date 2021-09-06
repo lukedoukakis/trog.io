@@ -12,7 +12,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator current;
     public static int Seed = 455;
     public static int ChunkSize = 20;
-    public static int ChunkRenderDistance = 8;
+    public static int ChunkRenderDistance = 20;
     public static float Scale = 1200f;
     public static float ElevationAmplitude = 1800f * 3f;
     public static float MinElevation = -.292893219f;
@@ -24,6 +24,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float MountainPolarity = 1f;
     public static float FlatLevel = .85f;
     public static float SeaLevel = 0.849985f;
+    public static float BankLevel = SeaLevel + .0002f;
     public static float WaterFeatureLevel = .85f;
     public static float SnowLevel = .86f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -526,17 +527,8 @@ public class ChunkGenerator : MonoBehaviour
 
                 // posterize all land
                 float postNes = .75f;
-
-                float stepsMod = (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 50f, z + zOffset - Seed + .01f) / 50f) * 2f - 1f;
-                //stepsMod = Mathf.Abs(stepsMod);
-                //stepsMod *= -1f;
-                //stepsMod += 1f;
-                //stepsMod = Mathf.Pow(stepsMod, .2f);
-                //stepsMod = Mathf.InverseLerp(.4f, .6f, stepsMod);
-
-
-                heightValue = Posterize(SeaLevel, 1f, heightValue, 350, .9f + postNes);
-                heightValue = Posterize(SeaLevel, 1f, heightValue, (int)(750f * stepsMod), 0f + postNes);
+                heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 350, .9f + postNes);
+                heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 750, 0f + postNes);
 
 
 
@@ -707,12 +699,6 @@ public class ChunkGenerator : MonoBehaviour
                 i++;
             }
         }
-
-
-
-
-        
-
 
         // set up triangles
         int vert = 0;
