@@ -8,12 +8,11 @@ public class ChunkGenerator : MonoBehaviour
 {
 
 
-    public GameObject treeTestPrefab;
 
     public static ChunkGenerator current;
     public static int Seed = 455;
     public static int ChunkSize = 20;
-    public static int ChunkRenderDistance = 3;
+    public static int ChunkRenderDistance = 8;
     public static float Scale = 1200f;
     public static float ElevationAmplitude = 1800f * 3f;
     public static float MinElevation = -.292893219f;
@@ -42,6 +41,7 @@ public class ChunkGenerator : MonoBehaviour
     [SerializeField] MeshFilter WaterMeshFilter;
     Mesh TerrainMesh;
     Mesh WaterMesh;
+    [SerializeField] Material grassMaterial;
 
 
     [SerializeField] PhysicMaterial physicMaterial;
@@ -135,6 +135,10 @@ public class ChunkGenerator : MonoBehaviour
         currentChunkCoord = Vector2.positiveInfinity;
 
         layerMask_terrain = LayerMask.GetMask("Terrain");
+
+
+        // set grass material parameters
+        grassMaterial.SetFloat("_WaterHeight", SeaLevel * ElevationAmplitude + .5f);
     }
 
 
@@ -521,11 +525,18 @@ public class ChunkGenerator : MonoBehaviour
                 }
 
                 // posterize all land
-                //float postNes = Mathf.PerlinNoise((x + xOffset) / 100f, (z + zOffset) / 100f);
-                //postNes = Mathf.InverseLerp(.49f, .51f, postNes);
+                float postNes = .75f;
 
-                //heightValue = Posterize(SeaLevel + .0001f, 1f, heightValue, 250, .9f + postNes);
-                //heightValue = Posterize(SeaLevel + .0001f, 1f, heightValue, 750, 0f + postNes);
+                float stepsMod = (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 50f, z + zOffset - Seed + .01f) / 50f) * 2f - 1f;
+                //stepsMod = Mathf.Abs(stepsMod);
+                //stepsMod *= -1f;
+                //stepsMod += 1f;
+                //stepsMod = Mathf.Pow(stepsMod, .2f);
+                //stepsMod = Mathf.InverseLerp(.4f, .6f, stepsMod);
+
+
+                heightValue = Posterize(SeaLevel, 1f, heightValue, 350, .9f + postNes);
+                heightValue = Posterize(SeaLevel, 1f, heightValue, (int)(750f * stepsMod), 0f + postNes);
 
 
 

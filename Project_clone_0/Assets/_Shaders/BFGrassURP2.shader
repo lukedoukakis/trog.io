@@ -68,6 +68,14 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 		[Header(Lighting Parameters)]
 		[Space]
 		_LightIntensity("Additional Lights Intensity", Range(0.00, 2)) = 1
+
+		[Header(Added Parameters)]
+		[Space]
+		_ColorNoise("Color Noise", 2D) = "white" {}
+		_ColorGradient("Color Gradient", 2D) = "white" {}
+		_ColorTiling("Color Tiling", Float) = .1
+		_WaterHeight("Water Height", Float) = 0
+		_MinimumNormal("Minimum Normal", Float) = .95
 	}
 		SubShader
 		{
@@ -176,6 +184,12 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 			SamplerState my_linear_clamp_sampler;
 			half _LightIntensity;
 
+			Texture2D _ColorGradient;
+			Texture2D _ColorNoise;
+			half _WaterHeight;
+			half _ColorTiling;
+			half _MinimumNormal;
+
 			float2 hash2D2D(float2 s)
 			{
 				//magic numbers
@@ -218,7 +232,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				o.objPos = v.vertex;
 				o.pos = GetVertexPositionInputs(v.vertex).positionCS;
 				float4 downVector = { 0, 2000, 0, 0 };
-				if(v.normal.y < .85){
+				if(v.normal.y < _MinimumNormal){
 					o.pos = o.pos + downVector;
 				}
 
@@ -246,7 +260,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 					o.uv = input[i].uv;
 					o.pos = input[i].pos;
 					float4 downVector = { 0, 2000, 0, 0 };
-					if(input[i].normal.y < .85){
+					if(input[i].normal.y < _MinimumNormal){
 						o.pos = o.pos + downVector;
 					}
 					o.color = 0.0 + _GrassCut;
@@ -282,12 +296,17 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 							P = input[ii].shadowCoord + _OffsetVector * _NumberOfStacks*0.01;
 							float4 NewNormal = float4(input[ii].normal,0); // problem is here
 
+							// change height
 							objSpace = float4(input[ii].objPos + NewNormal * _OffsetValue*i + offsetNormal);
+							if(UnityObjectToWorld(input[ii].objPos).y <= _WaterHeight){
+								objSpace = input[ii].objPos;
+							}
+
 							o.color = (i / (_NumberOfStacks - _GrassCut));
 							o.uv = input[ii].uv;
 							o.pos = GetVertexPositionInputs(objSpace).positionCS;
 							float4 downVector = { 0, 2000, 0, 0 };
-							if(input[ii].normal.y < .85){
+							if(input[ii].normal.y < _MinimumNormal){
 								o.pos = o.pos + downVector;
 							}
 							o.shadowCoord = P;
@@ -368,10 +387,18 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				float3 grassPattern = tex2D(_GrassTex, mainUV * _TilingN1 + dis.xy);
 #endif
 
-
+				float2 loc = float2(.5, .5);
+				loc.x = noise(3);
+				loc.y = .5;
 				half4 col = _MainTex.Sample(my_linear_repeat_sampler, mainUV + dis.xy * 0.09);
-				half4 colGround = _GroundTex.Sample(my_linear_repeat_sampler, mainUV + dis.xy * 0.05);
 
+				// color noise color
+				float4 noiseCol = _ColorNoise.Sample(my_linear_repeat_sampler, mainUV * _ColorTiling);
+				float2 coord = float2(noiseCol.r, 0);
+				col *= _ColorGradient.Sample(my_linear_repeat_sampler, coord) * .5;
+
+
+				half4 colGround = _GroundTex.Sample(my_linear_repeat_sampler, mainUV + dis.xy * 0.05);
 				float3 noise = _Noise.Sample(my_linear_repeat_sampler, mainUV * _TilingN2 + dis.xy) * _NoisePower;
 				half3 NoGrass = _NoGrassTex.Sample(my_linear_repeat_sampler, mainUV + dis.xy * 0.05);
 				NoGrass.r = saturate(NoGrass.r + ripplesG);
@@ -384,6 +411,9 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 					if (alpha*(ripples3 + 1) - (i.color.r) < -0.02)discard;
 				}
 				_Color *= 2;
+				if(i.worldPos.y <= _WaterHeight - .02){
+					_Color *= .75;
+				}
 
 				col.xyz = (pow(abs(col), _GrassSaturation) * _GrassSaturation)*float3(_Color.x, _Color.y, _Color.z);
 				col.xyz *= saturate(lerp(_SelfShadowColor, 1, pow(abs(i.color.x), 1.1)) + (_GrassShading  * (ripples * 1 + 1) - noise.x*dis.x * 2) + (1 - NoGrass.r) - noise.x*dis.x * 2);
@@ -519,6 +549,12 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 			SamplerState my_linear_repeat_sampler;
 			SamplerState my_linear_clamp_sampler;
 
+			Texture2D _ColorGradient;
+			Texture2D _ColorNoise;
+			half _WaterHeight;
+			half _ColorTiling;
+			half _MinimumNormal;
+
 			v2g vert(appdata v)
 			{
 				v2g o;
@@ -528,7 +564,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				//o.pos = GetVertexPositionInputs(v.vertex).positionCS;
 				o.pos = TransformWorldToHClip(ApplyShadowBias(GetVertexPositionInputs(v.vertex).positionWS, GetVertexNormalInputs(v.normal).normalWS, _LightDirection));
 				float4 downVector = { 0, 2000, 0, 0 };
-				if(v.normal.y < .85){
+				if(v.normal.y < _MinimumNormal){
 					o.pos = o.pos + downVector;
 				}
 
@@ -555,7 +591,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 					o.uv = input[i].uv;
 					o.pos = input[i].pos;
 					float4 downVector = { 0, 2000, 0, 0 };
-					if(input[i].normal.y < .85){
+					if(input[i].normal.y < _MinimumNormal){
 						o.pos = o.pos + downVector;
 					}
 					o.color = float3(0 + _GrassCut, 0 + _GrassCut, 0 + _GrassCut);
@@ -585,13 +621,18 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 						UNITY_TRANSFER_INSTANCE_ID(input[ii], o);
 						UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 						float4 NewNormal = float4(input[ii].normal, 0);
+
+						// change height
 						objSpace = float4(input[ii].objPos + NewNormal * _OffsetValue*i + offsetNormal);
+						if(UnityObjectToWorld(input[ii].objPos).y <= _WaterHeight){
+							objSpace = input[ii].objPos;	
+						}
+
 						o.color = (i / (_NumberOfStacks - _GrassCut));
 						o.uv = input[ii].uv;
-						//o.pos = GetVertexPositionInputs(objSpace).positionCS;
 						o.pos = TransformWorldToHClip(ApplyShadowBias(GetVertexPositionInputs(objSpace).positionWS, GetVertexNormalInputs(input[ii].normal).normalWS, _LightDirection));
 						float4 downVector = { 0, 2000, 0, 0 };
-						if(input[ii].normal.y < .85){
+						if(input[ii].normal.y < _MinimumNormal){
 							o.pos = o.pos + downVector;
 						}
 						o.worldPos = UnityObjectToWorld(objSpace);
@@ -652,6 +693,12 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				}
 #endif
 				half4 col = _MainTex.Sample(my_linear_repeat_sampler, mainUV + dis.xy * 0.09);
+
+				// color noise color
+				float4 noiseCol = _ColorNoise.Sample(my_linear_repeat_sampler, mainUV * _ColorTiling);
+				float2 coord = float2(noiseCol.r, 0);
+				col *= _ColorGradient.Sample(my_linear_repeat_sampler, coord);
+
 				float3 noise = _Noise.Sample(my_linear_repeat_sampler, mainUV * _TilingN2 + dis.xy) * _NoisePower;
 				float3 grassPattern = _GrassTex.Sample(my_linear_repeat_sampler, mainUV * _TilingN1 + dis.xy);
 				half3 NoGrass = _NoGrassTex.Sample(my_linear_repeat_sampler, mainUV + dis.xy * 0.05);
