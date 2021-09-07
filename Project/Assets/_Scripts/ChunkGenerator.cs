@@ -19,8 +19,8 @@ public class ChunkGenerator : MonoBehaviour
     public static float MaxElevation = .224744871f;
     public static int MountainMapScale = 800;
     public static float ElevationMapScale = 2000;
-    public static int TemperatureMapScale = 400;
-    public static int HumidityMapScale = 400;
+    public static int TemperatureMapScale = 800;
+    public static int HumidityMapScale = 800;
     public static float MountainPolarity = 1f;
     public static float FlatLevel = .85f;
     public static float SeaLevel = 0.849985f;
@@ -96,6 +96,14 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
+    List<List<GameObject>> featuresToCheck;
+    struct FeatureLocation{
+        GameObject featurePrefab;
+        Vector3 position;
+    }
+
+
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -149,6 +157,8 @@ public class ChunkGenerator : MonoBehaviour
         terrainMaterial.SetFloat("_SnowHeight", SnowLevel * ElevationAmplitude + .5f);
         grassMaterial.SetFloat("_WaterHeight", SeaLevel * ElevationAmplitude + .5f);
         grassMaterial.SetFloat("_GrassNormal", .8f);
+
+        featuresToCheck = new List<List<GameObject>>();
     }
 
 
@@ -323,9 +333,8 @@ public class ChunkGenerator : MonoBehaviour
 
                 // TemperatureMap [0, 1]
 
-                temperatureValue = Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale);
-                temperatureValue -= .7f * (mountainValue / mtnCap);
-                // temperatureValue = Mathf.Pow((1f - (mountainValue / mtnCap)), 2f);
+                temperatureValue = 1.5f * Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale);
+                temperatureValue -= 1f * (mountainValue / mtnCap);
                 // temperatureValue +=  (Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale) * 2f - 1f) * (3f * (1f - mountainValue/mtnCap));
 
                 //temperatureValue = Mathf.InverseLerp(.4f, .6f, temperatureValue);
@@ -590,16 +599,10 @@ public class ChunkGenerator : MonoBehaviour
     {
 
         Color c = new Color();
-
-        // snowiness (c.b)
-        //c.b = 255f * (1f - Mathf.InverseLerp(0f, 3/11f, temperature));
-
-        if(biome == (int)Biome.BiomeType.Tundra || biome == (int)Biome.BiomeType.SnowyTaiga){
-            c.b = 255f;
-        }
-        else{
-            c.b = 0f;
-        }
+        float snowHeight = Biome.GetSnowHeight(SnowLevel, temperature);
+        float snow = Mathf.InverseLerp(snowHeight - .08f, snowHeight, height);
+        c.b = Mathf.Max(0, snow) * 255f;
+        //c.b = 0f;
         //c.b = 255f;
 
     
@@ -615,26 +618,31 @@ public class ChunkGenerator : MonoBehaviour
 
     public static List<GameObject> PlaceFeatures(int biome, float wetness, float x, float y, float z){
 
-        float randomness = 5f;
+        float randomOffsetDivisor;
+        Vector3 randomOffsetPosition;
 
         List<GameObject> features = new List<GameObject>();
         FeatureAttributes featureAttributes;
         foreach(GameObject feat in Biome.TreePool[biome]){
             featureAttributes = FeatureAttributes.GetFeatureAttributes(feat.name, wetness);
-            int divisor = (int)(Mathf.Ceil(Mathf.Lerp(1f, 20f, 1f - featureAttributes.density)) + (UnityEngine.Random.Range(-1f, 1f) * randomness));
-            divisor = Mathf.Clamp(divisor, 1, 20);
+            randomOffsetDivisor = 5f * (Mathf.PerlinNoise((x + .01f) / 2f, (z + .01f) / 2f) * 2f - 1f);
+            randomOffsetPosition = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
+            int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - featureAttributes.density) + randomOffsetDivisor);
+            if(divisor < 1){ divisor = 1; }
             if(x % divisor == 0 && z % divisor == 0){
-                GameObject o = GameObject.Instantiate(feat, new Vector3(x, y, z), Quaternion.identity, current.Trees.transform);
+                GameObject o = GameObject.Instantiate(feat, new Vector3(x, y, z) + randomOffsetPosition, Quaternion.identity, current.Trees.transform);
                 o.transform.localScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
                 features.Add(o);
             }
         }
         foreach(GameObject feat in Biome.FeaturePool[biome]){
             featureAttributes = FeatureAttributes.GetFeatureAttributes(feat.name, wetness);
-            int divisor = (int)(Mathf.Ceil(Mathf.Lerp(1f, 20f, 1f - featureAttributes.density)) + (UnityEngine.Random.Range(-1f, 1f) * randomness));
-            divisor = Mathf.Clamp(divisor, 1, 20);
+            randomOffsetDivisor = 5f * (Mathf.PerlinNoise((x + .01f) / 2f, (z + .01f) / 2f) * 2f - 1f);
+            randomOffsetPosition = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
+            int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - featureAttributes.density) + randomOffsetDivisor);
+            if(divisor < 1){ divisor = 1; }
             if(x % divisor == 0 && z % divisor == 0){
-                GameObject o = GameObject.Instantiate(feat, new Vector3(x, y, z), Quaternion.identity, current.Trees.transform);
+                GameObject o = GameObject.Instantiate(feat, new Vector3(x, y, z) + randomOffsetPosition, Quaternion.identity, current.Trees.transform);
                 o.transform.localScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
                 features.Add(o);
             }

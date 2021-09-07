@@ -32,17 +32,26 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - Texture2D_B15FC389:
+        m_Texture: {fileID: 2800000, guid: d1554ad204dd4fc46ac7b4de46f513ac, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - Vector1_116F49B0: 0
     - Vector1_124AF345: 0
     - Vector1_61F46C5F: 200
     - Vector1_6A3D0673: 0
-    - Vector1_81EA2B5B: 0.999
+    - Vector1_81EA2B5B: 0.8
+    - Vector1_995DB535: 1
     - Vector1_B1CE0AD9: 100
     - Vector1_C1CE9129: 0.5
     - Vector1_D5D2B22E: 100
     - _SnowHeight: 4644.5
     - _WaterHeight: 4590.419
     m_Colors:
+    - Color_1DD039A2: {r: 0.99056596, g: 0.9086226, b: 0.6588199, a: 0}
     - Color_20D74E1E: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
+    - Color_54E7F5BD: {r: 1, g: 0.70598435, b: 0.6179246, a: 0}
     - Color_9C158BA5: {r: 0.3773585, g: 0.13349947, b: 0.13349947, a: 0}
+    - Color_B9FC0D65: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 0}
+    - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}

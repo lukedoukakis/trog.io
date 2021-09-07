@@ -685,7 +685,7 @@ public class EntityPhysics : EntityComponent
             }
         }
         if(!jumping){
-            max = Mathf.Lerp(max, max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y), 30f * Time.deltaTime);
+            //max = Mathf.Lerp(max, max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y), 30f * Time.deltaTime);
         }
 
         if(horvel.magnitude > max){
