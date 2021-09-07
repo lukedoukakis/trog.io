@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 1814208522}
+  m_SkyboxMaterial: {fileID: 1582095883}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -1729,7 +1729,7 @@ MonoBehaviour:
   cameraDistance_input: 0
   sensitivity_rotation: 3
   sensitivity_zoom: 0.3
-  featureCullDistance: 250
+  featureCullDistance: 200
   smallFeatureCullDistance: 50
 --- !u!114 &1158204826
 MonoBehaviour:
@@ -2576,7 +2576,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1482183495}
   m_CullTransparentMesh: 0
---- !u!21 &1814208522
+--- !u!21 &1582095883
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
@@ -2945,7 +2945,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ac54f37a9fc325948b3725506bb959bf, type: 2}
+  - {fileID: 2100000, guid: 5f152eb29ebd84e4d9ee5c6e5ec3b3e6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3903,11 +3903,15 @@ MonoBehaviour:
   currentChunkCoord: {x: 0, y: 0}
   TerrainMeshFilter: {fileID: 1098165271}
   WaterMeshFilter: {fileID: 1402622343}
+  terrainMaterial: {fileID: 2100000, guid: 290566ca53af35840a9e5947983103c0, type: 2}
+  grassMaterial: {fileID: 2100000, guid: d164e70257e99134db77b64134de959c, type: 2}
   physicMaterial: {fileID: 13400000, guid: 3c2720acdc0ef2d43aeb89dd00e2bb70, type: 2}
   layerMask_terrain:
     serializedVersion: 2
     m_Bits: 0
   chunkPrefab: {fileID: 2854202466093326487, guid: 3b2ccdcd009fcc04bb6cee6704c61cba,
+    type: 3}
+  waterPrefab: {fileID: 3305828948652118815, guid: 1985e08a6e543a346bf65cdeba4bf9b6,
     type: 3}
   waterAlpha: 0.6
   octaves: 4

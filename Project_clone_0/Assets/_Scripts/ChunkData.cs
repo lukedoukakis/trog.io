@@ -12,15 +12,11 @@ public class ChunkData
 
     public GameObject chunk;
     public GameObject terrain;
-    public GameObject water;
     public GameObject trees;
 
     public MeshFilter terrainMeshFilter;
-    public MeshFilter waterMeshFilter;
     public MeshRenderer terrainMeshRenderer;
-    public MeshRenderer waterMeshRenderer;
     public Mesh terrainMesh;
-    public Mesh waterMesh;
 
     public float[,] TemperatureMap;
     public float[,] HumidityMap;
@@ -45,21 +41,15 @@ public class ChunkData
         chunk = GameObject.Instantiate(chunkPrefab);
         chunk.transform.SetParent(GameObject.Find("Chunk Generator").transform);
         terrain = chunk.transform.Find("Terrain").gameObject;
-        water = chunk.transform.Find("Water").gameObject;
         chunk.transform.position = Vector3.zero;
         trees = new GameObject();
         trees.transform.SetParent(chunk.transform);
 
         terrainMeshRenderer = terrain.GetComponent<MeshRenderer>();
-        waterMeshRenderer = water.GetComponent<MeshRenderer>();
         terrainMeshFilter = terrain.GetComponent<MeshFilter>();
-        waterMeshFilter = water.GetComponent<MeshFilter>();
         terrainMesh = new Mesh();
-        waterMesh = new Mesh();
         terrainMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         terrainMeshFilter.mesh = terrainMesh;
-        waterMeshFilter.mesh = waterMesh;
 
         loaded = true;
     }
@@ -67,7 +57,6 @@ public class ChunkData
     public void Deload()
     {
         Component.Destroy(terrainMesh);
-        Component.Destroy(waterMesh);
         GameObject.Destroy(chunk);
         GameObject.Destroy(trees);
         loaded = false;
