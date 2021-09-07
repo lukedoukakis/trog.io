@@ -36,6 +36,7 @@ public class EntityPhysics : EntityComponent
 
 
     public Vector3 moveDir;
+    public bool onWalkableGround;
     public bool jumping, jumpOpposite, sprinting;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
     public float acceleration;
@@ -570,6 +571,7 @@ public class EntityPhysics : EntityComponent
                     rb.velocity = vel;
                 }
                 groundTime += Time.fixedDeltaTime;
+                onWalkableGround = groundInfo.normal.y >= ChunkGenerator.grassNormal - .05f;
             }
             else{
                 if(GROUNDTOUCH){
@@ -578,6 +580,7 @@ public class EntityPhysics : EntityComponent
                     airTime = 0f;
                 }
                 airTime += Time.fixedDeltaTime;
+                onWalkableGround = false;
             }
         }
     }
@@ -682,7 +685,6 @@ public class EntityPhysics : EntityComponent
             }
         }
         if(!jumping){
-            //max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y);
             max = Mathf.Lerp(max, max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y), 30f * Time.deltaTime);
         }
 
@@ -701,8 +703,7 @@ public class EntityPhysics : EntityComponent
 
     void SetGravity(){
         if((GROUNDTOUCH || WALLTOUCH) && !IN_WATER && moveDir.magnitude > 0f){
-            rb.useGravity = false;
-            //rb.useGravity = true;
+            rb.useGravity = !onWalkableGround;
         }
         else{ rb.useGravity = true; }
     }

@@ -75,7 +75,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 		_ColorGradient("Color Gradient", 2D) = "white" {}
 		_ColorTiling("Color Tiling", Float) = .1
 		_WaterHeight("Water Height", Float) = 0
-		_MinimumNormal("Minimum Normal", Float) = .95
+		_GrassNormal("Grass Normal", Float) = .95
 	}
 		SubShader
 		{
@@ -188,7 +188,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 			Texture2D _ColorNoise;
 			half _WaterHeight;
 			half _ColorTiling;
-			half _MinimumNormal;
+			half _GrassNormal;
 
 			float2 hash2D2D(float2 s)
 			{
@@ -232,7 +232,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				o.objPos = v.vertex;
 				o.pos = GetVertexPositionInputs(v.vertex).positionCS;
 				float4 downVector = { 0, 2000, 0, 0 };
-				if(v.normal.y < _MinimumNormal){
+				if(v.normal.y < _GrassNormal){
 					o.pos = o.pos + downVector;
 				}
 
@@ -260,7 +260,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 					o.uv = input[i].uv;
 					o.pos = input[i].pos;
 					float4 downVector = { 0, 2000, 0, 0 };
-					if(input[i].normal.y < _MinimumNormal){
+					if(input[i].normal.y < _GrassNormal){
 						o.pos = o.pos + downVector;
 					}
 					o.color = 0.0 + _GrassCut;
@@ -306,7 +306,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 							o.uv = input[ii].uv;
 							o.pos = GetVertexPositionInputs(objSpace).positionCS;
 							float4 downVector = { 0, 2000, 0, 0 };
-							if(input[ii].normal.y < _MinimumNormal){
+							if(input[ii].normal.y < _GrassNormal){
 								o.pos = o.pos + downVector;
 							}
 							o.shadowCoord = P;
@@ -553,7 +553,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 			Texture2D _ColorNoise;
 			half _WaterHeight;
 			half _ColorTiling;
-			half _MinimumNormal;
+			half _GrassNormal;
 
 			v2g vert(appdata v)
 			{
@@ -564,7 +564,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				//o.pos = GetVertexPositionInputs(v.vertex).positionCS;
 				o.pos = TransformWorldToHClip(ApplyShadowBias(GetVertexPositionInputs(v.vertex).positionWS, GetVertexNormalInputs(v.normal).normalWS, _LightDirection));
 				float4 downVector = { 0, 2000, 0, 0 };
-				if(v.normal.y < _MinimumNormal){
+				if(v.normal.y < _GrassNormal){
 					o.pos = o.pos + downVector;
 				}
 
@@ -591,7 +591,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 					o.uv = input[i].uv;
 					o.pos = input[i].pos;
 					float4 downVector = { 0, 2000, 0, 0 };
-					if(input[i].normal.y < _MinimumNormal){
+					if(input[i].normal.y < _GrassNormal){
 						o.pos = o.pos + downVector;
 					}
 					o.color = float3(0 + _GrassCut, 0 + _GrassCut, 0 + _GrassCut);
@@ -632,7 +632,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 						o.uv = input[ii].uv;
 						o.pos = TransformWorldToHClip(ApplyShadowBias(GetVertexPositionInputs(objSpace).positionWS, GetVertexNormalInputs(input[ii].normal).normalWS, _LightDirection));
 						float4 downVector = { 0, 2000, 0, 0 };
-						if(input[ii].normal.y < _MinimumNormal){
+						if(input[ii].normal.y < _GrassNormal){
 							o.pos = o.pos + downVector;
 						}
 						o.worldPos = UnityObjectToWorld(objSpace);
