@@ -66,7 +66,7 @@ public class EntityAnimation : EntityComponent
     public void SetBodyRotationMode(Enum mode, Transform t){
         if (true)
         {
-            Log("Setting body rotation mode");
+            //Log("Setting body rotation mode");
             bodyRotationMode = mode;
             if (t != null)
             {

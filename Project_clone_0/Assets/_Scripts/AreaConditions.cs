@@ -47,8 +47,8 @@ public class AreaConditions
     // get the environmental conditions of an area around the given position
     public static void GetAreaConditions(Vector3 position)
     {
-        ChunkData chunk = ChunkGenerator.GetChunk(position);
-        Vector2 position_chunkSpace = ChunkGenerator.ToChunkSpace(position);
+        ChunkData chunk = ChunkGenerator.current.GetChunk(position);
+        Vector2 position_chunkSpace = ChunkGenerator.current.ToChunkSpace(position);
 
         int x = (int)(ChunkGenerator.ChunkSize * Mathf.Abs((position_chunkSpace.x - chunk.coord.x)));
         int z = (int)(ChunkGenerator.ChunkSize * Mathf.Abs((position_chunkSpace.y - chunk.coord.y)));
@@ -155,7 +155,7 @@ public class AreaConditions
                 if(overflowX != 0 || overflowZ != 0)
                 {
                     chunkCoord = OriginChunk.coord + new Vector2(overflowX, overflowZ);
-                    cd = ChunkGenerator.GetChunk(chunkCoord);
+                    cd = ChunkGenerator.current.GetChunk(chunkCoord);
                 }
                 else
                 {

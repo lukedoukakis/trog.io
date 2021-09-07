@@ -25,7 +25,6 @@ GameObject:
   - component: {fileID: 2947814671508615466}
   - component: {fileID: 5656550286591847306}
   - component: {fileID: 4510218948483313081}
-  - component: {fileID: 4223180527397998597}
   - component: {fileID: 2441214465481829266}
   m_Layer: 12
   m_Name: PlayerIK
@@ -87,6 +86,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   hovering: 0
@@ -116,6 +116,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   id: 0
@@ -144,10 +145,14 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   statsModifiers: []
   statsCombined: {fileID: 0}
+  stamina_base: 100
+  hp: 0
+  stamina: 0
 --- !u!114 &8069827555116078490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,6 +175,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   home: {fileID: 0}
@@ -199,6 +205,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   rb: {fileID: 0}
@@ -231,6 +238,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   hitbox: {fileID: 0}
@@ -263,6 +271,7 @@ MonoBehaviour:
   obstacleHeightSense: {fileID: 0}
   kneeHeightT: {fileID: 0}
   moveDir: {x: 0, y: 0, z: 0}
+  onWalkableGround: 0
   jumping: 0
   jumpOpposite: 0
   sprinting: 0
@@ -337,6 +346,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   hp: 0
@@ -363,6 +373,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   holding_item: {fileID: 0}
@@ -416,6 +427,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   pressForward: 0
@@ -442,6 +454,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15fbd0e55bac06d48ac6e6c193042235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  entityHandle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityAnimation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityHitDetection: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
+  entityCommandServer: {fileID: 0}
 --- !u!114 &8374234257668663390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -464,6 +489,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   npcPrefab: {fileID: 0}
@@ -527,22 +553,6 @@ MonoBehaviour:
   interpolateScale: 1
   syncScale: 1
   target: {fileID: 8259034806594529843}
---- !u!114 &4223180527397998597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8069827555116078467}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0
-  clientAuthority: 1
-  animator: {fileID: 0}
 --- !u!114 &2441214465481829266
 MonoBehaviour:
   m_ObjectHideFlags: 0
