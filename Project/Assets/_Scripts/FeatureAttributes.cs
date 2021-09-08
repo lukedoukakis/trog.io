@@ -55,11 +55,17 @@ public class FeatureAttributes
             case string str when name.StartsWith("Mushroom"):
                 featureAttributes = new FeatureAttributes(1f, .1f);
                 break;
-            case string str when name.StartsWith("Bush"):
-                featureAttributes = new FeatureAttributes(1.5f, .7f);
+            case string str when name.StartsWith("BushChaparral"):
+                featureAttributes = new FeatureAttributes(1.5f, .5f);
+                break;
+            case string str when name.StartsWith("BushSavannah"):
+                featureAttributes = new FeatureAttributes(1.5f, .2f);
+                break;
+            case string str when name.StartsWith("BushForest"):
+                featureAttributes = new FeatureAttributes(1.5f, .2f);
                 break;
             case string str when name.StartsWith("Dead Bush"):
-                featureAttributes = new FeatureAttributes(4f, .1f);
+                featureAttributes = new FeatureAttributes(3f, .3f);
                 break;
             case string str when name.StartsWith("Cactus"):
                 featureAttributes = new FeatureAttributes(3f, .05f);

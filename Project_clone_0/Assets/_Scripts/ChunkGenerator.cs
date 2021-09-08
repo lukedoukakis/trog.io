@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 
+
 public class ChunkGenerator : MonoBehaviour
 {
 
@@ -65,11 +66,6 @@ public class ChunkGenerator : MonoBehaviour
     static int[] TerrainTriangles;
     static Vector2[] TerrainUvs;
     static Color[] TerrainColors;
-    static Vector3[] WaterVertices;
-    static int[] WaterTriangles;
-    static Vector2[] WaterUvs;
-    static Color[] WaterColors;
-
     [SerializeField] float waterAlpha;
 
     float[,] TemperatureMap;
@@ -96,16 +92,20 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
-    static bool placing;
     static List<FeatureLocation> featureLocations;
     struct FeatureLocation{
-        public GameObject featurePrefab;
+        public GameObject feature;
         public Vector3 position;
         public Vector3 scale;
-        public FeatureLocation(GameObject _featurePrefab, Vector3 _position, Vector3 _scale){
-            featurePrefab = _featurePrefab;
+        public ChunkData chunkData;
+        public int x, z;
+        public FeatureLocation(GameObject _featurePrefab, Vector3 _position, Vector3 _scale, ChunkData _chunkData, int _x, int _z){
+            feature = _featurePrefab;
             position = _position;
             scale = _scale;
+            chunkData = _chunkData;
+            x = _x;
+            z = _z;
         }
     }
 
@@ -134,10 +134,6 @@ public class ChunkGenerator : MonoBehaviour
 
             UpdateWaterPosition();
 
-            if(!placing){
-                placing = true;
-                StartCoroutine(PlaceFeatures());
-            }
     
         }
 
@@ -272,7 +268,7 @@ public class ChunkGenerator : MonoBehaviour
         cd.HeightMap = HeightMap;
         cd.TreeMap = TreeMap;
 
-        PlaceTerrainAndWater();
+        PlaceTerrainAndWater(cd);
 
         yield return null;
 
@@ -631,7 +627,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
-    public static void SetFeaturePlots(int biome, float wetness, float x, float y, float z){
+    public static void PlaceFeatures(ChunkData cd, int biome, float wetness, float x, float y, float z, float xOffset, float zOffset){
 
         float randomOffsetDivisor;
         Vector3 randomOffsetPosition;
@@ -639,42 +635,48 @@ public class ChunkGenerator : MonoBehaviour
 
         foreach(GameObject feature in Biome.TreePool[biome]){
             featureAttributes = FeatureAttributes.GetFeatureAttributes(feature.name, wetness);
-            randomOffsetDivisor = 15f * (Mathf.PerlinNoise((x + .01f) / 2f, (z + .01f) / 2f) * 2f - 1f);
+            randomOffsetDivisor = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
             randomOffsetPosition = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
             int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - featureAttributes.density) + randomOffsetDivisor);
             if(divisor < 1){ divisor = 1; }
-            if(x % divisor == 0 && z % divisor == 0){
+            if((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0){
 
-                Vector3 featurePosition = new Vector3(x, y, z) + randomOffsetPosition;
+                Vector3 featurePosition = new Vector3(x + xOffset, y, z + zOffset) + randomOffsetPosition;
                 Vector3 featureScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
-                featureLocations.Add(new FeatureLocation(feature, featurePosition, featureScale));
+        
 
-                // GameObject o = GameObject.Instantiate(feat, new Vector3(x, y, z) + randomOffsetPosition, Quaternion.identity, current.Trees.transform);
-                // o.transform.localScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
+                GameObject o = GameObject.Instantiate(feature, featurePosition, Quaternion.identity, current.Trees.transform);
+                o.transform.localScale = featureScale;
+
+                //featureLocations.Add(new FeatureLocation(o, featurePosition, featureScale, cd, (int)x, (int)z));
             }
         }
         foreach(GameObject feature in Biome.FeaturePool[biome]){
             featureAttributes = FeatureAttributes.GetFeatureAttributes(feature.name, wetness);
-            randomOffsetDivisor = 5f * (Mathf.PerlinNoise((x + .01f) / 2f, (z + .01f) / 2f) * 2f - 1f);
+            randomOffsetDivisor = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
             randomOffsetPosition = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
             int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - featureAttributes.density) + randomOffsetDivisor);
             if(divisor < 1){ divisor = 1; }
-            if(x % divisor == 0 && z % divisor == 0){
-                
-                Vector3 featurePosition = new Vector3(x, y, z) + randomOffsetPosition;
-                Vector3 featureScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
-                featureLocations.Add(new FeatureLocation(feature, featurePosition, featureScale));
+            if((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0){
 
-                // GameObject o = GameObject.Instantiate(feat, new Vector3(x, y, z) + randomOffsetPosition, Quaternion.identity, current.Trees.transform);
-                // o.transform.localScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
+                Vector3 featurePosition = new Vector3(x + xOffset, y, z + zOffset) + randomOffsetPosition;
+                Vector3 featureScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
+               
+
+                GameObject o = GameObject.Instantiate(feature, featurePosition, Quaternion.identity, current.Trees.transform);
+                o.transform.localScale = featureScale;
+
+                //featureLocations.Add(new FeatureLocation(o, featurePosition, featureScale, cd, (int)x, (int)z));
             }
         }
         
     }
 
 
-    void PlaceTerrainAndWater()
+    void PlaceTerrainAndWater(ChunkData cd)
     {
+
+        TerrainMesh.Clear();
 
         // initialize properties for meshes
         TerrainVertices = new Vector3[(ChunkSize + 2) * (ChunkSize + 2)];
@@ -683,32 +685,27 @@ public class ChunkGenerator : MonoBehaviour
         TerrainColors = new Color[TerrainVertices.Length];
 
 
-        // set terrain vertices according to HeightMap
-        float height, rockiness, skewHoriz;
+        // set terrain vertices according to HeightMap, and set colors
+        // NOTE: vertex index = (z * (ChunkSize + 2) + x
+        float height;
+        float rockiness = 0;
+        //float skewHoriz;
         for (int i = 0, z = 0; z < ChunkSize + 2; z++)
         {
             for (int x = 0; x < ChunkSize + 2; x++)
             {
-
-
                 height = HeightMap[x, z] * ElevationAmplitude;
-                rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 30f, (z + zOffset) / 30f) * Mathf.PerlinNoise(height / 50f, 0f), 2f);
-                skewHoriz = (rockiness * 2f - 1f) * 36f * RockProtrusion;
-               
-                TerrainVertices[i] = new Vector3(x + xOffset + skewHoriz, height, z + zOffset + skewHoriz);
-
-
+                //rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 30f, (z + zOffset) / 30f) * Mathf.PerlinNoise(height / 50f, 0f), 2f);
+                //skewHoriz = (rockiness * 2f - 1f) * 36f * RockProtrusion;
+                //TerrainVertices[i] = new Vector3(x + xOffset + skewHoriz, height, z + zOffset + skewHoriz);
+                TerrainVertices[i] = new Vector3(x + xOffset, height, z + zOffset);
                 // TerrainVertices[i] = new Vector3(x + xOffset, HeightMap[x, z] * ElevationAmplitude, z + zOffset);
                 TerrainColors[i] = SetVertexColor(x + xOffset, z + zOffset, BiomeMap[x, z], HeightMap[x, z], MountainMap[x, z], TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], FreshWaterMap[x, z], rockiness);
-                
-                // place features
-                if(TreeMap[x, z] && z > 0 && x > 0){
-                    SetFeaturePlots(BiomeMap[x, z], WetnessMap[x, z], x + xOffset, height, z + zOffset);
-                }
-
                 i++;
             }
         }
+        TerrainMesh.vertices = TerrainVertices;
+        TerrainMesh.colors = TerrainColors;
 
         // set up triangles
         int vert = 0;
@@ -729,23 +726,38 @@ public class ChunkGenerator : MonoBehaviour
             }
             vert++;
         }
+        TerrainMesh.triangles = TerrainTriangles;
 
+        // set up normals
+        TerrainMesh.RecalculateNormals();
+
+
+        // set up UVs, and place features based on normal value
+        int normalIndex;
+        Vector3[] normals = TerrainMesh.normals;
         for (int i = 0, z = 0; z < ChunkSize + 2; z++)
         {
             for (int x = 0; x < ChunkSize + 2; x++)
             {
+
+                // uv
                 TerrainUvs[i] = new Vector2((float)x + xOffset, (float)z + zOffset);
+
+                // features
+                if(z > 0 && x > 0 && TreeMap[x, z]){
+                    normalIndex = (z * (ChunkSize + 2)) + x;
+                    if(normals[normalIndex].y >= grassNormal){
+                        PlaceFeatures(cd, BiomeMap[x, z], WetnessMap[x, z], x, HeightMap[x, z] * ElevationAmplitude, z, xOffset, zOffset);
+                    }
+                }
+                
+                
                 i++;
             }
         }
-
-        // update meshes
-        TerrainMesh.Clear();
-        TerrainMesh.vertices = TerrainVertices;
-        TerrainMesh.triangles = TerrainTriangles;
         TerrainMesh.uv = TerrainUvs;
-        TerrainMesh.colors = TerrainColors;
-        TerrainMesh.RecalculateNormals();
+        
+    
     
         MeshCollider mc = Terrain.AddComponent<MeshCollider>();
         mc.sharedMaterial = physicMaterial;
@@ -757,54 +769,6 @@ public class ChunkGenerator : MonoBehaviour
         Vector3 pos = playerT.position;
         pos.y = SeaLevel * ElevationAmplitude;
         Water.transform.position = pos;
-    }
-
-
-    IEnumerator PlaceFeatures(){
-        //Debug.Log("checking feature placement...");
-        while(true){
-
-
-            featureLocations = featureLocations.OrderBy(c => Vector3.Distance(playerT.position, c.position)).ToList();
-
-
-            //Debug.Log("featureLocs length: " + featureLocations.Count);
-            if(featureLocations.Any()){
-
-               // Debug.Log("placing...");
-
-                FeatureLocation featureLocation = featureLocations[0];
-                Vector3 featurePos = featureLocation.position;
-                Vector3 featureScale = featureLocation.scale;
-
-                Vector2 chunkCoords = ToChunkSpace(featurePos);
-                Debug.Log(chunkCoords);
-                float x = featurePos.x / (chunkCoords.x);
-                float z = featurePos.z / (chunkCoords.y);
-                //Debug.Log("x: " + x);
-                //Debug.Log("z: " + z);
-                
-                ChunkData cd = GetChunk(featurePos);
-                if (cd != null)
-                {
-                    if(true)
-                    //if (Mathf.Abs(featurePos.y - cd.HeightMap[(int)x, (int)z] * ElevationAmplitude) < .2f)
-                    {
-                        GameObject o = GameObject.Instantiate(featureLocation.featurePrefab, featurePos, Quaternion.identity, cd.trees.transform);
-                        o.transform.localScale = featureScale;
-                    }
-                }
-
-                featureLocations.Remove(featureLocation);
-
-
-            }
-
-            //Debug.Log("...............");
-            yield return new WaitForSeconds(.01f);
-
-        }
-        
     }
 
 
