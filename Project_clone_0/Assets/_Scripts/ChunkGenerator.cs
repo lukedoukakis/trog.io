@@ -88,26 +88,7 @@ public class ChunkGenerator : MonoBehaviour
     // feature
     GameObject Trees;
     [Range(0f, 1f)] public float treeDensity;
-    [Range(0f, 1f)] public float treeScale;
-
-
-
-    static List<FeatureLocation> featureLocations;
-    struct FeatureLocation{
-        public GameObject feature;
-        public Vector3 position;
-        public Vector3 scale;
-        public ChunkData chunkData;
-        public int x, z;
-        public FeatureLocation(GameObject _featurePrefab, Vector3 _position, Vector3 _scale, ChunkData _chunkData, int _x, int _z){
-            feature = _featurePrefab;
-            position = _position;
-            scale = _scale;
-            chunkData = _chunkData;
-            x = _x;
-            z = _z;
-        }
-    }
+    public float treeScale;
 
 
 
@@ -165,10 +146,6 @@ public class ChunkGenerator : MonoBehaviour
         terrainMaterial.SetFloat("_SnowHeight", SnowLevel * ElevationAmplitude + .5f);
         grassMaterial.SetFloat("_WaterHeight", SeaLevel * ElevationAmplitude + .5f);
         grassMaterial.SetFloat("_GrassNormal", .8f);
-
-        featureLocations = new List<FeatureLocation>();
-
-        Debug.Log("starting coroutine...");
     
     }
 
@@ -344,12 +321,12 @@ public class ChunkGenerator : MonoBehaviour
 
                 // TemperatureMap [0, 1]
 
-                temperatureValue = 1.5f * Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale);
-                temperatureValue -= 1f * (mountainValue / mtnCap);
+                temperatureValue = 1f * Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale);
+                //temperatureValue -= 1f * (mountainValue / mtnCap);
                 // temperatureValue +=  (Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale) * 2f - 1f) * (3f * (1f - mountainValue/mtnCap));
 
-                //temperatureValue = Mathf.InverseLerp(.4f, .6f, temperatureValue);
-                temperatureValue = Mathf.Clamp01(temperatureValue);
+                temperatureValue = Mathf.InverseLerp(.3f, .7f, temperatureValue);
+                //temperatureValue = Mathf.Clamp01(temperatureValue);
 
                 //temperatureValue = .01f;
 
@@ -359,9 +336,9 @@ public class ChunkGenerator : MonoBehaviour
 
                 // HumidityMap [0, 1]
                 humidityValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / HumidityMapScale, (z + zOffset - Seed + .01f) / HumidityMapScale);
-                humidityValue += mountainValue * .5f;
+                humidityValue += (mountainValue / mtnCap) * .5f;
                 humidityValue = Mathf.Clamp01(humidityValue);
-                humidityValue = Mathf.InverseLerp(.3f, .6f, humidityValue);
+                humidityValue = Mathf.InverseLerp(.3f, .7f, humidityValue);
                 //humidityValue = .9f;
                 // -------------------------------------------------------
 
@@ -632,41 +609,27 @@ public class ChunkGenerator : MonoBehaviour
         float randomOffsetDivisor;
         Vector3 randomOffsetPosition;
         FeatureAttributes featureAttributes;
+        string bundleName;
+        string bundleName_last = "";
 
-        foreach(GameObject feature in Biome.TreePool[biome]){
+        foreach(GameObject feature in Biome.TreePool[biome].Concat(Biome.FeaturePool[biome])){
             featureAttributes = FeatureAttributes.GetFeatureAttributes(feature.name, wetness);
             randomOffsetDivisor = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
             randomOffsetPosition = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
             int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - featureAttributes.density) + randomOffsetDivisor);
             if(divisor < 1){ divisor = 1; }
-            if((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0){
-
+            if((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0)
+            {
+                bundleName = FeatureAttributes.GetBundleName(feature.name);
                 Vector3 featurePosition = new Vector3(x + xOffset, y, z + zOffset) + randomOffsetPosition;
                 Vector3 featureScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
-        
-
                 GameObject o = GameObject.Instantiate(feature, featurePosition, Quaternion.identity, current.Trees.transform);
                 o.transform.localScale = featureScale;
 
-                //featureLocations.Add(new FeatureLocation(o, featurePosition, featureScale, cd, (int)x, (int)z));
-            }
-        }
-        foreach(GameObject feature in Biome.FeaturePool[biome]){
-            featureAttributes = FeatureAttributes.GetFeatureAttributes(feature.name, wetness);
-            randomOffsetDivisor = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
-            randomOffsetPosition = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
-            int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - featureAttributes.density) + randomOffsetDivisor);
-            if(divisor < 1){ divisor = 1; }
-            if((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0){
+                bool breaker = (bundleName == bundleName_last && !featureAttributes.bundle);
+                bundleName_last = bundleName;
 
-                Vector3 featurePosition = new Vector3(x + xOffset, y, z + zOffset) + randomOffsetPosition;
-                Vector3 featureScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
-               
-
-                GameObject o = GameObject.Instantiate(feature, featurePosition, Quaternion.identity, current.Trees.transform);
-                o.transform.localScale = featureScale;
-
-                //featureLocations.Add(new FeatureLocation(o, featurePosition, featureScale, cd, (int)x, (int)z));
+                if(breaker){ break; }
             }
         }
         
