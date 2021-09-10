@@ -14,7 +14,7 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 455;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 15;
-    public static float Scale = 1200f * 2.5f;
+    public static float Scale = 1200f;
     public static float ElevationAmplitude = 5400f;
     public static float MinElevation = -.292893219f;
     public static float MaxElevation = .224744871f;
@@ -325,7 +325,7 @@ public class ChunkGenerator : MonoBehaviour
                 //temperatureValue -= 1f * (mountainValue / mtnCap);
                 // temperatureValue +=  (Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale) * 2f - 1f) * (3f * (1f - mountainValue/mtnCap));
 
-                temperatureValue = Mathf.InverseLerp(.3f, .7f, temperatureValue);
+                temperatureValue = Mathf.InverseLerp(.49f, .51f, temperatureValue);
                 //temperatureValue = Mathf.Clamp01(temperatureValue);
 
                 //temperatureValue = .01f;
@@ -516,7 +516,7 @@ public class ChunkGenerator : MonoBehaviour
                 // posterize all land
                 float postNes = .75f;
                 heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 350, .9f + postNes);
-                heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 750, 0f + postNes);
+                //heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 750, 0f + postNes);
 
 
                 // dip

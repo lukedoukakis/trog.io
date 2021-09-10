@@ -14,7 +14,7 @@ public class EntityAnimation : EntityComponent
     // rotation
     public Enum bodyRotationMode;
     public Transform bodyRotationTarget;
-    public static float bodyRotationSpeed_player = .0001f; //.04
+    public static float bodyRotationSpeed_player = .1f; //.04
     public static float bodyRotationSpeed_ai = .0625f;
     public static float leanBoundMin = -.4f;
     public static float leanBoundMax = 1.05f;
