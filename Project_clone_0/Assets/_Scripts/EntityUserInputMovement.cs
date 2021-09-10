@@ -122,7 +122,11 @@ public class EntityUserInputMovement : EntityComponent
         //Log("Hovered object: " + hoveredInteractableObject.name);
 
         // if hovering over something, interact with it
-        if(hoveredInteractableObject != null){
+        if(hoveredInteractableObject == null){
+            entityItems.DropHolding(null);
+            entityItems.OnItemsChange();
+        }
+        else{
             switch (hoveredInteractableObject.tag) {
                 case "Item" :
                     entityItems.OnObjectInteract(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());

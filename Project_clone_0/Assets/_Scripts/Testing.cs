@@ -6,7 +6,7 @@ public class Testing : MonoBehaviour
 {
 
 
-    EntityHandle playerHandle;
+    public EntityHandle playerHandle;
     public Faction faction;
 
     public static Testing instance;
@@ -31,12 +31,14 @@ public class Testing : MonoBehaviour
     void Update(){
 
 
-        playerHandle = GameManager.current.localPlayer.GetComponent<EntityHandle>();
-
-
-        if(Input.GetKeyUp(KeyCode.C)){
-            Camp.TryPlaceCamp(playerHandle.entityInfo.faction, GameManager.current.localPlayer.transform.position);
+        if(playerHandle != null){
+            if(Input.GetKeyUp(KeyCode.C)){
+                Camp.TryPlaceCamp(playerHandle.entityInfo.faction, GameManager.current.localPlayer.transform.position);
+            }
         }
+
+
+        
 
         // if(Input.GetKeyUp(KeyCode.V)){
         //     GameObject o = new GameObject();

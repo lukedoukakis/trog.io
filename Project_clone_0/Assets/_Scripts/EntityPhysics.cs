@@ -144,8 +144,8 @@ public class EntityPhysics : EntityComponent
     }
 
     void Start(){
-        acceleration = StatsHandler.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * AccelerationScale;
-        maxSpeed_run = StatsHandler.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * MaxSpeedScale;
+        acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * AccelerationScale;
+        maxSpeed_run = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * MaxSpeedScale;
         maxSpeed_sprint = maxSpeed_run * 1.5f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * .75f;
@@ -387,7 +387,7 @@ public class EntityPhysics : EntityComponent
 
 
     public void Move(Vector3 direction, float speed){
-        float speedStat = speed * StatsHandler.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed);
+        float speedStat = speed * Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed);
         sprinting = entityBehavior.urgent || (isLocalPlayer && entityUserInputMovement.pressSprint);
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
         rb.AddForce(move * speedStat, ForceMode.Force);
@@ -546,9 +546,9 @@ public class EntityPhysics : EntityComponent
     }
 
     public void OnWeaponHit(Collider collider){
-        Log("HIT!!!!");
         GameObject hitObject = collider.gameObject;
-        collider.gameObject.GetComponent<EntityHitDetection>().OnHit(this.entityStats, this.entityItems.weaponEquipped_item);
+        Log("HIT!!!! " + collider.gameObject.name);
+        collider.gameObject.GetComponent<EntityHitDetection>().OnHit(this.entityHandle);
 
         // todo: weapon fixed at hit point
         

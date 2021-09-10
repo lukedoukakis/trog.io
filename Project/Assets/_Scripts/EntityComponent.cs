@@ -20,6 +20,10 @@ public class EntityComponent : NetworkBehaviour
 
 
     protected virtual void Awake(){
+        FindAndSetEntityReferences();
+    }
+
+    public void FindAndSetEntityReferences(){
         entityHandle = GetComponent<EntityHandle>();
         entityInfo = GetComponent<EntityInfo>();
         entityStats = GetComponent<EntityStats>();

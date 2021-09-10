@@ -9,7 +9,13 @@ public class Camp : ScriptableObject
 
     public static float BASE_CAMP_RADIUS;
     public enum ComponentType{
-        Bonfire, Workbench, FoodRack, WeaponsRack, ClothingRack, Tent, Anvil
+        Bonfire,
+        Workbench, 
+        Tent,
+        Anvil,
+        Rack_Food, 
+        Rack_Weapons, 
+        Rack_Clothing,
     }
 
 
@@ -21,11 +27,11 @@ public class Camp : ScriptableObject
 
     public Bonfire bonfire;
     public Workbench workbench;
-    public List<ObjectRack> foodRacks;
-    public List<ObjectRack> weaponsRacks;
-    public List<ObjectRack> clothingRacks;
     public List<Tent> tents;
     public Anvil anvil;
+    public List<ObjectRack> racks_food;
+    public List<ObjectRack> racks_weapons;
+    public List<ObjectRack> racks_clothing;
 
 
 
@@ -49,9 +55,9 @@ public class Camp : ScriptableObject
         Camp camp = ScriptableObject.CreateInstance<Camp>();
         faction.camp = camp;
         camp.faction = faction;
-        camp.foodRacks = new List<ObjectRack>();
-        camp.weaponsRacks = new List<ObjectRack>();
-        camp.clothingRacks = new List<ObjectRack>();
+        camp.racks_food = new List<ObjectRack>();
+        camp.racks_weapons = new List<ObjectRack>();
+        camp.racks_clothing = new List<ObjectRack>();
         camp.tents = new List<Tent>();
         camp.SetOrigin(position);
         camp.SetRadius(faction.members.Count);
@@ -112,14 +118,14 @@ public class Camp : ScriptableObject
             case ComponentType.Workbench :
                 search = "OrientationWorkbench";
                 break;
-            case ComponentType.FoodRack :
-                search = "OrientationFoodRack" + foodRacks.Count;
+            case ComponentType.Rack_Food :
+                search = "OrientationFoodRack" + racks_food.Count;
                 break;
-            case ComponentType.WeaponsRack :
-                search = "OrientationWeaponsRack" + weaponsRacks.Count;
+            case ComponentType.Rack_Weapons :
+                search = "OrientationWeaponsRack" + racks_weapons.Count;
                 break;
-            case ComponentType.ClothingRack :
-                search = "OrientationClothingRack" + clothingRacks.Count;
+            case ComponentType.Rack_Clothing :
+                search = "OrientationClothingRack" + racks_clothing.Count;
                 break;
             case ComponentType.Tent :
                 search = "OrientationTent" + tents.Count;
@@ -145,7 +151,7 @@ public class Camp : ScriptableObject
 
     public void PlaceBonfire(){
         Bonfire bonfire = ScriptableObject.CreateInstance<Bonfire>();
-        bonfire.SetBonfire(this, faction.ownedItems.GetItemCount(Item.Wood) > 1f, 1f, 1f);
+        bonfire.SetBonfire(this, faction.ownedItems.GetItemCount(Item.LogFir) > 1f, 1f, 1f);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Bonfire);
         bonfire.worldObject.transform.position = targetOrientation.position;
         bonfire.worldObject.transform.rotation = targetOrientation.rotation;
@@ -169,16 +175,16 @@ public class Camp : ScriptableObject
         Enum componentType;
         switch (itemType) {
             case Item.Type.Food :
-                componentType = ComponentType.FoodRack;
+                componentType = ComponentType.Rack_Food;
                 break;
             case Item.Type.Weapon :
-                componentType = ComponentType.WeaponsRack;
+                componentType = ComponentType.Rack_Weapons;
                 break;
             case Item.Type.Clothing :
-                componentType = ComponentType.ClothingRack;
+                componentType = ComponentType.Rack_Clothing;
                 break;
             default :
-                componentType = ComponentType.FoodRack;
+                componentType = ComponentType.Rack_Food;
                 Debug.Log("Placing item rack for unsupported item type: " + itemType);
                 break;
         }
@@ -280,19 +286,16 @@ public class Camp : ScriptableObject
     
     public List<ObjectRack> GetRackListForItemType(Enum itemType){
         List<ObjectRack> rackList;
-        rackList = foodRacks;
+        rackList = racks_food;
         switch(itemType){
             case Item.Type.Food :
-                rackList = foodRacks;
+                rackList = racks_food;
                 break;
             case Item.Type.Weapon :
-                rackList = weaponsRacks;
+                rackList = racks_weapons;
                 break;
             case Item.Type.Clothing :
-                rackList = clothingRacks;
-                break;
-            case Item.Type.MiscLarge :
-                // todo
+                rackList = racks_clothing;
                 break;
             case Item.Type.MiscSmall :
                 // todo

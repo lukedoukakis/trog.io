@@ -5,16 +5,22 @@ using UnityEngine;
 public class EntityHitDetection : EntityComponent
 {
     
+    [SerializeField] Species species;
 
+    public void OnHit(EntityHandle attackerHandle){
 
-    public void OnHit(EntityStats attackerStats, Item attackerWeapon){
-
-        // add stats if doesn't exist
-        if(entityStats == null){
+        // add and set up info and stats if they don't exist
+        if(entityInfo == null){
+            entityInfo = gameObject.AddComponent<EntityInfo>();
+            entityInfo.FindAndSetEntityReferences();
+            entityInfo.species = species;
             entityStats = gameObject.AddComponent<EntityStats>();
+            entityStats.FindAndSetEntityReferences();
         }
 
-        entityStats.TakeDamage(attackerStats, attackerWeapon);
+
+        // take damage from the hit
+        entityStats.TakeDamage(attackerHandle);
 
 
     }

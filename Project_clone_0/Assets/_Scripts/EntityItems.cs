@@ -75,16 +75,16 @@ public class EntityItems : EntityComponent
         Item i = Item.GetItemByName(o.name);
         switch (i.type) {
             case Item.Type.Food :
-                PickUpHolding(i, attachedObject);
+                PickUpHolding(i, o, attachedObject);
                 break;
             case Item.Type.Weapon :
                 PickUpWeapon(i, attachedObject);
                 break;
             case Item.Type.Clothing :
-                PickUpHolding(i, attachedObject);
+                PickUpHolding(i, o, attachedObject);
                 break;
             default:
-                PickUpHolding(i, attachedObject);
+                PickUpHolding(i, o, attachedObject);
                 break;
             
         }
@@ -131,14 +131,14 @@ public class EntityItems : EntityComponent
 
     // holding
 
-    public void PickUpHolding(Item i, ScriptableObject attachedObject){
+    public void PickUpHolding(Item item, GameObject gameobject, ScriptableObject attachedObject){
 
         if (attachedObject is ObjectRack)
         {
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)attachedObject;
             Faction rackFac = rack.camp.faction;
-            Faction.RemoveItemOwned(rackFac, i, 1, rack);
+            Faction.RemoveItemOwned(rackFac, item, 1, rack);
         }
         // todo: if getting from another human
         else
@@ -146,12 +146,18 @@ public class EntityItems : EntityComponent
             Debug.Log("No attached object match");
         }
 
-        GameObject o = Utility.InstantiatePrefabSameName(i.gameobject);
+        GameObject o;
+        if(Item.IsClampedType(item)){
+            o = Utility.InstantiatePrefabSameName(item.gameobject);
+        }
+        else{
+            o = gameobject;
+        }
 
         if(holding_item != null){
             DropHolding(attachedObject);
         }
-        holding_item = i;
+        holding_item = item;
         holding_object = o;
         Utility.ToggleObjectPhysics(holding_object, false);
     }
@@ -159,18 +165,31 @@ public class EntityItems : EntityComponent
     public void DropHolding(ScriptableObject targetAttachedObject){
         if(holding_item == null) { return; }
 
-        if(targetAttachedObject is ObjectRack){
-            // get rack reference from attached object and add the item to faction items with specified rack
-            ObjectRack rack = (ObjectRack)targetAttachedObject;
-            if(!rack.itemType.Equals(holding_item.type)){ rack = null; }
-            Faction.AddItemOwned(entityInfo.faction, weaponUnequipped_item, 1, rack);
+        if (Item.IsClampedType(holding_item))
+        {
+            if (targetAttachedObject == null){
+                Faction.AddItemOwned(entityInfo.faction, weaponUnequipped_item, 1, null);
+            }
+            else if (targetAttachedObject is ObjectRack)
+            {
+                // get rack reference from attached object and add the item to faction items with specified rack
+                ObjectRack rack = (ObjectRack)targetAttachedObject;
+                if (!rack.itemType.Equals(holding_item.type)) { rack = null; }
+                Faction.AddItemOwned(entityInfo.faction, weaponUnequipped_item, 1, rack);
+            }
+            else
+            {
+                Debug.Log("No attached object match");
+            }
+            // todo: case human
+
+            GameObject.Destroy(holding_object);
         }
         else{
-            Debug.Log("No attached object match");
+            Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.hitbox, false);
         }
-        // todo: case human
-        
-        GameObject.Destroy(holding_object);
+        Utility.ToggleObjectPhysics(holding_object, true);
+
         holding_item = null;
         holding_object = null;
     }
@@ -334,6 +353,16 @@ public class EntityItems : EntityComponent
     public void OnItemsChange()
     {
         entityPhysics.UpdateIKForCarryingItems();
+        if(weaponEquipped_object != null){
+            Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.hitbox, true);
+
+        }
+        if(weaponUnequipped_object != null){
+            Physics.IgnoreCollision(weaponUnequipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.hitbox, true);
+        }
+        if(holding_object != null){
+            Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.hitbox, true);
+        }
     }
 
     // ---
