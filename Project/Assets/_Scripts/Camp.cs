@@ -9,7 +9,14 @@ public class Camp : ScriptableObject
 
     public static float BASE_CAMP_RADIUS;
     public enum ComponentType{
-        Bonfire, Workbench, FoodRack, WeaponsRack, ClothingRack, Tent, Anvil
+        Bonfire,
+        Workbench, 
+        Tent,
+        Anvil,
+        Rack_Food, 
+        Rack_Weapons, 
+        Rack_Clothing,
+        Rack_Wood,
     }
 
 
@@ -24,6 +31,7 @@ public class Camp : ScriptableObject
     public List<ObjectRack> foodRacks;
     public List<ObjectRack> weaponsRacks;
     public List<ObjectRack> clothingRacks;
+    public List<ObjectRack> woodRacks;
     public List<Tent> tents;
     public Anvil anvil;
 
@@ -112,13 +120,13 @@ public class Camp : ScriptableObject
             case ComponentType.Workbench :
                 search = "OrientationWorkbench";
                 break;
-            case ComponentType.FoodRack :
+            case ComponentType.Rack_Food :
                 search = "OrientationFoodRack" + foodRacks.Count;
                 break;
-            case ComponentType.WeaponsRack :
+            case ComponentType.Rack_Weapons :
                 search = "OrientationWeaponsRack" + weaponsRacks.Count;
                 break;
-            case ComponentType.ClothingRack :
+            case ComponentType.Rack_Clothing :
                 search = "OrientationClothingRack" + clothingRacks.Count;
                 break;
             case ComponentType.Tent :
@@ -169,16 +177,16 @@ public class Camp : ScriptableObject
         Enum componentType;
         switch (itemType) {
             case Item.Type.Food :
-                componentType = ComponentType.FoodRack;
+                componentType = ComponentType.Rack_Food;
                 break;
             case Item.Type.Weapon :
-                componentType = ComponentType.WeaponsRack;
+                componentType = ComponentType.Rack_Weapons;
                 break;
             case Item.Type.Clothing :
-                componentType = ComponentType.ClothingRack;
+                componentType = ComponentType.Rack_Clothing;
                 break;
             default :
-                componentType = ComponentType.FoodRack;
+                componentType = ComponentType.Rack_Food;
                 Debug.Log("Placing item rack for unsupported item type: " + itemType);
                 break;
         }

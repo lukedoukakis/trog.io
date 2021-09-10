@@ -23,7 +23,7 @@ public class EntityStats : EntityComponent
         base.Awake();
 
         statsModifiers = new List<Stats>();
-        statsCombined = Stats.InitializeStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        statsCombined = Stats.InstantiateStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         EntityInfo info = GetComponent<EntityInfo>();
         AddStatsModifier(SpeciesBaseReferences.GetBaseReferences(info.species).baseStats);
         hp = (int)(BASE_AMOUNT_HP * Stats.GetStatValue(statsCombined, Stats.StatType.Health));
@@ -68,10 +68,12 @@ public class EntityStats : EntityComponent
     }
 
 
-    public void TakeDamage(EntityStats attackerStats, Item attackerWeapon){
+    public void TakeDamage(EntityHandle attackerHandle){
 
-        // get attacker's relevant stats
-        float attackerAttack = Stats.GetStatValue(attackerStats.statsCombined, Stats.StatType.Attack);
+        // get attacker's relevant stats and weapon
+        Stats attackerStats = attackerHandle.entityStats.statsCombined;
+        Item attackerWeapon = attackerHandle.entityItems.weaponEquipped_item;
+        float attackerAttack = Stats.GetStatValue(attackerStats, Stats.StatType.Attack);
 
         // get this entity's relevant stats
         float armorBase = Stats.GetStatValue(this.statsCombined, Stats.StatType.ArmorBase);
@@ -106,14 +108,23 @@ public class EntityStats : EntityComponent
         // Debug.Log("DAMAGE: " + (int)hpLoss);
         // Debug.Log("HP: " + hp.ToString());
         if(hp <= 0){
-            OnHealthEmptied();
+            OnHealthEmptied(attackerHandle);
         }
 
     }
 
-    void OnHealthEmptied(){
+    void OnHealthEmptied(EntityHandle attackerHandle){
         Debug.Log("DED");
-        // todo: death stuff
+
+
+        // get drops and give to attacker's faction
+        ItemCollection drop = SpeciesBaseReferences.GetBaseReferences(entityInfo.species).baseDrop;
+        Debug.Log("Adding drops to entity \'" + attackerHandle.entityInfo.nickname + "\' faction: " + drop.ToString());
+        // todo: add supplemental drops based on specific properties of this entity (?)
+        Faction.AddItemOwned(attackerHandle.entityInfo.faction, drop, null);
+
+        // todo: death 'animation'/being destroyed visuals
+
     }
 
 
@@ -150,7 +161,7 @@ public class Stats : ScriptableObject
 
 
 
-    public static Stats NONE = InitializeStats(
+    public static Stats NONE = InstantiateStats(
         0f,
         0f,
         0f,
@@ -167,7 +178,7 @@ public class Stats : ScriptableObject
 
     // ----
     // definitions
-    public static Stats BASE_HUMAN = InitializeStats(
+    public static Stats BASE_HUMAN = InstantiateStats(
         1f,
         1f,
         1f,
@@ -182,7 +193,7 @@ public class Stats : ScriptableObject
         1f
     );
 
-    public static Stats BASE_TREE = InitializeStats(
+    public static Stats BASE_TREE = InstantiateStats(
         3f,
         0f,
         0f,
@@ -197,7 +208,7 @@ public class Stats : ScriptableObject
         0f
     );
 
-    public static Stats BASE_CACTUS = InitializeStats(
+    public static Stats BASE_CACTUS = InstantiateStats(
         2f,
         0f,
         0f,
@@ -212,7 +223,7 @@ public class Stats : ScriptableObject
         0f
     );
     
-    public static Stats FOOD_TESTFOOD = InitializeStats(
+    public static Stats FOOD_TESTFOOD = InstantiateStats(
         1f,
         1f,
         1f,
@@ -227,7 +238,7 @@ public class Stats : ScriptableObject
         0f
     );
 
-    public static Stats WEAPON_SPEAR = InitializeStats(
+    public static Stats WEAPON_SPEAR = InstantiateStats(
         0f,
         0f,
         3f,
@@ -242,7 +253,7 @@ public class Stats : ScriptableObject
         0f
     );
 
-    public static Stats WEAPON_AXE = InitializeStats(
+    public static Stats WEAPON_AXE = InstantiateStats(
         0f,
         0f,
         3f,
@@ -257,7 +268,7 @@ public class Stats : ScriptableObject
         0f
     );
 
-    public static Stats CLOTHING_TESTCLOTHING = InitializeStats(
+    public static Stats CLOTHING_TESTCLOTHING = InstantiateStats(
         0f,
         0f,
         0f,
@@ -395,7 +406,7 @@ public class Stats : ScriptableObject
 
     }
 
-    public static Stats InitializeStats(float health, float stamina, float attack, float attackSpeed, float speed, float swim, float agility, float armorBase, float armorBlunt, float armorSlash, float armorPierce, float coldResist){
+    public static Stats InstantiateStats(float health, float stamina, float attack, float attackSpeed, float speed, float swim, float agility, float armorBase, float armorBlunt, float armorSlash, float armorPierce, float coldResist){
         Stats stats = ScriptableObject.CreateInstance<Stats>();
         stats.health = health;
         stats.stamina = stamina;

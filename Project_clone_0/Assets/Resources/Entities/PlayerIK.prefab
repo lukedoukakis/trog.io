@@ -120,7 +120,7 @@ MonoBehaviour:
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   id: 0
-  species: Human
+  species: 0
   nickname: Player
   faction: {fileID: 0}
 --- !u!114 &8069827555116078485
@@ -150,7 +150,7 @@ MonoBehaviour:
   entityCommandServer: {fileID: 0}
   statsModifiers: []
   statsCombined: {fileID: 0}
-  stamina_base: 100
+  BASE_AMOUNT_STAMINA: 100
   hp: 0
   stamina: 0
 --- !u!114 &8069827555116078490
@@ -467,6 +467,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
+  species: 0
 --- !u!114 &8374234257668663390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -642,7 +643,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: HumanIK
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6666043928345325841, guid: bcf187194d93e87428143f82751631f7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: bcf187194d93e87428143f82751631f7, type: 3}
 --- !u!4 &8259034806594529843 stripped
 Transform:

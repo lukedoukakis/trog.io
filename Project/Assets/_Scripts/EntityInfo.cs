@@ -31,7 +31,7 @@ public class SpeciesBaseReferences : ScriptableObject{
     public ItemCollection baseDrop;
     public Stats baseStats;
 
-    public static SpeciesBaseReferences Initialize(ItemCollection baseDrop, Stats baseStats){
+    public static SpeciesBaseReferences InstantiateSpeciesBaseReferences(ItemCollection baseDrop, Stats baseStats){
         SpeciesBaseReferences speciesBaseReferences = ScriptableObject.CreateInstance<SpeciesBaseReferences>();
         speciesBaseReferences.baseDrop = baseDrop;
         speciesBaseReferences.baseStats = baseStats;
@@ -44,7 +44,7 @@ public class SpeciesBaseReferences : ScriptableObject{
 
     static Dictionary<Species, SpeciesBaseReferences> SpeciesBaseReferencesMap = new Dictionary<Species, SpeciesBaseReferences>(){
         {
-            Species.Human, SpeciesBaseReferences.Initialize(
+            Species.Human, SpeciesBaseReferences.InstantiateSpeciesBaseReferences(
                 new ItemCollection(
                     new Dictionary<Item, int>{
                         // todo: drops for human
@@ -57,7 +57,7 @@ public class SpeciesBaseReferences : ScriptableObject{
         },
 
         {
-            Species.Tree, SpeciesBaseReferences.Initialize(
+            Species.Tree, SpeciesBaseReferences.InstantiateSpeciesBaseReferences(
                 new ItemCollection(
                     new Dictionary<Item, int>{
                         // todo: finish drop for tree

@@ -26,6 +26,12 @@ public class Faction : ScriptableObject
         fac.targetedObjects.Add(o);
     }
 
+    public static void AddItemOwned(Faction fac, ItemCollection itemCollection, ObjectRack rack){
+        foreach(KeyValuePair<Item, int> kvp in itemCollection.items){
+            AddItemOwned(fac, kvp.Key, kvp.Value, rack);
+        }
+    }
+
     public static void AddItemOwned(Faction fac, Item item, int count, ObjectRack rack)
     {
 
@@ -95,7 +101,7 @@ public class Faction : ScriptableObject
 
 
 
-    public static Faction GenerateFaction(string _factionName, bool _isPlayerFaction){
+    public static Faction InstantiateFaction(string _factionName, bool _isPlayerFaction){
         Faction f = ScriptableObject.CreateInstance<Faction>();
         f.id = UnityEngine.Random.Range(0, int.MaxValue);
         f.factionName = _factionName;

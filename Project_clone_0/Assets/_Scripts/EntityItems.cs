@@ -334,6 +334,7 @@ public class EntityItems : EntityComponent
     public void OnItemsChange()
     {
         entityPhysics.UpdateIKForCarryingItems();
+        Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.hitbox);
     }
 
     // ---

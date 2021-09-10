@@ -218,7 +218,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
-  species: Tree
+  species: 1
 --- !u!136 &8443955031357635585
 CapsuleCollider:
   m_ObjectHideFlags: 0
