@@ -7,6 +7,18 @@ public class ItemCollection
     
     public Dictionary<Item, int> items;
 
+
+
+    public ItemCollection(Dictionary<Item, int>[] _items){
+        this.items = _items[0];
+        if(_items.Length > 1){
+            for(int i = 1; i < _items.Length; ++i){
+                foreach(KeyValuePair<Item, int> kvp in _items[i]){
+                    AddItem(kvp.Key, kvp.Value);
+                }
+            }
+        }
+    }
     public ItemCollection(Dictionary<Item, int> _items){
         this.items = _items;
     }

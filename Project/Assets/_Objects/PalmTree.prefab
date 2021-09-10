@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 4434791661191091285}
   - component: {fileID: -429956354899342119}
   m_Layer: 0
-  m_Name: Palm Tree
+  m_Name: PalmTree
   m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -154,6 +154,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
+  species: Tree
 --- !u!136 &4434791661191091285
 CapsuleCollider:
   m_ObjectHideFlags: 0

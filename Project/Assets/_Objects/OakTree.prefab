@@ -171,7 +171,7 @@ GameObject:
   - component: {fileID: 8443955031357635585}
   - component: {fileID: -9105256293425638662}
   m_Layer: 10
-  m_Name: Oak Tree
+  m_Name: OakTree
   m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -218,6 +218,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
+  species: Tree
 --- !u!136 &8443955031357635585
 CapsuleCollider:
   m_ObjectHideFlags: 0

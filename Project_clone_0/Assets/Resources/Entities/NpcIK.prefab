@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 114389023734901772}
   - component: {fileID: 114389023734901775}
   - component: {fileID: 114389023734901769}
+  - component: {fileID: -3559509913535453237}
   - component: {fileID: 2862668722696777771}
   - component: {fileID: 4026186526722097221}
   - component: {fileID: -5512500607254942701}
@@ -116,7 +117,7 @@ MonoBehaviour:
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   id: 0
-  species: Human
+  species: 0
   nickname: bob
   faction: {fileID: 0}
 --- !u!114 &114389023734901763
@@ -389,6 +390,32 @@ MonoBehaviour:
   basePosition_weaponEquipped_axe: {fileID: 0}
   basePosition_holding: {fileID: 0}
   itemOrientationAnimator: {fileID: 0}
+--- !u!114 &-3559509913535453237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114389023734901768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15fbd0e55bac06d48ac6e6c193042235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  entityHandle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityAnimation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityHitDetection: {fileID: 0}
+  entityUserInputMovement: {fileID: 0}
+  entityCommandServer: {fileID: 0}
+  species: 0
 --- !u!114 &2862668722696777771
 MonoBehaviour:
   m_ObjectHideFlags: 0

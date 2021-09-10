@@ -40,7 +40,7 @@ public class UnitButtonController : MonoBehaviour
         referencedObject = this.handle.gameObject;
         referencedObjectInfo = referencedObject.GetComponent<EntityInfo>();
         if(referencedObjectInfo.nickname == ""){
-            label = referencedObjectInfo.species;
+            label = referencedObjectInfo.species.ToString();
         }
         else{
             label = referencedObjectInfo.nickname;

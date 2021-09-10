@@ -11,8 +11,8 @@ public class EntityStats : EntityComponent
     public Stats statsCombined;
 
 
-    public static float hp_base = 100;
-    public float stamina_base = 100;
+    public static float BASE_AMOUNT_HP = 100;
+    public float BASE_AMOUNT_STAMINA = 100;
     public static float hpLossFromHit_base = 8;
     public int hp;
     public int stamina;
@@ -23,12 +23,11 @@ public class EntityStats : EntityComponent
         base.Awake();
 
         statsModifiers = new List<Stats>();
-        statsCombined = StatsHandler.InitializeStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        statsCombined = Stats.InitializeStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         EntityInfo info = GetComponent<EntityInfo>();
-        string statsIdentifier = (info == null) ? statsIdentifier = tag : info.species;
-        AddStatsModifier(StatsHandler.GetEntityBaseStats(statsIdentifier));
-        hp = (int)(hp_base * StatsHandler.GetStatValue(statsCombined, Stats.StatType.Health));
-        stamina = (int)(stamina_base * StatsHandler.GetStatValue(statsCombined, Stats.StatType.Stamina));
+        AddStatsModifier(SpeciesBaseReferences.GetBaseReferences(info.species).baseStats);
+        hp = (int)(BASE_AMOUNT_HP * Stats.GetStatValue(statsCombined, Stats.StatType.Health));
+        stamina = (int)(BASE_AMOUNT_STAMINA * Stats.GetStatValue(statsCombined, Stats.StatType.Stamina));
 
     }
 
@@ -38,7 +37,7 @@ public class EntityStats : EntityComponent
         Enum statType;
         foreach(int statNum in Enum.GetValues(typeof(Stats.StatType))){
             statType = (Stats.StatType)statNum;
-            StatsHandler.SetStatValue(statsCombined, statType, StatsHandler.GetStatValue(statsCombined, statType) + StatsHandler.GetStatValue(statsToAdd, statType));
+            Stats.SetStatValue(statsCombined, statType, Stats.GetStatValue(statsCombined, statType) + Stats.GetStatValue(statsToAdd, statType));
         }
         OnStatsChange();
         //Debug.Log("Added stats modifier");
@@ -51,7 +50,7 @@ public class EntityStats : EntityComponent
             foreach (int statNum in Enum.GetValues(typeof(Stats.StatType)))
             {
                 statType = (Stats.StatType)statNum;
-                StatsHandler.SetStatValue(statsCombined, statType, StatsHandler.GetStatValue(statsCombined, statType) - StatsHandler.GetStatValue(statsToRemove, statType));
+                Stats.SetStatValue(statsCombined, statType, Stats.GetStatValue(statsCombined, statType) - Stats.GetStatValue(statsToRemove, statType));
             }
         }
         else
@@ -72,10 +71,10 @@ public class EntityStats : EntityComponent
     public void TakeDamage(EntityStats attackerStats, Item attackerWeapon){
 
         // get attacker's relevant stats
-        float attackerAttack = StatsHandler.GetStatValue(attackerStats.statsCombined, Stats.StatType.Attack);
+        float attackerAttack = Stats.GetStatValue(attackerStats.statsCombined, Stats.StatType.Attack);
 
         // get this entity's relevant stats
-        float armorBase = StatsHandler.GetStatValue(this.statsCombined, Stats.StatType.ArmorBase);
+        float armorBase = Stats.GetStatValue(this.statsCombined, Stats.StatType.ArmorBase);
         Enum armorStatType;
         switch (attackerWeapon.damageType) {
             case Item.DamageType.Blunt :
@@ -91,7 +90,7 @@ public class EntityStats : EntityComponent
                 armorStatType = Stats.StatType.ArmorBlunt;
                 break;
         }
-        float armorFromWeaponType = StatsHandler.GetStatValue(this.statsCombined, armorStatType);
+        float armorFromWeaponType = Stats.GetStatValue(this.statsCombined, armorStatType);
 
         // calculate damage
         float hpLoss = hpLossFromHit_base;
@@ -107,12 +106,12 @@ public class EntityStats : EntityComponent
         // Debug.Log("DAMAGE: " + (int)hpLoss);
         // Debug.Log("HP: " + hp.ToString());
         if(hp <= 0){
-            OnDeath();
+            OnHealthEmptied();
         }
 
     }
 
-    void OnDeath(){
+    void OnHealthEmptied(){
         Debug.Log("DED");
         // todo: death stuff
     }
@@ -123,7 +122,7 @@ public class EntityStats : EntityComponent
     {
         string list = "";
         string _name = entityInfo.nickname;
-        string _type = entityInfo.species;
+        string _type = entityInfo.species.ToString();
         if (_name != "") { list += _name + " (" + _type + ")"; }
         else { list += _type; }
         list += "\n";
@@ -131,11 +130,306 @@ public class EntityStats : EntityComponent
         foreach (int i in Enum.GetValues(typeof(Stats.StatType)))
         {
             Enum statType = (Stats.StatType)i;
-            list += StatsHandler.GetStatName(statsCombined, statType) + ": " + StatsHandler.GetStatValue(statsCombined, statType);
+            list += Stats.GetStatName(statsCombined, statType) + ": " + Stats.GetStatValue(statsCombined, statType);
         }
         
         return list;
     }
+
+
+}
+
+
+public class Stats : ScriptableObject
+{
+    public enum StatType{
+        Health, Stamina, Attack, AttackSpeed, Speed, Swim, Agility, ArmorBase, ArmorBlunt, ArmorSlash, ArmorPierce, ColdResist
+    }
+
+    public float health, stamina, attack, attackSpeed, speed, swim, agility, armorBase, armorBlunt, armorSlash, armorPierce, coldResist;
+
+
+
+    public static Stats NONE = InitializeStats(
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f
+    );
+
+    // ----
+    // definitions
+    public static Stats BASE_HUMAN = InitializeStats(
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        1f
+    );
+
+    public static Stats BASE_TREE = InitializeStats(
+        3f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        8f,
+        0f,
+        8f,
+        0f
+    );
+
+    public static Stats BASE_CACTUS = InitializeStats(
+        2f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        2f,
+        0f,
+        2f,
+        0f
+    );
+    
+    public static Stats FOOD_TESTFOOD = InitializeStats(
+        1f,
+        1f,
+        1f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f
+    );
+
+    public static Stats WEAPON_SPEAR = InitializeStats(
+        0f,
+        0f,
+        3f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f
+    );
+
+    public static Stats WEAPON_AXE = InitializeStats(
+        0f,
+        0f,
+        3f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f
+    );
+
+    public static Stats CLOTHING_TESTCLOTHING = InitializeStats(
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        3f,
+        0f,
+        0f,
+        0f,
+        1f
+    );
+
+
+
+
+
+
+    
+
+
+
+
+    // ----
+
+
+
+    public static float GetStatValue(Stats stats, Enum statType){
+        switch (statType) {
+            case Stats.StatType.Health:
+                return stats.health;
+            case Stats.StatType.Stamina:
+                return stats.stamina;
+            case Stats.StatType.Attack:
+                return stats.attack;
+            case Stats.StatType.AttackSpeed:
+                return stats.attackSpeed;
+            case Stats.StatType.Speed:
+                return stats.speed;
+            case Stats.StatType.Swim:
+                return stats.swim;
+            case Stats.StatType.Agility:
+                return stats.agility;
+            case Stats.StatType.ArmorBase:
+                return stats.armorBase;
+            case Stats.StatType.ArmorBlunt:
+                return stats.armorBlunt;
+            case Stats.StatType.ArmorSlash:
+                return stats.armorSlash;
+            case Stats.StatType.ArmorPierce:
+                return stats.armorPierce;
+            case Stats.StatType.ColdResist:
+                return stats.coldResist;
+            default:
+                Debug.Log("Invalid stat type");
+                return -1;
+        }
+    }
+    public static string GetStatName(Stats stats, Enum statType){
+        switch (statType) {
+            case Stats.StatType.Health:
+                return "Health";
+            case Stats.StatType.Stamina:
+                return "Stamina";
+            case Stats.StatType.Attack:
+                return "Attack";
+            case Stats.StatType.AttackSpeed:
+                return "Attack Speed";
+            case Stats.StatType.Speed:
+                return "Speed";
+            case Stats.StatType.Swim:
+                return "Swim";
+            case Stats.StatType.Agility:
+                return "Agility";
+            case Stats.StatType.ArmorBase:
+                return "Base Damage Resistance";
+            case Stats.StatType.ArmorBlunt:
+                return "Blunt Damage Resistance";
+            case Stats.StatType.ArmorSlash:
+                return "Slash Damage Resistance";
+            case Stats.StatType.ArmorPierce:
+                return "Pierce Armor Resistance";
+            case Stats.StatType.ColdResist:
+                return "Cold Resistance";
+            default:
+                Debug.Log("Invalid stat type");
+               return "ERROR: INVALID STAT TYPE";
+        }
+    }
+
+    public static void SetStatValue(Stats stats, Enum statType, float value){
+        switch (statType) {
+            case Stats.StatType.Health:
+                stats.health = value;
+                break;
+            case Stats.StatType.Stamina:
+                stats.stamina = value;
+                break;
+            case Stats.StatType.Attack:
+                stats.attack = value;
+                break;
+            case Stats.StatType.AttackSpeed:
+                stats.attackSpeed = value;
+                break;
+            case Stats.StatType.Speed:
+                stats.speed = value;
+                break;
+            case Stats.StatType.Swim:
+                stats.swim = value;
+                break;
+            case Stats.StatType.Agility:
+                stats.agility = value;
+                break;
+            case Stats.StatType.ArmorBase:
+                stats.armorBase = value;
+                break;
+            case Stats.StatType.ArmorBlunt:
+                stats.armorBlunt = value;
+                break;
+            case Stats.StatType.ArmorSlash:
+                stats.armorSlash = value;
+                break;
+            case Stats.StatType.ArmorPierce:
+                stats.armorPierce = value;
+                break;
+            case Stats.StatType.ColdResist:
+                stats.coldResist = value;
+                break;
+            default:
+                Debug.Log("Invalid stat type");
+                break;
+        }
+
+
+    }
+
+    public static Stats InitializeStats(float health, float stamina, float attack, float attackSpeed, float speed, float swim, float agility, float armorBase, float armorBlunt, float armorSlash, float armorPierce, float coldResist){
+        Stats stats = ScriptableObject.CreateInstance<Stats>();
+        stats.health = health;
+        stats.stamina = stamina;
+        stats.attack = attack;
+        stats.attackSpeed = attackSpeed;
+        stats.speed = speed;
+        stats.swim = swim;
+        stats.agility = agility;
+        stats.armorBase = armorBase;
+        stats.armorBlunt = armorBlunt;
+        stats.armorSlash = armorSlash;
+        stats.armorPierce = armorPierce;
+        stats.coldResist = coldResist;
+        return stats;
+    }
+
+    // get stats from species
+    public static Stats GetEntityBaseStats(string identifier)
+    {
+        return BASE_STATS_MAP[identifier];
+    }
+
+
+    static Dictionary<string, Stats> BASE_STATS_MAP = new Dictionary<string, Stats>(){
+        { "Human", BASE_HUMAN },
+        { "Tree", BASE_TREE },
+        { "Cactus", BASE_CACTUS },
+    };
+
+
+
+
+
+    
 
 
 }
