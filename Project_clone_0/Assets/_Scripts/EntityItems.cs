@@ -71,20 +71,20 @@ public class EntityItems : EntityComponent
     }
 
     // client method when an object is interacted with
-    public void OnObjectInteract(GameObject o, ScriptableObject attachedObject){
-        Item i = Item.GetItemByName(o.name);
+    public void OnObjectInteract(GameObject worldObject, ScriptableObject attachedObject){
+        Item i = Item.GetItemByName(worldObject.name);
         switch (i.type) {
             case Item.Type.Food :
-                PickUpHolding(i, o, attachedObject);
+                PickUpHolding(i, worldObject, attachedObject);
                 break;
             case Item.Type.Weapon :
-                PickUpWeapon(i, attachedObject);
+                PickUpWeapon(i, worldObject, attachedObject);
                 break;
             case Item.Type.Clothing :
-                PickUpHolding(i, o, attachedObject);
+                PickUpHolding(i, worldObject, attachedObject);
                 break;
             default:
-                PickUpHolding(i, o, attachedObject);
+                PickUpHolding(i, worldObject, attachedObject);
                 break;
             
         }
@@ -92,40 +92,54 @@ public class EntityItems : EntityComponent
         OnItemsChange();
     }
 
+    public void OnEmptyInteract(){
+        if(holding_item != null){
+            DropHolding(null);
+        }
+        else{
+            if(weaponEquipped_item != null){
+                DropEquippedWeapon(null);
+            }
+        }
+        OnItemsChange();
+    }
 
-    public void PickUpWeapon(Item i, ScriptableObject attachedObject){
 
-        Debug.Log("Picking up weapon: " + i.nme);
+    public void PickUpWeapon(Item item, GameObject worldObject, ScriptableObject attachedObject){
+
+        Debug.Log("Picking up weapon: " + item.nme);
+
+        GameObject o;
 
         if (attachedObject is ObjectRack)
         {
+            Log("From rack");
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)attachedObject;
             Faction rackFac = rack.camp.faction;
-            Faction.RemoveItemOwned(rackFac, i, 1, rack);
+            Faction.RemoveItemOwned(rackFac, item, 1, rack);
+            o = Utility.InstantiatePrefabSameName(item.worldObject);
         }
         // todo: if getting from another human
-        else
+        else if(attachedObject == null)
         {
-            Debug.Log("No attached object match");
-        }
-
-
-        ToggleWeaponEquipped();
-
-        if(weaponEquipped_item == null){
-
-            // if no equipped weapon, set equipped weapon
-            SetEquippedWeapon(i);
-
+            Log("No attached obj");
+            o = worldObject;
         }
         else{
-            if(weaponUnequipped_item != null){
-                DropUnequippedWeapon(attachedObject);
-                
-            }
-            SetUnequippedWeapon(i);
+            o = worldObject;
         }
+
+        if(weaponEquipped_item != null){
+            if(weaponUnequipped_item == null){
+                ToggleWeaponEquipped();
+            }
+            else{
+                DropEquippedWeapon(attachedObject);
+            }
+        }
+        SetEquippedWeapon(item, o);
+
     }
 
 
@@ -133,26 +147,24 @@ public class EntityItems : EntityComponent
 
     public void PickUpHolding(Item item, GameObject gameobject, ScriptableObject attachedObject){
 
+        GameObject o;
+
         if (attachedObject is ObjectRack)
         {
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)attachedObject;
             Faction rackFac = rack.camp.faction;
             Faction.RemoveItemOwned(rackFac, item, 1, rack);
+            o = Utility.InstantiatePrefabSameName(item.worldObject);
         }
-        // todo: if getting from another human
-        else
+        else if(attachedObject == null)
         {
-            Debug.Log("No attached object match");
-        }
-
-        GameObject o;
-        if(Item.IsClampedType(item)){
-            o = Utility.InstantiatePrefabSameName(item.gameobject);
+            o = gameobject;
         }
         else{
             o = gameobject;
         }
+        // todo: if getting from another human
 
         if(holding_item != null){
             DropHolding(attachedObject);
@@ -165,29 +177,25 @@ public class EntityItems : EntityComponent
     public void DropHolding(ScriptableObject targetAttachedObject){
         if(holding_item == null) { return; }
 
-        if (Item.IsClampedType(holding_item))
+        if (targetAttachedObject is ObjectRack)
         {
-            if (targetAttachedObject == null){
-                Faction.AddItemOwned(entityInfo.faction, weaponUnequipped_item, 1, null);
-            }
-            else if (targetAttachedObject is ObjectRack)
-            {
-                // get rack reference from attached object and add the item to faction items with specified rack
-                ObjectRack rack = (ObjectRack)targetAttachedObject;
-                if (!rack.itemType.Equals(holding_item.type)) { rack = null; }
-                Faction.AddItemOwned(entityInfo.faction, weaponUnequipped_item, 1, rack);
-            }
-            else
-            {
-                Debug.Log("No attached object match");
-            }
-            // todo: case human
-
+            // get rack reference from attached object and add the item to faction items with specified rack
+            ObjectRack rack = (ObjectRack)targetAttachedObject;
+            if (!rack.itemType.Equals(holding_item.type)) { rack = null; }
+            Faction.AddItemOwned(entityInfo.faction, weaponUnequipped_item, 1, rack);
             GameObject.Destroy(holding_object);
         }
-        else{
+        else if (targetAttachedObject == null)
+        {
+            holding_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
             Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.hitbox, false);
         }
+        else
+        {
+            // todo: case human
+        }
+
+
         Utility.ToggleObjectPhysics(holding_object, true);
 
         holding_item = null;
@@ -236,34 +244,52 @@ public class EntityItems : EntityComponent
 
     // weapon
 
-    public void DropUnequippedWeapon(ScriptableObject targetAttachedObject){
+    // public void DropUnequippedWeapon(ScriptableObject targetAttachedObject){
 
+    //     if (targetAttachedObject is ObjectRack)
+    //     {
+    //         // get rack reference from attached object and add the item to faction items with specified rack
+    //         ObjectRack rack = (ObjectRack)targetAttachedObject;
+    //         Faction.AddItemOwned(entityInfo.faction, weaponUnequipped_item, 1, rack);
+    //         GameObject.Destroy(weaponUnequipped_object);
+    //     }
+    //     else if (targetAttachedObject == null)
+    //     {
+    //         weaponUnequipped_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
+    //         Physics.IgnoreCollision(weaponUnequipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.hitbox, false);
+    //         Utility.ToggleObjectPhysics(weaponUnequipped_object, true);
+    //     }
+    //     // todo: case human
 
-        if(targetAttachedObject is ObjectRack){
+    //     weaponUnequipped_item = null;
+    //     weaponUnequipped_object = null;
+
+    // }
+
+    public void DropEquippedWeapon(ScriptableObject targetAttachedObject){
+        if (targetAttachedObject is ObjectRack)
+        {
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)targetAttachedObject;
-            Faction.AddItemOwned(entityInfo.faction, weaponUnequipped_item, 1, rack);
+            Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1, rack);
+            GameObject.Destroy(weaponEquipped_object);
         }
-        else{
-            Debug.Log("No attached object match");
+        else if (targetAttachedObject == null)
+        {
+            weaponEquipped_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
+            Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.hitbox, false);
+            Utility.ToggleObjectPhysics(weaponEquipped_object, true);
         }
         // todo: case human
 
-        // destroy gameobject of unequipped weapon and set references to null
-        GameObject.Destroy(weaponUnequipped_object);
-        weaponUnequipped_item = null;
-        weaponUnequipped_object = null;
-
-        
-        // Utility.ToggleObjectPhysics(weaponUnequipped_object, true);
+        weaponEquipped_item = null;
+        weaponEquipped_object = null;
     }
 
-    public void SetUnequippedWeapon(Item i){
+    public void SetUnequippedWeapon(Item item, GameObject worldObject){
 
-        GameObject o = Utility.InstantiatePrefabSameName(i.gameobject);
-
-        weaponUnequipped_item = i;
-        weaponUnequipped_object = o;
+        weaponUnequipped_item = item;
+        weaponUnequipped_object = worldObject;
 
         // toggle physics
         Utility.ToggleObjectPhysics(weaponEquipped_object, false);
@@ -271,15 +297,16 @@ public class EntityItems : EntityComponent
         // remove hit detection owner
         weaponUnequipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().RemoveOwner();
     }
-    public void SetEquippedWeapon(Item i){
+    public void SetEquippedWeapon(Item item, GameObject worldObject){
 
-        GameObject o = Utility.InstantiatePrefabSameName(i.gameobject);
+        Log("Setting equipped weapon");
+        Log("Weapon name: " + worldObject.name);
 
-        weaponEquipped_item = i;
-        weaponEquipped_object = o;
+        weaponEquipped_item = item;
+        weaponEquipped_object = worldObject;
 
         // add stats
-        entityStats.AddStatsModifier(i.stats);
+        entityStats.AddStatsModifier(item.stats);
 
         // turn off physics
         Utility.ToggleObjectPhysics(weaponEquipped_object, false);
@@ -289,29 +316,62 @@ public class EntityItems : EntityComponent
     }
 
     public void ToggleWeaponEquipped(){
-        if(weaponEquipped_item != null && weaponUnequipped_item != null){
-            Item tempItem = weaponEquipped_item;
-            GameObject tempObject = weaponEquipped_object;
 
-            weaponEquipped_item = weaponUnequipped_item;
-            weaponEquipped_object = weaponUnequipped_object;
-            weaponUnequipped_item = tempItem;
-            weaponUnequipped_object = tempObject;
 
-            // turn off physics
+        Item tempItem = weaponEquipped_item;
+        GameObject tempObject = weaponEquipped_object;
+
+        weaponEquipped_item = weaponUnequipped_item;
+        weaponEquipped_object = weaponUnequipped_object;
+        weaponUnequipped_item = tempItem;
+        weaponUnequipped_object = tempObject;
+
+        if (weaponEquipped_item != null)
+        {
             Utility.ToggleObjectPhysics(weaponEquipped_object, false);
-            Utility.ToggleObjectPhysics(weaponUnequipped_object, false);
-
-            // update stats
-            entityStats.RemoveStatsModifier(weaponUnequipped_item.stats);
             entityStats.AddStatsModifier(weaponEquipped_item.stats);
-
-            // set weapon hit detection owner
             weaponEquipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().SetOwner(entityHandle);
-            weaponUnequipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().RemoveOwner();
-            
-            OnItemsChange();
         }
+
+        if (weaponUnequipped_item != null)
+        {
+            Utility.ToggleObjectPhysics(weaponUnequipped_object, false);
+            entityStats.RemoveStatsModifier(weaponUnequipped_item.stats);
+            if (weaponUnequipped_object != null)
+            {
+                weaponUnequipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().RemoveOwner();
+            }
+        }
+
+
+
+        OnItemsChange();
+        
+
+
+        // if(weaponEquipped_item != null && weaponUnequipped_item != null){
+        //     Item tempItem = weaponEquipped_item;
+        //     GameObject tempObject = weaponEquipped_object;
+
+        //     weaponEquipped_item = weaponUnequipped_item;
+        //     weaponEquipped_object = weaponUnequipped_object;
+        //     weaponUnequipped_item = tempItem;
+        //     weaponUnequipped_object = tempObject;
+
+        //     // turn off physics
+        //     Utility.ToggleObjectPhysics(weaponEquipped_object, false);
+        //     Utility.ToggleObjectPhysics(weaponUnequipped_object, false);
+
+        //     // update stats
+        //     entityStats.RemoveStatsModifier(weaponUnequipped_item.stats);
+        //     entityStats.AddStatsModifier(weaponEquipped_item.stats);
+
+        //     // set weapon hit detection owner
+        //     weaponEquipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().SetOwner(entityHandle);
+        //     weaponUnequipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().RemoveOwner();
+            
+        //     OnItemsChange();
+        // }
     }
 
     // ---

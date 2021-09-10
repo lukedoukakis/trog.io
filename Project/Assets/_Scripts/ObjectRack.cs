@@ -59,7 +59,7 @@ public class ObjectRack : ScriptableObject
             if(!IsFull()){
 
                 // if room in the rack, add the item to it
-                GameObject o = Utility.InstantiatePrefabSameName(item.gameobject);
+                GameObject o = Utility.InstantiatePrefabSameName(item.worldObject);
                 objects.Add(o);
                 SetObjectOrientation(o);
                 o.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(this);

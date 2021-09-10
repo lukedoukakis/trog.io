@@ -33,14 +33,19 @@ public class Utility : MonoBehaviour
 
 
     public static void ToggleObjectPhysics(GameObject o, bool value){
-        Collider col = o.GetComponent<BoxCollider>();
-        Rigidbody rb = o.GetComponent<Rigidbody>();
-        if(col != null){
-            col.enabled = value;
-        }
-        if(rb != null){
-            rb.isKinematic = !value;
-        }
+        if (o != null)
+        {
+            Collider col = o.GetComponent<BoxCollider>();
+            Rigidbody rb = o.GetComponent<Rigidbody>();
+            if (col != null)
+            {
+                col.enabled = value;
+            }
+            if (rb != null)
+            {
+                rb.isKinematic = !value;
+            }
+        }   
     }
 
 }

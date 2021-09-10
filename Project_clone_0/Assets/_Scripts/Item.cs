@@ -65,7 +65,7 @@ public class Item : ScriptableObject
     public Enum damageType;
     public ItemCollection contents;
     public ItemCollection components;
-    public GameObject gameobject;
+    public GameObject worldObject;
     public Image image;
 
     public enum Type{
@@ -90,7 +90,7 @@ public class Item : ScriptableObject
         i.damageType = _damageType;
         i.contents = _contents;
         i.components = _components;
-        i.gameobject = _gameobject;
+        i.worldObject = _gameobject;
         i.image = _image;
         return i;
     }

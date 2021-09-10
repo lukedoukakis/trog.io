@@ -109,7 +109,7 @@ public class EntityUserInputMovement : EntityComponent
     void CheckInteraction(){
 
         if(Input.GetKeyUp(KeyCode.E)){
-            Interact();
+            OnInteract();
         }
 
         if(Input.GetKeyUp(KeyCode.Alpha1)){
@@ -117,15 +117,15 @@ public class EntityUserInputMovement : EntityComponent
         }
     }
    
-    void Interact(){
+    void OnInteract(){
 
         //Log("Hovered object: " + hoveredInteractableObject.name);
 
         // if hovering over something, interact with it
         if(hoveredInteractableObject == null){
-            entityItems.DropHolding(null);
-            entityItems.OnItemsChange();
+            entityItems.OnEmptyInteract();
         }
+
         else{
             switch (hoveredInteractableObject.tag) {
                 case "Item" :

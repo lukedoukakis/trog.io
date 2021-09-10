@@ -43,23 +43,27 @@ public class EntityStats : EntityComponent
         //Debug.Log("Added stats modifier");
     }
     public void RemoveStatsModifier(Stats statsToRemove){
-        bool removed = statsModifiers.Remove(statsToRemove);
-        if (removed)
+        if (statsToRemove != null)
         {
-            Enum statType;
-            foreach (int statNum in Enum.GetValues(typeof(Stats.StatType)))
+            bool removed = statsModifiers.Remove(statsToRemove);
+            if (removed)
             {
-                statType = (Stats.StatType)statNum;
-                Stats.SetStatValue(statsCombined, statType, Stats.GetStatValue(statsCombined, statType) - Stats.GetStatValue(statsToRemove, statType));
+                Enum statType;
+                foreach (int statNum in Enum.GetValues(typeof(Stats.StatType)))
+                {
+                    statType = (Stats.StatType)statNum;
+                    Stats.SetStatValue(statsCombined, statType, Stats.GetStatValue(statsCombined, statType) - Stats.GetStatValue(statsToRemove, statType));
+                }
             }
-        }
-        else
-        {
-            Debug.Log("Error: couldn't find specified stats modifier to remove from stats modifiers");
+            else
+            {
+                Debug.Log("Error: couldn't find specified stats modifier to remove from stats modifiers");
+            }
+
+            OnStatsChange();
+            //Debug.Log("Removed stats modifier");
         }
 
-        OnStatsChange();
-        //Debug.Log("Removed stats modifier");
 
     }
 
@@ -141,7 +145,7 @@ public class EntityStats : EntityComponent
                 Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, count, null);
             }
             else{
-                GameObject looseObj = Utility.InstantiatePrefabSameName(item.gameobject);
+                GameObject looseObj = Utility.InstantiatePrefabSameName(item.worldObject);
                 looseObj.transform.position = this.gameObject.transform.position;
                 looseObj.transform.rotation = this.transform.gameObject.transform.rotation;
             }

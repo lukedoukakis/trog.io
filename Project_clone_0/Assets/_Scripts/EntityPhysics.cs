@@ -501,7 +501,7 @@ public class EntityPhysics : EntityComponent
             triggerName = "Release";
             BeginWeaponHitTime();
             if(entityItems.weaponEquipped_item == null){
-                LaunchProjectile(Item.SmallStone.gameobject);
+                LaunchProjectile(Item.SmallStone.worldObject);
             }
         }
         switch (weapItem.holdStyle)
