@@ -106,7 +106,7 @@ public class EntityStats : EntityComponent
         // Debug.Log("Armor Type: " + armorStatType.ToString());
         // Debug.Log("Armor against this type: " + armorFromWeaponType);
         // Debug.Log("DAMAGE: " + (int)hpLoss);
-        // Debug.Log("HP: " + hp.ToString());
+        Debug.Log("HP: " + hp.ToString());
         if(hp <= 0){
             OnHealthEmptied(attackerHandle);
         }
@@ -117,13 +117,36 @@ public class EntityStats : EntityComponent
         Debug.Log("DED");
 
 
-        // get drops and give to attacker's faction
-        ItemCollection drop = SpeciesBaseReferences.GetBaseReferences(entityInfo.species).baseDrop;
-        Debug.Log("Adding drops to entity \'" + attackerHandle.entityInfo.nickname + "\' faction: " + drop.ToString());
-        // todo: add supplemental drops based on specific properties of this entity (?)
-        Faction.AddItemOwned(attackerHandle.entityInfo.faction, drop, null);
-
+        SpawnDrops(attackerHandle);
+        
         // todo: death 'animation'/being destroyed visuals
+        GameObject.Destroy(this.gameObject);
+
+    }
+
+
+    // drop drops - if they're clothing, food or weapons, add to attacker's faction
+    void SpawnDrops(EntityHandle receiverHandle){
+
+        ItemCollection drops = SpeciesBaseReferences.GetBaseReferences(entityInfo.species).baseDrop;
+        Debug.Log("Adding drops to entity \'" + receiverHandle.entityInfo.nickname + "\' faction: " + drops.ToString());
+        // todo: add supplemental drops based on specific properties of this entity (?)
+
+        Item item;
+        int count;
+        foreach(KeyValuePair<Item, int> kvp in drops.items){
+            item = kvp.Key;
+            count = kvp.Value;
+            if(Item.IsClampedType(item)){
+                Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, count, null);
+            }
+            else{
+                GameObject looseObj = Utility.InstantiatePrefabSameName(item.gameobject);
+                looseObj.transform.position = this.gameObject.transform.position;
+                looseObj.transform.rotation = this.transform.gameObject.transform.rotation;
+            }
+        }
+        
 
     }
 

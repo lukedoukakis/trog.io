@@ -61,7 +61,7 @@ public class SpeciesBaseReferences : ScriptableObject{
                 new ItemCollection(
                     new Dictionary<Item, int>{
                         // todo: finish drop for tree
-                        {Item.Wood, 4},
+                        {Item.LogFir, 1},
                     }
                 ),
                 Stats.BASE_TREE

@@ -16,7 +16,6 @@ public class Camp : ScriptableObject
         Rack_Food, 
         Rack_Weapons, 
         Rack_Clothing,
-        Rack_Wood,
     }
 
 
@@ -28,12 +27,11 @@ public class Camp : ScriptableObject
 
     public Bonfire bonfire;
     public Workbench workbench;
-    public List<ObjectRack> foodRacks;
-    public List<ObjectRack> weaponsRacks;
-    public List<ObjectRack> clothingRacks;
-    public List<ObjectRack> woodRacks;
     public List<Tent> tents;
     public Anvil anvil;
+    public List<ObjectRack> racks_food;
+    public List<ObjectRack> racks_weapons;
+    public List<ObjectRack> racks_clothing;
 
 
 
@@ -57,9 +55,9 @@ public class Camp : ScriptableObject
         Camp camp = ScriptableObject.CreateInstance<Camp>();
         faction.camp = camp;
         camp.faction = faction;
-        camp.foodRacks = new List<ObjectRack>();
-        camp.weaponsRacks = new List<ObjectRack>();
-        camp.clothingRacks = new List<ObjectRack>();
+        camp.racks_food = new List<ObjectRack>();
+        camp.racks_weapons = new List<ObjectRack>();
+        camp.racks_clothing = new List<ObjectRack>();
         camp.tents = new List<Tent>();
         camp.SetOrigin(position);
         camp.SetRadius(faction.members.Count);
@@ -121,13 +119,13 @@ public class Camp : ScriptableObject
                 search = "OrientationWorkbench";
                 break;
             case ComponentType.Rack_Food :
-                search = "OrientationFoodRack" + foodRacks.Count;
+                search = "OrientationFoodRack" + racks_food.Count;
                 break;
             case ComponentType.Rack_Weapons :
-                search = "OrientationWeaponsRack" + weaponsRacks.Count;
+                search = "OrientationWeaponsRack" + racks_weapons.Count;
                 break;
             case ComponentType.Rack_Clothing :
-                search = "OrientationClothingRack" + clothingRacks.Count;
+                search = "OrientationClothingRack" + racks_clothing.Count;
                 break;
             case ComponentType.Tent :
                 search = "OrientationTent" + tents.Count;
@@ -153,7 +151,7 @@ public class Camp : ScriptableObject
 
     public void PlaceBonfire(){
         Bonfire bonfire = ScriptableObject.CreateInstance<Bonfire>();
-        bonfire.SetBonfire(this, faction.ownedItems.GetItemCount(Item.Wood) > 1f, 1f, 1f);
+        bonfire.SetBonfire(this, faction.ownedItems.GetItemCount(Item.LogFir) > 1f, 1f, 1f);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Bonfire);
         bonfire.worldObject.transform.position = targetOrientation.position;
         bonfire.worldObject.transform.rotation = targetOrientation.rotation;
@@ -288,19 +286,16 @@ public class Camp : ScriptableObject
     
     public List<ObjectRack> GetRackListForItemType(Enum itemType){
         List<ObjectRack> rackList;
-        rackList = foodRacks;
+        rackList = racks_food;
         switch(itemType){
             case Item.Type.Food :
-                rackList = foodRacks;
+                rackList = racks_food;
                 break;
             case Item.Type.Weapon :
-                rackList = weaponsRacks;
+                rackList = racks_weapons;
                 break;
             case Item.Type.Clothing :
-                rackList = clothingRacks;
-                break;
-            case Item.Type.MiscLarge :
-                // todo
+                rackList = racks_clothing;
                 break;
             case Item.Type.MiscSmall :
                 // todo

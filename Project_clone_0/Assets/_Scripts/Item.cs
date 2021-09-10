@@ -12,7 +12,7 @@ public class Item : ScriptableObject
 
     // Item defs
     public static Item Torch = InitiailizeItem("Torch", Type.Weapon, Stats.NONE, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
-    public static Item Stone = InitiailizeItem("Stone", Type.MiscLarge, Stats.NONE, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject/Stone"), Resources.Load<Image>("Items/Stone/Image"));
+    public static Item Stone = InitiailizeItem("Stone", Type.LargeLongObject, Stats.NONE, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject/Stone"), Resources.Load<Image>("Items/Stone/Image"));
     public static Item SmallStone = InitiailizeItem("SmallStone", Type.MiscSmall, Stats.NONE, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/SmallStone/Gameobject/SmallStone"), Resources.Load<Image>("Items/SmallStone/Image"));
     public static Item Spear = InitiailizeItem("Spear", Type.Weapon, Stats.WEAPON_SPEAR, HoldStyle.Spear, DamageType.Pierce, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Spear/Image"));
     public static Item Axe = InitiailizeItem("Axe", Type.Weapon, Stats.WEAPON_AXE, HoldStyle.Axe, DamageType.Slash, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Axe/Gameobject/Axe"), Resources.Load<Image>("Items/Axe/Image"));
@@ -24,7 +24,7 @@ public class Item : ScriptableObject
     public static Item FoodTest = InitiailizeItem("FoodTest", Type.Food, Stats.FOOD_TESTFOOD, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/FoodTest/Gameobject/FoodTest"), Resources.Load<Image>("Items/FoodTest/Image"));
 
     // Not implemented in files yet
-    public static Item Wood = InitiailizeItem("Wood", Type.MiscLarge, Stats.NONE, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Wood/Gameobject/Wood"), Resources.Load<Image>("Items/Wood/Image"));
+    public static Item LogFir = InitiailizeItem("LogFir", Type.LargeLongObject, Stats.NONE, HoldStyle.Hug, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/LogFir/Gameobject/LogFir"), Resources.Load<Image>("Items/LogFir/Image"));
 
 
 
@@ -39,7 +39,7 @@ public class Item : ScriptableObject
         { "Axe", Axe },
 
     
-        { "Wood", Wood },
+        { "LogFir", LogFir },
         { "ClothingTest", ClothingTest },
         { "FoodTest", FoodTest },
     };
@@ -49,6 +49,10 @@ public class Item : ScriptableObject
 
         return Items[_nme];
        
+    }
+
+    public static bool IsClampedType(Item item){
+        return item.type.Equals(Item.Type.Food) || item.type.Equals(Item.Type.Weapon) || item.type.Equals(Item.Type.Clothing);
     }
 
 
@@ -65,7 +69,7 @@ public class Item : ScriptableObject
     public Image image;
 
     public enum Type{
-        Food, Weapon, Clothing, MiscLarge, MiscSmall
+        Food, Weapon, Clothing, LargeLongObject, MiscSmall
     }
 
     public enum HoldStyle{

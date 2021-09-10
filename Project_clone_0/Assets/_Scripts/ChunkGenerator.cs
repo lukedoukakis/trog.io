@@ -325,7 +325,7 @@ public class ChunkGenerator : MonoBehaviour
                 //temperatureValue -= 1f * (mountainValue / mtnCap);
                 // temperatureValue +=  (Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale) * 2f - 1f) * (3f * (1f - mountainValue/mtnCap));
 
-                temperatureValue = Mathf.InverseLerp(.49f, .51f, temperatureValue);
+                temperatureValue = Mathf.InverseLerp(.4f, .6f, temperatureValue);
                 //temperatureValue = Mathf.Clamp01(temperatureValue);
 
                 //temperatureValue = .01f;
