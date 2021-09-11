@@ -35,6 +35,7 @@ public class EntityPhysics : EntityComponent
     public static float weaponHitTime_max = .25f;
 
 
+    public bool bipedal;
     public Vector3 moveDir;
     public bool onWalkableGround;
     public bool jumping, jumpOpposite, sprinting;
