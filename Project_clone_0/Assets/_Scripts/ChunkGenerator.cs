@@ -360,9 +360,10 @@ public class ChunkGenerator : MonoBehaviour
 
                 // FreshWaterMap [0, 1]
 
-                if (bigMound < .01f)
+                if (bigMound < .1f)
                 {
                     float riverScale = 180f;
+                    riverScale = 360f;
                     freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
                     float rough = Mathf.PerlinNoise((x + xOffset + .01f) / 40f, (z + zOffset + .01f) / 40f);
                     freshWaterValue *= Mathf.Pow(rough, 1f);
@@ -373,13 +374,16 @@ public class ChunkGenerator : MonoBehaviour
                     freshWaterValue *= -1f;
                     freshWaterValue += 1f;
                     freshWaterValue = Mathf.Clamp01(freshWaterValue);
-                    freshWaterValue = Mathf.Pow(freshWaterValue, 2f);
+
+                    freshWaterValue = Mathf.Pow(freshWaterValue, 1.6f);
                 }
                 else{
                     freshWaterValue = 0f;
                 }
-                
-            
+
+
+
+
 
 
 
@@ -457,7 +461,7 @@ public class ChunkGenerator : MonoBehaviour
                 {
                     heightValue_water = Mathf.Max(SeaLevel, Mathf.Lerp(SeaLevel, heightValue - .0001f, .5f));
                     heightValue = Mathf.Lerp(heightValue, SeaLevel - .0001f, freshWaterValue);
-                    //heightValue = Mathf.Lerp(heightValue, heightValue - .01f, freshWaterValue);
+                    //heightValue = Mathf.Lerp(heightValue, SeaLevel - .0001f, freshWaterValue * (1f - Mathf.InverseLerp(0f, .1f, bigMound)));
                 }
 
 
