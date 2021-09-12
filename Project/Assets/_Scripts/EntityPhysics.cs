@@ -21,11 +21,12 @@ public class EntityPhysics : EntityComponent
     public Transform hips, head, handRight, handLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float groundCastDistance_player = .1f;
-    public static float groundCastDistance_npc = .1f;
+    public static float groundCastDistance_player = .3f;
+    public static float groundCastDistance_npc = .3f;
     public static float groundCastDistance_far = 100f;
     public static float wallCastDistance = 1f;
     float groundCastDistance;
+    float distanceFromGround;
     public static float JumpForce = 2800f;
     public static float ThrowForce = 100f;
     public static float AccelerationScale = 12f;
@@ -308,7 +309,7 @@ public class EntityPhysics : EntityComponent
             RaycastHit hit;
             if (Physics.Raycast(plantPos, Vector3.down, out hit, 100f, layerMask_walkable))
             {
-                plantPos.y = hit.point.y;
+                plantPos.y = hit.point.y + distanceFromGround;
             }
         }
         Vector3 pos = targetIk.position;
@@ -565,7 +566,8 @@ public class EntityPhysics : EntityComponent
     void CheckGround(){
         Vector3 vel = rb.velocity;
         if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far, layerMask_walkable)){
-            if(Vector3.Distance(groundInfo.point, transform.position) < groundCastDistance){
+            distanceFromGround = Vector3.Distance(groundInfo.point, transform.position);
+            if(distanceFromGround < groundCastDistance){
                 if(!GROUNDTOUCH){
                     GROUNDTOUCH = true;
                     vel.y = 0f;
