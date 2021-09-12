@@ -123,11 +123,11 @@ public class Biome : MonoBehaviour
 
     public static float GetSnowHeight(float snowLevel, float temperature){
 
-        //return snowLevel;
+        return snowLevel;
 
-        float maxHeight = 1.1f;
-        float snowHeight = Mathf.Lerp(snowLevel, maxHeight, temperature);
-        return snowHeight;
+        // float maxHeight = 1.1f;
+        // float snowHeight = Mathf.Lerp(snowLevel, maxHeight, temperature);
+        // return snowHeight;
     }
 
 

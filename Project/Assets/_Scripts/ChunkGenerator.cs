@@ -292,15 +292,35 @@ public class ChunkGenerator : MonoBehaviour
             for (int x = 0; x < ChunkSize + 2; x++)
             {
 
+
+
+                 // TemperatureMap [0, 1]
+
+                temperatureValue = 1f * Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale);
+                //temperatureValue -= 1f * (mountainValue / mtnCap);
+                // temperatureValue +=  (Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale) * 2f - 1f) * (3f * (1f - mountainValue/mtnCap));
+
+                temperatureValue = Mathf.InverseLerp(.25f, .75f, temperatureValue);
+                //temperatureValue = Mathf.Clamp01(temperatureValue);
+
+                temperatureValue = .25f;
+
+
+
+
+
+
+                // ElevationMap
+
                 float e = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / ElevationMapScale, (z + zOffset - Seed + 100000.01f) / ElevationMapScale);
                 e = Mathf.Clamp01(e);
                 elevationValue = Mathf.Pow(e + .5f, .5f) - 1f;
-                if(elevationValue > .00001f){
-                    elevationValue = .00001f;
+                if(elevationValue > .00005f){
+                    elevationValue = .00005f;
                 }
-                float bigMound = Mathf.PerlinNoise((x + xOffset + 100000.01f) / 800f, (z + zOffset + 100000.01f) / 800f) * 2f - 1f;
-                bigMound = Mathf.Pow(Mathf.Abs(bigMound) * -1f + 1f, 1f);
-                bigMound *= .065f;
+                float bigMound = Mathf.PerlinNoise((x + xOffset + 100000.01f) / 1600f, (z + zOffset + 100000.01f) / 1600f) * 2f - 1f;
+                bigMound = Mathf.Pow(Mathf.Abs(bigMound) * -1f + 1f, 8f);
+                bigMound *= .036f * (1f - Mathf.InverseLerp(.25f, .75f, temperatureValue));
                 elevationValue += bigMound;
                 float maxE = Mathf.Pow(1f + .5f, .5f) - 1f;
                 float minE = Mathf.Pow(0f + .5f, .5f) - 1f;
@@ -312,7 +332,7 @@ public class ChunkGenerator : MonoBehaviour
                 float mtn3 = Mathf.PerlinNoise((x + xOffset - Seed + 200000.01f) / MountainMapScale, (z + zOffset - Seed + 200000.01f) / MountainMapScale);
 
                 mountainValue = Mathf.Min(mtn0, mtn1, mtn3);
-                mountainValue = Mathf.InverseLerp(.3f, .7f, mountainValue);
+                //mountainValue = Mathf.InverseLerp(.3f, .7f, mountainValue);
                 //mountainValue = .99f;
                 mountainValue *= .75f;
                 mountainValue = Mathf.Pow(mountainValue, 2f);
@@ -325,22 +345,6 @@ public class ChunkGenerator : MonoBehaviour
                 }
                 //Debug.Log(mountainValue);
 
-                // -------------------------------------------------------
-
-
-                // TemperatureMap [0, 1]
-
-                temperatureValue = 1f * Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale);
-                temperatureValue = Mathf.Clamp(0, e, temperatureValue);
-                //temperatureValue -= 1f * (mountainValue / mtnCap);
-                // temperatureValue +=  (Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale) * 2f - 1f) * (3f * (1f - mountainValue/mtnCap));
-
-                temperatureValue = Mathf.InverseLerp(.2f, .8f, temperatureValue);
-                //temperatureValue = Mathf.Clamp01(temperatureValue);
-
-                temperatureValue = .3f;
-
-
 
                 // -------------------------------------------------------
 
@@ -348,55 +352,34 @@ public class ChunkGenerator : MonoBehaviour
                 humidityValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / HumidityMapScale, (z + zOffset - Seed + .01f) / HumidityMapScale);
                 //humidityValue += (mountainValue / mtnCap) * .5f;
                 //humidityValue = Mathf.Clamp01(humidityValue);
-                humidityValue = Mathf.InverseLerp(.2f, .8f, humidityValue);
+                //humidityValue = Mathf.InverseLerp(.2f, .8f, humidityValue);
                 humidityValue = .9f;
                 // -------------------------------------------------------
 
 
 
                 // FreshWaterMap [0, 1]
-                // float riverScale = 180f;
-                // freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
-                // float rough = Mathf.PerlinNoise((x + xOffset + .01f) / 40f, (z + zOffset + .01f) / 40f);
-                // freshWaterValue *= Mathf.Pow(rough, 1f);
-                // rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
-                // freshWaterValue += rough * .1f;
-                // freshWaterValue -= Mathf.PerlinNoise((x + xOffset + .01f) / 400f, (z + zOffset + .01f) / 400f) / 2f;
-                // freshWaterValue = Mathf.Abs(freshWaterValue);
-                // freshWaterValue *= -1f;
-                // freshWaterValue += 1f;
-                // freshWaterValue = Mathf.Clamp01(freshWaterValue);
 
-
-                // float thresh1 = .7f + .1f * (Mathf.PerlinNoise((x + xOffset + Seed + .01f) / 20f, (z + zOffset + Seed + .01f) / 20f) * 2f - 1f);
-                // float thresh2 = .85f + .1f * (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 20f, (z + zOffset - Seed + .01f) / 20f) * 2f - 1f);
-                // if (freshWaterValue > thresh1)
-                // {
-                //     float emod = Mathf.PerlinNoise((x + xOffset + Seed + .01f) / riverScale, (z + zOffset + Seed + .01f) / riverScale) * 2f - 1f;
-                //     if (freshWaterValue > thresh2)
-                //     {
-                //         float midpt = (thresh2 + 1f) / 2f;
-                //         float fac = 1f - Mathf.Pow(Mathf.Abs(midpt - freshWaterValue) / (Mathf.Abs(1f - thresh2) / 2f), 2f);
-                //         freshWaterValue = Mathf.Lerp(freshWaterValue, 1f, emod * 2f * fac);
-                //     }
-                //     else
-                //     {
-                //         float midpt = (thresh1 + thresh2) / 2f;
-                //         float fac = 1f - Mathf.Pow(Mathf.Abs(midpt - freshWaterValue) / (Mathf.Abs(thresh1 - thresh2) / 2f), 2f);
-                //         freshWaterValue = Mathf.Lerp(freshWaterValue, thresh2, emod * 2f * fac);
-                //     }
-                // }
-                // else
-                // {
-                //     freshWaterValue = Mathf.InverseLerp(0f, Mathf.Pow(thresh1, 3f), Mathf.Pow(freshWaterValue, 3f)) * thresh1;
-                //     //freshWaterValue = 0f;
-                // }
-
-                // freshWaterValue = Mathf.Pow(freshWaterValue, .9f);
-                // freshWaterValue *= Mathf.Pow(1f - Mathf.InverseLerp(.25f, .5f, mountainValue / mtnCap), 1f);      
+                if (bigMound < .01f)
+                {
+                    float riverScale = 180f;
+                    freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
+                    float rough = Mathf.PerlinNoise((x + xOffset + .01f) / 40f, (z + zOffset + .01f) / 40f);
+                    freshWaterValue *= Mathf.Pow(rough, 1f);
+                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
+                    freshWaterValue += rough * .1f;
+                    //freshWaterValue -= Mathf.PerlinNoise((x + xOffset + .01f) / 1000f, (z + zOffset + .01f) / 1000f) / 2f;
+                    freshWaterValue = Mathf.Abs(freshWaterValue);
+                    freshWaterValue *= -1f;
+                    freshWaterValue += 1f;
+                    freshWaterValue = Mathf.Clamp01(freshWaterValue);
+                    freshWaterValue = Mathf.Pow(freshWaterValue, 2f);
+                }
+                else{
+                    freshWaterValue = 0f;
+                }
                 
-                freshWaterValue = 0f;
-
+            
 
 
 
@@ -520,12 +503,12 @@ public class ChunkGenerator : MonoBehaviour
                 // }
 
 
-                // badland effect in deserts
-                if(heightValue > SeaLevel + .0001f){
-                    float postHeight = Posterize(SeaLevel + .0001f, 1f, heightValue, 100, .5f);
-                    float badland = Mathf.InverseLerp(.6f, .9f, temperatureValue);
-                    heightValue = Mathf.Lerp(heightValue, postHeight, badland);
-                }
+                // // badland effect in deserts
+                // if(heightValue > SeaLevel + .0001f){
+                //     float postHeight = Posterize(SeaLevel + .0001f, 1f, heightValue, 100, .5f);
+                //     float badland = Mathf.InverseLerp(.6f, .9f, temperatureValue);
+                //     heightValue = Mathf.Lerp(heightValue, postHeight, badland);
+                // }
 
                 // posterize all land
                 //float postNes = .75f;
@@ -544,6 +527,9 @@ public class ChunkGenerator : MonoBehaviour
                     treeValue = true;
                 }
                 else { treeValue = false; }
+
+
+        
 
 
                 // -------------------------------------------------------
