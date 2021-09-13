@@ -37,7 +37,6 @@ public class EntityPhysics : EntityComponent
     public static float weaponHitTime_max = .25f;
 
 
-    public bool quadripedal;
     public Vector3 moveDir;
     public bool onWalkableGround;
     public bool jumping, jumpOpposite, sprinting;
@@ -67,6 +66,15 @@ public class EntityPhysics : EntityComponent
     public Vector3 plantPosFootRight, plantPosFootLeft, plantPosHandRight, plantPosHandLeft;
     public float updateTime_footRight, updateTime_footLeft, updateTime_handRight, updateTime_handLeft, updateTime_hips;
 
+    // ikProfile settings
+    public bool quadripedal;
+    public float runCycle_strideFrequency;
+    public float runCycle_lerpTightness;
+    public float runCycle_limbVerticalDisplacement;
+    public float runCycle_limbForwardReachDistance;
+
+
+
     // other settings
     bool rangedMode;
     float weaponChargeTime;
@@ -83,6 +91,10 @@ public class EntityPhysics : EntityComponent
     protected override void Awake(){
 
         base.Awake();
+
+    }
+
+    void Start(){
 
         body = Utility.FindDeepChildWithTag(this.transform, "Body");
         hitbox = body.GetComponent<CapsuleCollider>();
@@ -142,29 +154,35 @@ public class EntityPhysics : EntityComponent
         ikScripts_legs = new FastIKFabric[]{ ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft };
         ikScripts_upperBody = new FastIKFabric[]{ ikScript_handRight, ikScript_handLeft };
 
-        //targetFootRight.SetParent(null);
-        //targetFootLeft.SetParent(null);
+        quadripedal = entityInfo.speciesInfo.ikProfile.quadripedal;
+        runCycle_strideFrequency = entityInfo.speciesInfo.ikProfile.runCycle_strideFrequency;
+        runCycle_lerpTightness = entityInfo.speciesInfo.ikProfile.runCycle_lerpTightness;
+        runCycle_limbVerticalDisplacement = entityInfo.speciesInfo.ikProfile.runCycle_limbVerticalDisplacement;
+        runCycle_limbForwardReachDistance = entityInfo.speciesInfo.ikProfile.runCycle_limbForwardReachDistance;
 
-
-        quadripedal = entityInfo.speciesInfo.quadripedal;
-
-    }
-
-    void Start(){
         acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * AccelerationScale;
         maxSpeed_run = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * MaxSpeedScale;
         maxSpeed_sprint = maxSpeed_run * 1.5f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * .75f;
 
-
         plantPosFootRight = targetFootRight.position;
         plantPosFootLeft = targetFootLeft.position;
+        plantPosHandRight = targetHandRight.position;
+        plantPosHandLeft = targetHandLeft.position;
         updateTime_footRight = 0f;
         updateTime_footLeft = .5f;
+        updateTime_handRight = .5f;
+        updateTime_handLeft = 0f;
         updateTime_hips = 0f;
 
-        handFree_right = handFree_left = true;
+        if(!quadripedal){
+            handFree_right = handFree_left = true;
+        }
+        else{
+            handFree_right = handFree_left = false;
+        }
+    
         ToggleIK(true);
         UpdateIKForCarryingItems();
     }
@@ -227,7 +245,7 @@ public class EntityPhysics : EntityComponent
                         {
                             CyclePlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, ref updateTime_handRight, IN_WATER);
                         }
-                        if (updateTime_footLeft >= 1f)
+                        if (updateTime_handLeft >= 1f)
                         {
                             CyclePlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ref updateTime_handLeft, IN_WATER);
                         }
@@ -248,13 +266,13 @@ public class EntityPhysics : EntityComponent
             else
             {
                 // in the air
-                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + entityAnimation.bodyT.right * 0f, ref plantPosFootLeft);
-                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityAnimation.bodyT.forward * .5f + entityAnimation.bodyT.right * .1f, ref plantPosFootRight);
+                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + entityAnimation.body.right * 0f, ref plantPosFootLeft);
+                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityAnimation.body.forward * .5f + entityAnimation.body.right * .1f, ref plantPosFootRight);
                 updateTime_footRight = .2f;
                 updateTime_footLeft = .7f;
                 if(quadripedal){
-                    SetPlantPosition(targetHandLeft, basePositionHandLeft, Vector3.up * .1f + entityAnimation.bodyT.right * 0f, ref plantPosHandLeft);
-                    SetPlantPosition(targetHandRight, basePositionHandRight, Vector3.up * .3f + entityAnimation.bodyT.forward * .5f + entityAnimation.bodyT.right * .1f, ref plantPosHandRight);
+                    SetPlantPosition(targetHandLeft, basePositionHandLeft, Vector3.up * .1f + entityAnimation.body.right * 0f, ref plantPosHandLeft);
+                    SetPlantPosition(targetHandRight, basePositionHandRight, Vector3.up * .3f + entityAnimation.body.forward * .5f + entityAnimation.body.right * .1f, ref plantPosHandRight);
                     updateTime_handRight = .2f;
                     updateTime_handLeft = .7f;
                 }
@@ -278,10 +296,12 @@ public class EntityPhysics : EntityComponent
             }
         }
         
-        float footPlantTimeUpdateSpeed = 3f * Time.deltaTime;
+        float footPlantTimeUpdateSpeed = runCycle_strideFrequency * Time.deltaTime;
         float hipsUpdateSpeed = footPlantTimeUpdateSpeed / 2f;
         updateTime_footRight += footPlantTimeUpdateSpeed;
         updateTime_footLeft += footPlantTimeUpdateSpeed;
+        updateTime_handRight += footPlantTimeUpdateSpeed;
+        updateTime_handLeft += footPlantTimeUpdateSpeed;
         updateTime_hips += hipsUpdateSpeed;
 
 
@@ -297,13 +317,13 @@ public class EntityPhysics : EntityComponent
 
 
         // feet and toes
-        float changePositionSpeed = 5f  * Time.deltaTime;
+        float changePositionSpeed = runCycle_lerpTightness * Time.deltaTime;
         Vector3 vertFootLeft, vertFootRight;
         if(IsMoving()){
             // moving
             vertFootLeft = Vector3.up * GetRunCycleVerticality(updateTime_footLeft, water);
             vertFootRight = Vector3.up * GetRunCycleVerticality(updateTime_footRight, water);
-            Vector3 toeForward = (entityAnimation.bodyT.forward + transform.forward).normalized;
+            Vector3 toeForward = (entityAnimation.body.forward + transform.forward).normalized;
             targetToeRight.position = targetFootRight.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) +.2f);
             targetToeLeft.position = targetFootLeft.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) +.2f);
 
@@ -312,11 +332,15 @@ public class EntityPhysics : EntityComponent
         else{
             // not moving
             vertFootLeft = vertFootRight = Vector3.up * GetRunCycleVerticality(.65f, water);
-            targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward.normalized + Vector3.down;
-            targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward.normalized + Vector3.down;
+            targetToeRight.position = targetFootRight.position + entityAnimation.body.forward.normalized + Vector3.down;
+            targetToeLeft.position = targetFootLeft.position + entityAnimation.body.forward.normalized + Vector3.down;
         }
         targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertFootRight;
         targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertFootLeft;
+        if(quadripedal){
+            targetHandRight.position = Vector3.Lerp(targetHandRight.position, plantPosHandRight, changePositionSpeed) + vertFootLeft;
+            targetHandLeft.position = Vector3.Lerp(targetHandLeft.position, plantPosHandLeft, changePositionSpeed) + vertFootRight;
+        }
 
         
     }
@@ -324,7 +348,7 @@ public class EntityPhysics : EntityComponent
     float GetRunCycleVerticality(float updateTime, bool water)
     {
         float verticalityBase = water ? .006f : .015f;
-        return (verticalityBase + .025f * Mathf.InverseLerp(0f, 2f, rb.velocity.y)) * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
+        return (verticalityBase + runCycle_limbVerticalDisplacement * Mathf.InverseLerp(0f, 2f, rb.velocity.y)) * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
     }
 
     // .5 is stance phase, -.5 is swing phase
@@ -337,7 +361,7 @@ public class EntityPhysics : EntityComponent
 
     public void CyclePlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime, bool water){
 
-        float forwardReachDistance = water ? 0f : .58f * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityAnimation.bodyLean * .1f);
+        float forwardReachDistance = water ? 0f : runCycle_limbForwardReachDistance * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityAnimation.bodyLean * .1f);
         plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
         updateTime = Mathf.Max(updateTime, 1f) - 1f;
     }
@@ -646,7 +670,7 @@ public class EntityPhysics : EntityComponent
         bool w = false;
         if(offWallTime > .4f){
             if(moveDir.magnitude > 0){
-                if(Physics.Raycast(wallSense.position, transform.forward, out wallInfo, wallCastDistance) || Physics.Raycast(wallSense.position, entityAnimation.bodyT.forward, out wallInfo, wallCastDistance)){
+                if(Physics.Raycast(wallSense.position, transform.forward, out wallInfo, wallCastDistance) || Physics.Raycast(wallSense.position, entityAnimation.body.forward, out wallInfo, wallCastDistance)){
                     string tag = wallInfo.collider.gameObject.tag;
                     if(tag != "Npc" && tag != "Player" && tag != "Body"){
                         w = true;

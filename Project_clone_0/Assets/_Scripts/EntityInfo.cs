@@ -32,22 +32,22 @@ public class EntityInfo : EntityComponent
 public class SpeciesInfo : ScriptableObject{
     public ItemCollection baseDrop;
     public Stats baseStats;
-    public bool quadripedal;
+    public IkProfile ikProfile;
 
-    public static SpeciesInfo InstantiateSpeciesInfo(ItemCollection baseDrop, Stats baseStats, bool quadripedal){
+    public static SpeciesInfo InstantiateSpeciesInfo(ItemCollection baseDrop, Stats baseStats, IkProfile ikProfile){
         SpeciesInfo speciesInfo = ScriptableObject.CreateInstance<SpeciesInfo>();
         speciesInfo.baseDrop = baseDrop;
         speciesInfo.baseStats = baseStats;
-        speciesInfo.quadripedal = quadripedal;
+        speciesInfo.ikProfile = ikProfile;
         
         return speciesInfo;
     }
 
     public static SpeciesInfo GetSpeciesInfo(Species spec){
-        return SpeciesBaseReferencesMap[spec];
+        return SpeciesInfoDict[spec];
     }
 
-    static Dictionary<Species, SpeciesInfo> SpeciesBaseReferencesMap = new Dictionary<Species, SpeciesInfo>(){
+    static Dictionary<Species, SpeciesInfo> SpeciesInfoDict = new Dictionary<Species, SpeciesInfo>(){
         {
             Species.Human, SpeciesInfo.InstantiateSpeciesInfo(
                 new ItemCollection(
@@ -57,7 +57,7 @@ public class SpeciesInfo : ScriptableObject{
                     
                 ),
                 Stats.BASE_HUMAN,
-                false
+                IkProfile.InstantiateIkProfile("B-hips", "B-head", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", true, 3f, 5f, .025f, .58f)
             )
 
         },
@@ -71,13 +71,55 @@ public class SpeciesInfo : ScriptableObject{
                     }
                 ),
                 Stats.BASE_TREE,
-                true
+                null
             )
 
         },
 
 
     };
+}
+
+
+
+public class IkProfile : ScriptableObject {
+
+    // string names of body parts in body transform
+    public string name_head, name_hips, name_footRight, name_footLeft, name_toeRight, name_toeLeft, name_handRight, name_handLeft;
+
+    public bool quadripedal;
+    public float runCycle_strideFrequency;
+    public float runCycle_lerpTightness;
+    public float runCycle_limbVerticalDisplacement;
+    public float runCycle_limbForwardReachDistance;
+
+    public static IkProfile InstantiateIkProfile(string name_head, string name_hips, string name_footRight, string name_footLeft, string name_toeRight, string name_toeLeft, string name_handRight, string name_handLeft, bool quadripedal, float runCycle_strideFrequency, float runCycle_lerpTightness, float runCycle_limbVerticalDisplacement, float runCycle_limbForwardReachDistance){
+        IkProfile ikProfile = ScriptableObject.CreateInstance<IkProfile>();
+        ikProfile.name_head = name_head;
+        ikProfile.name_hips = name_hips;
+        ikProfile.name_footRight  = name_footRight;
+        ikProfile.name_footLeft = name_footLeft;
+        ikProfile.name_toeRight = name_toeRight;
+        ikProfile.name_toeLeft = name_toeLeft;
+        ikProfile.name_handRight = name_handRight;
+        ikProfile.name_handLeft = name_handLeft;
+        ikProfile.quadripedal = quadripedal;
+        ikProfile.runCycle_strideFrequency = runCycle_strideFrequency;
+        ikProfile.runCycle_lerpTightness = runCycle_lerpTightness;
+        ikProfile.runCycle_limbVerticalDisplacement = runCycle_limbVerticalDisplacement;
+        ikProfile.runCycle_limbForwardReachDistance = runCycle_limbForwardReachDistance;
+        return ikProfile;
+    }
+
+
+
+
+
+
+
+
+
+
 }
 
 

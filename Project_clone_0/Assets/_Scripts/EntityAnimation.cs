@@ -7,8 +7,8 @@ public class EntityAnimation : EntityComponent
 {
 
     public Rigidbody rb;
-    public Transform bodyT;
-    public Transform headT;
+    public Transform body;
+    public Transform head;
 
 
     // rotation
@@ -46,8 +46,8 @@ public class EntityAnimation : EntityComponent
 
       
         rb = GetComponent<Rigidbody>();
-        headT = Utility.FindDeepChild(transform, "B-head");
-        bodyT = Utility.FindDeepChild(transform, "HumanIK");
+        body = Utility.FindDeepChildWithTag(this.transform, "Body");
+        head = Utility.FindDeepChild(body, "B-head");
         //bodyT = Utility.FindDeepChild(transform, "Human Model 2");
         if(tag == "Player"){
             bodyRotationSpeed = bodyRotationSpeed_player;
@@ -95,10 +95,10 @@ public class EntityAnimation : EntityComponent
 
 
                 bool moving = entityPhysics.IsMoving();
-                Vector3 dirHoriz = moving ? rb.velocity : bodyT.forward;
+                Vector3 dirHoriz = moving ? rb.velocity : body.forward;
                 dirHoriz.y = 0;
                 dirHoriz = dirHoriz.normalized;
-                Vector3 direction = Vector3.RotateTowards(bodyT.forward, dirHoriz, bodyRotationSpeed, 0f).normalized;
+                Vector3 direction = Vector3.RotateTowards(body.forward, dirHoriz, bodyRotationSpeed, 0f).normalized;
                 
                 direction += Vector3.up * (bodyLean * -1f);
 
@@ -119,7 +119,7 @@ public class EntityAnimation : EntityComponent
                     angularVelocityY = 0f;
                 }
                 rotation *= Quaternion.Euler(Vector3.forward * angularVelocityY * -1f);
-                bodyT.rotation = rotation;
+                body.rotation = rotation;
       
             
 
@@ -129,14 +129,14 @@ public class EntityAnimation : EntityComponent
             case BodyRotationMode.Target:
                 Vector3 dir;
                 if(bodyRotationTarget != null){
-                    dir = (bodyRotationTarget.position - bodyT.position).normalized;
+                    dir = (bodyRotationTarget.position - body.position).normalized;
                 }
                 else{
                     dir = transform.forward;
                 }
                 dir += (Vector3.up * bodyLean * -1f);
                 Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
-                bodyT.rotation = Quaternion.Slerp(bodyT.rotation, rot, .1f);
+                body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
                 break;
 
             default:
@@ -221,7 +221,7 @@ public class EntityAnimation : EntityComponent
 
     void FixedUpdate(){
         UpdateBodyRotation();
-        bodyRotationLast = bodyT.rotation;
+        bodyRotationLast = body.rotation;
         angularVelocityY_last = angularVelocityY;
     }
 
