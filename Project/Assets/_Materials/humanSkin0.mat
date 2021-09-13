@@ -7,10 +7,10 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: unlitWood
-  m_Shader: {fileID: -6465566751694194690, guid: b62a38319167f37409790434ffbb1835,
+  m_Name: humanSkin0
+  m_Shader: {fileID: -6465566751694194690, guid: 21d586b92db687f40831fc51479d9060,
     type: 3}
-  m_ShaderKeywords: _GLOSSYREFLECTIONS_OFF _SPECULAR_SETUP
+  m_ShaderKeywords: _SPECULAR_SETUP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -110,10 +110,12 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
-    - Color_962802DE: {r: 0.4056604, g: 0.2504589, b: 0.13203098, a: 0}
-    - Color_EB41B935: {r: 0.8584906, g: 0.7111559, b: 0.5223834, a: 0}
+    - Color_5241E242: {r: 0, g: 0, b: 0, a: 0}
+    - Color_81DCE527: {r: 0.7264151, g: 0.58228475, b: 0.39404595, a: 0}
+    - Color_962802DE: {r: 0.735849, g: 0.57518464, b: 0.37833747, a: 0}
+    - Color_EB41B935: {r: 0.6698113, g: 0.5232258, b: 0.33806515, a: 0}
     - _BaseColor: {r: 0.8679245, g: 0.8137069, b: 0.6673193, a: 1}
-    - _Color: {r: 0.4433962, g: 0.3559173, b: 0.21124065, a: 1}
+    - _Color: {r: 0.7924528, g: 0.548035, b: 0.33268064, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
 --- !u!114 &3256184390710493056

@@ -17,6 +17,7 @@ public class EntityPhysics : EntityComponent
     public Rigidbody rb;
     public Animator animator;
     public Transform gyro;
+    public Transform body;
     public Transform[] bodyPartTs, bodyPartTs_legs, bodyPartTs_upperBody;
     public Transform hips, head, handRight, handLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
@@ -83,8 +84,9 @@ public class EntityPhysics : EntityComponent
 
         base.Awake();
 
-        hitbox = transform.Find("HumanIK").GetComponent<CapsuleCollider>();
-        obstacleHitbox = transform.Find("HumanIK").GetComponent<BoxCollider>();
+        body = Utility.FindDeepChildWithTag(this.transform, "Body");
+        hitbox = body.GetComponent<CapsuleCollider>();
+        obstacleHitbox = body.GetComponent<BoxCollider>();
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         layerMask_water = LayerMask.GetMask("Water");
@@ -93,14 +95,14 @@ public class EntityPhysics : EntityComponent
         animator = GetComponentInChildren<Animator>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
 
-        hips = Utility.FindDeepChild(this.transform, "B-hips");
-        head = Utility.FindDeepChild(this.transform, "B-head");
-        handRight = Utility.FindDeepChild(this.transform, "B-palm_01_R");
-        handLeft = Utility.FindDeepChild(this.transform, "B-palm_01_L");
-        footRight = Utility.FindDeepChild(this.transform, "B-foot_R");
-        footLeft = Utility.FindDeepChild(this.transform, "B-foot_L");
-        toeRight = Utility.FindDeepChild(this.transform, "B-toe_R");
-        toeLeft = Utility.FindDeepChild(this.transform, "B-toe_L");
+        hips = Utility.FindDeepChild(body, "B-hips");
+        head = Utility.FindDeepChild(body, "B-head");
+        handRight = Utility.FindDeepChild(body, "B-palm_01_R");
+        handLeft = Utility.FindDeepChild(body, "B-palm_01_L");
+        footRight = Utility.FindDeepChild(body, "B-foot_R");
+        footLeft = Utility.FindDeepChild(body, "B-foot_L");
+        toeRight = Utility.FindDeepChild(body, "B-toe_R");
+        toeLeft = Utility.FindDeepChild(body, "B-toe_L");
         bodyPartTs = new Transform[]{ handRight, handLeft, footRight, footLeft, toeRight, toeLeft };
         bodyPartTs_legs = new Transform[]{ footRight, footLeft, toeRight, toeLeft };
         bodyPartTs_upperBody = new Transform[]{ handRight, handLeft };

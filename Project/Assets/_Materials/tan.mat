@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: unlitTan
+  m_Name: tan
   m_Shader: {fileID: -6465566751694194690, guid: b62a38319167f37409790434ffbb1835,
     type: 3}
   m_ShaderKeywords: _GLOSSYREFLECTIONS_OFF _SPECULAR_SETUP
@@ -110,7 +110,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
-    - Color_962802DE: {r: 0.4716981, g: 0.28154647, b: 0.1713243, a: 0}
+    - Color_962802DE: {r: 0.6981132, g: 0.50379044, b: 0.36552152, a: 0}
     - Color_EB41B935: {r: 0.8584906, g: 0.7111559, b: 0.5223834, a: 0}
     - _BaseColor: {r: 0.8679245, g: 0.8137069, b: 0.6673193, a: 1}
     - _Color: {r: 0.4433962, g: 0.3559173, b: 0.21124065, a: 1}

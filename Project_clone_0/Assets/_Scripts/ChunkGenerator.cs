@@ -13,7 +13,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator current;
     public static int Seed = 455;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 15;
+    public static int ChunkRenderDistance = 7;
     public static float Scale = 1200f / 10f;
     public static float ElevationAmplitude = 5400f;
     public static float MinElevation = -.292893219f;
@@ -528,7 +528,10 @@ public class ChunkGenerator : MonoBehaviour
                 // TreeMap
                 if (heightValue > FlatLevel)
                 {
-                    treeValue = true;
+                    float tree = Mathf.PerlinNoise((x + xOffset + .001f) / 100f, (z + zOffset + .001f) / 100f);
+                    float rough = Mathf.PerlinNoise((x + xOffset + .001f) / 20f, (z + zOffset + .001f) / 20f) * 2f - 1f;
+                    tree += rough * .25f;
+                    treeValue = (Mathf.PerlinNoise((x + xOffset + .001f) / 100f, (z + zOffset + .001f) / 100f)) > .4f;
                 }
                 else { treeValue = false; }
 
