@@ -231,11 +231,6 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 
 				o.objPos = v.vertex;
 				o.pos = GetVertexPositionInputs(v.vertex).positionCS;
-				float4 downVector = { 0, 2000, 0, 0 };
-				if(v.normal.y < _GrassNormal){
-					o.pos = o.pos + downVector;
-				}
-
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.shadowCoord = GetShadowCoord(vertexInput);
 				o.normal = v.normal;
@@ -259,10 +254,6 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 					UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 					o.uv = input[i].uv;
 					o.pos = input[i].pos;
-					float4 downVector = { 0, 2000, 0, 0 };
-					if(input[i].normal.y < _GrassNormal){
-						o.pos = o.pos + downVector;
-					}
 					o.color = 0.0 + _GrassCut;
 					o.normal = GetVertexNormalInputs(input[i].normal).normalWS;
 					o.worldPos = UnityObjectToWorld(input[i].objPos);
@@ -271,7 +262,9 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 #ifdef LIGHTMAP_ON
 					o.lmap = input[i].lmap.xy;
 #endif
-					tristream.Append(o);
+					if(input[i].normal.y >= _GrassNormal){
+						tristream.Append(o);
+					}
 				}
 				tristream.RestartStrip();
 
@@ -305,18 +298,18 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 							o.color = (i / (_NumberOfStacks - _GrassCut));
 							o.uv = input[ii].uv;
 							o.pos = GetVertexPositionInputs(objSpace).positionCS;
-							float4 downVector = { 0, 2000, 0, 0 };
-							if(input[ii].normal.y < _GrassNormal){
-								o.pos = o.pos + downVector;
-							}
 							o.shadowCoord = P;
 							o.worldPos = UnityObjectToWorld(objSpace);
 							o.normal = GetVertexNormalInputs(input[ii].normal).normalWS;
 							o.fogCoord = ComputeFogFactor(input[ii].pos.z);
 #ifdef LIGHTMAP_ON
 							o.lmap = input[ii].lmap.xy;
-#endif
-							tristream.Append(o);
+#endif						
+
+							if(input[ii].normal.y >= _GrassNormal){
+								tristream.Append(o);
+							}
+							
 						}
 						tristream.RestartStrip();
 					}
@@ -563,10 +556,6 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				o.objPos = v.vertex;
 				//o.pos = GetVertexPositionInputs(v.vertex).positionCS;
 				o.pos = TransformWorldToHClip(ApplyShadowBias(GetVertexPositionInputs(v.vertex).positionWS, GetVertexNormalInputs(v.normal).normalWS, _LightDirection));
-				float4 downVector = { 0, 2000, 0, 0 };
-				if(v.normal.y < _GrassNormal){
-					o.pos = o.pos + downVector;
-				}
 
 #if defined(USE_SC) && defined(USE_S)
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
@@ -590,10 +579,6 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 					UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 					o.uv = input[i].uv;
 					o.pos = input[i].pos;
-					float4 downVector = { 0, 2000, 0, 0 };
-					if(input[i].normal.y < _GrassNormal){
-						o.pos = o.pos + downVector;
-					}
 					o.color = float3(0 + _GrassCut, 0 + _GrassCut, 0 + _GrassCut);
 					o.normal = GetVertexNormalInputs(input[i].normal).normalWS;
 					o.worldPos = UnityObjectToWorld(input[i].objPos);
@@ -631,10 +616,6 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 						o.color = (i / (_NumberOfStacks - _GrassCut));
 						o.uv = input[ii].uv;
 						o.pos = TransformWorldToHClip(ApplyShadowBias(GetVertexPositionInputs(objSpace).positionWS, GetVertexNormalInputs(input[ii].normal).normalWS, _LightDirection));
-						float4 downVector = { 0, 2000, 0, 0 };
-						if(input[ii].normal.y < _GrassNormal){
-							o.pos = o.pos + downVector;
-						}
 						o.worldPos = UnityObjectToWorld(objSpace);
 						o.normal = GetVertexNormalInputs(input[ii].normal).normalWS;
 

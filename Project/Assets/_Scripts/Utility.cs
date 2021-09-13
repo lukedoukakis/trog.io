@@ -26,6 +26,21 @@ public class Utility : MonoBehaviour
         return instance;
     }
 
+    public static Transform FindDeepChildWithTag(Transform parentT, string _tag)
+    {
+        Queue<Transform> queue = new Queue<Transform>();
+        queue.Enqueue(parentT);
+        while (queue.Count > 0)
+        {
+            var c = queue.Dequeue();
+            if (c.tag == _tag)
+                return c;
+            foreach (Transform t in c)
+                queue.Enqueue(t);
+        }
+        return null;
+    }
+
     public static IEnumerator DespawnObject(GameObject gameObject, float delay){
         yield return new WaitForSeconds(delay);
         GameObject.Destroy(gameObject);

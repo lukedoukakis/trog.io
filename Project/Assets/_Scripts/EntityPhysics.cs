@@ -17,15 +17,17 @@ public class EntityPhysics : EntityComponent
     public Rigidbody rb;
     public Animator animator;
     public Transform gyro;
+    public Transform body;
     public Transform[] bodyPartTs, bodyPartTs_legs, bodyPartTs_upperBody;
     public Transform hips, head, handRight, handLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float groundCastDistance_player = .1f;
-    public static float groundCastDistance_npc = .1f;
+    public static float groundCastDistance_player = .3f;
+    public static float groundCastDistance_npc = .3f;
     public static float groundCastDistance_far = 100f;
     public static float wallCastDistance = 1f;
     float groundCastDistance;
+    float distanceFromGround;
     public static float JumpForce = 2800f;
     public static float ThrowForce = 100f;
     public static float AccelerationScale = 12f;
@@ -35,6 +37,7 @@ public class EntityPhysics : EntityComponent
     public static float weaponHitTime_max = .25f;
 
 
+    public bool bipedal;
     public Vector3 moveDir;
     public bool onWalkableGround;
     public bool jumping, jumpOpposite, sprinting;
@@ -81,8 +84,9 @@ public class EntityPhysics : EntityComponent
 
         base.Awake();
 
-        hitbox = transform.Find("HumanIK").GetComponent<CapsuleCollider>();
-        obstacleHitbox = transform.Find("HumanIK").GetComponent<BoxCollider>();
+        body = Utility.FindDeepChildWithTag(this.transform, "Body");
+        hitbox = body.GetComponent<CapsuleCollider>();
+        obstacleHitbox = body.GetComponent<BoxCollider>();
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         layerMask_water = LayerMask.GetMask("Water");
@@ -91,14 +95,14 @@ public class EntityPhysics : EntityComponent
         animator = GetComponentInChildren<Animator>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
 
-        hips = Utility.FindDeepChild(this.transform, "B-hips");
-        head = Utility.FindDeepChild(this.transform, "B-head");
-        handRight = Utility.FindDeepChild(this.transform, "B-palm_01_R");
-        handLeft = Utility.FindDeepChild(this.transform, "B-palm_01_L");
-        footRight = Utility.FindDeepChild(this.transform, "B-foot_R");
-        footLeft = Utility.FindDeepChild(this.transform, "B-foot_L");
-        toeRight = Utility.FindDeepChild(this.transform, "B-toe_R");
-        toeLeft = Utility.FindDeepChild(this.transform, "B-toe_L");
+        hips = Utility.FindDeepChild(body, "B-hips");
+        head = Utility.FindDeepChild(body, "B-head");
+        handRight = Utility.FindDeepChild(body, "B-palm_01_R");
+        handLeft = Utility.FindDeepChild(body, "B-palm_01_L");
+        footRight = Utility.FindDeepChild(body, "B-foot_R");
+        footLeft = Utility.FindDeepChild(body, "B-foot_L");
+        toeRight = Utility.FindDeepChild(body, "B-toe_R");
+        toeLeft = Utility.FindDeepChild(body, "B-toe_L");
         bodyPartTs = new Transform[]{ handRight, handLeft, footRight, footLeft, toeRight, toeLeft };
         bodyPartTs_legs = new Transform[]{ footRight, footLeft, toeRight, toeLeft };
         bodyPartTs_upperBody = new Transform[]{ handRight, handLeft };
@@ -307,7 +311,7 @@ public class EntityPhysics : EntityComponent
             RaycastHit hit;
             if (Physics.Raycast(plantPos, Vector3.down, out hit, 100f, layerMask_walkable))
             {
-                plantPos.y = hit.point.y;
+                plantPos.y = hit.point.y + distanceFromGround;
             }
         }
         Vector3 pos = targetIk.position;
@@ -564,7 +568,8 @@ public class EntityPhysics : EntityComponent
     void CheckGround(){
         Vector3 vel = rb.velocity;
         if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far, layerMask_walkable)){
-            if(Vector3.Distance(groundInfo.point, transform.position) < groundCastDistance){
+            distanceFromGround = Vector3.Distance(groundInfo.point, transform.position);
+            if(distanceFromGround < groundCastDistance){
                 if(!GROUNDTOUCH){
                     GROUNDTOUCH = true;
                     vel.y = 0f;

@@ -89,7 +89,7 @@ public class Camp : ScriptableObject
             pos.y = ChunkGenerator.ElevationAmplitude;
             RaycastHit hit;
             if(Physics.Raycast(pos, Vector3.down, out hit, ChunkGenerator.ElevationAmplitude, CampResources.LayerMask_Terrain)){
-                orientation.position = hit.point;
+                orientation.position = hit.point + Vector3.up * .25f;
             }
             else{
                 orientation.position = Vector3.one * float.MaxValue;
@@ -98,7 +98,7 @@ public class Camp : ScriptableObject
             Vector3 toCenterEulers = Quaternion.LookRotation(GetCampComponentOrientation(ComponentType.Bonfire).position - orientation.position, Vector3.up).eulerAngles;
             Vector3 normalEulers = Quaternion.FromToRotation(Vector3.up, hit.normal).eulerAngles;
             Vector3 orientationEulers = orientation.rotation.eulerAngles;
-            //orientationEulers.z = normalEulers.z;
+            orientationEulers.z = normalEulers.z;
             orientationEulers.x = normalEulers.x;
             orientationEulers.y = toCenterEulers.y;
             orientation.rotation = Quaternion.Euler(orientationEulers);
