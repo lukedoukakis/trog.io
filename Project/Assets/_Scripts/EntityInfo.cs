@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public enum Species{ Human, Tree }
+public enum Species{ Human, Bear, Tree }
 
 public class EntityInfo : EntityComponent
 {
@@ -57,7 +57,21 @@ public class SpeciesInfo : ScriptableObject{
                     
                 ),
                 Stats.BASE_HUMAN,
-                IkProfile.InstantiateIkProfile("B-hips", "B-head", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", true, 3f, 5f, .025f, .58f)
+                IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", false, 3f, 5f, .025f, .58f)
+            )
+
+        },
+
+        {
+            Species.Bear, SpeciesInfo.InstantiateSpeciesInfo(
+                new ItemCollection(
+                    new Dictionary<Item, int>{
+                        // todo: drops for bear
+                    }
+                    
+                ),
+                Stats.BASE_BEAR,
+                IkProfile.InstantiateIkProfile("head", "hip_left", "leg_lower_right.001", "leg_lower_left.001", "leg_lower_right.001_end", "leg_lower_left.001_end", "arm_lower_right.001", "arm_lower_left.001", true, 3f, 5f, .025f, .58f)
             )
 
         },

@@ -264,7 +264,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2c5c1a9ad36d1884d96e689cf3bfa26e, type: 2}
+  - {fileID: 2100000, guid: a929827de47cd7649af0a65345b1be07, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -447,7 +447,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8723686242999770267}
-  - component: {fileID: 5386310171266843604}
   m_Layer: 0
   m_Name: Bear
   m_TagString: Body
@@ -475,20 +474,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &5386310171266843604
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1865195148134338098}
-  m_Material: {fileID: 13400000, guid: 3c2720acdc0ef2d43aeb89dd00e2bb70, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5542581
-  m_Height: 1.228842
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.6168786, z: -0.107420206}
 --- !u!1 &2774685953449528997
 GameObject:
   m_ObjectHideFlags: 0

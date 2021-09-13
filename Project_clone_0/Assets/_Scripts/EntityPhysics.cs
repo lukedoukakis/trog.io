@@ -67,6 +67,7 @@ public class EntityPhysics : EntityComponent
     public float updateTime_footRight, updateTime_footLeft, updateTime_handRight, updateTime_handLeft, updateTime_hips;
 
     // ikProfile settings
+    public IkProfile ikProfile;
     public bool quadripedal;
     public float runCycle_strideFrequency;
     public float runCycle_lerpTightness;
@@ -97,6 +98,8 @@ public class EntityPhysics : EntityComponent
     void Start(){
 
         body = Utility.FindDeepChildWithTag(this.transform, "Body");
+        Log(body.name);
+
         hitbox = body.GetComponent<CapsuleCollider>();
         obstacleHitbox = body.GetComponent<BoxCollider>();
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
@@ -107,14 +110,22 @@ public class EntityPhysics : EntityComponent
         animator = GetComponentInChildren<Animator>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
 
-        hips = Utility.FindDeepChild(body, "B-hips");
-        head = Utility.FindDeepChild(body, "B-head");
-        handRight = Utility.FindDeepChild(body, "B-palm_01_R");
-        handLeft = Utility.FindDeepChild(body, "B-palm_01_L");
-        footRight = Utility.FindDeepChild(body, "B-foot_R");
-        footLeft = Utility.FindDeepChild(body, "B-foot_L");
-        toeRight = Utility.FindDeepChild(body, "B-toe_R");
-        toeLeft = Utility.FindDeepChild(body, "B-toe_L");
+        ikProfile = entityInfo.speciesInfo.ikProfile;
+        quadripedal = ikProfile.quadripedal;
+        runCycle_strideFrequency = ikProfile.runCycle_strideFrequency;
+        runCycle_lerpTightness = ikProfile.runCycle_lerpTightness;
+        runCycle_limbVerticalDisplacement = ikProfile.runCycle_limbVerticalDisplacement;
+        runCycle_limbForwardReachDistance = ikProfile.runCycle_limbForwardReachDistance;
+
+        hips = Utility.FindDeepChild(body, ikProfile.name_hips);
+        Log(hips.name);
+        head = Utility.FindDeepChild(body, ikProfile.name_head);
+        handRight = Utility.FindDeepChild(body, ikProfile.name_handRight);
+        handLeft = Utility.FindDeepChild(body, ikProfile.name_handLeft);
+        footRight = Utility.FindDeepChild(body, ikProfile.name_footRight);
+        footLeft = Utility.FindDeepChild(body, ikProfile.name_footLeft);
+        toeRight = Utility.FindDeepChild(body, ikProfile.name_toeRight);
+        toeLeft = Utility.FindDeepChild(body, ikProfile.name_toeLeft);
         bodyPartTs = new Transform[]{ handRight, handLeft, footRight, footLeft, toeRight, toeLeft };
         bodyPartTs_legs = new Transform[]{ footRight, footLeft, toeRight, toeLeft };
         bodyPartTs_upperBody = new Transform[]{ handRight, handLeft };
@@ -153,12 +164,6 @@ public class EntityPhysics : EntityComponent
         ikScripts = new FastIKFabric[]{ ikScript_hips, ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft };
         ikScripts_legs = new FastIKFabric[]{ ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft };
         ikScripts_upperBody = new FastIKFabric[]{ ikScript_handRight, ikScript_handLeft };
-
-        quadripedal = entityInfo.speciesInfo.ikProfile.quadripedal;
-        runCycle_strideFrequency = entityInfo.speciesInfo.ikProfile.runCycle_strideFrequency;
-        runCycle_lerpTightness = entityInfo.speciesInfo.ikProfile.runCycle_lerpTightness;
-        runCycle_limbVerticalDisplacement = entityInfo.speciesInfo.ikProfile.runCycle_limbVerticalDisplacement;
-        runCycle_limbForwardReachDistance = entityInfo.speciesInfo.ikProfile.runCycle_limbForwardReachDistance;
 
         acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * AccelerationScale;
         maxSpeed_run = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * MaxSpeedScale;

@@ -222,6 +222,21 @@ public class Stats : ScriptableObject
         1f
     );
 
+    public static Stats BASE_BEAR = InstantiateStats(
+        2f,
+        .5f,
+        6f,
+        1f,
+        .7f,
+        1f,
+        1.1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        10f
+    );
+
     public static Stats BASE_TREE = InstantiateStats(
         3f,
         0f,
