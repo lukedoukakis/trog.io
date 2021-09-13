@@ -37,7 +37,7 @@ public class EntityPhysics : EntityComponent
     public static float weaponHitTime_max = .25f;
 
 
-    public bool bipedal;
+    public bool quadripedal;
     public Vector3 moveDir;
     public bool onWalkableGround;
     public bool jumping, jumpOpposite, sprinting;
@@ -64,8 +64,8 @@ public class EntityPhysics : EntityComponent
     public Transform ikParent;
     public Transform basePositionHips, basePositionFootRight, basePositionFootLeft, basePositionHandRight, basePositionHandLeft;
     public Transform targetHips, targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft;
-    public Vector3 plantPosFootLeft, plantPosFootRight;
-    public float updateTime_footRight, updateTime_footLeft, updateTime_hips;
+    public Vector3 plantPosFootRight, plantPosFootLeft, plantPosHandRight, plantPosHandLeft;
+    public float updateTime_footRight, updateTime_footLeft, updateTime_handRight, updateTime_handLeft, updateTime_hips;
 
     // other settings
     bool rangedMode;
@@ -145,6 +145,9 @@ public class EntityPhysics : EntityComponent
         //targetFootRight.SetParent(null);
         //targetFootLeft.SetParent(null);
 
+
+        quadripedal = entityInfo.speciesInfo.quadripedal;
+
     }
 
     void Start(){
@@ -206,20 +209,40 @@ public class EntityPhysics : EntityComponent
                 // not in the air
                 if (moving || IN_WATER)
                 {
+                    // moving
+
                     // check if plant points need update
                     if (updateTime_footRight >= 1f)
                     {
-                        CycleFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight, IN_WATER);
+                        CyclePlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight, IN_WATER);
                     }
                     if (updateTime_footLeft >= 1f)
                     {
-                        CycleFootPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, ref updateTime_footLeft, IN_WATER);
+                        CyclePlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, ref updateTime_footLeft, IN_WATER);
                     }
+
+                    // if quadripedal, check for hand placement update as well
+                    if(quadripedal){
+                        if (updateTime_handRight >= 1f)
+                        {
+                            CyclePlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, ref updateTime_handRight, IN_WATER);
+                        }
+                        if (updateTime_footLeft >= 1f)
+                        {
+                            CyclePlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ref updateTime_handLeft, IN_WATER);
+                        }
+                    }
+
                 }
                 else
                 {
+                    // not moving
                     SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.zero, ref plantPosFootLeft);
                     SetPlantPosition(targetFootRight, basePositionFootRight, GetHorizVelocity().normalized * -.2f, ref plantPosFootRight);
+                    if(quadripedal){
+                        SetPlantPosition(targetHandLeft, basePositionHandLeft, Vector3.zero, ref plantPosHandLeft);
+                        SetPlantPosition(targetHandRight, basePositionHandRight, GetHorizVelocity().normalized * -.2f, ref plantPosHandRight);
+                    }
                 }
             }
             else
@@ -229,9 +252,21 @@ public class EntityPhysics : EntityComponent
                 SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityAnimation.bodyT.forward * .5f + entityAnimation.bodyT.right * .1f, ref plantPosFootRight);
                 updateTime_footRight = .2f;
                 updateTime_footLeft = .7f;
+                if(quadripedal){
+                    SetPlantPosition(targetHandLeft, basePositionHandLeft, Vector3.up * .1f + entityAnimation.bodyT.right * 0f, ref plantPosHandLeft);
+                    SetPlantPosition(targetHandRight, basePositionHandRight, Vector3.up * .3f + entityAnimation.bodyT.forward * .5f + entityAnimation.bodyT.right * .1f, ref plantPosHandRight);
+                    updateTime_handRight = .2f;
+                    updateTime_handLeft = .7f;
+                }
             }
-            AdjustFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, groundIsClose);
-            AdjustFootPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, groundIsClose);
+
+            // update plant positions for accuracy
+            UpdatePlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, groundIsClose);
+            UpdatePlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, groundIsClose);
+            if(quadripedal){
+                UpdatePlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, groundIsClose);
+                UpdatePlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, groundIsClose);
+            }
             ApplyFootPositionRestraints();
 
         }
@@ -263,23 +298,25 @@ public class EntityPhysics : EntityComponent
 
         // feet and toes
         float changePositionSpeed = 5f  * Time.deltaTime;
-        Vector3 vertLeft, vertRight;
+        Vector3 vertFootLeft, vertFootRight;
         if(IsMoving()){
             // moving
-            vertLeft = Vector3.up * GetRunCycleVerticality(updateTime_footLeft, water);
-            vertRight = Vector3.up * GetRunCycleVerticality(updateTime_footRight, water);
+            vertFootLeft = Vector3.up * GetRunCycleVerticality(updateTime_footLeft, water);
+            vertFootRight = Vector3.up * GetRunCycleVerticality(updateTime_footRight, water);
             Vector3 toeForward = (entityAnimation.bodyT.forward + transform.forward).normalized;
             targetToeRight.position = targetFootRight.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) +.2f);
             targetToeLeft.position = targetFootLeft.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) +.2f);
+
+            
         }
         else{
             // not moving
-            vertLeft = vertRight = Vector3.up * GetRunCycleVerticality(.65f, water);
+            vertFootLeft = vertFootRight = Vector3.up * GetRunCycleVerticality(.65f, water);
             targetToeRight.position = targetFootRight.position + entityAnimation.bodyT.forward.normalized + Vector3.down;
             targetToeLeft.position = targetFootLeft.position + entityAnimation.bodyT.forward.normalized + Vector3.down;
         }
-        targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertRight;
-        targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertLeft;
+        targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertFootRight;
+        targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertFootLeft;
 
         
     }
@@ -298,13 +335,13 @@ public class EntityPhysics : EntityComponent
 
 
 
-    public void CycleFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime, bool water){
+    public void CyclePlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime, bool water){
 
         float forwardReachDistance = water ? 0f : .58f * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityAnimation.bodyLean * .1f);
         plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
         updateTime = Mathf.Max(updateTime, 1f) - 1f;
     }
-    public void AdjustFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, bool onGround){
+    public void UpdatePlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, bool onGround){
         // move plantPos down until hits terrain
         if (onGround)
         {
@@ -329,6 +366,17 @@ public class EntityPhysics : EntityComponent
         pos = targetFootLeft.position;
         pos.y = Mathf.Min(pos.y, kneeHeightT.position.y);
         targetFootLeft.position = pos;
+
+        if (quadripedal)
+        {
+            pos = targetHandRight.position;
+            pos.y = Mathf.Min(pos.y, kneeHeightT.position.y);
+            targetHandRight.position = pos;
+
+            pos = targetHandLeft.position;
+            pos.y = Mathf.Min(pos.y, kneeHeightT.position.y);
+            targetHandLeft.position = pos;
+        }
     }
 
     public void SetPlantPosition(Transform targetIk, Transform targetTransform, Vector3 offset, ref Vector3 positionPointer){
@@ -345,6 +393,10 @@ public class EntityPhysics : EntityComponent
     }
 
     public void UpdateIKForCarryingItems(){
+
+        if(quadripedal){
+            return;
+        }
 
         GameObject objectRight = entityItems.weaponEquipped_object;
         GameObject objectLeft = entityItems.holding_object;

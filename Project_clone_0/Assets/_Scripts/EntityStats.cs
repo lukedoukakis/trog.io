@@ -25,7 +25,7 @@ public class EntityStats : EntityComponent
         statsModifiers = new List<Stats>();
         statsCombined = Stats.InstantiateStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         EntityInfo info = GetComponent<EntityInfo>();
-        AddStatsModifier(SpeciesBaseReferences.GetBaseReferences(info.species).baseStats);
+        AddStatsModifier(entityInfo.speciesInfo.baseStats);
         hp = (int)(BASE_AMOUNT_HP * Stats.GetStatValue(statsCombined, Stats.StatType.Health));
         stamina = (int)(BASE_AMOUNT_STAMINA * Stats.GetStatValue(statsCombined, Stats.StatType.Stamina));
 
@@ -132,7 +132,7 @@ public class EntityStats : EntityComponent
     // drop drops - if they're clothing, food or weapons, add to attacker's faction
     void SpawnDrops(EntityHandle receiverHandle){
 
-        ItemCollection drops = SpeciesBaseReferences.GetBaseReferences(entityInfo.species).baseDrop;
+        ItemCollection drops = entityInfo.speciesInfo.baseDrop;
         Debug.Log("Adding drops to entity \'" + receiverHandle.entityInfo.nickname + "\' faction: " + drops.ToString());
         // todo: add supplemental drops based on specific properties of this entity (?)
 
@@ -141,6 +141,8 @@ public class EntityStats : EntityComponent
         foreach(KeyValuePair<Item, int> kvp in drops.items){
             item = kvp.Key;
             count = kvp.Value;
+
+            // if clamped type (weapon, food, clothing), add straight to faction items - otherwise, drop on ground
             if(Item.IsClampedType(item)){
                 Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, count, null);
             }

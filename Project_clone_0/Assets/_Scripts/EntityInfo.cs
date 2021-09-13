@@ -12,6 +12,7 @@ public class EntityInfo : EntityComponent
     public Species species;
     public string nickname;
     public Faction faction;
+    public SpeciesInfo speciesInfo;
 
 
     protected override void Awake(){
@@ -20,6 +21,7 @@ public class EntityInfo : EntityComponent
 
 
         id = Random.Range(0, int.MaxValue);
+        speciesInfo = SpeciesInfo.GetSpeciesInfo(species);
     }
 
 
@@ -27,44 +29,49 @@ public class EntityInfo : EntityComponent
 
 
 // to hold references to things like base stats, drops etc for all species
-public class SpeciesBaseReferences : ScriptableObject{
+public class SpeciesInfo : ScriptableObject{
     public ItemCollection baseDrop;
     public Stats baseStats;
+    public bool quadripedal;
 
-    public static SpeciesBaseReferences InstantiateSpeciesBaseReferences(ItemCollection baseDrop, Stats baseStats){
-        SpeciesBaseReferences speciesBaseReferences = ScriptableObject.CreateInstance<SpeciesBaseReferences>();
-        speciesBaseReferences.baseDrop = baseDrop;
-        speciesBaseReferences.baseStats = baseStats;
-        return speciesBaseReferences;
+    public static SpeciesInfo InstantiateSpeciesInfo(ItemCollection baseDrop, Stats baseStats, bool quadripedal){
+        SpeciesInfo speciesInfo = ScriptableObject.CreateInstance<SpeciesInfo>();
+        speciesInfo.baseDrop = baseDrop;
+        speciesInfo.baseStats = baseStats;
+        speciesInfo.quadripedal = quadripedal;
+        
+        return speciesInfo;
     }
 
-    public static SpeciesBaseReferences GetBaseReferences(Species spec){
+    public static SpeciesInfo GetSpeciesInfo(Species spec){
         return SpeciesBaseReferencesMap[spec];
     }
 
-    static Dictionary<Species, SpeciesBaseReferences> SpeciesBaseReferencesMap = new Dictionary<Species, SpeciesBaseReferences>(){
+    static Dictionary<Species, SpeciesInfo> SpeciesBaseReferencesMap = new Dictionary<Species, SpeciesInfo>(){
         {
-            Species.Human, SpeciesBaseReferences.InstantiateSpeciesBaseReferences(
+            Species.Human, SpeciesInfo.InstantiateSpeciesInfo(
                 new ItemCollection(
                     new Dictionary<Item, int>{
                         // todo: drops for human
                     }
                     
                 ),
-                Stats.BASE_HUMAN
+                Stats.BASE_HUMAN,
+                false
             )
 
         },
 
         {
-            Species.Tree, SpeciesBaseReferences.InstantiateSpeciesBaseReferences(
+            Species.Tree, SpeciesInfo.InstantiateSpeciesInfo(
                 new ItemCollection(
                     new Dictionary<Item, int>{
                         // todo: finish drop for tree
                         {Item.LogFir, 1},
                     }
                 ),
-                Stats.BASE_TREE
+                Stats.BASE_TREE,
+                true
             )
 
         },
