@@ -227,7 +227,7 @@ public class Stats : ScriptableObject
         .5f,
         6f,
         1f,
-        .7f,
+        1f,
         1f,
         1.1f,
         1f,

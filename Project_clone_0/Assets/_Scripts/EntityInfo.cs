@@ -71,7 +71,7 @@ public class SpeciesInfo : ScriptableObject{
                     
                 ),
                 Stats.BASE_BEAR,
-                IkProfile.InstantiateIkProfile("head", "hip_left", "leg_lower_right.001", "leg_lower_left.001", "leg_lower_right.001_end", "leg_lower_left.001_end", "arm_lower_right.001_end", "arm_lower_left.001_end", "arm_lower_right.001_end_end", "arm_lower_left.001_end_end", true, 2f, 5f, .1f, .58f)
+                IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right.001", "leg_lower_left.001", "leg_lower_right.001_end", "leg_lower_left.001_end", "arm_lower_right.001_end", "arm_lower_left.001_end", "arm_lower_right.001_end_end", "arm_lower_left.001_end_end", true, 3f, 5f, .1f, .58f)
             )
 
         },
