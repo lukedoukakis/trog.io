@@ -123,6 +123,7 @@ MonoBehaviour:
   species: 0
   nickname: Player
   faction: {fileID: 0}
+  speciesInfo: {fileID: 0}
 --- !u!114 &8069827555116078485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,8 +210,8 @@ MonoBehaviour:
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   rb: {fileID: 0}
-  bodyT: {fileID: 0}
-  headT: {fileID: 0}
+  body: {fileID: 0}
+  head: {fileID: 0}
   bodyRotationTarget: {fileID: 0}
   bodyLean: 0
   angularVelocityY: 0
@@ -254,6 +255,7 @@ MonoBehaviour:
   rb: {fileID: 0}
   animator: {fileID: 0}
   gyro: {fileID: 0}
+  body: {fileID: 0}
   bodyPartTs: []
   bodyPartTs_legs: []
   bodyPartTs_upperBody: []
@@ -261,6 +263,8 @@ MonoBehaviour:
   head: {fileID: 0}
   handRight: {fileID: 0}
   handLeft: {fileID: 0}
+  fingerRight: {fileID: 0}
+  fingerLeft: {fileID: 0}
   footRight: {fileID: 0}
   footLeft: {fileID: 0}
   toeRight: {fileID: 0}
@@ -301,6 +305,8 @@ MonoBehaviour:
   ikScript_toeLeft: {fileID: 0}
   ikScript_handRight: {fileID: 0}
   ikScript_handLeft: {fileID: 0}
+  ikScript_fingerRight: {fileID: 0}
+  ikScript_fingerLeft: {fileID: 0}
   ikScripts: []
   ikScripts_legs: []
   ikScripts_upperBody: []
@@ -317,11 +323,23 @@ MonoBehaviour:
   targetToeLeft: {fileID: 0}
   targetHandRight: {fileID: 0}
   targetHandLeft: {fileID: 0}
-  plantPosFootLeft: {x: 0, y: 0, z: 0}
+  targetFingerRight: {fileID: 0}
+  targetFingerLeft: {fileID: 0}
   plantPosFootRight: {x: 0, y: 0, z: 0}
+  plantPosFootLeft: {x: 0, y: 0, z: 0}
+  plantPosHandRight: {x: 0, y: 0, z: 0}
+  plantPosHandLeft: {x: 0, y: 0, z: 0}
   updateTime_footRight: 0
   updateTime_footLeft: 0
+  updateTime_handRight: 0
+  updateTime_handLeft: 0
   updateTime_hips: 0
+  ikProfile: {fileID: 0}
+  quadripedal: 0
+  runCycle_strideFrequency: 0
+  runCycle_lerpTightness: 0
+  runCycle_limbVerticalDisplacement: 0
+  runCycle_limbForwardReachDistance: 0
   weaponCanHit: 0
   weaponHit: 0
 --- !u!114 &8069827555116078495

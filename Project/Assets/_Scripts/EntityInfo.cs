@@ -57,7 +57,7 @@ public class SpeciesInfo : ScriptableObject{
                     
                 ),
                 Stats.BASE_HUMAN,
-                IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", false, 3f, 5f, .025f, .58f)
+                IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", false, 3f, 5f, 1f, .58f)
             )
 
         },
@@ -71,7 +71,7 @@ public class SpeciesInfo : ScriptableObject{
                     
                 ),
                 Stats.BASE_BEAR,
-                IkProfile.InstantiateIkProfile("head", "hip_left", "leg_lower_right.001", "leg_lower_left.001", "leg_lower_right.001_end", "leg_lower_left.001_end", "arm_lower_right.001", "arm_lower_left.001", true, 3f, 5f, .025f, .58f)
+                IkProfile.InstantiateIkProfile("head", "hip_left", "leg_lower_right.001", "leg_lower_left.001", "leg_lower_right.001_end", "leg_lower_left.001_end", "arm_lower_right.001_end", "arm_lower_left.001_end", "arm_lower_right.001_end_end", "arm_lower_left.001_end_end", true, 2f, 5f, .1f, .58f)
             )
 
         },
@@ -99,7 +99,7 @@ public class SpeciesInfo : ScriptableObject{
 public class IkProfile : ScriptableObject {
 
     // string names of body parts in body transform
-    public string name_head, name_hips, name_footRight, name_footLeft, name_toeRight, name_toeLeft, name_handRight, name_handLeft;
+    public string name_head, name_hips, name_footRight, name_footLeft, name_toeRight, name_toeLeft, name_handRight, name_handLeft, name_fingerRight, name_fingerLeft;
 
     public bool quadripedal;
     public float runCycle_strideFrequency;
@@ -107,7 +107,7 @@ public class IkProfile : ScriptableObject {
     public float runCycle_limbVerticalDisplacement;
     public float runCycle_limbForwardReachDistance;
 
-    public static IkProfile InstantiateIkProfile(string name_head, string name_hips, string name_footRight, string name_footLeft, string name_toeRight, string name_toeLeft, string name_handRight, string name_handLeft, bool quadripedal, float runCycle_strideFrequency, float runCycle_lerpTightness, float runCycle_limbVerticalDisplacement, float runCycle_limbForwardReachDistance){
+    public static IkProfile InstantiateIkProfile(string name_head, string name_hips, string name_footRight, string name_footLeft, string name_toeRight, string name_toeLeft, string name_handRight, string name_handLeft, string name_fingerRight, string name_fingerLeft, bool quadripedal, float runCycle_strideFrequency, float runCycle_lerpTightness, float runCycle_limbVerticalDisplacement, float runCycle_limbForwardReachDistance){
         IkProfile ikProfile = ScriptableObject.CreateInstance<IkProfile>();
         ikProfile.name_head = name_head;
         ikProfile.name_hips = name_hips;
@@ -117,6 +117,8 @@ public class IkProfile : ScriptableObject {
         ikProfile.name_toeLeft = name_toeLeft;
         ikProfile.name_handRight = name_handRight;
         ikProfile.name_handLeft = name_handLeft;
+        ikProfile.name_fingerRight = name_fingerRight;
+        ikProfile.name_fingerLeft = name_fingerLeft;
         ikProfile.quadripedal = quadripedal;
         ikProfile.runCycle_strideFrequency = runCycle_strideFrequency;
         ikProfile.runCycle_lerpTightness = runCycle_lerpTightness;
