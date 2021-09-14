@@ -11,7 +11,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
     public static ChunkGenerator current;
-    public static int Seed = 455;
+    public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 7;
     public static float Scale = 1200f / 10f;
@@ -121,9 +121,7 @@ public class ChunkGenerator : MonoBehaviour
 
     void Init()
     {
-        Seed = UnityEngine.Random.Range(0, 100000);
-        Seed = 1;
-        if (Seed == -1) { Seed = UnityEngine.Random.Range(-100000, 100000); }
+
         Debug.Log("seed: " + Seed.ToString());
 
         //RiverGenerator.Generate();
