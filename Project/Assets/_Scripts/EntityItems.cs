@@ -119,6 +119,8 @@ public class EntityItems : EntityComponent
             Faction rackFac = rack.camp.faction;
             Faction.RemoveItemOwned(rackFac, item, 1, rack);
             o = Utility.InstantiatePrefabSameName(item.worldObject);
+            o.transform.position = worldObject.transform.position;
+            o.transform.rotation = worldObject.transform.rotation;
         }
         // todo: if getting from another human
         else if(attachedObject == null)
@@ -145,7 +147,7 @@ public class EntityItems : EntityComponent
 
     // holding
 
-    public void PickUpHolding(Item item, GameObject gameobject, ScriptableObject attachedObject){
+    public void PickUpHolding(Item item, GameObject worldObject, ScriptableObject attachedObject){
 
         GameObject o;
 
@@ -156,13 +158,15 @@ public class EntityItems : EntityComponent
             Faction rackFac = rack.camp.faction;
             Faction.RemoveItemOwned(rackFac, item, 1, rack);
             o = Utility.InstantiatePrefabSameName(item.worldObject);
+            o.transform.position = worldObject.transform.position;
+            o.transform.rotation = worldObject.transform.rotation;
         }
         else if(attachedObject == null)
         {
-            o = gameobject;
+            o = worldObject;
         }
         else{
-            o = gameobject;
+            o = worldObject;
         }
         // todo: if getting from another human
 
@@ -188,7 +192,7 @@ public class EntityItems : EntityComponent
         else if (targetAttachedObject == null)
         {
             holding_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
-            Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.hitbox, false);
+            Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, false);
         }
         else
         {
@@ -277,7 +281,7 @@ public class EntityItems : EntityComponent
         else if (targetAttachedObject == null)
         {
             weaponEquipped_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
-            Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.hitbox, false);
+            Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.worldCollider, false);
             Utility.ToggleObjectPhysics(weaponEquipped_object, true);
         }
         // todo: case human
@@ -414,14 +418,14 @@ public class EntityItems : EntityComponent
     {
         entityPhysics.UpdateIKForCarryingItems();
         if(weaponEquipped_object != null){
-            Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.hitbox, true);
+            Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.worldCollider, true);
 
         }
         if(weaponUnequipped_object != null){
-            Physics.IgnoreCollision(weaponUnequipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.hitbox, true);
+            Physics.IgnoreCollision(weaponUnequipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.worldCollider, true);
         }
         if(holding_object != null){
-            Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.hitbox, true);
+            Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, true);
         }
     }
 

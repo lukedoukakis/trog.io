@@ -12,8 +12,8 @@ public class EntityHitDetection : EntityComponent
         // add and set up info and stats if they don't exist
         if(entityInfo == null){
             entityInfo = gameObject.AddComponent<EntityInfo>();
-            entityInfo.FindAndSetEntityReferences();
             entityInfo.species = species;
+            entityInfo.Init();
             entityStats = gameObject.AddComponent<EntityStats>();
             entityStats.FindAndSetEntityReferences();
         }

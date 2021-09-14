@@ -19,11 +19,15 @@ public class EntityInfo : EntityComponent
 
         base.Awake();
 
-
-        id = Random.Range(0, int.MaxValue);
-        speciesInfo = SpeciesInfo.GetSpeciesInfo(species);
+        Init();
+    
     }
 
+    public void Init(){
+        id = Random.Range(0, int.MaxValue);
+        speciesInfo = SpeciesInfo.GetSpeciesInfo(species);
+        FindAndSetEntityReferences();
+    }
 
 }
 

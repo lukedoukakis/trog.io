@@ -438,7 +438,7 @@ public class EntityBehavior : EntityComponent
 
         bool CanClearObstacle(){
             Transform ohs = entityPhysics.obstacleHeightSense;
-            return !Physics.BoxCast(ohs.position, new Vector3(entityPhysics.hitbox.bounds.extents.x, .01f, .1f), gyro.forward, gyro.rotation, Mathf.Max(leftDistance, centerDistance, rightDistance));
+            return !Physics.BoxCast(ohs.position, new Vector3(entityPhysics.worldCollider.bounds.extents.x, .01f, .1f), gyro.forward, gyro.rotation, Mathf.Max(leftDistance, centerDistance, rightDistance));
         }
 
         void TurnTowardsMostOpenPath(){

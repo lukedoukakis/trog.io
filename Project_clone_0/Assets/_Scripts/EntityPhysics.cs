@@ -7,8 +7,7 @@ using DitzelGames.FastIK;
 public class EntityPhysics : EntityComponent
 {
 
-    public Collider hitbox;
-    public Collider obstacleHitbox;
+    public Collider worldCollider;
     public PhysicMaterial highFrictionMat;
     public PhysicMaterial noFrictionMat;
     public LayerMask layerMask_water;
@@ -101,8 +100,7 @@ public class EntityPhysics : EntityComponent
         body = Utility.FindDeepChildWithTag(this.transform, "Body");
         Log(body.name);
 
-        hitbox = body.GetComponent<CapsuleCollider>();
-        obstacleHitbox = body.GetComponent<BoxCollider>();
+        worldCollider = body.GetComponent<CapsuleCollider>();
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         layerMask_water = LayerMask.GetMask("Water");
@@ -575,7 +573,7 @@ public class EntityPhysics : EntityComponent
             //entityAnimation.SetFreeBodyRotationMode(false);
             yield return new WaitForSeconds(.2f);
             GameObject projectile = GameObject.Instantiate(projectilePrefab, handRight.position, Quaternion.identity);
-            Physics.IgnoreCollision(projectile.GetComponent<Collider>(), hitbox);
+            Physics.IgnoreCollision(projectile.GetComponent<Collider>(), worldCollider);
             Vector3 targetPos, throwDir;
 
             if (isLocalPlayer){
@@ -770,10 +768,10 @@ public class EntityPhysics : EntityComponent
 
     void CheckPhysicMaterial(){
         if(moveDir.magnitude > 0f){
-            hitbox.sharedMaterial = noFrictionMat;
+            worldCollider.sharedMaterial = noFrictionMat;
         }
         else{
-            hitbox.sharedMaterial = highFrictionMat;
+            worldCollider.sharedMaterial = highFrictionMat;
         }
     }
 
@@ -900,13 +898,13 @@ public class EntityPhysics : EntityComponent
 
     void OnTriggerEnter(Collider col){
         if(col.gameObject.layer == LayerMask.NameToLayer("Feature")){
-            hitbox.sharedMaterial = noFrictionMat;
+            worldCollider.sharedMaterial = noFrictionMat;
         }
         
     }
     void OnTriggerExit(Collider col){
         if(col.gameObject.layer == LayerMask.NameToLayer("Feature")){
-            hitbox.sharedMaterial = highFrictionMat;
+            worldCollider.sharedMaterial = highFrictionMat;
         }
     }
 }
