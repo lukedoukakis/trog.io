@@ -16,16 +16,12 @@ public class Item : ScriptableObject
     public static Item SmallStone = InitiailizeItem("SmallStone", Type.MiscSmall, Stats.NONE, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/SmallStone/Gameobject/SmallStone"), Resources.Load<Image>("Items/SmallStone/Image"));
     public static Item Spear = InitiailizeItem("Spear", Type.Weapon, Stats.WEAPON_SPEAR, HoldStyle.Spear, DamageType.Pierce, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Spear/Image"));
     public static Item Axe = InitiailizeItem("Axe", Type.Weapon, Stats.WEAPON_AXE, HoldStyle.Axe, DamageType.Slash, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Axe/Gameobject/Axe"), Resources.Load<Image>("Items/Axe/Image"));
-    
-
-    // testing purposes
-    public static Item ClothingTest = InitiailizeItem("ClothingTest", Type.Clothing, Stats.CLOTHING_TESTCLOTHING, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/ClothingTest/Gameobject/ClothingTest"), Resources.Load<Image>("Items/ClothingTest/Image"));
-
-    public static Item FoodTest = InitiailizeItem("FoodTest", Type.Food, Stats.FOOD_TESTFOOD, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/FoodTest/Gameobject/FoodTest"), Resources.Load<Image>("Items/FoodTest/Image"));
-
-    // Not implemented in files yet
     public static Item LogFir = InitiailizeItem("LogFir", Type.LargeLongObject, Stats.NONE, HoldStyle.Hug, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/LogFir/Gameobject/LogFir"), Resources.Load<Image>("Items/LogFir/Image"));
+    public static Item CarcassBear = InitiailizeItem("CarcassBear", Type.LargeLongObject, Stats.NONE, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/CarcassBear/Gameobject/CarcassBear"), Resources.Load<Image>("Items/CarcassBear/Image"));
 
+    // testing items
+    public static Item ClothingTest = InitiailizeItem("ClothingTest", Type.Clothing, Stats.CLOTHING_TESTCLOTHING, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/ClothingTest/Gameobject/ClothingTest"), Resources.Load<Image>("Items/ClothingTest/Image"));
+    public static Item FoodTest = InitiailizeItem("FoodTest", Type.Food, Stats.FOOD_TESTFOOD, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/FoodTest/Gameobject/FoodTest"), Resources.Load<Image>("Items/FoodTest/Image"));
 
 
 
@@ -37,9 +33,9 @@ public class Item : ScriptableObject
         { "SmallStone", SmallStone },
         { "Spear", Spear },
         { "Axe", Axe },
-
-    
         { "LogFir", LogFir },
+        { "CarcassBear", CarcassBear },
+        
         { "ClothingTest", ClothingTest },
         { "FoodTest", FoodTest },
     };
