@@ -69,6 +69,7 @@ public class EntityPhysics : EntityComponent
     // ikProfile settings
     public IkProfile ikProfile;
     public bool quadripedal;
+    public bool hasFingersAndToes;
     public float runCycle_strideFrequency;
     public float runCycle_lerpTightness;
     public float runCycle_limbVerticalDisplacement;
@@ -112,6 +113,7 @@ public class EntityPhysics : EntityComponent
 
         ikProfile = entityInfo.speciesInfo.ikProfile;
         quadripedal = ikProfile.quadripedal;
+        hasFingersAndToes = ikProfile.hasFingersAndToes;
         runCycle_strideFrequency = ikProfile.runCycle_strideFrequency;
         runCycle_lerpTightness = ikProfile.runCycle_lerpTightness;
         runCycle_limbVerticalDisplacement = ikProfile.runCycle_limbVerticalDisplacement;
@@ -122,12 +124,15 @@ public class EntityPhysics : EntityComponent
         head = Utility.FindDeepChild(body, ikProfile.name_head);
         handRight = Utility.FindDeepChild(body, ikProfile.name_handRight);
         handLeft = Utility.FindDeepChild(body, ikProfile.name_handLeft);
-        fingerRight = Utility.FindDeepChild(body, ikProfile.name_fingerRight);
-        fingerLeft = Utility.FindDeepChild(body, ikProfile.name_fingerLeft);
         footRight = Utility.FindDeepChild(body, ikProfile.name_footRight);
         footLeft = Utility.FindDeepChild(body, ikProfile.name_footLeft);
-        toeRight = Utility.FindDeepChild(body, ikProfile.name_toeRight);
-        toeLeft = Utility.FindDeepChild(body, ikProfile.name_toeLeft);
+        if(hasFingersAndToes){
+            toeRight = Utility.FindDeepChild(body, ikProfile.name_toeRight);
+            toeLeft = Utility.FindDeepChild(body, ikProfile.name_toeLeft);
+            fingerRight = Utility.FindDeepChild(body, ikProfile.name_fingerRight);
+            fingerLeft = Utility.FindDeepChild(body, ikProfile.name_fingerLeft);
+        }
+
         bodyPartTs = new Transform[]{ handRight, handLeft, fingerRight, fingerLeft, footRight, footLeft, toeRight, toeLeft };
         bodyPartTs_legs = new Transform[]{ footRight, footLeft, toeRight, toeLeft };
         bodyPartTs_upperBody = new Transform[]{ handRight, handLeft, fingerRight, fingerLeft };
@@ -150,23 +155,25 @@ public class EntityPhysics : EntityComponent
         targetHips = ikParent.Find("TargetHips");
         targetFootRight = ikParent.Find("TargetFootRight");
         targetFootLeft = ikParent.Find("TargetFootLeft");
-        targetToeRight = ikParent.Find("TargetToeRight");
-        targetToeLeft = ikParent.Find("TargetToeLeft");
         targetHandRight = ikParent.Find("TargetHandRight");
         targetHandLeft = ikParent.Find("TargetHandLeft");
-        targetFingerRight = ikParent.Find("TargetFingerRight");
-        targetFingerLeft = ikParent.Find("TargetFingerLeft");
         basePositionHandRight = ikParent.Find("BasePositionHandRight");
         basePositionHandLeft = ikParent.Find("BasePositionHandLeft");
         ikScript_hips = hips.GetComponent<FastIKFabric>();
         ikScript_footRight = footRight.GetComponent<FastIKFabric>();
         ikScript_footLeft = footLeft.GetComponent<FastIKFabric>();
-        ikScript_toeRight = toeRight.GetComponent<FastIKFabric>();
-        ikScript_toeLeft = toeLeft.GetComponent<FastIKFabric>();
         ikScript_handRight = handRight.GetComponent<FastIKFabric>();
         ikScript_handLeft = handLeft.GetComponent<FastIKFabric>();
-        ikScript_fingerRight = fingerRight.GetComponent<FastIKFabric>();;
-        ikScript_fingerLeft = fingerLeft.GetComponent<FastIKFabric>();
+        if(hasFingersAndToes){
+            targetToeRight = ikParent.Find("TargetToeRight");
+            targetToeLeft = ikParent.Find("TargetToeLeft");
+            targetFingerRight = ikParent.Find("TargetFingerRight");
+            targetFingerLeft = ikParent.Find("TargetFingerLeft");
+            ikScript_toeRight = toeRight.GetComponent<FastIKFabric>();
+            ikScript_toeLeft = toeLeft.GetComponent<FastIKFabric>();
+            ikScript_fingerRight = fingerRight.GetComponent<FastIKFabric>();;
+            ikScript_fingerLeft = fingerLeft.GetComponent<FastIKFabric>();
+        }
         ikScripts = new FastIKFabric[]{ ikScript_hips, ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft, ikScript_fingerRight, ikScript_fingerLeft };
         ikScripts_legs = new FastIKFabric[]{ ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft };
         ikScripts_upperBody = new FastIKFabric[]{ ikScript_handRight, ikScript_handLeft, ikScript_fingerRight, ikScript_fingerLeft };
@@ -325,10 +332,10 @@ public class EntityPhysics : EntityComponent
     public void UpdateLimbPositions(bool water){
 
         // hips
-        // if(updateTime_hips > 1f){
-        //     updateTime_hips = updateTime_hips - 1f;
-        // }
-        // targetHips.position = basePositionHips.position + Vector3.up * GetRunCyclePhase(updateTime_hips, 0f) * .1f;
+        if(updateTime_hips > 1f){
+            updateTime_hips = updateTime_hips - 1f;
+        }
+        targetHips.position = basePositionHips.position + Vector3.up * GetRunCyclePhase(updateTime_hips, 0f) * .1f;
 
 
         // feet and toes
@@ -339,11 +346,15 @@ public class EntityPhysics : EntityComponent
             vertFootLeft = Vector3.up * GetRunCycleVerticality(updateTime_footLeft, water);
             vertFootRight = Vector3.up * GetRunCycleVerticality(updateTime_footRight, water);
             Vector3 toeForward = (entityAnimation.body.forward + transform.forward).normalized;
-            targetToeRight.position = targetFootRight.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) +.2f);
-            targetToeLeft.position = targetFootLeft.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) +.2f);
-            if(quadripedal){
-                targetFingerRight.position = targetFingerRight.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) +.2f);
-                targetFingerLeft.position = targetFingerLeft.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) +.2f);
+            if (hasFingersAndToes)
+            {
+                targetToeRight.position = targetFootRight.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) + .2f);
+                targetToeLeft.position = targetFootLeft.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) + .2f);
+                if (quadripedal)
+                {
+                    targetFingerRight.position = targetFingerRight.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) + .2f);
+                    targetFingerLeft.position = targetFingerLeft.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) + .2f);
+                }
             }
 
             
@@ -351,11 +362,15 @@ public class EntityPhysics : EntityComponent
         else{
             // not moving
             vertFootLeft = vertFootRight = Vector3.up * GetRunCycleVerticality(.65f, water);
-            targetToeRight.position = targetFootRight.position + entityAnimation.body.forward.normalized + Vector3.down;
-            targetToeLeft.position = targetFootLeft.position + entityAnimation.body.forward.normalized + Vector3.down;
-            if(quadripedal){
-                targetFingerRight.position = targetHandRight.position + entityAnimation.body.forward.normalized + Vector3.down;
-                targetFingerLeft.position = targetHandLeft.position + entityAnimation.body.forward.normalized + Vector3.down;
+            if (hasFingersAndToes)
+            {
+                targetToeRight.position = targetFootRight.position + entityAnimation.body.forward.normalized + Vector3.down;
+                targetToeLeft.position = targetFootLeft.position + entityAnimation.body.forward.normalized + Vector3.down;
+                if (quadripedal)
+                {
+                    targetFingerRight.position = targetHandRight.position + entityAnimation.body.forward.normalized + Vector3.down;
+                    targetFingerLeft.position = targetHandLeft.position + entityAnimation.body.forward.normalized + Vector3.down;
+                }
             }
             
 

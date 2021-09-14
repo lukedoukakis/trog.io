@@ -92,7 +92,7 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
-    - _OffsetVector: {r: 0, g: 0, b: 0, a: 0}
+    - _OffsetVector: {r: 1, g: 3, b: 1, a: 0}
     - _ProjectedShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 0.1509434, g: 0.1509434, b: 0.1509434, a: 1}
     - _SelfShadowColor: {r: 0, g: 0, b: 0, a: 1}
