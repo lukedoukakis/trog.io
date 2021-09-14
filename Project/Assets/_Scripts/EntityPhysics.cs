@@ -666,8 +666,8 @@ public class EntityPhysics : EntityComponent
 
     public void OnWeaponHit(Collider collider){
         GameObject hitObject = collider.gameObject;
-        Log("HIT!!!! " + collider.gameObject.name);
-        collider.gameObject.GetComponent<EntityHitDetection>().OnHit(this.entityHandle);
+        //Log("HIT!!!! " + collider.gameObject.name);
+        collider.gameObject.GetComponentInParent<EntityHitDetection>().OnHit(this.entityHandle);
 
         // todo: weapon fixed at hit point
         

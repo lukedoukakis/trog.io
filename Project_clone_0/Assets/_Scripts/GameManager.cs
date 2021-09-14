@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 
     // options
     public static int cameraMode = 1;
-    public static int startingTribeMembers = 1;
+    public static int startingTribeMembers = 4;
 
 
 

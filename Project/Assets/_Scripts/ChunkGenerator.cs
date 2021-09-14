@@ -26,7 +26,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float SeaLevel = 0.849985f;
     public static float BankLevel = SeaLevel + .0002f;
     public static float WaterFeatureLevel = .85f;
-    public static float SnowLevel = .86f;
+    public static float SnowLevel = .8601f;
     public static float grassNormal = .87f;
     public static bool LoadingChunks, DeloadingChunks;
     static GameObject Chunk;
@@ -283,6 +283,7 @@ public class ChunkGenerator : MonoBehaviour
         int biomeValue;
         bool treeValue;
         float mtnCap;
+        float rough;
 
         // loop start
         for (int z = 0; z < ChunkSize + 2; z++)
@@ -316,9 +317,12 @@ public class ChunkGenerator : MonoBehaviour
                 if(elevationValue > .00005f){
                     elevationValue = .00005f;
                 }
-                float bigMound = Mathf.PerlinNoise((x + xOffset + 100000.01f) / 1600f, (z + zOffset + 100000.01f) / 1600f) * 2f - 1f;
-                bigMound = Mathf.Pow(Mathf.Abs(bigMound) * -1f + 1f, 8f);
-                bigMound *= .036f * (1f - Mathf.InverseLerp(.25f, .75f, temperatureValue));
+                float bm0 = Mathf.PerlinNoise((x + xOffset + 100000.01f) / 1600f, (z + zOffset + 100000.01f) / 1600f) * 2f - 1f;
+                float bm1 = Mathf.PerlinNoise((x + xOffset + 200000.01f) / 1600f, (z + zOffset + 200000.01f) / 1600f) * 2f - 1f;
+                float bigMound = Mathf.Min(bm0, bm1);
+                bigMound = Mathf.Pow(Mathf.Abs(bigMound) * -1f + 1f, 3f);
+                float bigMoundCap = .036f;
+                bigMound *= bigMoundCap * (1f - Mathf.InverseLerp(.25f, .75f, temperatureValue));;
                 elevationValue += bigMound;
                 float maxE = Mathf.Pow(1f + .5f, .5f) - 1f;
                 float minE = Mathf.Pow(0f + .5f, .5f) - 1f;
@@ -361,19 +365,33 @@ public class ChunkGenerator : MonoBehaviour
                 if (bigMound < .1f)
                 {
                     float riverScale = 180f;
-                    riverScale = 720f;
+                    riverScale = 900f;
+
+                    // main river path
                     freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
-                    float rough = Mathf.PerlinNoise((x + xOffset + .01f) / 40f, (z + zOffset + .01f) / 40f);
-                    //freshWaterValue *= Mathf.Pow(rough, 1f);
-                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
-                    freshWaterValue += rough * .1f;
-                    //freshWaterValue -= Mathf.PerlinNoise((x + xOffset + .01f) / 1000f, (z + zOffset + .01f) / 1000f) / 2f;
+
+                    // give rivers character
+                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 40f, (z + zOffset + .01f) / 40f) * 2f - 1f;
+                    freshWaterValue += Mathf.Max(0f, rough) * .1f;
+
+                    // give rivers roughness
+                    if(freshWaterValue < .99f){
+                        rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
+                        freshWaterValue += rough * .1f;
+                    }
+                    
+
+                    // ridgify
                     freshWaterValue = Mathf.Abs(freshWaterValue);
                     freshWaterValue *= -1f;
                     freshWaterValue += 1f;
-                    freshWaterValue = Mathf.Clamp01(freshWaterValue);
 
-                    freshWaterValue = Mathf.Pow(freshWaterValue, 2f);
+                    freshWaterValue = Mathf.Clamp01(freshWaterValue);
+                    freshWaterValue = Mathf.Pow(freshWaterValue, 3f);
+
+                    // reduce fresh water value proportionally to mound height
+                    freshWaterValue *= 1f - (Mathf.InverseLerp(.25f, 1f, (bigMound / bigMoundCap)));
+
                 }
                 else{
                     freshWaterValue = 0f;
@@ -527,9 +545,9 @@ public class ChunkGenerator : MonoBehaviour
                 if (heightValue > FlatLevel)
                 {
                     float tree = Mathf.PerlinNoise((x + xOffset + .001f) / 100f, (z + zOffset + .001f) / 100f);
-                    float rough = Mathf.PerlinNoise((x + xOffset + .001f) / 20f, (z + zOffset + .001f) / 20f) * 2f - 1f;
-                    tree += rough * .25f;
-                    treeValue = (Mathf.PerlinNoise((x + xOffset + .001f) / 100f, (z + zOffset + .001f) / 100f)) > .4f;
+                    rough = Mathf.PerlinNoise((x + xOffset + .001f) / 20f, (z + zOffset + .001f) / 20f) * 2f - 1f;
+                    tree += rough * .1f;
+                    treeValue = tree > .4f;
                 }
                 else { treeValue = false; }
 
@@ -593,7 +611,7 @@ public class ChunkGenerator : MonoBehaviour
 
         Color c = new Color();
         float snowHeight = Biome.GetSnowHeight(SnowLevel, temperature);
-        float snow = Mathf.InverseLerp(snowHeight - .08f, snowHeight, height);
+        float snow = Mathf.InverseLerp(snowHeight - .13f, snowHeight, height);
         c.b = Mathf.Max(0, snow) * 255f;
         //c.b = 0f;
         //c.b = 255f;
@@ -628,8 +646,8 @@ public class ChunkGenerator : MonoBehaviour
                 bundleName = FeatureAttributes.GetBundleName(feature.name);
                 Vector3 featurePosition = new Vector3(x + xOffset, y, z + zOffset) + randomOffsetPosition;
                 Vector3 featureScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
-                GameObject o = GameObject.Instantiate(feature, featurePosition, Quaternion.identity, current.Trees.transform);
-                o.transform.localScale = featureScale;
+                GameObject o = GameObject.Instantiate(feature, featurePosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), current.Trees.transform);
+                o.transform.localScale = featureScale * UnityEngine.Random.Range(.75f, 1.25f);
 
                 bool breaker = (bundleName == bundleName_last && !featureAttributes.bundle);
                 bundleName_last = bundleName;

@@ -70,7 +70,7 @@ public class SpeciesInfo : ScriptableObject{
             Species.Bear, SpeciesInfo.InstantiateSpeciesInfo(
                 new ItemCollection(
                     new Dictionary<Item, int>{
-                        // todo: drops for bear
+                        {Item.CarcassBear, 1}
                     }
                     
                 ),

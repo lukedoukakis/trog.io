@@ -238,8 +238,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
-  hitbox: {fileID: 0}
-  obstacleHitbox: {fileID: 0}
+  worldCollider: {fileID: 0}
   highFrictionMat: {fileID: 0}
   noFrictionMat: {fileID: 0}
   layerMask_water:
@@ -332,6 +331,7 @@ MonoBehaviour:
   updateTime_hips: 0
   ikProfile: {fileID: 0}
   quadripedal: 0
+  hasFingersAndToes: 0
   runCycle_strideFrequency: 0
   runCycle_lerpTightness: 0
   runCycle_limbVerticalDisplacement: 0
@@ -390,7 +390,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
-  species: 0
+  species: 1
 --- !u!114 &4761202945426959485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -484,6 +484,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: BearIK
+      objectReference: {fileID: 0}
+    - target: {fileID: 1902126483733769833, guid: 541058b98845a0f4cb512dd24e163012,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: 0.00000000102591
+      objectReference: {fileID: 0}
+    - target: {fileID: 1902126483733769833, guid: 541058b98845a0f4cb512dd24e163012,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 0.0000000030267973
+      objectReference: {fileID: 0}
+    - target: {fileID: 7159296744588251058, guid: 541058b98845a0f4cb512dd24e163012,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: 2.2737368e-13
+      objectReference: {fileID: 0}
+    - target: {fileID: 7159296744588251058, guid: 541058b98845a0f4cb512dd24e163012,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: 0.0046038753
+      objectReference: {fileID: 0}
+    - target: {fileID: 7159296744588251058, guid: 541058b98845a0f4cb512dd24e163012,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: -4.5719784e-10
       objectReference: {fileID: 0}
     - target: {fileID: 8188035395828070014, guid: 541058b98845a0f4cb512dd24e163012,
         type: 3}
