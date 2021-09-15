@@ -57,7 +57,7 @@ public class FeatureAttributes
     public static Dictionary<string, FeatureAttributes> FeatureAttributesMap = new Dictionary<string, FeatureAttributes>(){
         {"TreeAcacia", new FeatureAttributes(2f, hgtDry, q3, q3, new Vector2(.1f, .1f), false)},
         {"TreeJungle", new FeatureAttributes(2f, hgtDry, q4, q4, new Vector2(.7f, .7f), false)},
-        {"TreeFir", new FeatureAttributes(2.5f, hgtDry, h1, h2, new Vector2(.1f, .4f), false)},
+        {"TreeFir", new FeatureAttributes(2.5f, hgtDry, h1, h2, new Vector2(.4f, .4f), false)},
         {"TreePalm", new FeatureAttributes(2.5f, hgtDry, q4, h2, new Vector2(.1f, .1f), false)},
         //{"TreeOak", new FeatureAttributes(2f, hgtDry, h1, q1, new Vector2(.1f, .4f), false)},
         {"Grass", new FeatureAttributes(2f, hgtWater, q3, q3, new Vector2(.1f, .1f), false)},

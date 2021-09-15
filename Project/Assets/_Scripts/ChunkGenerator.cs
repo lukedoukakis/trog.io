@@ -620,8 +620,11 @@ public class ChunkGenerator : MonoBehaviour
         float randomDivisorOffset;
         string bundleName;
         string bundleName_last = "";
+        Vector3 randomPositionOffset, featurePosition, featureScale;
+        GameObject o;
 
-        foreach(GameObject feature in Biome.Trees.Concat(Biome.Features)){
+        foreach(GameObject feature in Biome.Features)
+        {
             featureAttributes = FeatureAttributes.GetFeatureAttributes(feature.name);
             placementDensity = FeatureAttributes.GetPlacementDensity(featureAttributes, temp, humid, height);
             //placementDensity = .1f;
@@ -633,10 +636,10 @@ public class ChunkGenerator : MonoBehaviour
                 if ((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0)
                 {
                     bundleName = FeatureAttributes.GetBundleName(feature.name);
-                    Vector3 randomPositionOffset = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
-                    Vector3 featurePosition = new Vector3(x + xOffset, height * ElevationAmplitude, z + zOffset) + randomPositionOffset;
-                    Vector3 featureScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
-                    GameObject o = GameObject.Instantiate(feature, featurePosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), current.Trees.transform);
+                    randomPositionOffset = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
+                    featurePosition = new Vector3(x + xOffset, height * ElevationAmplitude, z + zOffset) + randomPositionOffset;
+                    featureScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
+                    o = GameObject.Instantiate(feature, featurePosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), current.Trees.transform);
                     o.transform.localScale = featureScale * UnityEngine.Random.Range(.75f, 1.25f);
 
                     bool breaker = (bundleName == bundleName_last && !featureAttributes.bundle);
