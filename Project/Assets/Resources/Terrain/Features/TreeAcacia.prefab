@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1591758319320041201}
   - component: {fileID: -8437724355431166028}
   m_Layer: 10
-  m_Name: AcaciaTree
+  m_Name: TreeAcacia
   m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60,7 +60,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
-  species: 1
+  species: 2
 --- !u!136 &1591758319320041201
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -150,7 +150,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 14bd2c04aaa7ca44e914a6ee5dea2688, type: 2}
+  - {fileID: 2100000, guid: 3c3553c187c9f634180083232f09af42, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

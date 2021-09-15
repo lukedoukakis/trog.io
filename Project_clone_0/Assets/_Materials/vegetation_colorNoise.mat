@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: vegetation_colorNoise
-  m_Shader: {fileID: -6465566751694194690, guid: 8acbc90bea4f874409565bc974052f7e,
+  m_Shader: {fileID: -6465566751694194690, guid: b62a38319167f37409790434ffbb1835,
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -29,5 +29,9 @@ Material:
     - Vector1_5BA5719C: 3
     - Vector1_656083AD: 1
     - Vector1_D29BA90B: 10
+    - _ColorNoise: 1
+    - _SnowHeightCap: 4644.54
+    - _SnowHeightStart: 3942.5398
+    - _SnowMinimumSurfaceNormal: 0.8
     m_Colors:
     - Color_962802DE: {r: 1, g: 1, b: 1, a: 1}

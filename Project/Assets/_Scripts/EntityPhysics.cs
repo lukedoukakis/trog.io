@@ -691,7 +691,7 @@ public class EntityPhysics : EntityComponent
                     rb.velocity = vel;
                 }
                 groundTime += Time.fixedDeltaTime;
-                onWalkableGround = groundInfo.normal.y >= ChunkGenerator.grassNormal - .2f;
+                onWalkableGround = groundInfo.normal.y >= ChunkGenerator.GrassNormal - .2f;
             }
             else{
                 if(GROUNDTOUCH){

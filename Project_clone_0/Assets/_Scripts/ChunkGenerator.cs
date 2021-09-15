@@ -25,7 +25,8 @@ public class ChunkGenerator : MonoBehaviour
     public static float SeaLevel = FlatLevel - (meter * .06f); //0.849985f;
     public static float BankLevel = SeaLevel + meter;
     public static float SnowLevel = .8601f;
-    public static float grassNormal = .87f;
+    public static float GrassNormal = .87f;
+    public static float SnowNormal = .8f;
     public static bool LoadingChunks, DeloadingChunks;
     static GameObject Chunk;
     static GameObject Terrain;
@@ -43,6 +44,7 @@ public class ChunkGenerator : MonoBehaviour
     Mesh WaterMesh;
     [SerializeField] Material terrainMaterial;
     [SerializeField] Material grassMaterial;
+    [SerializeField] Material[] SnowMaterials;
 
 
     [SerializeField] PhysicMaterial physicMaterial;
@@ -139,9 +141,13 @@ public class ChunkGenerator : MonoBehaviour
 
         // set grass material parameters
         terrainMaterial.SetFloat("_WaterHeight", SeaLevel * ElevationAmplitude + .5f);
-        terrainMaterial.SetFloat("_SnowHeight", SnowLevel * ElevationAmplitude + .5f);
         grassMaterial.SetFloat("_WaterHeight", SeaLevel * ElevationAmplitude + .5f);
         grassMaterial.SetFloat("_GrassNormal", .8f);
+        foreach(Material mat in SnowMaterials){
+            mat.SetFloat("_SnowMinimumSurfaceNormal", SnowNormal);
+            mat.SetFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel - .13f) * ChunkGenerator.ElevationAmplitude);
+            mat.SetFloat("_SnowHeightCap", ChunkGenerator.SnowLevel * ChunkGenerator.ElevationAmplitude);
+        }
 
         Features = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Features"));
         Creatures = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Creatures"));
@@ -732,7 +738,7 @@ public class ChunkGenerator : MonoBehaviour
                 // features
                 if(z > 0 && x > 0 && TreeMap[x, z]){
                     normalIndex = (z * (ChunkSize + 2)) + x;
-                    if(normals[normalIndex].y >= grassNormal){
+                    if(normals[normalIndex].y >= GrassNormal){
                         StartCoroutine(PlaceFeatures(cd, TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], HeightMap[x, z], x, z, xOffset, zOffset));
                     }
                 }
