@@ -349,7 +349,7 @@ public class ChunkGenerator : MonoBehaviour
                 //humidityValue += (mountainValue / mtnCap) * .5f;
                 //humidityValue = Mathf.Clamp01(humidityValue);
                 //humidityValue = Mathf.InverseLerp(.2f, .8f, humidityValue);
-                humidityValue = .9f;
+                humidityValue = .75f;
                 // -------------------------------------------------------
 
 
