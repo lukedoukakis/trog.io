@@ -20,7 +20,6 @@ public class Biome : MonoBehaviour
         Features = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Features"));
         Creatures = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Creatures"));
 
-        //Debug.Log("initialized");
         initialized = true;
     }
 

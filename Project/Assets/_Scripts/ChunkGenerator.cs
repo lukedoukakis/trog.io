@@ -16,16 +16,14 @@ public class ChunkGenerator : MonoBehaviour
     public static int ChunkRenderDistance = 7;
     public static float Scale = 1200f / 10f;
     public static float ElevationAmplitude = 5400f;
-    public static float MinElevation = -.292893219f;
-    public static float MaxElevation = .224744871f;
-    public static int MountainMapScale = 800 / 10;
-    public static float ElevationMapScale = 2000 * 8;
+    public static float MountainMapScale = 80f;
+    public static float ElevationMapScale = 16000f;
     public static int TemperatureMapScale = 800;
     public static int HumidityMapScale = 800;
+    public static float meter = 1f / ElevationAmplitude;
     public static float FlatLevel = .85f;
-    public static float SeaLevel = 0.849985f;
-    public static float BankLevel = SeaLevel + .0002f;
-    public static float WaterFeatureLevel = .85f;
+    public static float SeaLevel = FlatLevel - (meter * .06f); //0.849985f;
+    public static float BankLevel = SeaLevel + meter;
     public static float SnowLevel = .8601f;
     public static float grassNormal = .87f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -615,33 +613,38 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
-    public static void PlaceFeatures(ChunkData cd, float wetness, float x, float y, float z, float xOffset, float zOffset){
+    public static void PlaceFeatures(ChunkData cd, float temp, float humid, float wetness, float height, float x, float z, float xOffset, float zOffset){
 
-        float randomOffsetDivisor;
-        Vector3 randomOffsetPosition;
         FeatureAttributes featureAttributes;
+        float placementDensity;
+        float randomDivisorOffset;
         string bundleName;
         string bundleName_last = "";
 
         foreach(GameObject feature in Biome.Trees.Concat(Biome.Features)){
-            featureAttributes = FeatureAttributes.GetFeatureAttributes(feature.name, wetness);
-            randomOffsetDivisor = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
-            randomOffsetPosition = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
-            int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - featureAttributes.density) + randomOffsetDivisor);
-            if(divisor < 1){ divisor = 1; }
-            if((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0)
+            featureAttributes = FeatureAttributes.GetFeatureAttributes(feature.name);
+            placementDensity = FeatureAttributes.GetPlacementDensity(featureAttributes, temp, humid, height);
+            if (placementDensity > 0f)
             {
-                bundleName = FeatureAttributes.GetBundleName(feature.name);
-                Vector3 featurePosition = new Vector3(x + xOffset, y, z + zOffset) + randomOffsetPosition;
-                Vector3 featureScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
-                GameObject o = GameObject.Instantiate(feature, featurePosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), current.Trees.transform);
-                o.transform.localScale = featureScale * UnityEngine.Random.Range(.75f, 1.25f);
+                randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
+                int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - placementDensity) + randomDivisorOffset);
+                if (divisor < 1) { divisor = 1; }
+                if ((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0)
+                {
+                    bundleName = FeatureAttributes.GetBundleName(feature.name);
+                    Vector3 randomPositionOffset = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
+                    Vector3 featurePosition = new Vector3(x + xOffset, height * ElevationAmplitude, z + zOffset) + randomPositionOffset;
+                    Vector3 featureScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
+                    GameObject o = GameObject.Instantiate(feature, featurePosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), current.Trees.transform);
+                    o.transform.localScale = featureScale * UnityEngine.Random.Range(.75f, 1.25f);
 
-                bool breaker = (bundleName == bundleName_last && !featureAttributes.bundle);
-                bundleName_last = bundleName;
+                    bool breaker = (bundleName == bundleName_last && !featureAttributes.bundle);
+                    bundleName_last = bundleName;
 
-                if(breaker){ break; }
+                    if (breaker) { break; }
+                }
             }
+    
         }
         
     }
@@ -721,7 +724,7 @@ public class ChunkGenerator : MonoBehaviour
                 if(z > 0 && x > 0 && TreeMap[x, z]){
                     normalIndex = (z * (ChunkSize + 2)) + x;
                     if(normals[normalIndex].y >= grassNormal){
-                        PlaceFeatures(cd, WetnessMap[x, z], x, HeightMap[x, z] * ElevationAmplitude, z, xOffset, zOffset);
+                        PlaceFeatures(cd, TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], HeightMap[x, z], x, z, xOffset, zOffset);
                     }
                 }
                 
