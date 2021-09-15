@@ -7,12 +7,11 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: fur0
-  m_Shader: {fileID: -6465566751694194690, guid: b62a38319167f37409790434ffbb1835,
-    type: 3}
-  m_ShaderKeywords: USE_SC _RTEFFECT_ON
+  m_Name: furBrown
+  m_Shader: {fileID: 4800000, guid: 57b0dd448af507049843cc9662a2f794, type: 3}
+  m_ShaderKeywords: USE_S _RTEFFECT_ON
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 1
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -20,21 +19,13 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - Texture2D_127D54B3:
-        m_Texture: {fileID: 2800000, guid: 16d300134c867234588aeecccb9392b9, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _ColorGradient:
         m_Texture: {fileID: 2800000, guid: 6a2b53bfa0c06394485830fc39664c26, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorNoise:
         m_Texture: {fileID: 2800000, guid: 369f6fef0ebe1f14aa6ed86d8e55cc6e, type: 3}
-        m_Scale: {x: 0.1, y: 0.1}
-        m_Offset: {x: 0, y: 0}
-    - _ColorNoiseTex:
-        m_Texture: {fileID: 2800000, guid: 6a2b53bfa0c06394485830fc39664c26, type: 3}
-        m_Scale: {x: 10, y: 10}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Distortion:
         m_Texture: {fileID: 2800000, guid: 7f25c6183047a8a4bb1552aab341ba92, type: 3}
@@ -45,12 +36,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GroundTex:
-        m_Texture: {fileID: 2800000, guid: 6ce0f98802b142740b0e8916d3a3e127, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1bcdee215fa6f2648b54a14b15851fe0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 7f969087a2b5cf840bdda1c1d1e3a930, type: 3}
-        m_Scale: {x: 0.1, y: 0.1}
+        m_Texture: {fileID: 2800000, guid: 1bcdee215fa6f2648b54a14b15851fe0, type: 3}
+        m_Scale: {x: 10, y: 10}
         m_Offset: {x: 0, y: 0}
     - _NoGrassTex:
         m_Texture: {fileID: 0}
@@ -61,52 +52,42 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_656083AD: 1.1
-    - _ColorNoise: 0
-    - _ColorTiling: 0.005
+    - _ColorTiling: 5e-13
     - _FadeDistanceEnd: 101
     - _FadeDistanceStart: 100
     - _GrassCut: 0
-    - _GrassNormal: -10000
-    - _GrassSaturation: 0.5
-    - _GrassShading: 1
-    - _GrassThinness: 1.1
+    - _GrassNormal: -1e+10
+    - _GrassSaturation: 1
+    - _GrassShading: 0.035
+    - _GrassThinness: 0.6
     - _GrassThinnessIntersection: 0.43
     - _LightIntensity: 0
-    - _MinimumNormal: 0.8
     - _MinimumNumberStacks: 2
     - _NoisePower: 2
     - _NumberOfStacks: 17
-    - _OffsetValue: 0
+    - _OffsetValue: 0.001
     - _ProceduralDistance: 5.5
     - _ProceduralStrength: 1.5
     - _RimMax: 0.62
     - _RimMin: 0.241
     - _RimPower: 4.08
-    - _ShadowFuziness: 1
-    - _SnowDepth: 0.1
-    - _SnowHeightCap: 0
-    - _SnowHeightStart: 0
-    - _SnowMinimumSurfaceNormal: 1.1
     - _TilingN1: 9.36
     - _TilingN2: 0.05
     - _TilingN3: 100
     - _UsePR: 0
     - _UseRT: 0
-    - _UseShadow: 0
-    - _UseShadowCast: 1
+    - _UseShadow: 1
+    - _UseShadowCast: 0
     - _UseWC: 0
-    - _WaterHeight: -1000000
+    - _WaterHeight: -1e+17
     - _WindForce: 0
     - _WindMovement: 0
     - _WorldRotation: 0
     - _WorldScale: 10
     m_Colors:
-    - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
-    - Color_962802DE: {r: 0.735849, g: 0.41243622, b: 0.21867211, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
-    - _OffsetVector: {r: 1, g: 1, b: 1, a: 0}
+    - _OffsetVector: {r: 0, g: -0.25, b: 0.1, a: 1}
     - _ProjectedShadowColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 0.1509434, g: 0.1509434, b: 0.1509434, a: 1}
+    - _RimColor: {r: 0.15094337, g: 0.15094337, b: 0.15094337, a: 1}
     - _SelfShadowColor: {r: 0, g: 0, b: 0, a: 1}

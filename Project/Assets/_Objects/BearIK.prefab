@@ -354,7 +354,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1445871822129392261}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.202, y: -0.055000007, z: 0.10000004}
+  m_LocalPosition: {x: -0.202, y: -0.055000007, z: 0.58}
   m_LocalScale: {x: 0.049999997, y: 0.05, z: 0.05}
   m_Children: []
   m_Father: {fileID: 177270842529022092}
@@ -1950,7 +1950,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8388706574008818021}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.187, y: -0.054999948, z: 0.1}
+  m_LocalPosition: {x: 0.187, y: -0.054999948, z: 0.58}
   m_LocalScale: {x: 0.049999997, y: 0.05, z: 0.05}
   m_Children: []
   m_Father: {fileID: 177270842529022092}
@@ -2304,11 +2304,11 @@ CharacterJoint:
     spring: 0
     damper: 0
   m_Swing1Limit:
-    limit: 40
+    limit: 15.079976
     bounciness: 0
     contactDistance: 0
   m_Swing2Limit:
-    limit: 40
+    limit: 10.809589
     bounciness: 0
     contactDistance: 0
   m_EnableProjection: 0
@@ -2401,7 +2401,7 @@ CharacterJoint:
     bounciness: 0
     contactDistance: 0
   m_Swing2Limit:
-    limit: 22.895514
+    limit: 14.222176
     bounciness: 0
     contactDistance: 0
   m_EnableProjection: 0
@@ -2619,7 +2619,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: a29a830b3bcb31541b79e47923862c21, type: 2}
+      objectReference: {fileID: 2100000, guid: 4e6f75fd8af54c5449e896d11e9deb01, type: 2}
     - target: {fileID: 919132149155446097, guid: 60f5aa5dfae41804eb173d34aeb35e45,
         type: 3}
       propertyPath: m_Name
