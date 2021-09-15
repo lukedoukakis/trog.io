@@ -26,6 +26,7 @@ public class EntityInfo : EntityComponent
     public void Init(){
         id = Random.Range(0, int.MaxValue);
         speciesInfo = SpeciesInfo.GetSpeciesInfo(species);
+        faction = speciesInfo.baseFaction;
         FindAndSetEntityReferences();
     }
 
@@ -34,12 +35,14 @@ public class EntityInfo : EntityComponent
 
 // to hold references to things like base stats, drops etc for all species
 public class SpeciesInfo : ScriptableObject{
+    public Faction baseFaction;
     public ItemCollection baseDrop;
     public Stats baseStats;
     public IkProfile ikProfile;
 
-    public static SpeciesInfo InstantiateSpeciesInfo(ItemCollection baseDrop, Stats baseStats, IkProfile ikProfile){
+    public static SpeciesInfo InstantiateSpeciesInfo(Faction baseFaction, ItemCollection baseDrop, Stats baseStats, IkProfile ikProfile){
         SpeciesInfo speciesInfo = ScriptableObject.CreateInstance<SpeciesInfo>();
+        speciesInfo.baseFaction = baseFaction;
         speciesInfo.baseDrop = baseDrop;
         speciesInfo.baseStats = baseStats;
         speciesInfo.ikProfile = ikProfile;
@@ -54,6 +57,7 @@ public class SpeciesInfo : ScriptableObject{
     static Dictionary<Species, SpeciesInfo> SpeciesInfoDict = new Dictionary<Species, SpeciesInfo>(){
         {
             Species.Human, SpeciesInfo.InstantiateSpeciesInfo(
+                Faction.InstantiateFaction(Species.Human.ToString(), false),
                 new ItemCollection(
                     new Dictionary<Item, int>{
                         // todo: drops for human
@@ -68,6 +72,7 @@ public class SpeciesInfo : ScriptableObject{
 
         {
             Species.Bear, SpeciesInfo.InstantiateSpeciesInfo(
+                Faction.InstantiateFaction(Species.Bear.ToString(), false),
                 new ItemCollection(
                     new Dictionary<Item, int>{
                         {Item.CarcassBear, 1}
@@ -82,6 +87,7 @@ public class SpeciesInfo : ScriptableObject{
 
         {
             Species.Tree, SpeciesInfo.InstantiateSpeciesInfo(
+                Faction.InstantiateFaction(Species.Tree.ToString(), false),
                 new ItemCollection(
                     new Dictionary<Item, int>{
                         // todo: finish drop for tree

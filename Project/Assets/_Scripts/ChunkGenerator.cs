@@ -13,7 +13,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator current;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 7;
+    public static int ChunkRenderDistance = 5;
     public static float Scale = 1200f / 10f;
     public static float ElevationAmplitude = 5400f;
     public static float MountainMapScale = 80f;
@@ -24,7 +24,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float FlatLevel = .85f;
     public static float SeaLevel = FlatLevel - (meter * .06f); //0.849985f;
     public static float BankLevel = SeaLevel + meter;
-    public static float SnowLevel = .8601f;
+    public static float SnowLevel = .861f;
     public static float GrassNormal = .8f;
     public static float SnowNormal = .8f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -145,7 +145,7 @@ public class ChunkGenerator : MonoBehaviour
         grassMaterial.SetFloat("_GrassNormal", GrassNormal);
         foreach(Material mat in SnowMaterials){
             //mat.SetFloat("_SnowMinimumSurfaceNormal", SnowNormal);
-            mat.SetFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel - .2f) * ChunkGenerator.ElevationAmplitude);
+            mat.SetFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel - .13f) * ChunkGenerator.ElevationAmplitude);
             mat.SetFloat("_SnowHeightCap", ChunkGenerator.SnowLevel * ChunkGenerator.ElevationAmplitude);
         }
 
@@ -624,20 +624,20 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
-    public static IEnumerator PlaceFeatures(ChunkData cd, float temp, float humid, float wetness, float height, float x, float z, float xOffset, float zOffset){
+    public static IEnumerator GenerateSpawns(ChunkData cd, float temp, float humid, float wetness, float height, float x, float z, float xOffset, float zOffset){
 
-        FeatureAttributes featureAttributes;
+        SpawnParameters spawnParameters;
         float placementDensity;
         float randomDivisorOffset;
         string bundleName;
         string bundleName_last = "";
-        Vector3 randomPositionOffset, featurePosition, featureScale;
+        Vector3 randomPositionOffset, spawnPosition, spawnScale;
         GameObject o;
 
         foreach(GameObject feature in Features)
         {
-            featureAttributes = FeatureAttributes.GetFeatureAttributes(feature.name);
-            placementDensity = FeatureAttributes.GetPlacementDensity(featureAttributes, temp, humid, height);
+            spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
+            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height);
             //placementDensity = .1f;
             if (placementDensity > 0f)
             {
@@ -646,14 +646,45 @@ public class ChunkGenerator : MonoBehaviour
                 if (divisor < 1) { divisor = 1; }
                 if ((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0)
                 {
-                    bundleName = FeatureAttributes.GetBundleName(feature.name);
+                    bundleName = SpawnParameters.GetBundleName(feature.name);
                     randomPositionOffset = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
-                    featurePosition = new Vector3(x + xOffset, height * ElevationAmplitude, z + zOffset) + randomPositionOffset;
-                    featureScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
-                    o = GameObject.Instantiate(feature, featurePosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent.transform);
-                    o.transform.localScale = featureScale * UnityEngine.Random.Range(.75f, 1.25f);
+                    spawnPosition = new Vector3(x + xOffset, height * ElevationAmplitude, z + zOffset) + randomPositionOffset;
+                    spawnScale = Vector3.one * spawnParameters.scale * ChunkGenerator.current.treeScale;
+                    o = GameObject.Instantiate(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent.transform);
+                    o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
 
-                    bool breaker = (bundleName == bundleName_last && !featureAttributes.bundle);
+                    bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
+                    bundleName_last = bundleName;
+        
+                    if (breaker) { break; }
+                }
+            }
+            yield return null;
+        }
+
+        foreach(GameObject creature in Creatures)
+        {
+            spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
+            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height);
+            //placementDensity = .1f;
+            if (placementDensity > 0f)
+            {
+                //randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
+                randomDivisorOffset = 0;
+                int divisor = (int)(Mathf.Lerp(40f, 800f, 1f - placementDensity) + randomDivisorOffset);
+                if (divisor < 1) { divisor = 1; }
+                if ((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0)
+                {
+                    bundleName = SpawnParameters.GetBundleName(creature.name);
+                    spawnPosition = new Vector3(x + xOffset, height * ElevationAmplitude + 10f, z + zOffset);
+                    spawnScale = Vector3.one * spawnParameters.scale;
+                    o = GameObject.Instantiate(creature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent.transform);
+                    o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+
+                    // // test
+                    // o.transform.position = current.playerPos;
+
+                    bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
                     bundleName_last = bundleName;
         
                     if (breaker) { break; }
@@ -739,7 +770,7 @@ public class ChunkGenerator : MonoBehaviour
                 if(z > 0 && x > 0 && TreeMap[x, z]){
                     normalIndex = (z * (ChunkSize + 2)) + x;
                     if(normals[normalIndex].y >= GrassNormal){
-                        StartCoroutine(PlaceFeatures(cd, TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], HeightMap[x, z], x, z, xOffset, zOffset));
+                        StartCoroutine(GenerateSpawns(cd, TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], HeightMap[x, z], x, z, xOffset, zOffset));
                     }
                 }
                 

@@ -98,8 +98,6 @@ public class EntityPhysics : EntityComponent
     void Start(){
 
         body = Utility.FindDeepChildWithTag(this.transform, "Body");
-        Log(body.name);
-
         worldCollider = body.GetComponent<CapsuleCollider>();
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
@@ -118,7 +116,6 @@ public class EntityPhysics : EntityComponent
         runCycle_limbForwardReachDistance = ikProfile.runCycle_limbForwardReachDistance;
 
         hips = Utility.FindDeepChild(body, ikProfile.name_hips);
-        Log(hips.name);
         head = Utility.FindDeepChild(body, ikProfile.name_head);
         handRight = Utility.FindDeepChild(body, ikProfile.name_handRight);
         handLeft = Utility.FindDeepChild(body, ikProfile.name_handLeft);

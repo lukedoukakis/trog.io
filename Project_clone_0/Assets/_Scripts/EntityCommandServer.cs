@@ -53,7 +53,7 @@ public class EntityCommandServer : EntityComponent
     public void SetNewFaction(GameObject entity){
         //Debug.Log("SETTING FACTION");
         EntityHandle handle = entity.GetComponent<EntityHandle>();
-        Faction faction = Faction.InstantiateFaction("Faction " + (Random.Range(0, 10000f)).ToString(), true);
+        Faction faction = Faction.InstantiateFaction("Faction " + (Random.Range(0, int.MaxValue)).ToString(), true);
         faction.AddMember(handle);
         handle.entityInfo.faction = faction;
 

@@ -60,7 +60,7 @@ public class ChunkData
         Component.Destroy(terrainMesh);
         GameObject.Destroy(chunk);
         GameObject.Destroy(featuresParent);
-        //GameObject.Destroy(creatures);
+        GameObject.Destroy(creaturesParent);
         loaded = false;
 
     }
