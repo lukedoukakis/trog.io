@@ -82,6 +82,7 @@ Material:
     - _Blend: 0
     - _Blur: 0.5
     - _BumpScale: 1
+    - _ColorNoise: 0
     - _Cull: 2
     - _CutOff: 0.5
     - _Cutoff: 0.5
@@ -101,6 +102,10 @@ Material:
     - _ReceiveShadows: 1
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
+    - _SnowDepth: 0.1
+    - _SnowHeightCap: 4644.54
+    - _SnowHeightStart: 3564.5398
+    - _SnowMinimumSurfaceNormal: 0.8
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
@@ -110,6 +115,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
+    - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.4056604, g: 0.2504589, b: 0.13203098, a: 0}
     - Color_EB41B935: {r: 0.8584906, g: 0.7111559, b: 0.5223834, a: 0}
     - _BaseColor: {r: 0.8679245, g: 0.8137069, b: 0.6673193, a: 1}

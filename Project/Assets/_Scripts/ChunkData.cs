@@ -12,7 +12,7 @@ public class ChunkData
 
     public GameObject chunk;
     public GameObject terrain;
-    public GameObject trees;
+    public Transform featuresParent, creaturesParent;
 
     public MeshFilter terrainMeshFilter;
     public MeshRenderer terrainMeshRenderer;
@@ -22,7 +22,6 @@ public class ChunkData
     public float[,] HumidityMap;
     public float[,] ElevationMap;
     public float[,] MountainMap;
-    public int[,] BiomeMap;
     public float[,] FreshWaterMap;
     public float[,] WetnessMap;
     public float[,] HeightMap;
@@ -42,8 +41,10 @@ public class ChunkData
         chunk.transform.SetParent(GameObject.Find("Chunk Generator").transform);
         terrain = chunk.transform.Find("Terrain").gameObject;
         chunk.transform.position = Vector3.zero;
-        trees = new GameObject();
-        trees.transform.SetParent(chunk.transform);
+        featuresParent = new GameObject().transform;
+        creaturesParent = new GameObject().transform;
+        featuresParent.SetParent(chunk.transform);
+        creaturesParent.SetParent(chunk.transform);
 
         terrainMeshRenderer = terrain.GetComponent<MeshRenderer>();
         terrainMeshFilter = terrain.GetComponent<MeshFilter>();
@@ -58,7 +59,8 @@ public class ChunkData
     {
         Component.Destroy(terrainMesh);
         GameObject.Destroy(chunk);
-        GameObject.Destroy(trees);
+        GameObject.Destroy(featuresParent);
+        //GameObject.Destroy(creatures);
         loaded = false;
 
     }

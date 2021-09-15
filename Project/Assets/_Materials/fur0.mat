@@ -62,6 +62,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - Vector1_656083AD: 1.1
+    - _ColorNoise: 0
     - _ColorTiling: 0.005
     - _FadeDistanceEnd: 101
     - _FadeDistanceStart: 100
@@ -83,6 +84,10 @@ Material:
     - _RimMin: 0.241
     - _RimPower: 4.08
     - _ShadowFuziness: 1
+    - _SnowDepth: 0.1
+    - _SnowHeightCap: 0
+    - _SnowHeightStart: 0
+    - _SnowMinimumSurfaceNormal: 1.1
     - _TilingN1: 9.36
     - _TilingN2: 0.05
     - _TilingN3: 100
@@ -97,6 +102,7 @@ Material:
     - _WorldRotation: 0
     - _WorldScale: 10
     m_Colors:
+    - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.735849, g: 0.41243622, b: 0.21867211, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}

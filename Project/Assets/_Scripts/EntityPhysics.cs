@@ -691,7 +691,7 @@ public class EntityPhysics : EntityComponent
                     rb.velocity = vel;
                 }
                 groundTime += Time.fixedDeltaTime;
-                onWalkableGround = groundInfo.normal.y >= ChunkGenerator.grassNormal - .2f;
+                onWalkableGround = groundInfo.normal.y >= ChunkGenerator.GrassNormal - .2f;
             }
             else{
                 if(GROUNDTOUCH){
@@ -737,7 +737,7 @@ public class EntityPhysics : EntityComponent
         if(w){    
             if(!IN_WATER){
                 IN_WATER = true;
-                animator.SetTrigger("Water");
+                //animator.SetTrigger("Water");
                 entityAnimation.SetBodyRotationMode(EntityAnimation.BodyRotationMode.Target, null);
             }
             ApplyFlotationForce(waterY - y);
@@ -746,7 +746,7 @@ public class EntityPhysics : EntityComponent
             if(IN_WATER){
                 IN_WATER = false;
                 offWaterTime = 0f;
-                animator.SetTrigger("Land");
+                //animator.SetTrigger("Land");
                 entityAnimation.SetBodyRotationMode(EntityAnimation.BodyRotationMode.Target, entityAnimation.bodyRotationTarget);
             }
         }

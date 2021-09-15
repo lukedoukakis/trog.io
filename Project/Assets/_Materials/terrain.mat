@@ -44,6 +44,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture2DAsset_91C3A819_Out_0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - Vector1_116F49B0: 0
     - Vector1_124AF345: 0
@@ -54,8 +58,13 @@ Material:
     - Vector1_B1CE0AD9: 100
     - Vector1_C1CE9129: 0.6
     - Vector1_D5D2B22E: 100
+    - _SnowCapHeight: 0
     - _SnowHeight: 4645.04
-    - _WaterHeight: 4590.419
+    - _SnowHeightCap: 4644.54
+    - _SnowHeightStart: 3564.5398
+    - _SnowMinimumSurfaceNormal: 0.8
+    - _SnowStartHeight: 0
+    - _WaterHeight: 4590.4404
     m_Colors:
     - Color_1DD039A2: {r: 0.99056596, g: 0.9086226, b: 0.6588199, a: 0}
     - Color_20D74E1E: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
