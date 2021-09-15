@@ -25,7 +25,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float SeaLevel = FlatLevel - (meter * .06f); //0.849985f;
     public static float BankLevel = SeaLevel + meter;
     public static float SnowLevel = .8601f;
-    public static float GrassNormal = .87f;
+    public static float GrassNormal = .8f;
     public static float SnowNormal = .8f;
     public static bool LoadingChunks, DeloadingChunks;
     static GameObject Chunk;
@@ -142,10 +142,10 @@ public class ChunkGenerator : MonoBehaviour
         // set grass material parameters
         terrainMaterial.SetFloat("_WaterHeight", SeaLevel * ElevationAmplitude + .5f);
         grassMaterial.SetFloat("_WaterHeight", SeaLevel * ElevationAmplitude + .5f);
-        grassMaterial.SetFloat("_GrassNormal", .8f);
+        grassMaterial.SetFloat("_GrassNormal", GrassNormal);
         foreach(Material mat in SnowMaterials){
-            mat.SetFloat("_SnowMinimumSurfaceNormal", SnowNormal);
-            mat.SetFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel - .13f) * ChunkGenerator.ElevationAmplitude);
+            //mat.SetFloat("_SnowMinimumSurfaceNormal", SnowNormal);
+            mat.SetFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel - .2f) * ChunkGenerator.ElevationAmplitude);
             mat.SetFloat("_SnowHeightCap", ChunkGenerator.SnowLevel * ChunkGenerator.ElevationAmplitude);
         }
 
