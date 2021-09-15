@@ -82,7 +82,10 @@ public class ChunkGenerator : MonoBehaviour
 
 
     // feature
-    GameObject Trees;
+    Transform FeaturesParent;
+    Transform CreaturesParent;
+    public static List<GameObject> Features;
+    public static List<GameObject> Creatures;
     [Range(0f, 1f)] public float treeDensity;
     public float treeScale;
 
@@ -93,13 +96,12 @@ public class ChunkGenerator : MonoBehaviour
     {
         current = this;
         Init();
-        Biome.Init();
 
     }
 
     private void Update()
     {
-        if (Biome.initialized && playerT != null)
+        if (playerT != null)
         {
             if(!LoadingChunks && !DeloadingChunks){
                 LoadingChunks = true;
@@ -140,6 +142,9 @@ public class ChunkGenerator : MonoBehaviour
         terrainMaterial.SetFloat("_SnowHeight", SnowLevel * ElevationAmplitude + .5f);
         grassMaterial.SetFloat("_WaterHeight", SeaLevel * ElevationAmplitude + .5f);
         grassMaterial.SetFloat("_GrassNormal", .8f);
+
+        Features = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Features"));
+        Creatures = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Creatures"));
     
     }
 
@@ -221,7 +226,8 @@ public class ChunkGenerator : MonoBehaviour
         Chunk = cd.chunk;
         Terrain = cd.terrain;
         TerrainMesh = cd.terrainMesh;
-        Trees = cd.trees;
+        FeaturesParent = cd.featuresParent;
+        CreaturesParent = cd.creaturesParent;
         xIndex = (int)(cd.coord.x);
         zIndex = (int)(cd.coord.y);
         xOffset = xIndex * ChunkSize;
@@ -596,8 +602,7 @@ public class ChunkGenerator : MonoBehaviour
     {
 
         Color c = new Color();
-        float snowHeight = Biome.GetSnowHeight(SnowLevel, temperature);
-        float snow = Mathf.InverseLerp(snowHeight - .13f, snowHeight, height);
+        float snow = Mathf.InverseLerp(SnowLevel - .13f, SnowLevel, height);
         c.b = Mathf.Max(0, snow) * 255f;
         //c.b = 0f;
         //c.b = 255f;
@@ -613,7 +618,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
-    public static void PlaceFeatures(ChunkData cd, float temp, float humid, float wetness, float height, float x, float z, float xOffset, float zOffset){
+    public static IEnumerator PlaceFeatures(ChunkData cd, float temp, float humid, float wetness, float height, float x, float z, float xOffset, float zOffset){
 
         FeatureAttributes featureAttributes;
         float placementDensity;
@@ -623,7 +628,7 @@ public class ChunkGenerator : MonoBehaviour
         Vector3 randomPositionOffset, featurePosition, featureScale;
         GameObject o;
 
-        foreach(GameObject feature in Biome.Features)
+        foreach(GameObject feature in Features)
         {
             featureAttributes = FeatureAttributes.GetFeatureAttributes(feature.name);
             placementDensity = FeatureAttributes.GetPlacementDensity(featureAttributes, temp, humid, height);
@@ -639,16 +644,16 @@ public class ChunkGenerator : MonoBehaviour
                     randomPositionOffset = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
                     featurePosition = new Vector3(x + xOffset, height * ElevationAmplitude, z + zOffset) + randomPositionOffset;
                     featureScale = Vector3.one * featureAttributes.scale * ChunkGenerator.current.treeScale;
-                    o = GameObject.Instantiate(feature, featurePosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), current.Trees.transform);
+                    o = GameObject.Instantiate(feature, featurePosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent.transform);
                     o.transform.localScale = featureScale * UnityEngine.Random.Range(.75f, 1.25f);
 
                     bool breaker = (bundleName == bundleName_last && !featureAttributes.bundle);
                     bundleName_last = bundleName;
-
+        
                     if (breaker) { break; }
                 }
             }
-    
+            yield return null;
         }
         
     }
@@ -728,7 +733,7 @@ public class ChunkGenerator : MonoBehaviour
                 if(z > 0 && x > 0 && TreeMap[x, z]){
                     normalIndex = (z * (ChunkSize + 2)) + x;
                     if(normals[normalIndex].y >= grassNormal){
-                        PlaceFeatures(cd, TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], HeightMap[x, z], x, z, xOffset, zOffset);
+                        StartCoroutine(PlaceFeatures(cd, TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], HeightMap[x, z], x, z, xOffset, zOffset));
                     }
                 }
                 
