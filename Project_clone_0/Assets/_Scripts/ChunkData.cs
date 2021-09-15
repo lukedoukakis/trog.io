@@ -22,7 +22,6 @@ public class ChunkData
     public float[,] HumidityMap;
     public float[,] ElevationMap;
     public float[,] MountainMap;
-    public int[,] BiomeMap;
     public float[,] FreshWaterMap;
     public float[,] WetnessMap;
     public float[,] HeightMap;

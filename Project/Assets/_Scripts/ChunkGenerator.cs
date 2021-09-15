@@ -71,7 +71,6 @@ public class ChunkGenerator : MonoBehaviour
     float[,] HumidityMap;
     float[,] ElevationMap;
     float[,] MountainMap;
-    int[,] BiomeMap;
     float[,] FreshWaterMap;
     float[,] WetnessMap;
     float[,] HeightMap;
@@ -236,7 +235,6 @@ public class ChunkGenerator : MonoBehaviour
         cd.HumidityMap = HumidityMap;
         cd.ElevationMap = ElevationMap;
         cd.MountainMap = MountainMap;
-        cd.BiomeMap = BiomeMap;
         cd.FreshWaterMap = FreshWaterMap;
         cd.WetnessMap = WetnessMap;
         cd.HeightMap = HeightMap;
@@ -273,14 +271,12 @@ public class ChunkGenerator : MonoBehaviour
         HumidityMap = new float[ChunkSize + 2, ChunkSize + 2];
         ElevationMap = new float[ChunkSize + 2, ChunkSize + 2];
         MountainMap = new float[ChunkSize + 2, ChunkSize + 2];
-        BiomeMap = new int[ChunkSize + 2, ChunkSize + 2];
         FreshWaterMap = new float[ChunkSize + 2, ChunkSize + 2];
         WetnessMap = new float[ChunkSize + 2, ChunkSize + 2];
         HeightMap = new float[ChunkSize + 2, ChunkSize + 2];
         TreeMap = new bool[ChunkSize + 2, ChunkSize + 2];
 
         float temperatureValue, humidityValue, elevationValue, mountainValue, freshWaterValue, wetnessValue, heightValue, heightValue_water;
-        int biomeValue;
         bool treeValue;
         float mtnCap;
         float rough;
@@ -552,13 +548,6 @@ public class ChunkGenerator : MonoBehaviour
                 else { treeValue = false; }
 
 
-        
-
-
-                // -------------------------------------------------------
-
-                // BiomeMap
-                biomeValue = Biome.GetBiome(temperatureValue, humidityValue, heightValue);
 
 
                 // -------------------------------------------------------
@@ -567,7 +556,6 @@ public class ChunkGenerator : MonoBehaviour
                 HumidityMap[x, z] = humidityValue;
                 MountainMap[x, z] = mountainValue / mtnCap;
                 ElevationMap[x, z] = elevationValue;
-                BiomeMap[x, z] = biomeValue;
                 FreshWaterMap[x, z] = freshWaterValue;
                 WetnessMap[x, z] = wetnessValue;
                 HeightMap[x, z] = heightValue;
@@ -606,7 +594,7 @@ public class ChunkGenerator : MonoBehaviour
 
     }
 
-    Color SetVertexColor(int x, int z, int biome, float height, float mountain, float temperature, float humidity, float wetness, float fw, float rockiness)
+    Color SetVertexColor(int x, int z, float height, float mountain, float temperature, float humidity, float wetness, float fw, float rockiness)
     {
 
         Color c = new Color();
@@ -627,7 +615,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
-    public static void PlaceFeatures(ChunkData cd, int biome, float wetness, float x, float y, float z, float xOffset, float zOffset){
+    public static void PlaceFeatures(ChunkData cd, float wetness, float x, float y, float z, float xOffset, float zOffset){
 
         float randomOffsetDivisor;
         Vector3 randomOffsetPosition;
@@ -635,7 +623,7 @@ public class ChunkGenerator : MonoBehaviour
         string bundleName;
         string bundleName_last = "";
 
-        foreach(GameObject feature in Biome.TreePool[biome].Concat(Biome.FeaturePool[biome])){
+        foreach(GameObject feature in Biome.Trees.Concat(Biome.Features)){
             featureAttributes = FeatureAttributes.GetFeatureAttributes(feature.name, wetness);
             randomOffsetDivisor = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
             randomOffsetPosition = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
@@ -686,7 +674,7 @@ public class ChunkGenerator : MonoBehaviour
                 //TerrainVertices[i] = new Vector3(x + xOffset + skewHoriz, height, z + zOffset + skewHoriz);
                 TerrainVertices[i] = new Vector3(x + xOffset, height, z + zOffset);
                 // TerrainVertices[i] = new Vector3(x + xOffset, HeightMap[x, z] * ElevationAmplitude, z + zOffset);
-                TerrainColors[i] = SetVertexColor(x + xOffset, z + zOffset, BiomeMap[x, z], HeightMap[x, z], MountainMap[x, z], TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], FreshWaterMap[x, z], rockiness);
+                TerrainColors[i] = SetVertexColor(x + xOffset, z + zOffset, HeightMap[x, z], MountainMap[x, z], TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], FreshWaterMap[x, z], rockiness);
                 i++;
             }
         }
@@ -733,7 +721,7 @@ public class ChunkGenerator : MonoBehaviour
                 if(z > 0 && x > 0 && TreeMap[x, z]){
                     normalIndex = (z * (ChunkSize + 2)) + x;
                     if(normals[normalIndex].y >= grassNormal){
-                        PlaceFeatures(cd, BiomeMap[x, z], WetnessMap[x, z], x, HeightMap[x, z] * ElevationAmplitude, z, xOffset, zOffset);
+                        PlaceFeatures(cd, WetnessMap[x, z], x, HeightMap[x, z] * ElevationAmplitude, z, xOffset, zOffset);
                     }
                 }
                 
