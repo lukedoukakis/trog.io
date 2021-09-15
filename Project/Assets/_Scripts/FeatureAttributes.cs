@@ -34,6 +34,7 @@ public class FeatureAttributes
     {
 
         string bundleName = GetBundleName(name);
+        //Debug.Log(name);
         FeatureAttributes featureAttributes = FeatureAttributesMap[bundleName];
         return featureAttributes;
     }
@@ -54,11 +55,11 @@ public class FeatureAttributes
     static Vector2 hgtBank = new Vector2(ChunkGenerator.SeaLevel, ChunkGenerator.BankLevel);
     static Vector2 hgtDry = new Vector2(ChunkGenerator.BankLevel, 1f);
     public static Dictionary<string, FeatureAttributes> FeatureAttributesMap = new Dictionary<string, FeatureAttributes>(){
-        {"AcaciaTree", new FeatureAttributes(2f, hgtDry, q3, q3, new Vector2(.1f, .1f), false)},
-        {"JungleTree", new FeatureAttributes(2f, hgtDry, q4, q4, new Vector2(.7f, .7f), false)},
-        {"FirTree", new FeatureAttributes(2.5f, hgtDry, h1, h2, new Vector2(.1f, .4f), false)},
-        {"PalmTree", new FeatureAttributes(2.5f, hgtDry, q4, h2, new Vector2(.1f, .1f), false)},
-        //{"OakTree", new FeatureAttributes(2f, hgtDry, h1, q1, new Vector2(.1f, .4f), false)},
+        {"TreeAcacia", new FeatureAttributes(2f, hgtDry, q3, q3, new Vector2(.1f, .1f), false)},
+        {"TreeJungle", new FeatureAttributes(2f, hgtDry, q4, q4, new Vector2(.7f, .7f), false)},
+        {"TreeFir", new FeatureAttributes(2.5f, hgtDry, h1, h2, new Vector2(.4f, .4f), false)},
+        {"TreePalm", new FeatureAttributes(2.5f, hgtDry, q4, h2, new Vector2(.1f, .1f), false)},
+        //{"TreeOak", new FeatureAttributes(2f, hgtDry, h1, q1, new Vector2(.1f, .4f), false)},
         {"Grass", new FeatureAttributes(2f, hgtWater, q3, q3, new Vector2(.1f, .1f), false)},
         {"Plant", new FeatureAttributes(1f, hgtDry, h2, h2, new Vector2(.1f, .8f), false)},
         {"Reed", new FeatureAttributes(1f, hgtWater, all, all, new Vector2(.42f, .42f), false)},

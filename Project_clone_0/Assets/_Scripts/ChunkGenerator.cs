@@ -624,6 +624,7 @@ public class ChunkGenerator : MonoBehaviour
         foreach(GameObject feature in Biome.Trees.Concat(Biome.Features)){
             featureAttributes = FeatureAttributes.GetFeatureAttributes(feature.name);
             placementDensity = FeatureAttributes.GetPlacementDensity(featureAttributes, temp, humid, height);
+            //placementDensity = .1f;
             if (placementDensity > 0f)
             {
                 randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
