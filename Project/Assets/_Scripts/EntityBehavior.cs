@@ -498,17 +498,17 @@ public class EntityBehavior : EntityComponent
 
         if(isLocalPlayer){
             if(Input.GetKeyUp(KeyCode.K)){
-                MainCommand.current.SendCommand("Collect Spear");
+                PlayerCommand.current.SendCommand("Collect Spear");
             }
             if(Input.GetKeyUp(KeyCode.L)){
-                MainCommand.current.SendCommand("Collect Stone");
+                PlayerCommand.current.SendCommand("Collect Stone");
             }
 
         }
 
         else{
              if(Input.GetKeyUp(KeyCode.Q)){
-                MainCommand.current.SendCommand("Attack TribeMember");
+                PlayerCommand.current.SendCommand("Attack TribeMember");
             }
         }
 

@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainCommand : MonoBehaviour
+public class PlayerCommand : MonoBehaviour
 {
 
 
-    public static MainCommand current;
-
-
+    public static PlayerCommand current;
     public string command;
 
 
@@ -17,13 +15,26 @@ public class MainCommand : MonoBehaviour
     }
 
     public void SendCommand(string c){
-        //Debug.Log("Sending command to selected");
-        EntityBehavior behavior;
-        foreach(EntityHandle handle in GlobalSelectionController.current.SelectedHandles.ToArray()){
-            behavior = handle.entityBehavior;
-            behavior.InsertActionImmediate(Action.GenerateAction(c, behavior.entityHandle), true);
-        }
-        //Debug.Log("Commands sent!");
+
+
+        // NEW PARTY CODE
+        GameManager.current.localPlayerHandle.entityInfo.faction.SendPartyCommand(c);
+
+
+
+
+        // OLD CODE
+
+        // //Debug.Log("Sending command to selected");
+        // EntityBehavior behavior;
+        // foreach(EntityHandle handle in GlobalSelectionController.current.SelectedHandles.ToArray()){
+        //     behavior = handle.entityBehavior;
+        //     behavior.InsertActionImmediate(Action.GenerateAction(c, behavior.entityHandle), true);
+        // }
+        // //Debug.Log("Commands sent!");
+
+
+
     }
 
 

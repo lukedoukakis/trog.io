@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager current;
     public int gameId;
     public GameObject localPlayer;
+    public EntityHandle localPlayerHandle;
 
 
 
@@ -21,6 +22,11 @@ public class GameManager : MonoBehaviour
     void Awake(){
         current = this;
 
+    }
+
+    public void SetLocalPlayer(GameObject o){
+        localPlayer = o;
+        localPlayerHandle = o.GetComponent<EntityHandle>();
     }
 
 

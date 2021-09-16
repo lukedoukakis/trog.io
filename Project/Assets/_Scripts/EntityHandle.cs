@@ -26,7 +26,7 @@ public class EntityHandle : EntityComponent
     public void InitAsLocalPlayer(bool fromMemory){
 
         // set global variables
-        GameManager.current.localPlayer = this.gameObject;
+        GameManager.current.SetLocalPlayer(this.gameObject);
         Testing.instance.playerHandle = this.gameObject.GetComponent<EntityHandle>();
         ChunkGenerator.current.playerT = transform;
         CameraController.current.enabled = true;
