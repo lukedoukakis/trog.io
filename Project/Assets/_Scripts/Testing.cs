@@ -28,25 +28,39 @@ public class Testing : MonoBehaviour
     }
 
 
-    void Update(){
+    void Update()
+    {
 
 
-        if(playerHandle != null){
-            if(Input.GetKeyUp(KeyCode.C)){
+        if (playerHandle != null)
+        {
+            if (Input.GetKeyUp(KeyCode.C))
+            {
                 Camp.TryPlaceCamp(playerHandle.entityInfo.faction, GameManager.current.localPlayer.transform.position);
+            }
+            if (Input.GetKeyUp(KeyCode.R))
+            {
+                transform.position = new Vector3(Random.Range(-50000f, 50000f), 4500f, Random.Range(-50000f, 50000f));
+            }
+            if (Input.GetKeyUp(KeyCode.LeftControl))
+            {
+                GameObject.Find("Torch").transform.position = playerHandle.transform.position + Vector3.up * 3f;
+            }
+            if (Input.GetKeyUp(KeyCode.K))
+            {
+                PlayerCommand.current.SendCommand("Collect Spear");
+            }
+            if (Input.GetKeyUp(KeyCode.L))
+            {
+                PlayerCommand.current.SendCommand("Collect Stone");
+            }
+            if (Input.GetKeyUp(KeyCode.Q))
+            {
+                PlayerCommand.current.SendCommand("Attack TribeMember");
             }
         }
 
 
-        
 
-        // if(Input.GetKeyUp(KeyCode.V)){
-        //     GameObject o = new GameObject();
-        //     playerHandle.entityItems.EquipClothing("ClothingTest", o);
-        // }
-
-        // if(Input.GetKeyUp(KeyCode.B)){
-        //     playerHandle.entityItems.UnequipCurrentClothing();
-        // }
     }
 }

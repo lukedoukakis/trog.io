@@ -4,14 +4,14 @@ using UnityEngine;
 
 
 public enum Species{ Human, Bear, Tree }
-public enum FoodChainRole{ Predator, LargePrey, SmallPrey }
+public enum FoodChainRole{ None, Predator, LargePrey, SmallPrey }
 
 public class EntityInfo : EntityComponent
 {
 
     public int id;
-    public Species species;
     public string nickname;
+    public Species species;
     public Faction faction;
     public SpeciesInfo speciesInfo;
 

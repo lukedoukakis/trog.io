@@ -495,23 +495,6 @@ public class EntityBehavior : EntityComponent
 
         entityPhysics.moveDir = move;
 
-
-        if(isLocalPlayer){
-            if(Input.GetKeyUp(KeyCode.K)){
-                PlayerCommand.current.SendCommand("Collect Spear");
-            }
-            if(Input.GetKeyUp(KeyCode.L)){
-                PlayerCommand.current.SendCommand("Collect Stone");
-            }
-
-        }
-
-        else{
-             if(Input.GetKeyUp(KeyCode.Q)){
-                PlayerCommand.current.SendCommand("Attack TribeMember");
-            }
-        }
-
         
 
 
