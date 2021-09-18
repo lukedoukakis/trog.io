@@ -4,9 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public enum ActionPriority{ Back, Front, FrontImmediate }
+public enum AttackType{ Weapon, Bite, Swipe, HeadButt, Stomp }
+
 public class EntityBehavior : EntityComponent
 {
 
+    public BehaviorProfile behaviorProfile;
     public Transform home;
     public Vector3 move;
     public bool urgent;
@@ -37,9 +41,6 @@ public class EntityBehavior : EntityComponent
 
     public Action activeAction;
     public List<Action> actions;
-    public enum Priority{
-        Back, Front, FrontImmediate
-    }
 
 
     public Dictionary<string, Action> actionLayers;
@@ -67,6 +68,7 @@ public class EntityBehavior : EntityComponent
 
     void Start(){
         timestep_creatureSense = 0f;
+        behaviorProfile = entityInfo.speciesInfo.behaviorProfile;
     }
 
 
@@ -137,10 +139,10 @@ public class EntityBehavior : EntityComponent
                 Pickup(a);
                 break;
             case ActionType.Attack :
-                Attack(a);
+                Chase(a);
                 break;
             case ActionType.Swing :
-                Swing(a);
+                Attack(a);
                 break;
             case ActionType.AttackRecover :
                 AttackRecover(a);
@@ -290,7 +292,7 @@ public class EntityBehavior : EntityComponent
 
     }
 
-    public void Attack(Action a){
+    public void Chase(Action a){
         GameObject target = a.obj;
         Action goToTarget = Action.GenerateAction(ActionType.GoTo, target, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, true);
         Action swingAtTarget = Action.GenerateAction(ActionType.Swing, target, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, false);
@@ -299,13 +301,14 @@ public class EntityBehavior : EntityComponent
         NextAction();
     }
 
-    void Swing(Action a){
+    void Attack(Action a){
         
         TerminateActionLayer("Hands");
         BeginActionLayer("Hands", a, _Swing());
 
         IEnumerator _Swing(){
-            entityPhysics.Attack();
+            AttackType attackType = behaviorProfile.attackTypes[UnityEngine.Random.Range(0, behaviorProfile.attackTypes.Count)];
+            entityPhysics.Attack(attackType);
             Action attackRecover = Action.GenerateAction(ActionType.AttackRecover, a.obj, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, false);
             InsertAction(attackRecover);
             yield return null;
@@ -321,19 +324,18 @@ public class EntityBehavior : EntityComponent
         IEnumerator _AttackRecover(){
 
             GameObject target = a.obj;
-            EntityStatus targetStatus = target.GetComponent<EntityStatus>();
-            if(true){ // TODO: if target is alive
-                
-                
+
+            if(target != null){
+
+                // if target is alive (hasn't been deleted)
+
                 Action followTarget = Action.GenerateAction(ActionType.Follow, a.obj, -1, null, null, -1, distanceThreshold_combat, EntityAnimation.BodyRotationMode.Target, true);
                 Action repeatAttack = Action.GenerateAction(ActionType.Attack, a.obj, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, false);
-                
                 InsertAction(followTarget);
                 NextAction();
                 yield return new WaitForSecondsRealtime(.3f);
                 InsertAction(repeatAttack);
                 NextAction();
-
 
             }
         }

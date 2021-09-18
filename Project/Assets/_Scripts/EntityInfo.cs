@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 
 public enum Species{ Any, Human, Bear, Tree }
-public enum FoodChainRole{ None, Predator, LargePrey, SmallPrey }
+public enum BehaviorType{ None, Aggressive, Timid, Steadfast }
 
 public class EntityInfo : EntityComponent
 {
@@ -25,7 +27,7 @@ public class EntityInfo : EntityComponent
     }
 
     public void Init(){
-        id = Random.Range(0, int.MaxValue);
+        id = UnityEngine.Random.Range(0, int.MaxValue);
         speciesInfo = SpeciesInfo.GetSpeciesInfo(species);
         faction = speciesInfo.baseFaction;
         FindAndSetEntityReferences();
@@ -70,7 +72,7 @@ public class SpeciesInfo : ScriptableObject{
                 ),
                 Stats.BASE_HUMAN,
                 IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", false, true, 3f, 5f, 1f, .58f),
-                BehaviorProfile.InstantiateBehaviorProfile(FoodChainRole.Predator, false)            
+                BehaviorProfile.InstantiateBehaviorProfile(BehaviorType.Aggressive, new List<AttackType>(){AttackType.Weapon}, false)            
             )
 
         },
@@ -86,7 +88,7 @@ public class SpeciesInfo : ScriptableObject{
                 ),
                 Stats.BASE_BEAR,
                 IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end", "leg_lower_left_end", "", "", "arm_lower_right_end", "arm_lower_left_end", "", "", true, false, 3f, 10f, 2.25f, .58f),
-                BehaviorProfile.InstantiateBehaviorProfile(FoodChainRole.Predator, false)
+                BehaviorProfile.InstantiateBehaviorProfile(BehaviorType.Aggressive,  new List<AttackType>(){AttackType.Bite, AttackType.Swipe}, false)
             )
 
         },
@@ -154,15 +156,17 @@ public class IkProfile : ScriptableObject
 public class BehaviorProfile : ScriptableObject
 {
 
-    public FoodChainRole foodChainRole;
+    public BehaviorType behaviorType;
+    public List<AttackType> attackTypes;
     public bool domesticatable;
 
 
 
-    public static BehaviorProfile InstantiateBehaviorProfile(FoodChainRole foodChainRole, bool domesticatable)
+    public static BehaviorProfile InstantiateBehaviorProfile(BehaviorType behaviorType, List<AttackType> attackTypes, bool domesticatable)
     {
         BehaviorProfile bp = ScriptableObject.CreateInstance<BehaviorProfile>();
-        bp.foodChainRole = foodChainRole;
+        bp.behaviorType = behaviorType;
+        bp.attackTypes = attackTypes;
         bp.domesticatable = domesticatable;
 
         return bp;

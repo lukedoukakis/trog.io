@@ -554,6 +554,9 @@ public class EntityPhysics : EntityComponent
         head.rotation = Quaternion.LookRotation(position, Vector3.up);
     }
 
+
+    // -------------
+
     // attacking
 
     public void LaunchProjectile(GameObject projectilePrefab){
@@ -598,7 +601,28 @@ public class EntityPhysics : EntityComponent
     }
 
 
-    public void Attack(){
+    public void Attack(AttackType attackType){
+
+        switch (attackType) {
+            case (AttackType.Weapon) :
+                AttackWeapon();
+                break;
+            case (AttackType.Bite) :
+                AttackBite();
+                break;
+            case (AttackType.Swipe) :
+                AttackSwipe();
+                break;
+            case (AttackType.HeadButt) :
+                AttackHeadButt();
+                break;
+            case (AttackType.Stomp) :
+                AttackStomp();
+                break;
+        }
+    }
+
+    void AttackWeapon(){
 
         Animator a = entityItems.itemOrientationAnimator;
 
@@ -635,8 +659,6 @@ public class EntityPhysics : EntityComponent
         a.SetTrigger(triggerName);
         
     }
-
-
     void BeginWeaponChargeTime(){
         weaponCharging = true;
         weaponChargeAmount = .001f;
@@ -658,17 +680,30 @@ public class EntityPhysics : EntityComponent
             weaponHit = false;
         }
     }
-
     public void OnWeaponHit(Collider collider){
         GameObject hitObject = collider.gameObject;
         //Log("HIT!!!! " + collider.gameObject.name);
         collider.gameObject.GetComponentInParent<EntityHitDetection>().OnHit(this.entityHandle);
-
-        // todo: weapon fixed at hit point
-        
+        // todo: weapon fixed at hit point   
     }
     public void OnWeaponHitRemove(){ 
         // todo: weapon no longer at fixed point
+    }
+
+    void AttackBite(){
+        // todo: bite attack
+    }   
+
+    void AttackSwipe(){
+        // todo: swipe attack
+    }
+
+    void AttackHeadButt(){
+        // todo: head butt attack
+    }
+
+    void AttackStomp(){
+        // todo: stomp attack
     }
 
 
