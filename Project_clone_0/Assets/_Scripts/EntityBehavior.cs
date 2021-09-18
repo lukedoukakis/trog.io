@@ -17,11 +17,14 @@ public class EntityBehavior : EntityComponent
     public static float distanceThreshold_point = .1f;
     public static float distanceThreshold_spot = 2f;
     public static float distanceThreshold_combat = 15f;
+    public static float distanceThreshhold_runFrom = 100f;
 
     Vector3 randomOffset;
 
 
     // sensing and movement parameters
+    public float timestep_creatureSense;
+    public static float senseSurroundingsTimeStep_creature = 1f;
     public static float senseDistance_obstacle = 3f;
     public static float senseDistance_immediate = 1f;
     public static float senseDistance_search = 150f;
@@ -63,7 +66,7 @@ public class EntityBehavior : EntityComponent
     }
 
     void Start(){
-
+        timestep_creatureSense = 0f;
     }
 
 
@@ -115,34 +118,37 @@ public class EntityBehavior : EntityComponent
         if(a.obj == null){ t = null; }else{ t = a.obj.transform; }
         entityAnimation.SetBodyRotationMode(a.bodyRotationMode, t);
         switch(a.type){
-            case (int)Action.ActionTypes.Idle :
+            case ActionType.Idle :
                 Idle(a);
                 break;
-            case (int)Action.ActionTypes.GoTo :
+            case ActionType.GoTo :
                 GoTo(a);
                 break;
-            case (int)Action.ActionTypes.Follow :
+            case ActionType.Follow :
                 Follow(a);
                 break;
-            case (int)Action.ActionTypes.Collect :
+            case ActionType.RunFrom :
+                RunFrom(a);
+                break;
+            case ActionType.Collect :
                 Collect(a);
                 break;
-            case (int)Action.ActionTypes.Pickup :
+            case ActionType.Pickup :
                 Pickup(a);
                 break;
-            case (int)Action.ActionTypes.Attack :
+            case ActionType.Attack :
                 Attack(a);
                 break;
-            case (int)Action.ActionTypes.Swing :
+            case ActionType.Swing :
                 Swing(a);
                 break;
-            case (int)Action.ActionTypes.AttackRecover :
+            case ActionType.AttackRecover :
                 AttackRecover(a);
                 break;
-            case (int)Action.ActionTypes.Build :
+            case ActionType.Build :
                 Build(a);
                 break;
-            case (int)Action.ActionTypes.Hunt :
+            case ActionType.Hunt :
                 Hunt(a);
                 break;
             default:
@@ -182,7 +188,7 @@ public class EntityBehavior : EntityComponent
             while (true)
             {
                 if (!IsAtPosition(targetT.position, a.distanceThreshold)){
-                    move = GetNavigationDirection(targetT);
+                    move = GetNavigationDirection(targetT, false);
                     entityPhysics.moveDir = move;
                 }
                 else
@@ -197,36 +203,43 @@ public class EntityBehavior : EntityComponent
     public void Follow(Action a){
 
         TerminateActionLayer("Movement");
-        BeginActionLayer("Movement", a, _Follow());
+        BeginActionLayer("Movement", a, _Follow(a, false));
+    }
 
-        IEnumerator _Follow()
+    public void RunFrom(Action a){
+        TerminateActionLayer("Movement");
+        BeginActionLayer("Movement", a, _Follow(a, true));
+    }
+    IEnumerator _Follow(Action a, bool reverse)
+    {
+
+        //Debug.Log("_Follow()");
+
+        Transform targetT;
+        if(reverse){
+            targetT = a.obj.transform;
+        }
+        else{
+            Transform directionalTs = Utility.FindDeepChild(a.obj.transform, "DirectionalTs");
+            targetT = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1));
+        }
+
+        // repeats until action layer is canceled
+        bool followCondition;
+        while (true)
         {
-
-            Transform targetT;
-            if(a.bodyRotationMode.Equals(EntityAnimation.BodyRotationMode.Normal)){
-                //targetT = a.obj.transform;
-                Transform directionalTs = Utility.FindDeepChild(a.obj.transform, "DirectionalTs");
-                targetT = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1));
-            }
-            else{
-                Transform directionalTs = Utility.FindDeepChild(a.obj.transform, "DirectionalTs");
-                targetT = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1));
-            }
-            
-
-            while (true)
+            followCondition = reverse ? (Vector3.Distance(transform.position, targetT.position) <= a.distanceThreshold) : Vector3.Distance(transform.position, targetT.position) > a.distanceThreshold;
+            if (followCondition)
             {
-
-                if(Vector3.Distance(transform.position, targetT.position) > a.distanceThreshold){
-                    move = GetNavigationDirection(targetT);
-                    entityPhysics.moveDir = move;
-                }
-                else{
-                    entityPhysics.moveDir = Vector3.zero;
-                }
-                yield return null;
-
+                move = GetNavigationDirection(targetT, reverse);
+                entityPhysics.moveDir = move;
             }
+            else
+            {
+                entityPhysics.moveDir = Vector3.zero;
+            }
+            yield return null;
+
         }
     }
 
@@ -245,8 +258,8 @@ public class EntityBehavior : EntityComponent
             //Log("Collect: picking up object");
             GameObject target = foundObjects[0];
             Faction.AddItemTargeted(entityInfo.faction, target);
-            Action goToObject = Action.GenerateAction((int)(Action.ActionTypes.GoTo), target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Normal, false);
-            Action pickupObject = Action.GenerateAction((int)(Action.ActionTypes.Pickup), target, -1, Item.GetItemByName(target.name), null, -1, -1f, EntityAnimation.BodyRotationMode.Normal, false);
+            Action goToObject = Action.GenerateAction(ActionType.GoTo, target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Normal, false);
+            Action pickupObject = Action.GenerateAction(ActionType.Pickup, target, -1, Item.GetItemByName(target.name), null, -1, -1f, EntityAnimation.BodyRotationMode.Normal, false);
             Action followPlayer = Action.GenerateAction("Follow Player", entityHandle);
             InsertAction(pickupObject);
             InsertAction(goToObject);
@@ -279,8 +292,8 @@ public class EntityBehavior : EntityComponent
 
     public void Attack(Action a){
         GameObject target = a.obj;
-        Action goToTarget = Action.GenerateAction((int)(Action.ActionTypes.GoTo), target, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, true);
-        Action swingAtTarget = Action.GenerateAction((int)(Action.ActionTypes.Swing), target, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, false);
+        Action goToTarget = Action.GenerateAction(ActionType.GoTo, target, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, true);
+        Action swingAtTarget = Action.GenerateAction(ActionType.Swing, target, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, false);
         InsertAction(swingAtTarget);
         InsertAction(goToTarget);
         NextAction();
@@ -293,7 +306,7 @@ public class EntityBehavior : EntityComponent
 
         IEnumerator _Swing(){
             entityPhysics.Attack();
-            Action attackRecover = Action.GenerateAction((int)(Action.ActionTypes.AttackRecover), a.obj, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, false);
+            Action attackRecover = Action.GenerateAction(ActionType.AttackRecover, a.obj, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, false);
             InsertAction(attackRecover);
             yield return null;
             NextAction();
@@ -312,8 +325,8 @@ public class EntityBehavior : EntityComponent
             if(true){ // TODO: if target is alive
                 
                 
-                Action followTarget = Action.GenerateAction((int)(Action.ActionTypes.Follow), a.obj, -1, null, null, -1, distanceThreshold_combat, EntityAnimation.BodyRotationMode.Target, true);
-                Action repeatAttack = Action.GenerateAction((int)(Action.ActionTypes.Attack), a.obj, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, false);
+                Action followTarget = Action.GenerateAction(ActionType.Follow, a.obj, -1, null, null, -1, distanceThreshold_combat, EntityAnimation.BodyRotationMode.Target, true);
+                Action repeatAttack = Action.GenerateAction(ActionType.Attack, a.obj, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, false);
                 
                 InsertAction(followTarget);
                 NextAction();
@@ -353,11 +366,13 @@ public class EntityBehavior : EntityComponent
     }
 
 
-    Vector3 GetNavigationDirection(Transform targetT){
+    Vector3 GetNavigationDirection(Transform targetT, bool reverse){
 
-        Vector3 targetDirection = targetT.position - transform.position;
+        // set direction to face
+        Vector3 targetDirection = reverse ? (transform.position - targetT.position) : (targetT.position - transform.position);
         Transform gyro = entityPhysics.gyro;
         gyro.LookAt(targetT);
+        if(reverse){ gyro.Rotate(Vector3.up * 180f); } // if reverse (running away from target), turn in y axis
         Quaternion rot = gyro.rotation;
         rot.x = 0;
         rot.z = 0;
@@ -456,10 +471,12 @@ public class EntityBehavior : EntityComponent
         //Log("TakeObject()");
         entityItems.OnObjectInteract(o, o.GetComponent<ScriptableObjectReference>().GetScriptableObject());
     }
+
+
     public List<GameObject> SenseSurroundingItems(Enum type, string name, float distance){
         Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Item"));
        
-        string sur = "";
+        //string sur = "";
         List<GameObject> foundObjects = new List<GameObject>();
         GameObject o;
         Item i;
@@ -470,7 +487,7 @@ public class EntityBehavior : EntityComponent
                 if(name == null || o.name == name){
                     if(!Faction.ItemIsTargetedByFaction(o, entityInfo.faction)){  
                         foundObjects.Add(o);
-                        sur += o.name + ", ";
+                        //sur += o.name + ", ";
                     }
                 }
             }
@@ -483,17 +500,61 @@ public class EntityBehavior : EntityComponent
     }
 
 
+    public List<EntityHandle> SenseSurroundingFeatures(Species species){
+        
+        // todo: sense surrounding features
+        return new List<EntityHandle>();
+    }
+
+
+    public List<EntityHandle> SenseSurroundingCreatures(Species species, float distance){
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Creature"));
+
+        List<EntityHandle> foundHandles = new List<EntityHandle>();
+        GameObject o;
+        EntityHandle handle;
+        foreach(Collider col in colliders){
+            o = col.gameObject;
+            handle = o.GetComponent<EntityHandle>();
+            if(species.Equals(Species.Any) || species.Equals(handle.entityInfo.species)){
+                foundHandles.Add(handle);
+            }
+        }
+        
+        return foundHandles;
+    }
+
+
+
+
+    public bool IsUpToNothingInParticular(){
+        List<Action> aList = new List<Action>(actions);
+        aList.Add(activeAction);
+        foreach(Action a in aList){
+            if(!a.type.Equals(ActionType.Idle) || !a.type.Equals(ActionType.GoTo)){
+                return false;
+            }
+        }
+        return true;
+    }
 
     public bool IsAtPosition(Vector3 position, float distanceThreshhold){
         return Vector3.Distance(transform.position, position) < distanceThreshhold;
     }
 
 
+
     // Update is called once per frame
     void Update()
-    {   
+    {
 
         entityPhysics.moveDir = move;
+
+        // timestep_creatureSense += Time.deltaTime;
+        // if(timestep_creatureSense >= senseSurroundingsTimeStep_creature){
+        //     SenseSurroundingCreatures(Species.Any, senseDistance_earshot);
+        // }
 
         
 

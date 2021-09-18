@@ -120,8 +120,8 @@ MonoBehaviour:
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   id: 0
-  species: 0
   nickname: Player
+  species: 1
   faction: {fileID: 0}
   speciesInfo: {fileID: 0}
 --- !u!114 &8069827555116078485
@@ -182,6 +182,7 @@ MonoBehaviour:
   home: {fileID: 0}
   move: {x: 0, y: 0, z: 0}
   urgent: 0
+  timestep_creatureSense: 0
   activeAction: {fileID: 0}
   actions: []
 --- !u!114 &8069827555116078489
@@ -242,8 +243,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
-  hitbox: {fileID: 0}
-  obstacleHitbox: {fileID: 0}
+  worldCollider: {fileID: 0}
   highFrictionMat: {fileID: 0}
   noFrictionMat: {fileID: 0}
   layerMask_water:
@@ -336,6 +336,7 @@ MonoBehaviour:
   updateTime_hips: 0
   ikProfile: {fileID: 0}
   quadripedal: 0
+  hasFingersAndToes: 0
   runCycle_strideFrequency: 0
   runCycle_lerpTightness: 0
   runCycle_limbVerticalDisplacement: 0
@@ -485,7 +486,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
-  species: 0
+  species: 1
 --- !u!114 &8374234257668663390
 MonoBehaviour:
   m_ObjectHideFlags: 0

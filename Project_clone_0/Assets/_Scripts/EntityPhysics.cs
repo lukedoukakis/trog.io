@@ -602,8 +602,6 @@ public class EntityPhysics : EntityComponent
 
         Animator a = entityItems.itemOrientationAnimator;
 
-
-
         Item weapItem = entityItems.weaponEquipped_item;
         string triggerName;
         if (weaponChargeTime == 0f)

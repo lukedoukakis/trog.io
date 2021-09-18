@@ -34,7 +34,7 @@ public class EntityCommandServer : EntityComponent
         GameObject npc = GameObject.Instantiate(npcPrefab, owningPlayer.transform.position, Quaternion.identity);
         EntityHandle playerHandle = owningPlayer.GetComponent<EntityHandle>();
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
-        playerHandle.entityInfo.faction.AddMember(npcHandle, false);
+        playerHandle.entityInfo.faction.AddMember(npcHandle, true);
         npcHandle.entityInfo.name = "new npc";
 
         NetworkServer.Spawn(npc, owningPlayer);

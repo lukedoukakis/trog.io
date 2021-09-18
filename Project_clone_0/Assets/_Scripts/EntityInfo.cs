@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public enum Species{ Human, Bear, Tree }
+public enum Species{ Any, Human, Bear, Tree }
 public enum FoodChainRole{ None, Predator, LargePrey, SmallPrey }
 
 public class EntityInfo : EntityComponent
@@ -54,6 +54,7 @@ public class SpeciesInfo : ScriptableObject{
     }
 
     public static SpeciesInfo GetSpeciesInfo(Species spec){
+        //Debug.Log(spec.ToString());
         return SpeciesInfoDict[spec];
     }
 

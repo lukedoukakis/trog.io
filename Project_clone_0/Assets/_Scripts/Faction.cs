@@ -20,12 +20,16 @@ public class Faction : ScriptableObject
 
 
 
-
-    public void SendPartyCommand(string command){
+    // send command to all party members within radius
+    public void SendPartyCommand(string command, Vector3 callPosition, float radius){
         EntityBehavior behavior;
         foreach(EntityHandle handle in party.ToArray()){
-            behavior = handle.entityBehavior;
-            behavior.InsertActionImmediate(Action.GenerateAction(command, behavior.entityHandle), true);
+            //Debug.Log("party member do shit");
+            if(Vector3.Distance(callPosition, handle.transform.position) <= radius)
+            {
+                behavior = handle.entityBehavior;
+                behavior.InsertActionImmediate(Action.GenerateAction(command, behavior.entityHandle), true);
+            }
         }
         //Debug.Log("Commands sent!");
     }

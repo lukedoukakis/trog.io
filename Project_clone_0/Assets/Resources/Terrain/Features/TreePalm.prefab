@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3063266008081522298}
   - component: {fileID: 6050594775104055711}
   - component: {fileID: 4942698249457021624}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Trunk
   m_TagString: Feature
   m_Icon: {fileID: 0}
@@ -106,8 +106,8 @@ GameObject:
   - component: {fileID: 6233510703383265969}
   - component: {fileID: 4434791661191091285}
   - component: {fileID: -429956354899342119}
-  m_Layer: 0
-  m_Name: PalmTree
+  m_Layer: 10
+  m_Name: TreePalm
   m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -198,7 +198,7 @@ GameObject:
   - component: {fileID: 6901523175781034875}
   - component: {fileID: 2038414992662614557}
   - component: {fileID: 2327130840582537322}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Leaves
   m_TagString: Feature
   m_Icon: {fileID: 0}
@@ -245,7 +245,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 14bd2c04aaa7ca44e914a6ee5dea2688, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

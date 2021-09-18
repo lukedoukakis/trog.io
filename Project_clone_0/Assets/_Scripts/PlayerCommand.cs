@@ -14,11 +14,14 @@ public class PlayerCommand : MonoBehaviour
         current = this;
     }
 
+
+    // calls party command for player's party with the command command
     public void SendCommand(string c){
 
 
         // NEW PARTY CODE
-        GameManager.current.localPlayerHandle.entityInfo.faction.SendPartyCommand(c);
+        //Debug.Log("PlayerCommand(): SendCommand()");
+        GameManager.current.localPlayerHandle.entityInfo.faction.SendPartyCommand(c, GameManager.current.localPlayer.transform.position, float.MaxValue);
 
 
 

@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+
+public enum ActionType{ Idle, GoTo, Follow, RunFrom, Collect, Pickup, Attack, Swing, AttackRecover, Build, Hunt }
+
 public class Action : ScriptableObject
 {
 
     // type of action
-    public int type;
+    public Enum type;
 
     // gameobject to interact with
     public GameObject obj;
@@ -34,7 +37,7 @@ public class Action : ScriptableObject
     // maximum time to be spent executing the action
     public int maxSeconds;
 
-    public static Action GenerateAction(int _type, GameObject _obj, int _number, Item _item_target, Item _item_result, int _maxSeconds, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent){
+    public static Action GenerateAction(Enum _type, GameObject _obj, int _number, Item _item_target, Item _item_result, int _maxSeconds, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent){
         Action a = ScriptableObject.CreateInstance<Action>();
         a.type = _type;
         a.obj = _obj;
@@ -50,7 +53,7 @@ public class Action : ScriptableObject
     }
     public static Action GenerateAction(){
         Action a = ScriptableObject.CreateInstance<Action>();
-        a.type = -1;
+        a.type = null;
         a.obj = null;
         a.number = -1;
         a.item_result = null;
@@ -68,40 +71,45 @@ public class Action : ScriptableObject
         Action a = Action.GenerateAction();
         switch(command){
             case "Idle" :
-                a.type = (int)Action.ActionTypes.Idle;
+                a.type = ActionType.Idle;
                 break;
             case "Go Home" :
-                a.type = (int)Action.ActionTypes.GoTo;
+                a.type = ActionType.GoTo;
                 a.obj = handle.entityBehavior.home.gameObject;
                 a.distanceThreshold = EntityBehavior.distanceThreshold_spot;
                 break;
             case "Follow Player" :
-                a.type = (int)Action.ActionTypes.Follow;
+                a.type = ActionType.Follow;
                 a.obj = Player.current.gameObject;
                 a.distanceThreshold = EntityBehavior.distanceThreshold_spot;
                 break;
+            case "Run From Player" :
+                a.type = ActionType.RunFrom;
+                a.obj = Player.current.gameObject;
+                a.distanceThreshold = EntityBehavior.distanceThreshhold_runFrom;
+                break;
             case "Collect Item" :
-                a.type = (int)Action.ActionTypes.Collect;
+                a.type = ActionType.Collect;
                 // TODO: finish params
                 break;
              case "Attack Entity" :
-                a.type = (int)Action.ActionTypes.Attack;
+                a.type = ActionType.Attack;
                 a.urgent = true;
                 // TODO: finish params
                 break;
 
             case "Collect Spear" :
-                a.type = (int)Action.ActionTypes.Collect;
+                a.type = ActionType.Collect;
                 a.item_target = Item.Spear;
                 //Log(a.item_target.nme);
                 break;
             case "Collect Stone" :
-                a.type = (int)Action.ActionTypes.Collect;
+                a.type = ActionType.Collect;
                 a.item_target = Item.Stone;
                 //Log(a.item_target.nme);
                 break;
             case "Attack TribeMember" :
-                a.type = (int)Action.ActionTypes.Attack;
+                a.type = ActionType.Attack;
                 a.urgent = true;
                 // a.obj = GameObject.FindGameObjectWithTag("Player");
 
@@ -126,22 +134,8 @@ public class Action : ScriptableObject
 
 
 
-    public enum ActionTypes{
-        Idle,
-        GoTo,
-        Follow,
-        Collect,
-        Pickup,
-        Attack,
-        Swing,
-        AttackRecover,
-        Build,
-        Hunt
-    }
-
-
 
     public override string ToString(){
-        return Enum.GetName(typeof(ActionTypes), type);
+        return Enum.GetName(typeof(ActionType), type);
     }
 }

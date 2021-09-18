@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 6257372575738916933}
   - component: {fileID: 7768159146827163568}
   m_Layer: 12
-  m_Name: Bear_NpcIK
+  m_Name: WildBear
   m_TagString: Npc
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -116,8 +116,8 @@ MonoBehaviour:
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   id: 0
-  species: 1
   nickname: Barry
+  species: 2
   faction: {fileID: 0}
   speciesInfo: {fileID: 0}
 --- !u!114 &7223609859536449621
@@ -178,6 +178,7 @@ MonoBehaviour:
   home: {fileID: 0}
   move: {x: 0, y: 0, z: 0}
   urgent: 0
+  timestep_creatureSense: 0
   activeAction: {fileID: 0}
   actions: []
 --- !u!114 &7223609859536449627
@@ -390,7 +391,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
-  species: 1
+  species: 2
 --- !u!114 &4761202945426959485
 MonoBehaviour:
   m_ObjectHideFlags: 0

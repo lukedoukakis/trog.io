@@ -15,8 +15,9 @@ public class CameraController : MonoBehaviour
 
     [SerializeField] float sensitivity_rotation;
     [SerializeField] float sensitivity_zoom;
-    [SerializeField] float featureCullDistance;
-    [SerializeField] float smallFeatureCullDistance;
+    [SerializeField] float cullDistance_feature;
+    [SerializeField] float cullDistance_smallFeature;
+    [SerializeField] float cullDistance_creature;
     float acceleration;
 
     Vector3 targetPos;
@@ -38,8 +39,9 @@ public class CameraController : MonoBehaviour
         Application.targetFrameRate = -1;
         QualitySettings.vSyncCount = 1;
         float[] cullDistances = new float[32];
-        cullDistances[10] = featureCullDistance;
-        cullDistances[11] = smallFeatureCullDistance;
+        cullDistances[10] = cullDistance_feature;
+        cullDistances[11] = cullDistance_smallFeature;
+        cullDistances[12] = cullDistance_creature;
         Camera.main.layerCullDistances = cullDistances;
         posModifier = 0f;
         cameraDistance_input = 1f;

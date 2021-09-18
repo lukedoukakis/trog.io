@@ -662,36 +662,36 @@ public class ChunkGenerator : MonoBehaviour
             yield return null;
         }
 
-        foreach(GameObject creature in Creatures)
-        {
-            spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
-            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height);
-            //placementDensity = .1f;
-            if (placementDensity > 0f)
-            {
-                //randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
-                randomDivisorOffset = 0;
-                int divisor = (int)(Mathf.Lerp(40f, 800f, 1f - placementDensity) + randomDivisorOffset);
-                if (divisor < 1) { divisor = 1; }
-                if ((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0)
-                {
-                    bundleName = SpawnParameters.GetBundleName(creature.name);
-                    spawnPosition = new Vector3(x + xOffset, height * ElevationAmplitude + 10f, z + zOffset);
-                    spawnScale = Vector3.one * spawnParameters.scale;
-                    o = GameObject.Instantiate(creature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent.transform);
-                    o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+        // foreach(GameObject creature in Creatures)
+        // {
+        //     spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
+        //     placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height);
+        //     //placementDensity = .1f;
+        //     if (placementDensity > 0f)
+        //     {
+        //         //randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
+        //         randomDivisorOffset = 0;
+        //         int divisor = (int)(Mathf.Lerp(40f, 800f, 1f - placementDensity) + randomDivisorOffset);
+        //         if (divisor < 1) { divisor = 1; }
+        //         if ((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0)
+        //         {
+        //             bundleName = SpawnParameters.GetBundleName(creature.name);
+        //             spawnPosition = new Vector3(x + xOffset, height * ElevationAmplitude + 10f, z + zOffset);
+        //             spawnScale = Vector3.one * spawnParameters.scale;
+        //             o = GameObject.Instantiate(creature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent.transform);
+        //             o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
 
-                    // // test
-                    // o.transform.position = current.playerPos;
+        //             // // test
+        //             // o.transform.position = current.playerPos;
 
-                    bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
-                    bundleName_last = bundleName;
+        //             bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
+        //             bundleName_last = bundleName;
         
-                    if (breaker) { break; }
-                }
-            }
-            yield return null;
-        }
+        //             if (breaker) { break; }
+        //         }
+        //     }
+        //     yield return null;
+        // }
         
     }
 
