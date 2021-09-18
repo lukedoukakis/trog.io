@@ -72,7 +72,12 @@ public class SpeciesInfo : ScriptableObject{
                 ),
                 Stats.BASE_HUMAN,
                 IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", false, true, 3f, 5f, 1f, .58f),
-                BehaviorProfile.InstantiateBehaviorProfile(BehaviorType.Aggressive, new List<AttackType>(){AttackType.Weapon}, false)            
+                BehaviorProfile.InstantiateBehaviorProfile(
+                    BehaviorType.Aggressive,
+                    new List<AttackType>(){AttackType.Weapon},
+                    new List<ActionParameters>(){ ActionParameters.GenerateAction(ActionType.Follow, null, -1, null, null, -1, EntityBehavior.distanceThreshold_combat, EntityOrientation.BodyRotationMode.Target, true)},
+                    0f,
+                    false)            
             )
 
         },
@@ -88,7 +93,12 @@ public class SpeciesInfo : ScriptableObject{
                 ),
                 Stats.BASE_BEAR,
                 IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end", "leg_lower_left_end", "", "", "arm_lower_right_end", "arm_lower_left_end", "", "", true, false, 3f, 10f, 2.25f, .58f),
-                BehaviorProfile.InstantiateBehaviorProfile(BehaviorType.Aggressive,  new List<AttackType>(){AttackType.Bite, AttackType.Swipe}, false)
+                BehaviorProfile.InstantiateBehaviorProfile(
+                    BehaviorType.Aggressive,
+                    new List<AttackType>(){AttackType.Swipe},
+                    new List<ActionParameters>(){ },
+                    .75f,
+                    false)
             )
 
         },
@@ -158,15 +168,19 @@ public class BehaviorProfile : ScriptableObject
 
     public BehaviorType behaviorType;
     public List<AttackType> attackTypes;
+    public List<ActionParameters> attackRecoverySequence;
+    public float lungePower;
     public bool domesticatable;
 
 
 
-    public static BehaviorProfile InstantiateBehaviorProfile(BehaviorType behaviorType, List<AttackType> attackTypes, bool domesticatable)
+    public static BehaviorProfile InstantiateBehaviorProfile(BehaviorType behaviorType, List<AttackType> attackTypes, List<ActionParameters> attackRecoverySequence, float lungePower, bool domesticatable)
     {
         BehaviorProfile bp = ScriptableObject.CreateInstance<BehaviorProfile>();
         bp.behaviorType = behaviorType;
         bp.attackTypes = attackTypes;
+        bp.attackRecoverySequence = attackRecoverySequence;
+        bp.lungePower = lungePower;
         bp.domesticatable = domesticatable;
 
         return bp;

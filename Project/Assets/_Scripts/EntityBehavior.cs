@@ -39,11 +39,11 @@ public class EntityBehavior : EntityComponent
 
 
 
-    public Action activeAction;
-    public List<Action> actions;
+    public ActionParameters activeAction;
+    public List<ActionParameters> actions;
 
 
-    public Dictionary<string, Action> actionLayers;
+    public Dictionary<string, ActionParameters> actionLayers;
     public Dictionary<string, IEnumerator> coroutineLayers;
 
 
@@ -54,7 +54,7 @@ public class EntityBehavior : EntityComponent
 
         home = GameObject.FindGameObjectWithTag("Home").transform;
         randomOffset = new Vector3(UnityEngine.Random.Range(randomOffsetRange*-1f, randomOffsetRange), 0f, UnityEngine.Random.Range(randomOffsetRange*-1f, 0));
-        actionLayers = new Dictionary<string, Action>{
+        actionLayers = new Dictionary<string, ActionParameters>{
             {"Command", null},
             {"Movement", null},
             {"Hands", null},
@@ -73,17 +73,17 @@ public class EntityBehavior : EntityComponent
 
 
     // add an action to the end of the queue
-    public void AddAction(Action a){
+    public void AddAction(ActionParameters a){
         actions.Add(a);
     }
 
     // insert an action to the front of the queue, to be executed when the current action is finished
-    public void InsertAction(Action a){
+    public void InsertAction(ActionParameters a){
         actions.Insert(0, a);
     }
 
     // insert an action to the front of the queue and immediately execute
-    public void InsertActionImmediate(Action a, bool clear){
+    public void InsertActionImmediate(ActionParameters a, bool clear){
         TerminateActionLayer("Command");
         if(clear){
             if(actions.Count > 0){
@@ -99,10 +99,10 @@ public class EntityBehavior : EntityComponent
 
 
     // select and execute the next action in the queue... if list is empty, insert "go home" or "idle" action
-    public Action NextAction(){
+    public ActionParameters NextAction(){
         if(actions.Count == 0){
             Log("Actions empty -> idling");
-            Action idle = Action.GenerateAction("Idle", entityHandle);
+            ActionParameters idle = ActionParameters.CreateActionParameters("Idle", entityHandle);
             InsertAction(idle);
         }
         activeAction = actions[0];
@@ -115,7 +115,7 @@ public class EntityBehavior : EntityComponent
 
     }
 
-    public void ExecuteAction(Action a){
+    public void ExecuteAction(ActionParameters a){
         Transform t = null;
         if(a.obj == null){ t = null; }else{ t = a.obj.transform; }
         entityAnimation.SetBodyRotationMode(a.bodyRotationMode, t);
@@ -138,10 +138,10 @@ public class EntityBehavior : EntityComponent
             case ActionType.Pickup :
                 Pickup(a);
                 break;
-            case ActionType.Attack :
+            case ActionType.Chase :
                 Chase(a);
                 break;
-            case ActionType.Swing :
+            case ActionType.Attack :
                 Attack(a);
                 break;
             case ActionType.AttackRecover :
@@ -166,7 +166,7 @@ public class EntityBehavior : EntityComponent
     
 
 
-    public void Idle(Action a){
+    public void Idle(ActionParameters a){
         TerminateActionLayer("Movement");
         BeginActionLayer("Movement", a, _Idle());
 
@@ -178,7 +178,7 @@ public class EntityBehavior : EntityComponent
         }
     }
 
-    public void GoTo(Action a){
+    public void GoTo(ActionParameters a){
 
         TerminateActionLayer("Movement");
         BeginActionLayer("Movement", a, _GoTo());
@@ -202,17 +202,17 @@ public class EntityBehavior : EntityComponent
         }
     }
 
-    public void Follow(Action a){
+    public void Follow(ActionParameters a){
 
         TerminateActionLayer("Movement");
         BeginActionLayer("Movement", a, _Follow(a, false));
     }
 
-    public void RunFrom(Action a){
+    public void RunFrom(ActionParameters a){
         TerminateActionLayer("Movement");
         BeginActionLayer("Movement", a, _Follow(a, true));
     }
-    IEnumerator _Follow(Action a, bool reverse)
+    IEnumerator _Follow(ActionParameters a, bool reverse)
     {
 
         //Debug.Log("_Follow()");
@@ -224,6 +224,7 @@ public class EntityBehavior : EntityComponent
         else{
             Transform directionalTs = Utility.FindDeepChild(a.obj.transform, "DirectionalTs");
             targetT = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1));
+            //targetT = a.obj.transform;
         }
 
         // repeats until action layer is canceled
@@ -245,7 +246,7 @@ public class EntityBehavior : EntityComponent
         }
     }
 
-    public void Collect(Action a){
+    public void Collect(ActionParameters a){
 
         Item i_target = a.item_target;
         //Log("target name: " + i_target.nme);
@@ -260,16 +261,16 @@ public class EntityBehavior : EntityComponent
             //Log("Collect: picking up object");
             GameObject target = foundObjects[0];
             Faction.AddItemTargeted(entityInfo.faction, target);
-            Action goToObject = Action.GenerateAction(ActionType.GoTo, target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Normal, false);
-            Action pickupObject = Action.GenerateAction(ActionType.Pickup, target, -1, Item.GetItemByName(target.name), null, -1, -1f, EntityAnimation.BodyRotationMode.Normal, false);
-            Action followPlayer = Action.GenerateAction("Follow Player", entityHandle);
+            ActionParameters goToObject = ActionParameters.GenerateAction(ActionType.GoTo, target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Normal, false);
+            ActionParameters pickupObject = ActionParameters.GenerateAction(ActionType.Pickup, target, -1, Item.GetItemByName(target.name), null, -1, -1f, EntityOrientation.BodyRotationMode.Normal, false);
+            ActionParameters followPlayer = ActionParameters.CreateActionParameters("Follow Player", entityHandle);
             InsertAction(pickupObject);
             InsertAction(goToObject);
             NextAction();
         }
     }
 
-    public void Pickup(Action a){
+    public void Pickup(ActionParameters a){
 
         TerminateActionLayer("Hands");
         BeginActionLayer("Hands", a, _Pickup());
@@ -292,31 +293,32 @@ public class EntityBehavior : EntityComponent
 
     }
 
-    public void Chase(Action a){
+    public void Chase(ActionParameters a){
         GameObject target = a.obj;
-        Action goToTarget = Action.GenerateAction(ActionType.GoTo, target, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, true);
-        Action swingAtTarget = Action.GenerateAction(ActionType.Swing, target, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, false);
+        ActionParameters goToTarget = ActionParameters.GenerateAction(ActionType.GoTo, target, -1, null, null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, true);
+        ActionParameters swingAtTarget = ActionParameters.GenerateAction(ActionType.Attack, target, -1, null, null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, false);
         InsertAction(swingAtTarget);
         InsertAction(goToTarget);
         NextAction();
     }
 
-    void Attack(Action a){
+    void Attack(ActionParameters a){
         
         TerminateActionLayer("Hands");
         BeginActionLayer("Hands", a, _Swing());
 
         IEnumerator _Swing(){
             AttackType attackType = behaviorProfile.attackTypes[UnityEngine.Random.Range(0, behaviorProfile.attackTypes.Count)];
-            entityPhysics.Attack(attackType);
-            Action attackRecover = Action.GenerateAction(ActionType.AttackRecover, a.obj, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, false);
+            entityPhysics.Attack(attackType, a.obj.transform);
+            ActionParameters attackRecover = ActionParameters.GenerateAction(ActionType.AttackRecover, a.obj, -1, null, null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, false);
+            yield return new WaitForSecondsRealtime(.2f);
             InsertAction(attackRecover);
             yield return null;
             NextAction();
         } 
     }
 
-    void AttackRecover(Action a){
+    void AttackRecover(ActionParameters a){
 
         TerminateActionLayer("Command");
         BeginActionLayer("Command", a, _AttackRecover());
@@ -329,12 +331,15 @@ public class EntityBehavior : EntityComponent
 
                 // if target is alive (hasn't been deleted)
 
-                Action followTarget = Action.GenerateAction(ActionType.Follow, a.obj, -1, null, null, -1, distanceThreshold_combat, EntityAnimation.BodyRotationMode.Target, true);
-                Action repeatAttack = Action.GenerateAction(ActionType.Attack, a.obj, -1, null, null, -1, distanceThreshold_spot, EntityAnimation.BodyRotationMode.Target, false);
-                InsertAction(followTarget);
-                NextAction();
-                yield return new WaitForSecondsRealtime(.3f);
+                //ActionParameters followTarget = ActionParameters.GenerateAction(ActionType.Follow, a.obj, -1, null, null, -1, distanceThreshold_combat, EntityOrientation.BodyRotationMode.Target, true);
+                //InsertAction(followTarget);
+                ActionParameters repeatAttack = ActionParameters.GenerateAction(ActionType.Chase, a.obj, -1, null, null, -1, 5f, EntityOrientation.BodyRotationMode.Target, false);
                 InsertAction(repeatAttack);
+                foreach(ActionParameters ap in behaviorProfile.attackRecoverySequence){
+                    ap.obj = a.obj;
+                    InsertAction(ap);
+                }
+                yield return new WaitForSecondsRealtime(1f * (1f - entityStats.statsCombined.attackSpeed));
                 NextAction();
 
             }
@@ -343,11 +348,11 @@ public class EntityBehavior : EntityComponent
         
     }
 
-    public void Build(Action a){
+    public void Build(ActionParameters a){
 
     }
 
-    public void Hunt(Action a){
+    public void Hunt(ActionParameters a){
 
     }
 
@@ -361,7 +366,7 @@ public class EntityBehavior : EntityComponent
         coroutineLayers[layer] = null;
     }
 
-    void BeginActionLayer(string layer, Action a, IEnumerator coroutine){
+    void BeginActionLayer(string layer, ActionParameters a, IEnumerator coroutine){
         actionLayers[layer] = a;
         coroutineLayers[layer] = coroutine;
         StartCoroutine(coroutine);
@@ -531,9 +536,9 @@ public class EntityBehavior : EntityComponent
 
 
     public bool IsUpToNothingInParticular(){
-        List<Action> aList = new List<Action>(actions);
+        List<ActionParameters> aList = new List<ActionParameters>(actions);
         aList.Add(activeAction);
-        foreach(Action a in aList){
+        foreach(ActionParameters a in aList){
             if(!a.type.Equals(ActionType.Idle) || !a.type.Equals(ActionType.GoTo)){
                 return false;
             }

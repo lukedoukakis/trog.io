@@ -15,6 +15,7 @@ public class EntityPhysics : EntityComponent
 
     public Rigidbody rb;
     public Animator animator;
+    public Animator iKTargetAnimator;
     public Transform gyro;
     public Transform body;
     public Transform[] bodyPartTs, bodyPartTs_legs, bodyPartTs_upperBody;
@@ -172,6 +173,7 @@ public class EntityPhysics : EntityComponent
         ikScripts = new FastIKFabric[]{ ikScript_hips, ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft, ikScript_fingerRight, ikScript_fingerLeft };
         ikScripts_legs = new FastIKFabric[]{ ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft };
         ikScripts_upperBody = new FastIKFabric[]{ ikScript_handRight, ikScript_handLeft, ikScript_fingerRight, ikScript_fingerLeft };
+        iKTargetAnimator = ikParent.GetComponent<Animator>();
 
         acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * AccelerationScale;
         maxSpeed_run = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * MaxSpeedScale;
@@ -601,28 +603,28 @@ public class EntityPhysics : EntityComponent
     }
 
 
-    public void Attack(AttackType attackType){
+    public void Attack(AttackType attackType, Transform target){
 
         switch (attackType) {
             case (AttackType.Weapon) :
-                AttackWeapon();
+                AttackWeapon(target);
                 break;
             case (AttackType.Bite) :
-                AttackBite();
+                AttackBite(target);
                 break;
             case (AttackType.Swipe) :
-                AttackSwipe();
+                AttackSwipe(target);
                 break;
             case (AttackType.HeadButt) :
-                AttackHeadButt();
+                AttackHeadButt(target);
                 break;
             case (AttackType.Stomp) :
-                AttackStomp();
+                AttackStomp(target);
                 break;
         }
     }
 
-    void AttackWeapon(){
+    void AttackWeapon(Transform target){
 
         Animator a = entityItems.itemOrientationAnimator;
 
@@ -690,19 +692,37 @@ public class EntityPhysics : EntityComponent
         // todo: weapon no longer at fixed point
     }
 
-    void AttackBite(){
+    void AttackBite(Transform target){
         // todo: bite attack
     }   
 
-    void AttackSwipe(){
+    void AttackSwipe(Transform target){
         // todo: swipe attack
+        StartCoroutine(_AttackSwipe());
+
+        IEnumerator _AttackSwipe(){
+            StartCoroutine(LungeForward());
+            iKTargetAnimator.enabled = true;
+            iKTargetAnimator.SetTrigger("AttackSwipe");
+            yield return new WaitForSeconds(.25f);
+            iKTargetAnimator.enabled = false;
+
+        }
+
+        IEnumerator LungeForward(){
+            Vector3 dir = ((target.position - transform.position).normalized + Vector3.up * .5f) * 2000f * entityBehavior.behaviorProfile.lungePower;
+            for(int i = 0; i < 30f; ++i){
+                rb.AddForce(dir);
+                yield return null;
+            }
+        }
     }
 
-    void AttackHeadButt(){
+    void AttackHeadButt(Transform target){
         // todo: head butt attack
     }
 
-    void AttackStomp(){
+    void AttackStomp(Transform target){
         // todo: stomp attack
     }
 
@@ -768,7 +788,7 @@ public class EntityPhysics : EntityComponent
             if(!IN_WATER){
                 IN_WATER = true;
                 //animator.SetTrigger("Water");
-                entityAnimation.SetBodyRotationMode(EntityAnimation.BodyRotationMode.Target, null);
+                entityAnimation.SetBodyRotationMode(EntityOrientation.BodyRotationMode.Target, null);
             }
             ApplyFlotationForce(waterY - y);
         }
@@ -777,7 +797,7 @@ public class EntityPhysics : EntityComponent
                 IN_WATER = false;
                 offWaterTime = 0f;
                 //animator.SetTrigger("Land");
-                entityAnimation.SetBodyRotationMode(EntityAnimation.BodyRotationMode.Target, entityAnimation.bodyRotationTarget);
+                entityAnimation.SetBodyRotationMode(EntityOrientation.BodyRotationMode.Target, entityAnimation.bodyRotationTarget);
             }
         }
     }

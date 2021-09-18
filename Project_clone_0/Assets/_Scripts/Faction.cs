@@ -28,7 +28,7 @@ public class Faction : ScriptableObject
             if(Vector3.Distance(callPosition, handle.transform.position) <= radius)
             {
                 behavior = handle.entityBehavior;
-                behavior.InsertActionImmediate(Action.GenerateAction(command, behavior.entityHandle), true);
+                behavior.InsertActionImmediate(ActionParameters.CreateActionParameters(command, behavior.entityHandle), true);
             }
         }
         //Debug.Log("Commands sent!");

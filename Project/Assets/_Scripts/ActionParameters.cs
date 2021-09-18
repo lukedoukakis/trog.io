@@ -4,9 +4,9 @@ using UnityEngine;
 using System;
 
 
-public enum ActionType{ Idle, GoTo, Follow, RunFrom, Collect, Pickup, Attack, Swing, AttackRecover, Build, Hunt }
+public enum ActionType{ Idle, GoTo, Follow, RunFrom, Collect, Pickup, Chase, Attack, AttackRecover, Build, Hunt }
 
-public class Action : ScriptableObject
+public class ActionParameters : ScriptableObject
 {
 
     // type of action
@@ -37,8 +37,8 @@ public class Action : ScriptableObject
     // maximum time to be spent executing the action
     public int maxSeconds;
 
-    public static Action GenerateAction(Enum _type, GameObject _obj, int _number, Item _item_target, Item _item_result, int _maxSeconds, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent){
-        Action a = ScriptableObject.CreateInstance<Action>();
+    public static ActionParameters GenerateAction(Enum _type, GameObject _obj, int _number, Item _item_target, Item _item_result, int _maxSeconds, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent){
+        ActionParameters a = ScriptableObject.CreateInstance<ActionParameters>();
         a.type = _type;
         a.obj = _obj;
         a.number = _number;
@@ -51,8 +51,8 @@ public class Action : ScriptableObject
 
         return a;
     }
-    public static Action GenerateAction(){
-        Action a = ScriptableObject.CreateInstance<Action>();
+    public static ActionParameters GenerateAction(){
+        ActionParameters a = ScriptableObject.CreateInstance<ActionParameters>();
         a.type = null;
         a.obj = null;
         a.number = -1;
@@ -60,15 +60,15 @@ public class Action : ScriptableObject
         a.item_target = null;
         a.maxSeconds = -1;
         a.distanceThreshold = -1;
-        a.bodyRotationMode = EntityAnimation.BodyRotationMode.Normal;
+        a.bodyRotationMode = EntityOrientation.BodyRotationMode.Normal;
         a.urgent = false;
         return a;
     }
 
     // some predefined actions
-    public static Action GenerateAction(string command, EntityHandle handle){
+    public static ActionParameters CreateActionParameters(string command, EntityHandle handle){
 
-        Action a = Action.GenerateAction();
+        ActionParameters a = ActionParameters.GenerateAction();
         switch(command){
             case "Idle" :
                 a.type = ActionType.Idle;
@@ -88,12 +88,17 @@ public class Action : ScriptableObject
                 a.obj = Player.current.gameObject;
                 a.distanceThreshold = EntityBehavior.distanceThreshhold_runFrom;
                 break;
+            case "Attack Player" :
+                a.type = ActionType.Chase;
+                a.obj = Player.current.gameObject;
+                a.urgent = true;
+                break;
             case "Collect Item" :
                 a.type = ActionType.Collect;
                 // TODO: finish params
                 break;
              case "Attack Entity" :
-                a.type = ActionType.Attack;
+                a.type = ActionType.Chase;
                 a.urgent = true;
                 // TODO: finish params
                 break;
@@ -109,7 +114,7 @@ public class Action : ScriptableObject
                 //Log(a.item_target.nme);
                 break;
             case "Attack TribeMember" :
-                a.type = ActionType.Attack;
+                a.type = ActionType.Chase;
                 a.urgent = true;
                 // a.obj = GameObject.FindGameObjectWithTag("Player");
 
