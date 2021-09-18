@@ -523,16 +523,43 @@ public class EntityBehavior : EntityComponent
         EntityHandle handle;
         foreach(Collider col in colliders){
             o = col.gameObject;
-            handle = o.GetComponent<EntityHandle>();
-            if(species.Equals(Species.Any) || species.Equals(handle.entityInfo.species)){
-                foundHandles.Add(handle);
+            handle = o.GetComponentInParent<EntityHandle>();
+            if(handle != null){
+                if(!species.Equals(entityInfo.species) && (species.Equals(Species.Any) || species.Equals(handle.entityInfo.species))){
+                    foundHandles.Add(handle);
+                }
             }
         }
         
         return foundHandles;
     }
 
+    // check surroundings for creatures and act accordingly based on behavior type
+    public void CheckForCreaturesUpdate(){
+        BehaviorType behaviorType = behaviorProfile.behaviorType;
+        if(behaviorType.Equals(BehaviorType.Steadfast)){ return; }
+        List<EntityHandle> sensedCreatureHandles = SenseSurroundingCreatures(Species.Any, 15f);
+        //Debug.Log(sensedCreatureHandles.Count);
+        if(sensedCreatureHandles.Count == 0){ return; }
+        //sensedCreatureHandles = sensedCreatureHandles.OrderBy(handle => Vector3.Distance(transform.position, handle.transform.position)).ToList();
 
+        BehaviorType behaviorTypeOther;
+        if (behaviorProfile.behaviorType.Equals(BehaviorType.Timid))
+        {
+            foreach (EntityHandle handleOther in sensedCreatureHandles)
+            {
+                behaviorTypeOther = handleOther.entityInfo.speciesInfo.behaviorProfile.behaviorType;
+                if (behaviorTypeOther.Equals(BehaviorType.Aggressive))
+                {
+                    InsertActionImmediate(ActionParameters.GenerateAction(ActionType.RunFrom, handleOther.gameObject, -1, null, null, -1, distanceThreshhold_runFrom, EntityOrientation.BodyRotationMode.Normal, false), true);
+                }
+            }
+        }
+        else if (behaviorProfile.behaviorType.Equals(BehaviorType.Aggressive)){
+            InsertActionImmediate(ActionParameters.GenerateAction(ActionType.Chase, sensedCreatureHandles[0].gameObject, -1, null, null, -1, distanceThreshhold_runFrom, EntityOrientation.BodyRotationMode.Target, false), true);
+        }
+
+    }
 
 
     public bool IsUpToNothingInParticular(){
@@ -552,16 +579,22 @@ public class EntityBehavior : EntityComponent
 
 
 
+
     // Update is called once per frame
     void Update()
     {
 
         entityPhysics.moveDir = move;
 
-        // timestep_creatureSense += Time.deltaTime;
-        // if(timestep_creatureSense >= senseSurroundingsTimeStep_creature){
-        //     SenseSurroundingCreatures(Species.Any, senseDistance_earshot);
-        // }
+        if (!isLocalPlayer)
+        {
+            timestep_creatureSense += Time.deltaTime;
+            if (timestep_creatureSense >= senseSurroundingsTimeStep_creature)
+            {
+                CheckForCreaturesUpdate();
+                timestep_creatureSense = timestep_creatureSense - senseSurroundingsTimeStep_creature;
+            }
+        }
 
         
 
