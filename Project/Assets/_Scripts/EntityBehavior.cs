@@ -222,9 +222,9 @@ public class EntityBehavior : EntityComponent
             targetT = a.obj.transform;
         }
         else{
-            Transform directionalTs = Utility.FindDeepChild(a.obj.transform, "DirectionalTs");
-            targetT = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1));
-            //targetT = a.obj.transform;
+            //Transform directionalTs = Utility.FindDeepChild(a.obj.transform, "DirectionalTs");
+            //targetT = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1));
+            targetT = a.obj.transform;
         }
 
         // repeats until action layer is canceled
@@ -541,7 +541,7 @@ public class EntityBehavior : EntityComponent
         List<EntityHandle> sensedCreatureHandles = SenseSurroundingCreatures(Species.Any, 15f);
         //Debug.Log(sensedCreatureHandles.Count);
         if(sensedCreatureHandles.Count == 0){ return; }
-        //sensedCreatureHandles = sensedCreatureHandles.OrderBy(handle => Vector3.Distance(transform.position, handle.transform.position)).ToList();
+        sensedCreatureHandles = sensedCreatureHandles.OrderBy(handle => Vector3.Distance(transform.position, handle.transform.position)).ToList();
 
         BehaviorType behaviorTypeOther;
         if (behaviorProfile.behaviorType.Equals(BehaviorType.Timid))
@@ -591,7 +591,7 @@ public class EntityBehavior : EntityComponent
             timestep_creatureSense += Time.deltaTime;
             if (timestep_creatureSense >= senseSurroundingsTimeStep_creature)
             {
-                CheckForCreaturesUpdate();
+                //CheckForCreaturesUpdate();
                 timestep_creatureSense = timestep_creatureSense - senseSurroundingsTimeStep_creature;
             }
         }

@@ -5,7 +5,8 @@ using UnityEngine;
 using System.Linq;
 
 
-public enum Species{ Any, Human, Bear, Tree }
+public enum Species{ Any, Human, Bear, Tree, Deer
+}
 public enum BehaviorType{ None, Aggressive, Timid, Steadfast }
 
 public class EntityInfo : EntityComponent
@@ -96,6 +97,28 @@ public class SpeciesInfo : ScriptableObject{
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Aggressive,
                     new List<AttackType>(){AttackType.Swipe},
+                    new List<ActionParameters>(){ },
+                    .75f,
+                    false)
+            )
+
+        },
+
+        {
+            Species.Deer, SpeciesInfo.InstantiateSpeciesInfo(
+                Faction.InstantiateFaction(Species.Deer.ToString(), false),
+                new ItemCollection(
+                    new Dictionary<Item, int>{
+                        // todo: deer carcass
+                        {Item.CarcassBear, 1}
+                    }
+                    
+                ),
+                Stats.BASE_DEER,
+                IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end_end", "leg_lower_left_end_end", "", "", "arm_lower_right_end_end_end", "arm_lower_left_end_end_end", "", "", true, false, 3f, 10f, 2.25f, .58f),
+                BehaviorProfile.InstantiateBehaviorProfile(
+                    BehaviorType.Timid,
+                    new List<AttackType>(){ },
                     new List<ActionParameters>(){ },
                     .75f,
                     false)

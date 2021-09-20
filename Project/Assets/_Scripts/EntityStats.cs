@@ -237,6 +237,21 @@ public class Stats : ScriptableObject
         10f
     );
 
+    public static Stats BASE_DEER = InstantiateStats(
+        1f,
+        .75f,
+        .1f,
+        .5f,
+        1f,
+        1f,
+        1.1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        10f
+    );
+
     public static Stats BASE_TREE = InstantiateStats(
         3f,
         0f,
