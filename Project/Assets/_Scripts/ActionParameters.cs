@@ -86,11 +86,12 @@ public class ActionParameters : ScriptableObject
             case "Run From Player" :
                 a.type = ActionType.RunFrom;
                 a.obj = Player.current.gameObject;
-                a.distanceThreshold = EntityBehavior.distanceThreshhold_runFrom;
+                a.distanceThreshold = EntityBehavior.distanceThreshhold_pursuit;
                 break;
             case "Attack Player" :
                 a.type = ActionType.Chase;
                 a.obj = Player.current.gameObject;
+                a.maxTime = handle.entityBehavior.GetChaseTime();
                 a.urgent = true;
                 break;
             case "Collect Item" :

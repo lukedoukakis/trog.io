@@ -710,8 +710,8 @@ public class EntityPhysics : EntityComponent
         }
 
         IEnumerator LungeForward(){
-            Vector3 dir = ((target.position - transform.position).normalized + Vector3.up * .5f) * 2000f * entityBehavior.behaviorProfile.lungePower;
-            for(int i = 0; i < 30f; ++i){
+            Vector3 dir = ((target.position - transform.position).normalized + Vector3.up * .5f) * 1000f * entityBehavior.behaviorProfile.lungePower;
+            for(int i = 0; i < 50f; ++i){
                 rb.AddForce(dir);
                 yield return null;
             }

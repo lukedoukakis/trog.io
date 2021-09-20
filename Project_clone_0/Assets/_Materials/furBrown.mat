@@ -71,7 +71,7 @@ Material:
     - _RimMax: 0.62
     - _RimMin: 0.241
     - _RimPower: 4.08
-    - _TilingN1: 9.36
+    - _TilingN1: 12
     - _TilingN2: 0.05
     - _TilingN3: 100
     - _UsePR: 0
@@ -90,4 +90,4 @@ Material:
     - _OffsetVector: {r: 0, g: -0.25, b: 0.1, a: 1}
     - _ProjectedShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 0.15094337, g: 0.15094337, b: 0.15094337, a: 1}
-    - _SelfShadowColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SelfShadowColor: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}

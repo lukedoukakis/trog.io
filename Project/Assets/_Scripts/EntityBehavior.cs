@@ -19,24 +19,27 @@ public class EntityBehavior : EntityComponent
     public static float distanceThreshold_none = -1f;
     public static float distanceThreshold_point = .1f;
     public static float distanceThreshold_spot = 2f;
+    public static float distanceThreshhold_lungeAttack = 10f;
     public static float distanceThreshold_combat = 15f;
-    public static float distanceThreshhold_runFrom = 100f;
+    public static float distanceThreshhold_pursuit = 100f;
 
     Vector3 randomOffset;
 
 
     // sensing and movement parameters
-    public float timestep_creatureSense;
-    public static float senseSurroundingsTimeStep_creature = 1f;
-    public static float senseDistance_obstacle = 3f;
-    public static float senseDistance_immediate = 1f;
-    public static float senseDistance_search = 150f;
-    public static float senseDistance_earshot = 500f;
-    public static float senseDistance_infinite = 5000f;
-    public static float maxJumpFromDistance = 2f;
-    public static float rotationSpeed = 1f;
-    public static float baseTime_chase = 10f;
-    public static float baseTime_flee = 10f;
+    public float timeSince_creatureSense;
+    public float timeSince_attack;
+    public static readonly float baseTimeStep_creatureSense = 1f;
+    public static readonly float baseTimeStep_attack = 1f;
+    public static readonly float senseDistance_obstacle = 3f;
+    public static readonly float senseDistance_immediate = 1f;
+    public static readonly float senseDistance_search = 150f;
+    public static readonly float senseDistance_earshot = 500f;
+    public static readonly float senseDistance_infinite = 5000f;
+    public static readonly float maxJumpFromDistance = 2f;
+    public static readonly float rotationSpeed = 1f;
+    public static readonly float baseTime_chase = 10f;
+    public static readonly float baseTime_flee = 10f;
 
 
 
@@ -68,7 +71,7 @@ public class EntityBehavior : EntityComponent
     }
 
     void Start(){
-        timestep_creatureSense = 0f;
+        timeSince_creatureSense = 0f;
         behaviorProfile = entityInfo.speciesInfo.behaviorProfile;
     }
 
@@ -105,6 +108,7 @@ public class EntityBehavior : EntityComponent
 
     // select and execute the next action in the queue... if list is empty, insert "go home" or "idle" action
     public ActionParameters NextAction(){
+        timeSince_creatureSense = baseTimeStep_creatureSense;
         if(actions.Count == 0){
             Log("Actions empty -> idling");
             ActionParameters idle = ActionParameters.CreateActionParameters("Idle", entityHandle);
@@ -187,7 +191,7 @@ public class EntityBehavior : EntityComponent
 
         TerminateActionLayer("Movement");
         BeginActionLayer("Movement", a, _GoTo());
-        Debug.Log("STARTING GOTO");
+        //Debug.Log("STARTING GOTO");
 
         IEnumerator _GoTo()
         {
@@ -316,18 +320,24 @@ public class EntityBehavior : EntityComponent
     public void Chase(ActionParameters a){
         GameObject target = a.obj;
         ActionParameters goToTarget = ActionParameters.GenerateAction(ActionType.GoTo, target, -1, null, null, a.maxTime, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, true);
-        ActionParameters swingAtTarget = ActionParameters.GenerateAction(ActionType.Attack, target, -1, null, null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, false);
-        InsertAction(swingAtTarget);
+        ActionParameters attackTarget = ActionParameters.GenerateAction(ActionType.Attack, target, -1, null, null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, false);
+        InsertAction(attackTarget);
         InsertAction(goToTarget);
         NextAction();
     }
 
     void Attack(ActionParameters a){
-        
-        TerminateActionLayer("Hands");
-        BeginActionLayer("Hands", a, _Swing());
 
-        IEnumerator _Swing(){
+        if (timeSince_attack >= baseTimeStep_attack * entityStats.statsCombined.attackSpeed)
+        {
+            // if attack rate allows, attack
+            timeSince_attack = 0f;
+            TerminateActionLayer("Hands");
+            BeginActionLayer("Hands", a, _Attack());
+        }
+
+        IEnumerator _Attack()
+        {
             AttackType attackType = behaviorProfile.attackTypes[UnityEngine.Random.Range(0, behaviorProfile.attackTypes.Count)];
             entityPhysics.Attack(attackType, a.obj.transform);
             ActionParameters attackRecover = ActionParameters.GenerateAction(ActionType.AttackRecover, a.obj, -1, null, null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, false);
@@ -335,7 +345,7 @@ public class EntityBehavior : EntityComponent
             InsertAction(attackRecover);
             yield return null;
             NextAction();
-        } 
+        }
     }
 
     void AttackRecover(ActionParameters a){
@@ -353,7 +363,7 @@ public class EntityBehavior : EntityComponent
 
                 //ActionParameters followTarget = ActionParameters.GenerateAction(ActionType.Follow, a.obj, -1, null, null, -1, distanceThreshold_combat, EntityOrientation.BodyRotationMode.Target, true);
                 //InsertAction(followTarget);
-                ActionParameters repeatAttack = ActionParameters.GenerateAction(ActionType.Chase, a.obj, -1, null, null, -1, 5f, EntityOrientation.BodyRotationMode.Target, false);
+                ActionParameters repeatAttack = ActionParameters.GenerateAction(ActionType.Chase, a.obj, -1, null, null, GetChaseTime(), distanceThreshhold_lungeAttack, EntityOrientation.BodyRotationMode.Target, false);
                 InsertAction(repeatAttack);
                 foreach(ActionParameters ap in behaviorProfile.attackRecoverySequence){
                     ap.obj = a.obj;
@@ -572,12 +582,12 @@ public class EntityBehavior : EntityComponent
                 behaviorTypeOther = handleOther.entityInfo.speciesInfo.behaviorProfile.behaviorType;
                 if (behaviorTypeOther.Equals(BehaviorType.Aggressive))
                 {
-                    InsertActionImmediate(ActionParameters.GenerateAction(ActionType.RunFrom, handleOther.gameObject, -1, null, null, baseTime_flee * entityStats.statsCombined.stamina, distanceThreshhold_runFrom, EntityOrientation.BodyRotationMode.Normal, false), true);
+                    InsertActionImmediate(ActionParameters.GenerateAction(ActionType.RunFrom, handleOther.gameObject, -1, null, null, GetFleeTime(), distanceThreshhold_pursuit, EntityOrientation.BodyRotationMode.Normal, false), true);
                 }
             }
         }
         else if (behaviorProfile.behaviorType.Equals(BehaviorType.Aggressive)){
-            InsertActionImmediate(ActionParameters.GenerateAction(ActionType.Chase, sensedCreatureHandles[0].gameObject, -1, null, null, baseTime_chase * entityStats.statsCombined.stamina, distanceThreshhold_runFrom, EntityOrientation.BodyRotationMode.Target, false), true);
+            InsertActionImmediate(ActionParameters.GenerateAction(ActionType.Chase, sensedCreatureHandles[0].gameObject, -1, null, null, GetChaseTime(), distanceThreshhold_lungeAttack, EntityOrientation.BodyRotationMode.Target, false), true);
         }
 
     }
@@ -607,6 +617,14 @@ public class EntityBehavior : EntityComponent
         return Vector3.Distance(transform.position, position) < distanceThreshhold;
     }
 
+    public float GetChaseTime(){
+        return baseTime_chase * entityStats.statsCombined.stamina;
+    }
+
+    public float GetFleeTime(){
+        return baseTime_flee * entityStats.statsCombined.stamina;
+    }
+
 
 
 
@@ -618,15 +636,20 @@ public class EntityBehavior : EntityComponent
 
         if (!isLocalPlayer)
         {
-            timestep_creatureSense += Time.deltaTime;
-            if (timestep_creatureSense >= senseSurroundingsTimeStep_creature)
+
+            float dTime = Time.deltaTime;
+
+            timeSince_creatureSense += dTime;
+            if (timeSince_creatureSense >= baseTimeStep_creatureSense)
             {
                 if(NotBusy()){
                     Debug.Log("Boutta sense creatures");
                     CheckForCreaturesUpdate();
                 }
-                timestep_creatureSense = timestep_creatureSense - senseSurroundingsTimeStep_creature;
+                timeSince_creatureSense = timeSince_creatureSense - baseTimeStep_creatureSense;
             }
+
+            timeSince_attack += dTime;
         }
 
         
