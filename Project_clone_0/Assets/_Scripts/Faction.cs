@@ -11,15 +11,48 @@ public class Faction : ScriptableObject
     public int id;
     public string factionName;
     public List<EntityHandle> members;
+    public List<EntityHandle> party;
     public ItemCollection ownedItems;
     public Camp camp;
     public List<GameObject> targetedObjects; // items being pursued by members of this faction
 
 
 
-    public void AddMember(EntityHandle handle){
-        members.Add(handle);
+
+
+    // send command to all party members within radius
+    public void SendPartyCommand(string command, Vector3 callPosition, float radius){
+        EntityBehavior behavior;
+        foreach(EntityHandle handle in party.ToArray()){
+            //Debug.Log("party member do shit");
+            if(Vector3.Distance(callPosition, handle.transform.position) <= radius)
+            {
+                behavior = handle.entityBehavior;
+                behavior.InsertActionImmediate(ActionParameters.CreateActionParameters(command, behavior.entityHandle), true);
+            }
+        }
+        //Debug.Log("Commands sent!");
+    }
+
+
+    public void AddMember(EntityHandle handle, bool addToparty){
         handle.entityInfo.faction = this;
+        members.Add(handle);
+        if(addToparty)
+        {
+            AddToParty(handle);
+        }
+    }
+
+    public void AddToParty(EntityHandle handle){
+        if(!party.Contains(handle)){
+            party.Add(handle);
+        }
+    }
+    public void RemoveFromParty(EntityHandle handle){
+        if(party.Contains(handle)){
+            party.Remove(handle);
+        }
     }
 
     public static void AddItemTargeted(Faction fac, GameObject o){
@@ -106,6 +139,7 @@ public class Faction : ScriptableObject
         f.id = UnityEngine.Random.Range(0, int.MaxValue);
         f.factionName = _factionName;
         f.members = new List<EntityHandle>();
+        f.party = new List<EntityHandle>();
         f.ownedItems = new ItemCollection();
         f.isPlayerFaction = _isPlayerFaction;
         f.targetedObjects = new List<GameObject>();

@@ -9,18 +9,24 @@ public class GameManager : MonoBehaviour
     public static GameManager current;
     public int gameId;
     public GameObject localPlayer;
+    public EntityHandle localPlayerHandle;
 
 
 
     // options
     public static int cameraMode = 1;
-    public static int startingTribeMembers = 4;
+    public static int startingTribeMembers = 0;
 
 
 
     void Awake(){
         current = this;
 
+    }
+
+    public void SetLocalPlayer(GameObject o){
+        localPlayer = o;
+        localPlayerHandle = o.GetComponent<EntityHandle>();
     }
 
 

@@ -10,7 +10,7 @@ public class EntityComponent : NetworkBehaviour
     [HideInInspector] public EntityInfo entityInfo;
     [HideInInspector] public EntityStats entityStats;
     [HideInInspector] public EntityBehavior entityBehavior;
-    [HideInInspector] public EntityAnimation entityAnimation;
+    [HideInInspector] public EntityOrientation entityAnimation;
     [HideInInspector] public EntityPhysics entityPhysics;
     [HideInInspector] public EntityStatus entityStatus;
     [HideInInspector] public EntityItems entityItems;
@@ -28,7 +28,7 @@ public class EntityComponent : NetworkBehaviour
         entityInfo = GetComponent<EntityInfo>();
         entityStats = GetComponent<EntityStats>();
         entityBehavior = GetComponent<EntityBehavior>();
-        entityAnimation = GetComponent<EntityAnimation>();
+        entityAnimation = GetComponent<EntityOrientation>();
         entityPhysics = GetComponent<EntityPhysics>();
         entityStatus = GetComponent<EntityStatus>();
         entityItems = GetComponent<EntityItems>();

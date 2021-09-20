@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: furLightBrown
+  m_Shader: {fileID: 4800000, guid: 57b0dd448af507049843cc9662a2f794, type: 3}
+  m_ShaderKeywords: USE_S _RTEFFECT_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _ColorGradient:
+        m_Texture: {fileID: 2800000, guid: 6a2b53bfa0c06394485830fc39664c26, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorNoise:
+        m_Texture: {fileID: 2800000, guid: 369f6fef0ebe1f14aa6ed86d8e55cc6e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Distortion:
+        m_Texture: {fileID: 2800000, guid: 7f25c6183047a8a4bb1552aab341ba92, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GrassTex:
+        m_Texture: {fileID: 2800000, guid: d1554ad204dd4fc46ac7b4de46f513ac, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GroundTex:
+        m_Texture: {fileID: 2800000, guid: 39e51e28b0b53d747a9440d043f78b17, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 39e51e28b0b53d747a9440d043f78b17, type: 3}
+        m_Scale: {x: 5, y: 5}
+        m_Offset: {x: 0, y: 0}
+    - _NoGrassTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Noise:
+        m_Texture: {fileID: 2800000, guid: 529789b31389da34d9a7f98c613bf944, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _ColorTiling: 5e-13
+    - _FadeDistanceEnd: 101
+    - _FadeDistanceStart: 100
+    - _GrassCut: 0
+    - _GrassNormal: -1e+10
+    - _GrassSaturation: 1
+    - _GrassShading: 0.035
+    - _GrassThinness: 0.6
+    - _GrassThinnessIntersection: 0.43
+    - _LightIntensity: 0
+    - _MinimumNumberStacks: 2
+    - _NoisePower: 2
+    - _NumberOfStacks: 17
+    - _OffsetValue: 0.001
+    - _ProceduralDistance: 5.5
+    - _ProceduralStrength: 1.5
+    - _RimMax: 0.62
+    - _RimMin: 0.241
+    - _RimPower: 4.08
+    - _TilingN1: 9.36
+    - _TilingN2: 0.05
+    - _TilingN3: 100
+    - _UsePR: 0
+    - _UseRT: 0
+    - _UseShadow: 1
+    - _UseShadowCast: 0
+    - _UseWC: 0
+    - _WaterHeight: -1e+17
+    - _WindForce: 0
+    - _WindMovement: 0
+    - _WorldRotation: 0
+    - _WorldScale: 10
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OffsetVector: {r: 0, g: -0.4, b: 0.2, a: 1}
+    - _ProjectedShadowColor: {r: 0.3679245, g: 0.3679245, b: 0.3679245, a: 1}
+    - _RimColor: {r: 0.15094337, g: 0.15094337, b: 0.15094337, a: 1}
+    - _SelfShadowColor: {r: 0.5660378, g: 0.5660378, b: 0.5660378, a: 1}

@@ -211,7 +211,7 @@ public class Stats : ScriptableObject
         1f,
         1f,
         1f,
-        1f,
+        .7f,
         1f,
         1f,
         1f,
@@ -226,7 +226,22 @@ public class Stats : ScriptableObject
         2f,
         .5f,
         6f,
+        .5f,
         1f,
+        1f,
+        1.1f,
+        1f,
+        1f,
+        1f,
+        1f,
+        10f
+    );
+
+    public static Stats BASE_DEER = InstantiateStats(
+        1f,
+        .75f,
+        .1f,
+        .5f,
         1f,
         1f,
         1.1f,

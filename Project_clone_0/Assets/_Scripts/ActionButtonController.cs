@@ -13,7 +13,7 @@ public class ActionButtonController : MonoBehaviour
 
     public void SendCommand(){
         //Debug.Log("ActionButtonController.SendCommand(): Sending command to unit!");
-        ubc.handle.entityBehavior.InsertActionImmediate(Action.GenerateAction(command, ubc.handle), true);
+        ubc.handle.entityBehavior.InsertActionImmediate(ActionParameters.CreateActionParameters(command, ubc.handle), true);
     }
 
 }

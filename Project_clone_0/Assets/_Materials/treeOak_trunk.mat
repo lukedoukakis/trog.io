@@ -33,6 +33,12 @@ Material:
     - Vector1_372C41D6: 0
     - Vector1_5F3126D7: 20
     - Vector1_656083AD: 1
+    - _ColorNoise: 0
+    - _SnowDepth: 0.1
+    - _SnowHeightCap: 1e+28
+    - _SnowHeightStart: 1e+24
+    - _SnowMinimumSurfaceNormal: 0
     m_Colors:
+    - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_7353929C: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.9339623, g: 0.78672767, b: 0.72690463, a: 0}

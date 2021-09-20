@@ -16,7 +16,7 @@ public class EntityCommandServer : EntityComponent
     protected override void Awake()
     {
         base.Awake();
-        npcPrefab = Resources.Load<GameObject>("Entities/Bear_NpcIK");
+        npcPrefab = Resources.Load<GameObject>("Entities/Deer_NpcIK");
         //Debug.Log("npcPrefab: " + npcPrefab.name);
     }
 
@@ -34,7 +34,7 @@ public class EntityCommandServer : EntityComponent
         GameObject npc = GameObject.Instantiate(npcPrefab, owningPlayer.transform.position, Quaternion.identity);
         EntityHandle playerHandle = owningPlayer.GetComponent<EntityHandle>();
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
-        playerHandle.entityInfo.faction.AddMember(npcHandle);
+        playerHandle.entityInfo.faction.AddMember(npcHandle, true);
         npcHandle.entityInfo.name = "new npc";
 
         NetworkServer.Spawn(npc, owningPlayer);
@@ -54,7 +54,7 @@ public class EntityCommandServer : EntityComponent
         //Debug.Log("SETTING FACTION");
         EntityHandle handle = entity.GetComponent<EntityHandle>();
         Faction faction = Faction.InstantiateFaction("Faction " + (Random.Range(0, int.MaxValue)).ToString(), true);
-        faction.AddMember(handle);
+        faction.AddMember(handle, false);
         handle.entityInfo.faction = faction;
 
         Testing.instance.OnFactionCreation();

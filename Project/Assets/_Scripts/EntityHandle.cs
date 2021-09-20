@@ -26,7 +26,7 @@ public class EntityHandle : EntityComponent
     public void InitAsLocalPlayer(bool fromMemory){
 
         // set global variables
-        GameManager.current.localPlayer = this.gameObject;
+        GameManager.current.SetLocalPlayer(this.gameObject);
         Testing.instance.playerHandle = this.gameObject.GetComponent<EntityHandle>();
         ChunkGenerator.current.playerT = transform;
         CameraController.current.enabled = true;
@@ -109,14 +109,7 @@ public class EntityHandle : EntityComponent
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.R)){
-            transform.position = new Vector3(Random.Range(-50000f, 50000f), 4500f, Random.Range(-50000f, 50000f));
-        }
-        if(isLocalPlayer){
-            if(Input.GetKeyUp(KeyCode.LeftControl)){
-                GameObject.Find("Torch").transform.position = transform.position + Vector3.up * 3f;
-            }
-        }
+        
     }
     
 }
