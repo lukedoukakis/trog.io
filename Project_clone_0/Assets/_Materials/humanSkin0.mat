@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: humanSkin0
-  m_Shader: {fileID: -6465566751694194690, guid: 21d586b92db687f40831fc51479d9060,
+  m_Shader: {fileID: -6465566751694194690, guid: b62a38319167f37409790434ffbb1835,
     type: 3}
   m_ShaderKeywords: _SPECULAR_SETUP
   m_LightmapFlags: 4
@@ -82,6 +82,7 @@ Material:
     - _Blend: 0
     - _Blur: 0.5
     - _BumpScale: 1
+    - _ColorNoise: 0
     - _Cull: 2
     - _CutOff: 0.5
     - _Cutoff: 0.5
@@ -101,6 +102,10 @@ Material:
     - _ReceiveShadows: 1
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
+    - _SnowDepth: 0.1
+    - _SnowHeightCap: 999999
+    - _SnowHeightStart: 999999
+    - _SnowMinimumSurfaceNormal: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
@@ -111,6 +116,7 @@ Material:
     m_Colors:
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
     - Color_5241E242: {r: 0, g: 0, b: 0, a: 0}
+    - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_81DCE527: {r: 0.7264151, g: 0.58228475, b: 0.39404595, a: 0}
     - Color_962802DE: {r: 0.735849, g: 0.57518464, b: 0.37833747, a: 0}
     - Color_EB41B935: {r: 0.6698113, g: 0.5232258, b: 0.33806515, a: 0}

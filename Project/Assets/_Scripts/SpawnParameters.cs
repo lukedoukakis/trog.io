@@ -71,7 +71,8 @@ public class SpawnParameters
         {"Cactus", new SpawnParameters(2.5f, hgtDry, q1, q1, new Vector2(.1f, .1f), false)},
 
         // creatures
-        {"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(1f, 1f), true)},
+        {"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(.8f, .8f), true)},
+        {"WildDeer", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(1f, 1f), true)},
         
     };
 

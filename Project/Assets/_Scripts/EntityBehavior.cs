@@ -591,7 +591,7 @@ public class EntityBehavior : EntityComponent
             timestep_creatureSense += Time.deltaTime;
             if (timestep_creatureSense >= senseSurroundingsTimeStep_creature)
             {
-                //CheckForCreaturesUpdate();
+                CheckForCreaturesUpdate();
                 timestep_creatureSense = timestep_creatureSense - senseSurroundingsTimeStep_creature;
             }
         }
