@@ -35,16 +35,16 @@ public class ActionParameters : ScriptableObject
 
 
     // maximum time to be spent executing the action
-    public int maxSeconds;
+    public float maxTime;
 
-    public static ActionParameters GenerateAction(Enum _type, GameObject _obj, int _number, Item _item_target, Item _item_result, int _maxSeconds, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent){
+    public static ActionParameters GenerateAction(Enum _type, GameObject _obj, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent){
         ActionParameters a = ScriptableObject.CreateInstance<ActionParameters>();
         a.type = _type;
         a.obj = _obj;
         a.number = _number;
         a.item_target = _item_target;
         a.item_result = _item_result;
-        a.maxSeconds = _maxSeconds;
+        a.maxTime = _maxTime;
         a.distanceThreshold = _distanceThreshold;
         a.bodyRotationMode = _bodyRotationMode;
         a.urgent = _urgent;
@@ -58,7 +58,7 @@ public class ActionParameters : ScriptableObject
         a.number = -1;
         a.item_result = null;
         a.item_target = null;
-        a.maxSeconds = -1;
+        a.maxTime = -1;
         a.distanceThreshold = -1;
         a.bodyRotationMode = EntityOrientation.BodyRotationMode.Normal;
         a.urgent = false;

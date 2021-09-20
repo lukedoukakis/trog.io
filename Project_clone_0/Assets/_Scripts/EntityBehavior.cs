@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
 public enum ActionPriority{ Back, Front, FrontImmediate }
 public enum AttackType{ Weapon, Bite, Swipe, HeadButt, Stomp }
 
@@ -36,6 +35,8 @@ public class EntityBehavior : EntityComponent
     public static float senseDistance_infinite = 5000f;
     public static float maxJumpFromDistance = 2f;
     public static float rotationSpeed = 1f;
+    public static float baseTime_chase = 10f;
+    public static float baseTime_flee = 10f;
 
 
 
@@ -94,6 +95,10 @@ public class EntityBehavior : EntityComponent
         OnActionInterrupt();
         NextAction();
         //Debug.Log("InsertActionImmediate() done");
+    }
+
+    public void ClearActions(){
+        actions.Clear();
     }
 
 
@@ -182,20 +187,30 @@ public class EntityBehavior : EntityComponent
 
         TerminateActionLayer("Movement");
         BeginActionLayer("Movement", a, _GoTo());
+        Debug.Log("STARTING GOTO");
 
         IEnumerator _GoTo()
         {
+            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            float maxTime = a.maxTime;
 
             Transform targetT = a.obj.transform;
-            while (true)
+            while(true)
             {
-                if (!IsAtPosition(targetT.position, a.distanceThreshold)){
+                if(IsAtPosition(targetT.position, a.distanceThreshold)){
+                    timer.Stop();
+                    NextAction();
+                }
+                else if((timer.ElapsedMilliseconds / 1000f) > maxTime){
+                    timer.Stop();
+                    ClearActions();
+                    NextAction();
+                }
+                else{
+                    //Debug.Log(timer.ElapsedMilliseconds / 1000f);
                     move = GetNavigationDirection(targetT, false);
                     entityPhysics.moveDir = move;
-                }
-                else
-                {
-                    NextAction();
                 }
                 yield return null;
             }
@@ -227,11 +242,15 @@ public class EntityBehavior : EntityComponent
             targetT = a.obj.transform;
         }
 
+        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+        timer.Start();
+        float maxTime = a.maxTime;
+
         // repeats until action layer is canceled
         bool followCondition;
         while (true)
         {
-            followCondition = reverse ? (Vector3.Distance(transform.position, targetT.position) <= a.distanceThreshold) : Vector3.Distance(transform.position, targetT.position) > a.distanceThreshold;
+            followCondition = (reverse ? (Vector3.Distance(transform.position, targetT.position) <= a.distanceThreshold) : Vector3.Distance(transform.position, targetT.position) > a.distanceThreshold) && (timer.ElapsedMilliseconds / 1000f) <= maxTime;
             if (followCondition)
             {
                 move = GetNavigationDirection(targetT, reverse);
@@ -240,6 +259,7 @@ public class EntityBehavior : EntityComponent
             else
             {
                 entityPhysics.moveDir = Vector3.zero;
+                NextAction();
             }
             yield return null;
 
@@ -295,7 +315,7 @@ public class EntityBehavior : EntityComponent
 
     public void Chase(ActionParameters a){
         GameObject target = a.obj;
-        ActionParameters goToTarget = ActionParameters.GenerateAction(ActionType.GoTo, target, -1, null, null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, true);
+        ActionParameters goToTarget = ActionParameters.GenerateAction(ActionType.GoTo, target, -1, null, null, a.maxTime, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, true);
         ActionParameters swingAtTarget = ActionParameters.GenerateAction(ActionType.Attack, target, -1, null, null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, false);
         InsertAction(swingAtTarget);
         InsertAction(goToTarget);
@@ -517,6 +537,7 @@ public class EntityBehavior : EntityComponent
     public List<EntityHandle> SenseSurroundingCreatures(Species species, float distance){
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Creature"));
+        Debug.Log("sense distance: " + distance + "... creatures found: " + colliders.Length);
 
         List<EntityHandle> foundHandles = new List<EntityHandle>();
         GameObject o;
@@ -551,24 +572,33 @@ public class EntityBehavior : EntityComponent
                 behaviorTypeOther = handleOther.entityInfo.speciesInfo.behaviorProfile.behaviorType;
                 if (behaviorTypeOther.Equals(BehaviorType.Aggressive))
                 {
-                    InsertActionImmediate(ActionParameters.GenerateAction(ActionType.RunFrom, handleOther.gameObject, -1, null, null, -1, distanceThreshhold_runFrom, EntityOrientation.BodyRotationMode.Normal, false), true);
+                    InsertActionImmediate(ActionParameters.GenerateAction(ActionType.RunFrom, handleOther.gameObject, -1, null, null, baseTime_flee * entityStats.statsCombined.stamina, distanceThreshhold_runFrom, EntityOrientation.BodyRotationMode.Normal, false), true);
                 }
             }
         }
         else if (behaviorProfile.behaviorType.Equals(BehaviorType.Aggressive)){
-            InsertActionImmediate(ActionParameters.GenerateAction(ActionType.Chase, sensedCreatureHandles[0].gameObject, -1, null, null, -1, distanceThreshhold_runFrom, EntityOrientation.BodyRotationMode.Target, false), true);
+            InsertActionImmediate(ActionParameters.GenerateAction(ActionType.Chase, sensedCreatureHandles[0].gameObject, -1, null, null, baseTime_chase * entityStats.statsCombined.stamina, distanceThreshhold_runFrom, EntityOrientation.BodyRotationMode.Target, false), true);
         }
 
     }
 
 
-    public bool IsUpToNothingInParticular(){
+    // returns true if the entity isn't "busy" with something
+    public bool NotBusy(){
         List<ActionParameters> aList = new List<ActionParameters>(actions);
         aList.Add(activeAction);
-        foreach(ActionParameters a in aList){
-            if(!a.type.Equals(ActionType.Idle) || !a.type.Equals(ActionType.GoTo)){
-                return false;
+        if (aList.Any())
+        {
+            foreach (ActionParameters a in aList.Where(a => a != null).ToList())
+            {
+                Debug.Log(a.type.ToString());
+                if (!a.type.Equals(ActionType.Idle) && !a.type.Equals(ActionType.GoTo))
+                {
+                    Debug.Log("   => creature is busy");
+                    return false;
+                }
             }
+            return true;
         }
         return true;
     }
@@ -591,7 +621,10 @@ public class EntityBehavior : EntityComponent
             timestep_creatureSense += Time.deltaTime;
             if (timestep_creatureSense >= senseSurroundingsTimeStep_creature)
             {
-                CheckForCreaturesUpdate();
+                if(NotBusy()){
+                    Debug.Log("Boutta sense creatures");
+                    CheckForCreaturesUpdate();
+                }
                 timestep_creatureSense = timestep_creatureSense - senseSurroundingsTimeStep_creature;
             }
         }
