@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 using System.Linq;
 
-
 public class ChunkGenerator : MonoBehaviour
 {
 
@@ -83,13 +82,16 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
-    // feature
+    // features and creatures
     Transform FeaturesParent;
-    Transform CreaturesParent;
+    public static List<GameObject> activeCreatures;
     public static List<GameObject> Features;
     public static List<GameObject> Creatures;
     [Range(0f, 1f)] public float treeDensity;
     public float treeScale;
+    public static readonly float creatureDespawnTimestep = 5f;
+    public static float creatureDespawnTime = 0f;
+    
 
 
 
@@ -113,9 +115,14 @@ public class ChunkGenerator : MonoBehaviour
                 StartCoroutine(DeloadChunks());
             }
 
+            creatureDespawnTime += Time.deltaTime;
+            if(creatureDespawnTime >= creatureDespawnTimestep){
+                DespawnCreatures();
+                creatureDespawnTime = creatureDespawnTime - creatureDespawnTimestep;
+            }
+
             UpdateWaterPosition();
 
-    
         }
 
     }
@@ -151,6 +158,9 @@ public class ChunkGenerator : MonoBehaviour
 
         Features = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Features"));
         Creatures = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Creatures"));
+
+        activeCreatures = new List<GameObject>();
+
     
     }
 
@@ -233,7 +243,6 @@ public class ChunkGenerator : MonoBehaviour
         Terrain = cd.terrain;
         TerrainMesh = cd.terrainMesh;
         FeaturesParent = cd.featuresParent;
-        CreaturesParent = cd.creaturesParent;
         xIndex = (int)(cd.coord.x);
         zIndex = (int)(cd.coord.y);
         xOffset = xIndex * ChunkSize;
@@ -666,20 +675,26 @@ public class ChunkGenerator : MonoBehaviour
         {
             spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
             placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height);
+            
+
+            int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
+            int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
+            //Debug.Log(placementOffsetX);
+            //Debug.Log(placementOffsetZ);
             //placementDensity = .1f;
             if (placementDensity > 0f)
             {
-                //randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
                 randomDivisorOffset = 0;
-                int divisor = (int)(Mathf.Lerp(40f, 800f, 1f - placementDensity) + randomDivisorOffset);
+                int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
                 if (divisor < 1) { divisor = 1; }
-                if ((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0)
+                if ((x + xOffset + placementOffsetX) % divisor == 0 && (z + zOffset + placementOffsetZ) % divisor == 0)
                 {
                     bundleName = SpawnParameters.GetBundleName(creature.name);
                     spawnPosition = new Vector3(x + xOffset, height * ElevationAmplitude + 10f, z + zOffset);
                     spawnScale = Vector3.one * spawnParameters.scale;
-                    o = GameObject.Instantiate(creature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent.transform);
+                    o = GameObject.Instantiate(creature, spawnPosition, Quaternion.identity, null);
                     o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                    activeCreatures.Add(o);
 
                     // // test
                     // o.transform.position = current.playerPos;
@@ -695,6 +710,17 @@ public class ChunkGenerator : MonoBehaviour
         
     }
 
+
+    void DespawnCreatures(){
+        float despawnDistance = ChunkSize * ChunkRenderDistance;
+        for(int i = 0; i < activeCreatures.Count; ++i){
+            if(Vector3.Distance(playerPos, activeCreatures[i].transform.position) > despawnDistance){
+                GameObject creature = activeCreatures[i];
+                activeCreatures.RemoveAt(i);
+                GameObject.Destroy(creature);
+            }
+        }
+    }
 
     void PlaceTerrainAndWater(ChunkData cd)
     {

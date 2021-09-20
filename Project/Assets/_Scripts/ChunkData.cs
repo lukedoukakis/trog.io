@@ -12,7 +12,7 @@ public class ChunkData
 
     public GameObject chunk;
     public GameObject terrain;
-    public Transform featuresParent, creaturesParent;
+    public Transform featuresParent;
 
     public MeshFilter terrainMeshFilter;
     public MeshRenderer terrainMeshRenderer;
@@ -42,9 +42,7 @@ public class ChunkData
         terrain = chunk.transform.Find("Terrain").gameObject;
         chunk.transform.position = Vector3.zero;
         featuresParent = new GameObject().transform;
-        creaturesParent = new GameObject().transform;
         featuresParent.SetParent(chunk.transform);
-        creaturesParent.SetParent(chunk.transform);
 
         terrainMeshRenderer = terrain.GetComponent<MeshRenderer>();
         terrainMeshFilter = terrain.GetComponent<MeshFilter>();
@@ -60,7 +58,6 @@ public class ChunkData
         Component.Destroy(terrainMesh);
         GameObject.Destroy(chunk);
         GameObject.Destroy(featuresParent);
-        GameObject.Destroy(creaturesParent);
         loaded = false;
 
     }
