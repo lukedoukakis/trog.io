@@ -534,20 +534,20 @@ public class EntityBehavior : EntityComponent
     }
 
 
-    public List<EntityHandle> SenseSurroundingCreatures(Species species, float distance){
+    public List<EntityHandle> SenseSurroundingCreatures(Species targetSpecies, float distance){
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Creature"));
         Debug.Log("sense distance: " + distance + "... creatures found: " + colliders.Length);
 
         List<EntityHandle> foundHandles = new List<EntityHandle>();
         GameObject o;
-        EntityHandle handle;
+        EntityHandle foundHandle;
         foreach(Collider col in colliders){
             o = col.gameObject;
-            handle = o.GetComponentInParent<EntityHandle>();
-            if(handle != null){
-                if(!species.Equals(entityInfo.species) && (species.Equals(Species.Any) || species.Equals(handle.entityInfo.species))){
-                    foundHandles.Add(handle);
+            foundHandle = o.GetComponentInParent<EntityHandle>();
+            if(foundHandle != null){
+                if(!foundHandle.entityInfo.species.Equals(entityInfo.species) && (targetSpecies.Equals(Species.Any) || targetSpecies.Equals(foundHandle.entityInfo.species))){
+                    foundHandles.Add(foundHandle);
                 }
             }
         }
