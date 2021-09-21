@@ -57,7 +57,7 @@ public class SpeciesInfo : ScriptableObject{
     }
 
     public static SpeciesInfo GetSpeciesInfo(Species spec){
-        Debug.Log(spec.ToString());
+        //Debug.Log(spec.ToString());
         return SpeciesInfoDict[spec];
     }
 

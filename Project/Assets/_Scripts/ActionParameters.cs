@@ -87,6 +87,7 @@ public class ActionParameters : ScriptableObject
                 a.type = ActionType.RunFrom;
                 a.obj = Player.current.gameObject;
                 a.distanceThreshold = EntityBehavior.distanceThreshhold_pursuit;
+                a.urgent = true;
                 break;
             case "Attack Player" :
                 a.type = ActionType.Chase;
