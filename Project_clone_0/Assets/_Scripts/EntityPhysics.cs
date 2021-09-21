@@ -688,7 +688,7 @@ public class EntityPhysics : EntityComponent
         collider.gameObject.GetComponentInParent<EntityHitDetection>().OnHit(this.entityHandle);
         
         // todo: weapon fixed at hit point
-        StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .2f));
+        StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
 
         IEnumerator FixWeaponPosition(GameObject weapon, Transform targetT, float time){
             //Transform originalParent = weapon.transform.parent;

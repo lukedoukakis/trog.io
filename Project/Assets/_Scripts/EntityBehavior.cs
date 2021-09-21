@@ -22,6 +22,7 @@ public class EntityBehavior : EntityComponent
     public static float distanceThreshhold_lungeAttack = 10f;
     public static float distanceThreshold_combat = 15f;
     public static float distanceThreshhold_pursuit = 100f;
+    public static float distanceThreshhold_active = 100f;
 
     Vector3 randomOffset;
 
@@ -110,7 +111,7 @@ public class EntityBehavior : EntityComponent
     public ActionParameters NextAction(){
         timeSince_creatureSense = baseTimeStep_creatureSense;
         if(actions.Count == 0){
-            Log("Actions empty -> idling");
+            //Debug.Log("Actions empty -> idling");
             ActionParameters idle = ActionParameters.CreateActionParameters("Idle", entityHandle);
             InsertAction(idle);
         }
@@ -547,7 +548,7 @@ public class EntityBehavior : EntityComponent
     public List<EntityHandle> SenseSurroundingCreatures(Species targetSpecies, float distance){
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Creature"));
-        Debug.Log("sense distance: " + distance + "... creatures found: " + colliders.Length);
+        //Debug.Log("sense distance: " + distance + "... creatures found: " + colliders.Length);
 
         List<EntityHandle> foundHandles = new List<EntityHandle>();
         GameObject o;
@@ -601,10 +602,10 @@ public class EntityBehavior : EntityComponent
         {
             foreach (ActionParameters a in aList.Where(a => a != null).ToList())
             {
-                Debug.Log(a.type.ToString());
+                //Debug.Log(a.type.ToString());
                 if (!a.type.Equals(ActionType.Idle) && !a.type.Equals(ActionType.GoTo))
                 {
-                    Debug.Log("   => creature is busy");
+                    //Debug.Log("   => creature is busy");
                     return false;
                 }
             }
@@ -625,6 +626,10 @@ public class EntityBehavior : EntityComponent
         return baseTime_flee * entityStats.statsCombined.stamina;
     }
 
+    bool WithinActiveDistance(){
+        return Vector3.Distance(GameManager.current.localPlayer.transform.position, transform.position) <= distanceThreshhold_active;
+    }
+
 
 
 
@@ -642,8 +647,8 @@ public class EntityBehavior : EntityComponent
             timeSince_creatureSense += dTime;
             if (timeSince_creatureSense >= baseTimeStep_creatureSense)
             {
-                if(NotBusy()){
-                    Debug.Log("Boutta sense creatures");
+                if(WithinActiveDistance() && NotBusy()){
+                    //Debug.Log("Boutta sense creatures");
                     CheckForCreaturesUpdate();
                 }
                 timeSince_creatureSense = timeSince_creatureSense - baseTimeStep_creatureSense;

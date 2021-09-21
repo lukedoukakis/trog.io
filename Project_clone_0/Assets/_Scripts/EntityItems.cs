@@ -471,6 +471,7 @@ public class EntityItems : EntityComponent
                 {
                     orientation_weaponEquipped = basePosition_weaponEquipped = null;
                 }
+
                 orientation_weaponEquipped.position = basePosition_weaponEquipped.position;
                 orientation_weaponEquipped.rotation = basePosition_weaponEquipped.rotation;
                 Vector3 targetPos = orientation_weaponEquipped.position;

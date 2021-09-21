@@ -103,8 +103,8 @@ Material:
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
     - _SnowDepth: 0.1
-    - _SnowHeightCap: 4644.54
-    - _SnowHeightStart: 3564.5398
+    - _SnowHeightCap: 999999
+    - _SnowHeightStart: 999999
     - _SnowMinimumSurfaceNormal: 0.8
     - _SpecularHighlights: 1
     - _SrcBlend: 1
