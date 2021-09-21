@@ -23,14 +23,18 @@ public class CameraController : MonoBehaviour
     Vector3 targetPos;
     Vector3 targetLookAt;
     float posModifier;
+    Vector3 targetOffset;
+    Vector3 currentOffset;
+    bool targetOffsetReached;
 
     void Awake(){
         current = this;
+        targetOffset = currentOffset = Vector3.right * .25f;
     }
     // Start is called before the first frame update
     void Start()
     {
-    
+
     }
 
     public void Init(Transform t){
@@ -92,23 +96,44 @@ public class CameraController : MonoBehaviour
                 posModifier = min;
             }
 
-            cameraDistance_baked = 1.5f;
+            cameraDistance_baked = .9f;
             float cameraDistance_combined = cameraDistance_baked * cameraDistance_input;
 
-            followT.position = Vector3.Lerp(followT.position, playerT.position + Vector3.up * 3.7f * cameraDistance_combined, 18f * Time.deltaTime);
+            followT.position = Vector3.Lerp(followT.position, playerT.position + Vector3.up * 7f * cameraDistance_combined, 18f * Time.deltaTime);
             targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -7f * cameraDistance_combined) + (Mathf.Sin(posModifier * pi) * Vector3.up * 4f * cameraDistance_combined), 50f * Time.deltaTime);
             Camera.main.transform.position = targetPos;
             targetLookAt = Vector3.Lerp(targetLookAt, followT.position, 50f * Time.deltaTime);
             Camera.main.transform.LookAt(targetLookAt);
+
+            ApplyOffset();
+
         
         
         }
+    }
+
+    void ApplyOffset(){
+        if(!targetOffsetReached){
+            if(Vector3.Distance(targetOffset, currentOffset) > .01f){
+                currentOffset = Vector3.Lerp(currentOffset, targetOffset, 10f * Time.deltaTime);
+            }
+            else{
+                targetOffsetReached = true;
+            }
+        }
+        
+        Camera.main.transform.position += Camera.main.transform.TransformDirection(currentOffset);
     }
 
     void ZoomInput(){
         float zoomDelta = Input.mouseScrollDelta.y * sensitivity_zoom;
         float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .2f, 1f);
         cameraDistance_input = Mathf.Lerp(cameraDistance_input, targetZoom, 40f * Time.deltaTime);
+    }
+
+    public void SetTargetOffset(Vector3 offset){
+        targetOffset = offset;
+        targetOffsetReached = false;
     }
 
 

@@ -316,7 +316,7 @@ public class EntityPhysics : EntityComponent
         }
         
         float footPlantTimeUpdateSpeed = runCycle_strideFrequency * Time.deltaTime;
-        float hipsUpdateSpeed = footPlantTimeUpdateSpeed / 2f;
+        float hipsUpdateSpeed = footPlantTimeUpdateSpeed / 6f;
         updateTime_footRight += footPlantTimeUpdateSpeed;
         updateTime_footLeft += footPlantTimeUpdateSpeed;
         updateTime_handRight += footPlantTimeUpdateSpeed;
@@ -332,7 +332,7 @@ public class EntityPhysics : EntityComponent
         if(updateTime_hips > 1f){
             updateTime_hips = updateTime_hips - 1f;
         }
-        targetHips.position = basePositionHips.position + Vector3.up * GetRunCyclePhase(updateTime_hips, 0f) * .1f;
+        targetHips.position = basePositionHips.position + Vector3.up * GetRunCyclePhase(updateTime_hips, 0f) * .2f;
 
 
         // feet and toes

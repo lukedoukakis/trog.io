@@ -431,6 +431,19 @@ public class EntityItems : EntityComponent
         if(holding_object != null){
             Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, true);
         }
+
+        if(isLocalPlayer){
+            UpdateCameraOffset();
+        }
+    }
+
+    void UpdateCameraOffset(){
+        if(weaponEquipped_item != null){
+            CameraController.current.SetTargetOffset(Vector3.right * .5f);
+        }
+        else{
+            CameraController.current.SetTargetOffset(Vector3.right * .25f);
+        }
     }
 
 
