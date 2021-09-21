@@ -671,42 +671,42 @@ public class ChunkGenerator : MonoBehaviour
             yield return null;
         }
 
-        foreach(GameObject creature in Creatures)
-        {
-            spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
-            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height);
+        // foreach(GameObject creature in Creatures)
+        // {
+        //     spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
+        //     placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height);
             
 
-            int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
-            int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
-            //Debug.Log(placementOffsetX);
-            //Debug.Log(placementOffsetZ);
-            //placementDensity = .1f;
-            if (placementDensity > 0f)
-            {
-                randomDivisorOffset = 0;
-                int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
-                if (divisor < 1) { divisor = 1; }
-                if ((x + xOffset + placementOffsetX) % divisor == 0 && (z + zOffset + placementOffsetZ) % divisor == 0)
-                {
-                    bundleName = SpawnParameters.GetBundleName(creature.name);
-                    spawnPosition = new Vector3(x + xOffset, height * ElevationAmplitude + 10f, z + zOffset);
-                    spawnScale = Vector3.one * spawnParameters.scale;
-                    o = GameObject.Instantiate(creature, spawnPosition, Quaternion.identity, null);
-                    o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-                    activeCreatures.Add(o);
+        //     int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
+        //     int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
+        //     //Debug.Log(placementOffsetX);
+        //     //Debug.Log(placementOffsetZ);
+        //     //placementDensity = .1f;
+        //     if (placementDensity > 0f)
+        //     {
+        //         randomDivisorOffset = 0;
+        //         int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
+        //         if (divisor < 1) { divisor = 1; }
+        //         if ((x + xOffset + placementOffsetX) % divisor == 0 && (z + zOffset + placementOffsetZ) % divisor == 0)
+        //         {
+        //             bundleName = SpawnParameters.GetBundleName(creature.name);
+        //             spawnPosition = new Vector3(x + xOffset, height * ElevationAmplitude + 10f, z + zOffset);
+        //             spawnScale = Vector3.one * spawnParameters.scale;
+        //             o = GameObject.Instantiate(creature, spawnPosition, Quaternion.identity, null);
+        //             o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+        //             activeCreatures.Add(o);
 
-                    // // test
-                    // o.transform.position = current.playerPos;
+        //             // // test
+        //             // o.transform.position = current.playerPos;
 
-                    bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
-                    bundleName_last = bundleName;
+        //             bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
+        //             bundleName_last = bundleName;
         
-                    if (breaker) { break; }
-                }
-            }
-            yield return null;
-        }
+        //             if (breaker) { break; }
+        //         }
+        //     }
+        //     yield return null;
+        // }
         
     }
 

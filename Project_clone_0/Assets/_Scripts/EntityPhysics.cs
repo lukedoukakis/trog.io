@@ -686,7 +686,34 @@ public class EntityPhysics : EntityComponent
         GameObject hitObject = collider.gameObject;
         //Log("HIT!!!! " + collider.gameObject.name);
         collider.gameObject.GetComponentInParent<EntityHitDetection>().OnHit(this.entityHandle);
-        // todo: weapon fixed at hit point   
+        
+        // todo: weapon fixed at hit point
+        StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .2f));
+
+        IEnumerator FixWeaponPosition(GameObject weapon, Transform targetT, float time){
+            //Transform originalParent = weapon.transform.parent;
+            //weapon.transform.SetParent(targetT);
+            Rigidbody rbTarget = targetT.gameObject.GetComponentInParent<Rigidbody>();
+            Rigidbody rbWeapon = weapon.GetComponent<Rigidbody>();
+            if(rbTarget == null){
+                rbTarget = targetT.gameObject.AddComponent<Rigidbody>();
+                rbTarget.constraints = RigidbodyConstraints.FreezeAll;
+            }
+            if(rbWeapon == null)
+            {
+                rbWeapon = weapon.gameObject.AddComponent<Rigidbody>();
+            }
+            //rbWeapon.constraints = RigidbodyConstraints.FreezeAll;
+            SpringJoint j = weapon.AddComponent<SpringJoint>();
+            j.connectedBody = rbTarget;
+            j.spring = 1;
+            entityItems.ToggleItemOrientationUpdate(false);
+            yield return new WaitForSecondsRealtime(time);
+            //weapon.transform.SetParent(originalParent);
+            Destroy(j);
+            entityItems.ToggleItemOrientationUpdate(true);
+        }
+
     }
     public void OnWeaponHitRemove(){ 
         // todo: weapon no longer at fixed point
