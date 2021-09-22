@@ -728,7 +728,7 @@ public class EntityPhysics : EntityComponent
         StartCoroutine(_AttackSwipe());
 
         IEnumerator _AttackSwipe(){
-            StartCoroutine(LungeForward());
+            Lunge(target.position - transform.position);
             iKTargetAnimator.enabled = true;
             iKTargetAnimator.SetTrigger("AttackSwipe");
             yield return new WaitForSeconds(.25f);
@@ -736,13 +736,6 @@ public class EntityPhysics : EntityComponent
 
         }
 
-        IEnumerator LungeForward(){
-            Vector3 dir = ((target.position - transform.position).normalized + Vector3.up * .5f) * 1000f * entityBehavior.behaviorProfile.lungePower;
-            for(int i = 0; i < 50f; ++i){
-                rb.AddForce(dir);
-                yield return null;
-            }
-        }
     }
 
     void AttackHeadButt(Transform target){
@@ -753,6 +746,22 @@ public class EntityPhysics : EntityComponent
         // todo: stomp attack
     }
 
+
+    public void Lunge(Vector3 direction){
+
+        StartCoroutine(_Lunge());
+
+        IEnumerator _Lunge()
+        {
+            Vector3 dir = ((direction).normalized + Vector3.up * .5f) * 1000f * entityBehavior.behaviorProfile.lungePower;
+            for (int i = 0; i < 50f; ++i)
+            {
+                rb.AddForce(dir);
+                yield return null;
+            }
+        }
+    }
+    
 
 
     // ----------------------------------------------------------

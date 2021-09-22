@@ -71,6 +71,7 @@ public class EntityBehavior : EntityComponent
             {"Hands", null},
             {"Head", null }
         };
+
     }
 
     void Start(){
@@ -237,6 +238,7 @@ public class EntityBehavior : EntityComponent
                     move = GetNavigationDirection(targetT, false);
                     entityPhysics.moveDir = move;
                 }
+                SetHeadLookAt(targetT.position, -1f);
                 yield return null;
             }
         }
@@ -285,15 +287,16 @@ public class EntityBehavior : EntityComponent
             }
             else
             {
-                Debug.Log("followCondition false");
                 entityPhysics.moveDir = Vector3.zero;
-                //timer.Stop();
-                //NextAction();
+
+                if(reverse){
+                    timer.Stop();
+                    NextAction();
+                }
+    
             }
 
-            // test head
-            //entityPhysics.head.LookAt(a.obj.transform);
-            entityPhysics.head.rotation = Quaternion.LookRotation((a.obj.transform.position - Vector3.up * 30f) - entityPhysics.head.position, Vector3.up);
+            if (!reverse) { SetHeadLookAt(a.obj.transform.position, -1f); }
 
             yield return null;
 
@@ -599,11 +602,12 @@ public class EntityBehavior : EntityComponent
     public void CheckForCreaturesUpdate(){
         BehaviorType behaviorType = behaviorProfile.behaviorType;
         if(behaviorType.Equals(BehaviorType.Steadfast)){ return; }
-        List<EntityHandle> sensedCreatureHandles = SenseSurroundingCreatures(Species.Any, 15f);
+        List<EntityHandle> sensedCreatureHandles = SenseSurroundingCreatures(Species.Any, 30f);
         //Debug.Log(sensedCreatureHandles.Count);
         if(sensedCreatureHandles.Count == 0){ return; }
         sensedCreatureHandles = sensedCreatureHandles.OrderBy(handle => Vector3.Distance(transform.position, handle.transform.position)).ToList();
 
+        float distanceAway;
         BehaviorType behaviorTypeOther;
         if (behaviorProfile.behaviorType.Equals(BehaviorType.Timid))
         {
@@ -612,7 +616,13 @@ public class EntityBehavior : EntityComponent
                 behaviorTypeOther = handleOther.entityInfo.speciesInfo.behaviorProfile.behaviorType;
                 if (behaviorTypeOther.Equals(BehaviorType.Aggressive))
                 {
-                    InsertActionImmediate(ActionParameters.GenerateActionParameters(ActionType.RunFrom, handleOther.gameObject, -1, null, null, GetFleeTime(), distanceThreshhold_pursuit, EntityOrientation.BodyRotationMode.Normal, true), true);
+                    distanceAway = Vector3.Distance(transform.position, handleOther.transform.position);
+                    if(distanceAway < 15f){
+                        InsertActionImmediate(ActionParameters.GenerateActionParameters(ActionType.RunFrom, handleOther.gameObject, -1, null, null, GetFleeTime(), distanceThreshhold_pursuit, EntityOrientation.BodyRotationMode.Normal, true), true);
+                    }
+                    else{
+                        SetHeadLookAt(handleOther.transform.position, baseTimeStep_creatureSense);
+                    }
                 }
             }
         }
@@ -641,6 +651,32 @@ public class EntityBehavior : EntityComponent
             return true;
         }
         return true;
+    }
+
+    // turn head towards position for x time
+    public void SetHeadLookAt(Vector3 lookAtPos, float time){
+
+        float lookAtForce = 2f;
+
+        if(time == -1f)
+        {
+            entityPhysics.head.rotation = Quaternion.Slerp(entityPhysics.head.rotation, Quaternion.LookRotation((lookAtPos - Vector3.up * 30f) - entityPhysics.head.position, Vector3.up), lookAtForce * Time.deltaTime);
+        }
+        else
+        {
+            StartCoroutine(_SetHeadLookAt());
+        }
+
+        IEnumerator _SetHeadLookAt()
+        {
+            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            float maxTime = time;
+            while(timer.ElapsedMilliseconds / 1000f < time){
+                entityPhysics.head.rotation = Quaternion.Slerp(entityPhysics.head.rotation, Quaternion.LookRotation((lookAtPos - Vector3.up * 30f) - entityPhysics.head.position, Vector3.up), lookAtForce * Time.deltaTime);
+                yield return null;
+            }
+        }
     }
 
     public bool IsAtPosition(Vector3 position, float distanceThreshhold){
@@ -678,7 +714,7 @@ public class EntityBehavior : EntityComponent
             {
                 if(WithinActiveDistance() && NotBusy()){
                     //Debug.Log("Boutta sense creatures");
-                    //CheckForCreaturesUpdate();
+                    CheckForCreaturesUpdate();
                 }
                 timeSince_creatureSense = timeSince_creatureSense - baseTimeStep_creatureSense;
             }

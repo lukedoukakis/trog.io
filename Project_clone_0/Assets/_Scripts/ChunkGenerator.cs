@@ -645,6 +645,10 @@ public class ChunkGenerator : MonoBehaviour
 
         foreach(GameObject feature in Features)
         {
+
+            // break if chunk not loaded
+            if(cd == null){ break; }
+
             spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
             placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height);
             //placementDensity = .1f;
@@ -673,6 +677,10 @@ public class ChunkGenerator : MonoBehaviour
 
         foreach(GameObject creature in Creatures)
         {
+
+            // break if chunk not loaded
+            if(cd == null){ break; }
+
             spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
             placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height);
             

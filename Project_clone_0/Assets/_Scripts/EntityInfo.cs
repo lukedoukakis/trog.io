@@ -118,7 +118,7 @@ public class SpeciesInfo : ScriptableObject{
                 IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end_end", "leg_lower_left_end_end", "", "", "arm_lower_right_end_end_end", "arm_lower_left_end_end_end", "", "", true, false, 3f, 10f, 2.25f, .58f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Timid,
-                    new List<AttackType>(){ },
+                    new List<AttackType>(){ AttackType.Swipe },
                     new List<ActionParameters>(){ },
                     .75f,
                     false)
