@@ -303,7 +303,7 @@ public class EntityItems : EntityComponent
         Utility.ToggleObjectPhysics(weaponEquipped_object, false);
 
         // remove hit detection owner
-        weaponUnequipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().RemoveOwner();
+        weaponUnequipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().RemoveOwner();
     }
     public void SetEquippedWeapon(Item item, GameObject worldObject){
 
@@ -320,7 +320,7 @@ public class EntityItems : EntityComponent
         Utility.ToggleObjectPhysics(weaponEquipped_object, false);
 
         // set weapon hit detection owner
-        weaponEquipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().SetOwner(entityHandle);
+        weaponEquipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().SetOwner(entityHandle);
     }
 
     public void ToggleWeaponEquipped(){
@@ -338,7 +338,7 @@ public class EntityItems : EntityComponent
         {
             Utility.ToggleObjectPhysics(weaponEquipped_object, false);
             entityStats.AddStatsModifier(weaponEquipped_item.stats);
-            weaponEquipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().SetOwner(entityHandle);
+            weaponEquipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().SetOwner(entityHandle);
         }
 
         if (weaponUnequipped_item != null)
@@ -347,7 +347,7 @@ public class EntityItems : EntityComponent
             entityStats.RemoveStatsModifier(weaponUnequipped_item.stats);
             if (weaponUnequipped_object != null)
             {
-                weaponUnequipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().RemoveOwner();
+                weaponUnequipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().RemoveOwner();
             }
         }
 

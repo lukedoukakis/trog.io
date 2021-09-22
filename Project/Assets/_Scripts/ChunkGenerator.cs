@@ -721,11 +721,17 @@ public class ChunkGenerator : MonoBehaviour
 
     void DespawnCreatures(){
         float despawnDistance = ChunkSize * ChunkRenderDistance;
+        GameObject creature;
         for(int i = 0; i < activeCreatures.Count; ++i){
-            if(Vector3.Distance(playerPos, activeCreatures[i].transform.position) > despawnDistance){
-                GameObject creature = activeCreatures[i];
+            creature = activeCreatures[i];
+            if(creature != null){
+                if(Vector3.Distance(playerPos, activeCreatures[i].transform.position) > despawnDistance){
+                    activeCreatures.RemoveAt(i);
+                    GameObject.Destroy(creature);
+                }
+            }
+            else{
                 activeCreatures.RemoveAt(i);
-                GameObject.Destroy(creature);
             }
         }
     }

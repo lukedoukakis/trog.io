@@ -74,26 +74,28 @@ public class EntityStats : EntityComponent
 
     public void TakeDamage(EntityHandle attackerHandle){
 
-        // get attacker's relevant stats and weapon
+        // get attacker's relevant stats and (if applicable) weapon
         Stats attackerStats = attackerHandle.entityStats.statsCombined;
-        Item attackerWeapon = attackerHandle.entityItems.weaponEquipped_item;
+        EntityItems attackerItems = attackerHandle.entityItems;
+        Item attackerWeapon = attackerItems == null ? Item.None : attackerItems.weaponEquipped_item;
         float attackerAttack = Stats.GetStatValue(attackerStats, Stats.StatType.Attack);
 
         // get this entity's relevant stats
         float armorBase = Stats.GetStatValue(this.statsCombined, Stats.StatType.ArmorBase);
         Enum armorStatType;
-        switch (attackerWeapon.damageType) {
-            case Item.DamageType.Blunt :
+        switch (attackerWeapon.damageType)
+        {
+            case Item.DamageType.Blunt:
                 armorStatType = Stats.StatType.ArmorBlunt;
                 break;
-            case Item.DamageType.Slash :
+            case Item.DamageType.Slash:
                 armorStatType = Stats.StatType.ArmorSlash;
                 break;
-            case Item.DamageType.Pierce :
+            case Item.DamageType.Pierce:
                 armorStatType = Stats.StatType.ArmorPierce;
                 break;
             default:
-                armorStatType = Stats.StatType.ArmorBlunt;
+                armorStatType = Stats.StatType.ArmorBase;
                 break;
         }
         float armorFromWeaponType = Stats.GetStatValue(this.statsCombined, armorStatType);
@@ -242,7 +244,7 @@ public class Stats : ScriptableObject
         .75f,
         .1f,
         .5f,
-        1f,
+        .7f,
         1f,
         1.1f,
         1f,

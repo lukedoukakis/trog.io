@@ -16,7 +16,7 @@ public class EntityCommandServer : EntityComponent
     protected override void Awake()
     {
         base.Awake();
-        npcPrefab = Resources.Load<GameObject>("Entities/Deer_NpcIK");
+        npcPrefab = Resources.Load<GameObject>("Entities/Bear_NpcIK");
         //Debug.Log("npcPrefab: " + npcPrefab.name);
     }
 

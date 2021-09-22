@@ -11,6 +11,7 @@ public class Item : ScriptableObject
 
 
     // Item defs
+    public static Item None = InitiailizeItem("None", Type.Weapon, Stats.NONE, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
     public static Item Torch = InitiailizeItem("Torch", Type.Weapon, Stats.NONE, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
     public static Item Stone = InitiailizeItem("Stone", Type.LargeLongObject, Stats.NONE, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject/Stone"), Resources.Load<Image>("Items/Stone/Image"));
     public static Item SmallStone = InitiailizeItem("SmallStone", Type.MiscSmall, Stats.NONE, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, EmptyItemCollection, Resources.Load<GameObject>("Items/SmallStone/Gameobject/SmallStone"), Resources.Load<Image>("Items/SmallStone/Image"));

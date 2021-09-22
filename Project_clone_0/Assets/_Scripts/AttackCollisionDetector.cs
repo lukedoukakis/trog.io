@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponCollisionDetector : MonoBehaviour
+public class AttackCollisionDetector : MonoBehaviour
 {
 
     EntityHandle owner;
@@ -23,12 +23,14 @@ public class WeaponCollisionDetector : MonoBehaviour
     }
 
     bool CanCollide(){
-        return owner != null && owner.entityPhysics.weaponCanHit;
+        return owner != null && owner.entityPhysics.attackCanHit;
     }
 
     void OnTriggerEnter(Collider otherCollider){
+        Debug.Log("TRIGGER ENTER");
         if(CanCollide()){
-            owner.entityPhysics.OnWeaponHit(otherCollider);
+            Debug.Log("COLLISION");
+            owner.entityPhysics.OnAttackHit(otherCollider);
         }
     }
 

@@ -82,9 +82,9 @@ public class EntityPhysics : EntityComponent
     float weaponChargeTime;
     bool weaponCharging;
     float weaponChargeAmount;
-    float weaponHitTime;
-    public bool weaponCanHit;
-    public bool weaponHit;
+    float attackHitTime;
+    public bool attackCanHit;
+    public bool attackHit;
 
 
 
@@ -197,7 +197,20 @@ public class EntityPhysics : EntityComponent
         else{
             handFree_right = handFree_left = false;
         }
-    
+
+        // find attackCollisionDetectors
+        foreach(AttackCollisionDetector acd in GetComponentsInChildren<AttackCollisionDetector>()){
+            acd.SetOwner(entityHandle);
+        }
+
+        // disable all self collision
+        Collider[] allColliders = GetComponentsInChildren<Collider>();
+        foreach(Collider col0 in allColliders){
+            foreach(Collider col1 in allColliders){
+                Physics.IgnoreCollision(col0, col1, true);
+            }
+        }
+
         ToggleIK(true);
         UpdateIKForCarryingItems();
     }
@@ -639,7 +652,7 @@ public class EntityPhysics : EntityComponent
         {
             StopWeaponChargeTime();
             triggerName = "Release";
-            BeginWeaponHitTime();
+            BeginAttackHitTime();
             if(entityItems.weaponEquipped_item == null){
                 LaunchProjectile(Item.SmallStone.worldObject);
             }
@@ -671,50 +684,60 @@ public class EntityPhysics : EntityComponent
         weaponChargeTime = 0f;
     }
 
-    void BeginWeaponHitTime(){
-        weaponHitTime = 0f;
-        weaponCanHit = true;
+    void BeginAttackHitTime(){
+        attackHitTime = 0f;
+        attackCanHit = true;
     }
-    void StopWeaponHitTime(){
-        weaponCanHit = false;
-        if(weaponHit){
+    void StopAttackHitTime(){
+        attackCanHit = false;
+        if(attackHit){
             OnWeaponHitRemove();
-            weaponHit = false;
+            attackHit = false;
         }
     }
-    public void OnWeaponHit(Collider collider){
+    public void OnAttackHit(Collider collider){
         GameObject hitObject = collider.gameObject;
-        //Log("HIT!!!! " + collider.gameObject.name);
-        collider.gameObject.GetComponentInParent<EntityHitDetection>().OnHit(this.entityHandle);
-        
-        // todo: weapon fixed at hit point
-        StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
+        Debug.Log(hitObject.layer);
 
-        IEnumerator FixWeaponPosition(GameObject weapon, Transform targetT, float time){
-            //Transform originalParent = weapon.transform.parent;
-            //weapon.transform.SetParent(targetT);
-            Rigidbody rbTarget = targetT.gameObject.GetComponentInParent<Rigidbody>();
-            Rigidbody rbWeapon = weapon.GetComponent<Rigidbody>();
-            if(rbTarget == null){
-                rbTarget = targetT.gameObject.AddComponent<Rigidbody>();
-                rbTarget.constraints = RigidbodyConstraints.FreezeAll;
-            }
-            if(rbWeapon == null)
+        if (hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature"))
+        {
+            Log("HIT!!!! " + collider.gameObject.name);
+            collider.gameObject.GetComponentInParent<EntityHitDetection>().OnHit(this.entityHandle);
+
+            // apply fixed weapon position effect if applicable
+            if (entityItems != null)
             {
-                rbWeapon = weapon.gameObject.AddComponent<Rigidbody>();
+                StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
             }
-            //rbWeapon.constraints = RigidbodyConstraints.FreezeAll;
-            SpringJoint j = weapon.AddComponent<SpringJoint>();
-            j.connectedBody = rbTarget;
-            j.spring = 1;
-            entityItems.ToggleItemOrientationUpdate(false);
-            yield return new WaitForSecondsRealtime(time);
-            //weapon.transform.SetParent(originalParent);
-            Destroy(j);
-            entityItems.ToggleItemOrientationUpdate(true);
         }
+        
+        
+        
 
     }
+    IEnumerator FixWeaponPosition(GameObject weapon, Transform targetT, float time)
+    {
+        Rigidbody rbTarget = targetT.gameObject.GetComponentInParent<Rigidbody>();
+        Rigidbody rbWeapon = weapon.GetComponent<Rigidbody>();
+        if (rbTarget == null)
+        {
+            rbTarget = targetT.gameObject.AddComponent<Rigidbody>();
+            rbTarget.constraints = RigidbodyConstraints.FreezeAll;
+        }
+        if (rbWeapon == null)
+        {
+            rbWeapon = weapon.gameObject.AddComponent<Rigidbody>();
+        }
+        //rbWeapon.constraints = RigidbodyConstraints.FreezeAll;
+        SpringJoint j = weapon.AddComponent<SpringJoint>();
+        j.connectedBody = rbTarget;
+        j.spring = 1;
+        entityItems.ToggleItemOrientationUpdate(false);
+        yield return new WaitForSecondsRealtime(time);
+        Destroy(j);
+        entityItems.ToggleItemOrientationUpdate(true);
+    }
+
     public void OnWeaponHitRemove(){ 
         // todo: weapon no longer at fixed point
     }
@@ -728,12 +751,13 @@ public class EntityPhysics : EntityComponent
         StartCoroutine(_AttackSwipe());
 
         IEnumerator _AttackSwipe(){
+            BeginAttackHitTime();
             Lunge(target.position - transform.position);
             iKTargetAnimator.enabled = true;
             iKTargetAnimator.SetTrigger("AttackSwipe");
             yield return new WaitForSeconds(.25f);
             iKTargetAnimator.enabled = false;
-
+            StopAttackHitTime();
         }
 
     }
@@ -967,11 +991,11 @@ public class EntityPhysics : EntityComponent
         if(weaponCharging){
             weaponChargeTime += dTime;
         }
-        if(weaponCanHit){
+        if(attackCanHit){
             //Log("Weapon can hit");
-            weaponHitTime += dTime;
-            if(weaponHitTime >= weaponHitTime_max){
-                StopWeaponHitTime();
+            attackHitTime += dTime;
+            if(attackHitTime >= weaponHitTime_max){
+                StopAttackHitTime();
                 //Log("Weapon cannot hit");
             }
         }
