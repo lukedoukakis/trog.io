@@ -175,11 +175,11 @@ public class EntityPhysics : EntityComponent
         ikScripts_upperBody = new FastIKFabric[]{ ikScript_handRight, ikScript_handLeft, ikScript_fingerRight, ikScript_fingerLeft };
         iKTargetAnimator = ikParent.GetComponent<Animator>();
 
-        acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * AccelerationScale * .5f;
-        maxSpeed_run = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * MaxSpeedScale * .5f;
-        maxSpeed_sprint = maxSpeed_run * 1.5f * 2f;
-        maxSpeed_climb = maxSpeed_run * .25f * .5f;
-        maxSpeed_swim = maxSpeed_run * .75f * .5f;
+        acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * AccelerationScale;
+        maxSpeed_run = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * MaxSpeedScale;
+        maxSpeed_sprint = maxSpeed_run * 1.5f;
+        maxSpeed_climb = maxSpeed_run * .25f;
+        maxSpeed_swim = maxSpeed_run * .75f;
 
         plantPosFootRight = targetFootRight.position;
         plantPosFootLeft = targetFootLeft.position;
