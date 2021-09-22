@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.PostProcessing;
+//using UnityEngine.Rendering.PostProcessing;
 
 public class LightingController : MonoBehaviour
 {
@@ -9,8 +9,8 @@ public class LightingController : MonoBehaviour
     public static LightingController current;
     
     // post-processing
-    public PostProcessVolume volume;
-    public ColorGrading colorGrading;
+    //public PostProcessVolume volume;
+    //public ColorGrading colorGrading;
 
     public GameObject sun, moon;
     public Light sunLight, moonLight;
@@ -35,8 +35,8 @@ public class LightingController : MonoBehaviour
         moonLight = moon.GetComponent<Light>();
 
         // initialize pp
-        volume = GetComponent<PostProcessVolume>();
-        volume.profile.TryGetSettings(out colorGrading);
+        //volume = GetComponent<PostProcessVolume>();
+        //volume.profile.TryGetSettings(out colorGrading);
         
 
         time = 200f;
@@ -81,7 +81,7 @@ public class LightingController : MonoBehaviour
         color *= Color.Lerp(sunLightColor_base, sunLightColor_sunset, sunset);
         sunLight.color = color;
 
-        colorGrading.colorFilter.value = Color.Lerp(ambientColorDay, ambientColorNight, darkness);
+        //colorGrading.colorFilter.value = Color.Lerp(ambientColorDay, ambientColorNight, darkness);
 
     }
 
