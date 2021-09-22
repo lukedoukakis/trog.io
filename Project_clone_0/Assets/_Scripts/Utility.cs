@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -70,4 +71,28 @@ public class Utility : MonoBehaviour
         return testValue >= bound1 && testValue <= bound2;
     }
 
+    public static Vector3 GetRandomVectorOffset(Vector3 position, float offsetMagnitude, bool mustBeOnLand)
+    {
+        Vector3 v = position + new Vector3(UnityEngine.Random.Range(-100f, 100f), UnityEngine.Random.Range(-100f, 100f), UnityEngine.Random.Range(-100f, 100f)) * offsetMagnitude;
+        
+        RaycastHit hit;
+        if (Physics.Raycast(v, Vector3.up, out hit, float.MaxValue, LayerMask.GetMask("Terrain")))
+        {
+            v.y = hit.point.y;
+        }
+        if(mustBeOnLand)
+        {
+            if(Physics.Raycast(v, Vector3.down, out hit, float.MaxValue, LayerMask.GetMask("Terrain"))){
+                if(hit.point.y > ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude){
+                    v.y = hit.point.y;
+                }
+                else{
+                    v.y = ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude;
+                }
+            }
+        }
+        
+        
+        return v;
+    }
 }

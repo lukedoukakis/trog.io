@@ -37,7 +37,7 @@ public class ActionParameters : ScriptableObject
     // maximum time to be spent executing the action
     public float maxTime;
 
-    public static ActionParameters GenerateAction(Enum _type, GameObject _obj, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent){
+    public static ActionParameters GenerateActionParameters(Enum _type, GameObject _obj, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent){
         ActionParameters a = ScriptableObject.CreateInstance<ActionParameters>();
         a.type = _type;
         a.obj = _obj;
@@ -66,7 +66,7 @@ public class ActionParameters : ScriptableObject
     }
 
     // some predefined actions
-    public static ActionParameters CreateActionParameters(string command, EntityHandle handle){
+    public static ActionParameters GetPredefinedActionParameters(string command, EntityHandle handle){
 
         ActionParameters a = ActionParameters.GenerateAction();
         switch(command){
@@ -94,6 +94,18 @@ public class ActionParameters : ScriptableObject
                 a.obj = Player.current.gameObject;
                 a.maxTime = handle.entityBehavior.GetChaseTime();
                 a.urgent = true;
+                break;
+            case "Idle For 5 Seconds" :
+                a.type = ActionType.Idle;
+                a.maxTime = 5f;
+                break;
+            case "Go To Random Nearby Spot" :
+                a.type = ActionType.GoTo;
+                GameObject temp = new GameObject();
+                temp.transform.position = Utility.GetRandomVectorOffset(handle.transform.position, 10f, true);
+                a.obj = temp;
+                a.maxTime = 10f;
+                a.distanceThreshold = EntityBehavior.distanceThreshold_spot;
                 break;
             case "Collect Item" :
                 a.type = ActionType.Collect;
