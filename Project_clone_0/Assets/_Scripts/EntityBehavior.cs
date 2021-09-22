@@ -63,11 +63,13 @@ public class EntityBehavior : EntityComponent
             {"Command", null},
             {"Movement", null},
             {"Hands", null},
+            {"Head", null}
         };
         coroutineLayers = new Dictionary<string, IEnumerator>{
             {"Command", null},
             {"Movement", null},
             {"Hands", null},
+            {"Head", null }
         };
     }
 
@@ -97,6 +99,7 @@ public class EntityBehavior : EntityComponent
         }
         InsertAction(a);
         OnActionInterrupt();
+        //Debug.Log("going to call nextaction... actions count: " + actions.Count);
         NextAction();
         //Debug.Log("InsertActionImmediate() done");
     }
@@ -213,6 +216,7 @@ public class EntityBehavior : EntityComponent
             System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
             timer.Start();
             float maxTime = a.maxTime;
+            if(maxTime == -1f){ maxTime = float.MaxValue; }
 
             Transform targetT = a.obj.transform;
             while(true)
@@ -266,11 +270,13 @@ public class EntityBehavior : EntityComponent
         System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
         timer.Start();
         float maxTime = a.maxTime;
+        if(maxTime == -1f){ maxTime = float.MaxValue; }
 
         // repeats until action layer is canceled
         bool followCondition;
         while (true)
         {
+
             followCondition = (reverse ? (Vector3.Distance(transform.position, targetT.position) <= a.distanceThreshold) : Vector3.Distance(transform.position, targetT.position) > a.distanceThreshold) && (timer.ElapsedMilliseconds / 1000f) <= maxTime;
             if (followCondition)
             {
@@ -279,9 +285,16 @@ public class EntityBehavior : EntityComponent
             }
             else
             {
+                Debug.Log("followCondition false");
                 entityPhysics.moveDir = Vector3.zero;
-                NextAction();
+                //timer.Stop();
+                //NextAction();
             }
+
+            // test head
+            //entityPhysics.head.LookAt(a.obj.transform);
+            entityPhysics.head.rotation = Quaternion.LookRotation((a.obj.transform.position - Vector3.up * 30f) - entityPhysics.head.position, Vector3.up);
+
             yield return null;
 
         }
@@ -665,7 +678,7 @@ public class EntityBehavior : EntityComponent
             {
                 if(WithinActiveDistance() && NotBusy()){
                     //Debug.Log("Boutta sense creatures");
-                    CheckForCreaturesUpdate();
+                    //CheckForCreaturesUpdate();
                 }
                 timeSince_creatureSense = timeSince_creatureSense - baseTimeStep_creatureSense;
             }

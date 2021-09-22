@@ -117,9 +117,10 @@ MonoBehaviour:
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   id: 0
-  species: 0
   nickname: bob
+  species: 1
   faction: {fileID: 0}
+  speciesInfo: {fileID: 0}
 --- !u!114 &114389023734901763
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,7 +148,7 @@ MonoBehaviour:
   entityCommandServer: {fileID: 0}
   statsModifiers: []
   statsCombined: {fileID: 0}
-  stamina_base: 100
+  BASE_AMOUNT_STAMINA: 100
   hp: 0
   stamina: 0
 --- !u!114 &114389023734901762
@@ -175,9 +176,12 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
+  behaviorProfile: {fileID: 0}
   home: {fileID: 0}
   move: {x: 0, y: 0, z: 0}
   urgent: 0
+  timeSince_creatureSense: 0
+  timeSince_attack: 0
   activeAction: {fileID: 0}
   actions: []
 --- !u!114 &114389023734901773
@@ -206,8 +210,8 @@ MonoBehaviour:
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
   rb: {fileID: 0}
-  bodyT: {fileID: 0}
-  headT: {fileID: 0}
+  body: {fileID: 0}
+  head: {fileID: 0}
   bodyRotationTarget: {fileID: 0}
   bodyLean: 0
   angularVelocityY: 0
@@ -238,8 +242,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
-  hitbox: {fileID: 0}
-  obstacleHitbox: {fileID: 0}
+  worldCollider: {fileID: 0}
   highFrictionMat: {fileID: 0}
   noFrictionMat: {fileID: 0}
   layerMask_water:
@@ -250,7 +253,9 @@ MonoBehaviour:
     m_Bits: 0
   rb: {fileID: 0}
   animator: {fileID: 0}
+  iKTargetAnimator: {fileID: 0}
   gyro: {fileID: 0}
+  body: {fileID: 0}
   bodyPartTs: []
   bodyPartTs_legs: []
   bodyPartTs_upperBody: []
@@ -258,6 +263,8 @@ MonoBehaviour:
   head: {fileID: 0}
   handRight: {fileID: 0}
   handLeft: {fileID: 0}
+  fingerRight: {fileID: 0}
+  fingerLeft: {fileID: 0}
   footRight: {fileID: 0}
   footLeft: {fileID: 0}
   toeRight: {fileID: 0}
@@ -298,6 +305,8 @@ MonoBehaviour:
   ikScript_toeLeft: {fileID: 0}
   ikScript_handRight: {fileID: 0}
   ikScript_handLeft: {fileID: 0}
+  ikScript_fingerRight: {fileID: 0}
+  ikScript_fingerLeft: {fileID: 0}
   ikScripts: []
   ikScripts_legs: []
   ikScripts_upperBody: []
@@ -314,11 +323,24 @@ MonoBehaviour:
   targetToeLeft: {fileID: 0}
   targetHandRight: {fileID: 0}
   targetHandLeft: {fileID: 0}
-  plantPosFootLeft: {x: 0, y: 0, z: 0}
+  targetFingerRight: {fileID: 0}
+  targetFingerLeft: {fileID: 0}
   plantPosFootRight: {x: 0, y: 0, z: 0}
+  plantPosFootLeft: {x: 0, y: 0, z: 0}
+  plantPosHandRight: {x: 0, y: 0, z: 0}
+  plantPosHandLeft: {x: 0, y: 0, z: 0}
   updateTime_footRight: 0
   updateTime_footLeft: 0
+  updateTime_handRight: 0
+  updateTime_handLeft: 0
   updateTime_hips: 0
+  ikProfile: {fileID: 0}
+  quadripedal: 0
+  hasFingersAndToes: 0
+  runCycle_strideFrequency: 0
+  runCycle_lerpTightness: 0
+  runCycle_limbVerticalDisplacement: 0
+  runCycle_limbForwardReachDistance: 0
   weaponCanHit: 0
   weaponHit: 0
 --- !u!114 &114389023734901775
@@ -415,7 +437,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
-  species: 0
+  species: 1
 --- !u!114 &2862668722696777771
 MonoBehaviour:
   m_ObjectHideFlags: 0
