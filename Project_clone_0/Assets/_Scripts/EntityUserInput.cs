@@ -18,6 +18,9 @@ public class EntityUserInput : EntityComponent
     public LayerMask LAYERMASK_INTERACTABLE;
 
 
+    bool newInteract;
+
+
 
 
     public Vector3 move;
@@ -163,7 +166,9 @@ public class EntityUserInput : EntityComponent
         if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
             
             // set hoveredInteractableObject to parent of collider hit
-            hoveredInteractableObject = hit.collider.transform.parent.gameObject;
+            GameObject hovered = hit.collider.transform.parent.gameObject;
+            newInteract = hovered != hoveredInteractableObject;
+            hoveredInteractableObject = hovered;
             //Log("hovered: " + hoveredInteractableObject.name);
         }
         else{
@@ -171,7 +176,9 @@ public class EntityUserInput : EntityComponent
             //Log("NO HOVERED INTERACTABLE GAMEOBJECT");
         }
 
-        HandleInteractionPopup();
+        if(newInteract){
+            HandleInteractionPopup();
+        }
 
         // todo: interact ui popup
     }
@@ -182,19 +189,51 @@ public class EntityUserInput : EntityComponent
         }
         else
         {
+
+            Item item;
+
             // get the correct text based on the interactable object we are dealing with
             string txt = "E: ";
             switch (hoveredInteractableObject.tag){
                 case "Item" : 
                     txt += "Take " + hoveredInteractableObject.name;
                     break;
-                case "Workbench" :
-                    Item holding = entityItems.holding_item;
-                    if(holding == null){
+                case "ObjectRack_Food" :
+                    item = entityItems.holding_item;
+                    if(item == null || !item.type.Equals(Item.Type.Food)){
                         txt = "";
                     }
                     else{
-                        txt += "Place item " + entityItems.holding_item.nme;
+                        txt += "Place " + item.nme;
+                    }
+                    break;
+                case "ObjectRack_Clothing" :
+                    item = entityItems.holding_item;
+                    if(item == null || !item.type.Equals(Item.Type.Clothing)){
+                        txt = "";
+                    }
+                    else{
+                        txt += "Place " + item.nme;
+                    }
+                    break;
+
+                case "ObjectRack_Weapons" :
+                    item = entityItems.weaponEquipped_item;
+                    if(item == null){
+                        txt = "";
+                    }
+                    else{
+                        txt += "Place " + item.nme;
+                    }
+                    break;
+
+                case "Workbench" :
+                    item = entityItems.holding_item;
+                    if(item == null){
+                        txt = "";
+                    }
+                    else{
+                        txt += "Place " + item.nme;
                     }
                     break;
                 // todo: handle other types of objects

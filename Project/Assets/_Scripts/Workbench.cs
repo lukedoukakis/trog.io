@@ -15,4 +15,9 @@ public class Workbench : ScriptableObject
         this.worldObject = Utility.InstantiatePrefabSameName(CampResources.Prefab_Workbench);
     }
 
+    public void PlaceOnWorkbench(){
+        // todo: place on workbench
+        // find available slot on workbench and place there
+    }
+
 }

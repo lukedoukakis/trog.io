@@ -11,12 +11,14 @@ TagManager:
   - Home
   - Body
   - Npc
-  - ItemRack
   - Human
   - Item
   - Tree
   - Cactus
   - Workbench
+  - ObjectRack_Food
+  - ObjectRack_Clothing
+  - ObjectRack_Weapons
   layers:
   - Default
   - TransparentFX
@@ -37,7 +39,7 @@ TagManager:
   - Clothing
   - BodyPart
   - HoverTrigger
-  - CampTool
+  - 
   - 
   - 
   - 

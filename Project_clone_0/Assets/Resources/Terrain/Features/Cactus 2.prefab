@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8352849079350504200}
   - component: {fileID: 291247846263061280}
   m_Layer: 10
-  m_Name: Cactus2
+  m_Name: Cactus 2
   m_TagString: Cactus
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59,6 +59,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInputMovement: {fileID: 0}
   entityCommandServer: {fileID: 0}
+  species: 0
 --- !u!33 &8352849079351664070
 MeshFilter:
   m_ObjectHideFlags: 0
