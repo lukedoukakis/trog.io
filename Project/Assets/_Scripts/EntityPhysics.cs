@@ -697,7 +697,7 @@ public class EntityPhysics : EntityComponent
     }
     public void OnAttackHit(Collider collider){
         GameObject hitObject = collider.gameObject;
-        Debug.Log(hitObject.layer);
+        //Debug.Log(hitObject.layer);
 
         if (hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature"))
         {

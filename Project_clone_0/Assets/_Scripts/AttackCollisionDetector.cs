@@ -27,9 +27,8 @@ public class AttackCollisionDetector : MonoBehaviour
     }
 
     void OnTriggerEnter(Collider otherCollider){
-        Debug.Log("TRIGGER ENTER");
+        //Debug.Log("TRIGGER ENTER");
         if(CanCollide()){
-            Debug.Log("COLLISION");
             owner.entityPhysics.OnAttackHit(otherCollider);
         }
     }

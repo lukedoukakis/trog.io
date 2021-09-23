@@ -112,7 +112,7 @@ public class EntityStats : EntityComponent
         // Debug.Log("Armor Type: " + armorStatType.ToString());
         // Debug.Log("Armor against this type: " + armorFromWeaponType);
         // Debug.Log("DAMAGE: " + (int)hpLoss);
-        Debug.Log("HP: " + hp.ToString());
+        //Debug.Log("HP: " + hp.ToString());
         if(hp <= 0){
             OnHealthEmptied(attackerHandle);
         }

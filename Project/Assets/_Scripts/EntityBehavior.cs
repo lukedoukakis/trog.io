@@ -219,10 +219,14 @@ public class EntityBehavior : EntityComponent
             float maxTime = a.maxTime;
             if(maxTime == -1f){ maxTime = float.MaxValue; }
 
-            Transform targetT = a.obj.transform;
             while(true)
             {
-                if(IsAtPosition(targetT.position, a.distanceThreshold)){
+                if(a.obj == null){
+                    timer.Stop();
+                    NextAction();
+                    break;
+                }
+                else if(IsAtPosition(a.obj.transform.position, a.distanceThreshold)){
                     timer.Stop();
                     NextAction();
                     break;
@@ -235,10 +239,10 @@ public class EntityBehavior : EntityComponent
                 }
                 else{
                     //Debug.Log(timer.ElapsedMilliseconds / 1000f);
-                    move = GetNavigationDirection(targetT, false);
+                    move = GetNavigationDirection(a.obj.transform, false);
                     entityPhysics.moveDir = move;
                 }
-                SetHeadLookAt(targetT.position, -1f);
+                SetHeadLookAt(a.obj.transform.position, -1f);
                 yield return null;
             }
         }
@@ -361,13 +365,20 @@ public class EntityBehavior : EntityComponent
 
     void Attack(ActionParameters a){
 
-        if (timeSince_attack >= baseTimeStep_attack * entityStats.statsCombined.attackSpeed)
+        // if attack rate allows and target isn't null, attack
+        if (a.obj != null)
         {
-            // if attack rate allows, attack
-            timeSince_attack = 0f;
-            TerminateActionLayer("Hands");
-            BeginActionLayer("Hands", a, _Attack());
+            if (timeSince_attack >= baseTimeStep_attack * entityStats.statsCombined.attackSpeed)
+            {
+                timeSince_attack = 0f;
+                TerminateActionLayer("Hands");
+                BeginActionLayer("Hands", a, _Attack());
+            }
         }
+        else{
+            NextAction();
+        }
+        
 
         IEnumerator _Attack()
         {
@@ -375,8 +386,9 @@ public class EntityBehavior : EntityComponent
             entityPhysics.Attack(attackType, a.obj.transform);
             ActionParameters attackRecover = ActionParameters.GenerateActionParameters(ActionType.AttackRecover, a.obj, -1, null, null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, true);
             yield return new WaitForSecondsRealtime(.2f);
-            InsertAction(attackRecover);
-            yield return null;
+            if(a.obj != null){
+                InsertAction(attackRecover);
+            }
             NextAction();
         }
     }
@@ -392,10 +404,8 @@ public class EntityBehavior : EntityComponent
 
             if(target != null){
 
-                // if target is alive (hasn't been deleted)
+                // if target is alive (hasn't been deleted), queue repeat attack
 
-                //ActionParameters followTarget = ActionParameters.GenerateAction(ActionType.Follow, a.obj, -1, null, null, -1, distanceThreshold_combat, EntityOrientation.BodyRotationMode.Target, true);
-                //InsertAction(followTarget);
                 ActionParameters repeatAttack = ActionParameters.GenerateActionParameters(ActionType.Chase, a.obj, -1, null, null, GetChaseTime(), distanceThreshhold_lungeAttack, EntityOrientation.BodyRotationMode.Target, true);
                 InsertAction(repeatAttack);
                 foreach(ActionParameters ap in behaviorProfile.attackRecoverySequence){
@@ -405,6 +415,10 @@ public class EntityBehavior : EntityComponent
                 yield return new WaitForSecondsRealtime(1f * (1f - entityStats.statsCombined.attackSpeed));
                 NextAction();
 
+            }
+            else{
+                Debug.Log("target has been killed");
+                NextAction();
             }
         }
         

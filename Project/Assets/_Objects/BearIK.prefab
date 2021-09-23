@@ -2342,7 +2342,7 @@ CharacterJoint:
     bounciness: 0
     contactDistance: 0
   m_HighTwistLimit:
-    limit: 70
+    limit: -7.1608653
     bounciness: 0
     contactDistance: 0
   m_SwingLimitSpring:
