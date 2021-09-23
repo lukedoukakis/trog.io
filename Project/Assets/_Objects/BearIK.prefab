@@ -2331,7 +2331,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.000000001029548, y: 0.0046042255, z: 0.000000002910382}
+  m_ConnectedAnchor: {x: 0.0000000010331861, y: 0.0046042255, z: 0.0000000027939662}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2424,7 +2424,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0.0046038753, z: -4.446778e-10}
+  m_ConnectedAnchor: {x: 0, y: 0.0046038753, z: -4.4467785e-10}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2572,9 +2572,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -6182523624037168214, guid: 60f5aa5dfae41804eb173d34aeb35e45,
         type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -6182523624037168214, guid: 60f5aa5dfae41804eb173d34aeb35e45,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 4e6f75fd8af54c5449e896d11e9deb01, type: 2}
+    - target: {fileID: -6182523624037168214, guid: 60f5aa5dfae41804eb173d34aeb35e45,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 7fa664937a758064c9d53ed060a9750b, type: 2}
     - target: {fileID: -5725482841792079320, guid: 60f5aa5dfae41804eb173d34aeb35e45,
         type: 3}
       propertyPath: m_Layer
@@ -2827,9 +2837,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8944505389801971347, guid: 60f5aa5dfae41804eb173d34aeb35e45,
         type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8944505389801971347, guid: 60f5aa5dfae41804eb173d34aeb35e45,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 4e6f75fd8af54c5449e896d11e9deb01, type: 2}
+    - target: {fileID: 8944505389801971347, guid: 60f5aa5dfae41804eb173d34aeb35e45,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 7fa664937a758064c9d53ed060a9750b, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60f5aa5dfae41804eb173d34aeb35e45, type: 3}
 --- !u!4 &3864924118936071797 stripped
