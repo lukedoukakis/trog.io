@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class EntityUserInputMovement : EntityComponent
+public class EntityUserInput : EntityComponent
 {
 
 
@@ -14,10 +14,20 @@ public class EntityUserInputMovement : EntityComponent
     public GameObject hoveredInteractableObject;
     public List<GameObject> interactableObjects;
 
+    // todo: use all interactable layers
+    public LayerMask LAYERMASK_INTERACTABLE;
+
 
 
 
     public Vector3 move;
+
+    protected override void Awake(){
+
+        base.Awake();
+
+        LAYERMASK_INTERACTABLE = LayerMask.GetMask("HoverTrigger");
+    }
 
 
     void Start(){
@@ -150,14 +160,16 @@ public class EntityUserInputMovement : EntityComponent
         Transform cameraT = Camera.main.transform;
         RaycastHit hit;
 
-        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LayerMask.GetMask("Item"))){ //todo: add "Entity" layer
-            hoveredInteractableObject = hit.collider.gameObject;
-            //Log(hoveredInteractableObject.name);
+        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){ //todo: add "Entity" layer
+            hoveredInteractableObject = hit.collider.transform.root.gameObject;
+            Log("hovered: " + hoveredInteractableObject.name);
         }
         else{
             hoveredInteractableObject = null;
             //Log("NO HOVERED INTERACTABLE GAMEOBJECT");
         }
+
+        // todo: interact ui popup
     }
 
 

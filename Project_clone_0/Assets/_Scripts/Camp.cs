@@ -94,14 +94,16 @@ public class Camp : ScriptableObject
             else{
                 orientation.position = Vector3.one * float.MaxValue;
             }
-            //orientation.rotation = Quaternion.LookRotation(GetCampComponentOrientation(ComponentType.Bonfire).position - orientation.position, Vector3.up);
+    
             Vector3 toCenterEulers = Quaternion.LookRotation(GetCampComponentOrientation(ComponentType.Bonfire).position - orientation.position, Vector3.up).eulerAngles;
-            Vector3 normalEulers = Quaternion.FromToRotation(Vector3.up, hit.normal).eulerAngles;
-            Vector3 orientationEulers = orientation.rotation.eulerAngles;
-            orientationEulers.z = normalEulers.z;
-            orientationEulers.x = normalEulers.x;
-            orientationEulers.y = toCenterEulers.y;
-            orientation.rotation = Quaternion.Euler(orientationEulers);
+            // Vector3 normalEulers = Quaternion.FromToRotation(Vector3.up, hit.normal).eulerAngles;
+            // Vector3 orientationEulers = orientation.rotation.eulerAngles;
+            // orientationEulers.z = normalEulers.z;
+            // orientationEulers.x = normalEulers.x;
+            // orientationEulers.y = toCenterEulers.y;
+            // orientation.rotation = Quaternion.Euler(orientationEulers);
+
+            orientation.rotation = Quaternion.Euler(toCenterEulers);
 
 
         }

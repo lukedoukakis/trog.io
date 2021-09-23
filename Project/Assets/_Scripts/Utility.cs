@@ -48,18 +48,25 @@ public class Utility : MonoBehaviour
     }
 
 
-    public static void ToggleObjectPhysics(GameObject o, bool value){
+    public static void ToggleObjectPhysics(GameObject o, bool value, bool toggleTriggers){
         if (o != null)
         {
-            Collider col = o.GetComponent<BoxCollider>();
-            Rigidbody rb = o.GetComponent<Rigidbody>();
-            if (col != null)
+            Collider[] cols = o.GetComponentsInChildren<BoxCollider>();
+            Rigidbody[] rbs = o.GetComponentsInChildren<Rigidbody>();
+            if (cols.Length > 0)
             {
-                col.enabled = value;
+                foreach(Collider col in cols){
+                    if(!col.isTrigger || toggleTriggers)
+                    {
+                        col.enabled = value;
+                    }
+                }
             }
-            if (rb != null)
+            if (rbs.Length > 0)
             {
-                rb.isKinematic = !value;
+                foreach(Rigidbody rb in rbs){
+                    rb.isKinematic = !value;
+                }
             }
         }   
     }

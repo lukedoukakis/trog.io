@@ -179,7 +179,7 @@ public class EntityItems : EntityComponent
         }
         holding_item = item;
         holding_object = o;
-        Utility.ToggleObjectPhysics(holding_object, false);
+        Utility.ToggleObjectPhysics(holding_object, false, false);
     }
 
     public void DropHolding(ScriptableObject targetAttachedObject){
@@ -197,6 +197,7 @@ public class EntityItems : EntityComponent
         {
             holding_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
             Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, false);
+            holding_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = true;
         }
         else
         {
@@ -204,7 +205,7 @@ public class EntityItems : EntityComponent
         }
 
 
-        Utility.ToggleObjectPhysics(holding_object, true);
+        Utility.ToggleObjectPhysics(holding_object, true, false);
 
         holding_item = null;
         holding_object = null;
@@ -252,28 +253,6 @@ public class EntityItems : EntityComponent
 
     // weapon
 
-    // public void DropUnequippedWeapon(ScriptableObject targetAttachedObject){
-
-    //     if (targetAttachedObject is ObjectRack)
-    //     {
-    //         // get rack reference from attached object and add the item to faction items with specified rack
-    //         ObjectRack rack = (ObjectRack)targetAttachedObject;
-    //         Faction.AddItemOwned(entityInfo.faction, weaponUnequipped_item, 1, rack);
-    //         GameObject.Destroy(weaponUnequipped_object);
-    //     }
-    //     else if (targetAttachedObject == null)
-    //     {
-    //         weaponUnequipped_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
-    //         Physics.IgnoreCollision(weaponUnequipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.hitbox, false);
-    //         Utility.ToggleObjectPhysics(weaponUnequipped_object, true);
-    //     }
-    //     // todo: case human
-
-    //     weaponUnequipped_item = null;
-    //     weaponUnequipped_object = null;
-
-    // }
-
     public void DropEquippedWeapon(ScriptableObject targetAttachedObject){
         if (targetAttachedObject is ObjectRack)
         {
@@ -286,7 +265,8 @@ public class EntityItems : EntityComponent
         {
             weaponEquipped_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
             Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.worldCollider, false);
-            Utility.ToggleObjectPhysics(weaponEquipped_object, true);
+            weaponEquipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = true;
+            Utility.ToggleObjectPhysics(weaponEquipped_object, true, false);
         }
         // todo: case human
 
@@ -300,7 +280,7 @@ public class EntityItems : EntityComponent
         weaponUnequipped_object = worldObject;
 
         // toggle physics
-        Utility.ToggleObjectPhysics(weaponEquipped_object, false);
+        Utility.ToggleObjectPhysics(weaponEquipped_object, false, false);
 
         // remove hit detection owner
         weaponUnequipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().RemoveOwner();
@@ -317,7 +297,7 @@ public class EntityItems : EntityComponent
         entityStats.AddStatsModifier(item.stats);
 
         // turn off physics
-        Utility.ToggleObjectPhysics(weaponEquipped_object, false);
+        Utility.ToggleObjectPhysics(weaponEquipped_object, false, false);
 
         // set weapon hit detection owner
         weaponEquipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().SetOwner(entityHandle);
@@ -336,14 +316,14 @@ public class EntityItems : EntityComponent
 
         if (weaponEquipped_item != null)
         {
-            Utility.ToggleObjectPhysics(weaponEquipped_object, false);
+            Utility.ToggleObjectPhysics(weaponEquipped_object, false, false);
             entityStats.AddStatsModifier(weaponEquipped_item.stats);
             weaponEquipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().SetOwner(entityHandle);
         }
 
         if (weaponUnequipped_item != null)
         {
-            Utility.ToggleObjectPhysics(weaponUnequipped_object, false);
+            Utility.ToggleObjectPhysics(weaponUnequipped_object, false, false);
             entityStats.RemoveStatsModifier(weaponUnequipped_item.stats);
             if (weaponUnequipped_object != null)
             {
@@ -355,31 +335,6 @@ public class EntityItems : EntityComponent
 
         OnItemsChange();
         
-
-
-        // if(weaponEquipped_item != null && weaponUnequipped_item != null){
-        //     Item tempItem = weaponEquipped_item;
-        //     GameObject tempObject = weaponEquipped_object;
-
-        //     weaponEquipped_item = weaponUnequipped_item;
-        //     weaponEquipped_object = weaponUnequipped_object;
-        //     weaponUnequipped_item = tempItem;
-        //     weaponUnequipped_object = tempObject;
-
-        //     // turn off physics
-        //     Utility.ToggleObjectPhysics(weaponEquipped_object, false);
-        //     Utility.ToggleObjectPhysics(weaponUnequipped_object, false);
-
-        //     // update stats
-        //     entityStats.RemoveStatsModifier(weaponUnequipped_item.stats);
-        //     entityStats.AddStatsModifier(weaponEquipped_item.stats);
-
-        //     // set weapon hit detection owner
-        //     weaponEquipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().SetOwner(entityHandle);
-        //     weaponUnequipped_object.transform.Find("HitZone").GetComponent<WeaponCollisionDetector>().RemoveOwner();
-            
-        //     OnItemsChange();
-        // }
     }
 
     // ---
@@ -423,13 +378,15 @@ public class EntityItems : EntityComponent
         entityPhysics.UpdateIKForCarryingItems();
         if(weaponEquipped_object != null){
             Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.worldCollider, true);
-
+            weaponEquipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
         if(weaponUnequipped_object != null){
             Physics.IgnoreCollision(weaponUnequipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.worldCollider, true);
+            weaponUnequipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
         if(holding_object != null){
             Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, true);
+            holding_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
 
         if(isLocalPlayer){

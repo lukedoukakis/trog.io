@@ -18,6 +18,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] float cullDistance_feature;
     [SerializeField] float cullDistance_smallFeature;
     [SerializeField] float cullDistance_creature;
+    [SerializeField] float cullDistance_item;
     float acceleration;
 
     Vector3 targetPos;
@@ -46,6 +47,7 @@ public class CameraController : MonoBehaviour
         cullDistances[10] = cullDistance_feature;
         cullDistances[11] = cullDistance_smallFeature;
         cullDistances[12] = cullDistance_creature;
+        cullDistances[13] = cullDistance_item;
         Camera.main.layerCullDistances = cullDistances;
         posModifier = 0f;
         cameraDistance_input = 1f;

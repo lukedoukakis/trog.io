@@ -8,13 +8,13 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: wood
-  m_Shader: {fileID: -6465566751694194690, guid: b62a38319167f37409790434ffbb1835,
+  m_Shader: {fileID: -6465566751694194690, guid: 21d586b92db687f40831fc51479d9060,
     type: 3}
   m_ShaderKeywords: _GLOSSYREFLECTIONS_OFF _SPECULAR_SETUP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -117,7 +117,7 @@ Material:
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.4056604, g: 0.2504589, b: 0.13203098, a: 0}
-    - Color_EB41B935: {r: 0.8584906, g: 0.7111559, b: 0.5223834, a: 0}
+    - Color_EB41B935: {r: 0.4245283, g: 0.35181713, b: 0.26232645, a: 0}
     - _BaseColor: {r: 0.8679245, g: 0.8137069, b: 0.6673193, a: 1}
     - _Color: {r: 0.4433962, g: 0.3559173, b: 0.21124065, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
