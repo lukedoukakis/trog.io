@@ -161,7 +161,9 @@ public class EntityUserInput : EntityComponent
         RaycastHit hit;
 
         if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
-            hoveredInteractableObject = hit.collider.transform.root.gameObject;
+            
+            // set hoveredInteractableObject to parent of collider hit
+            hoveredInteractableObject = hit.collider.transform.parent.gameObject;
             //Log("hovered: " + hoveredInteractableObject.name);
         }
         else{
@@ -184,7 +186,16 @@ public class EntityUserInput : EntityComponent
             string txt = "E: ";
             switch (hoveredInteractableObject.tag){
                 case "Item" : 
-                    txt += hoveredInteractableObject.name;
+                    txt += "Take " + hoveredInteractableObject.name;
+                    break;
+                case "Workbench" :
+                    Item holding = entityItems.holding_item;
+                    if(holding == null){
+                        txt = "";
+                    }
+                    else{
+                        txt += "Place item " + entityItems.holding_item.nme;
+                    }
                     break;
                 // todo: handle other types of objects
                 default:
