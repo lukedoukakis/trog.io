@@ -160,16 +160,41 @@ public class EntityUserInput : EntityComponent
         Transform cameraT = Camera.main.transform;
         RaycastHit hit;
 
-        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){ //todo: add "Entity" layer
+        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
             hoveredInteractableObject = hit.collider.transform.root.gameObject;
-            Log("hovered: " + hoveredInteractableObject.name);
+            //Log("hovered: " + hoveredInteractableObject.name);
         }
         else{
             hoveredInteractableObject = null;
             //Log("NO HOVERED INTERACTABLE GAMEOBJECT");
         }
 
+        HandleInteractionPopup();
+
         // todo: interact ui popup
+    }
+
+    void HandleInteractionPopup(){
+        if(hoveredInteractableObject == null){
+            InteractionPopupController.current.Hide();
+        }
+        else
+        {
+            // get the correct text based on the interactable object we are dealing with
+            string txt = "E: ";
+            switch (hoveredInteractableObject.tag){
+                case "Item" : 
+                    txt += hoveredInteractableObject.name;
+                    break;
+                // todo: handle other types of objects
+                default:
+                    txt += "<nomsg>";
+                    break;
+            }
+            InteractionPopupController.current.SetText(txt);
+            InteractionPopupController.current.Show();
+
+        }
     }
 
 

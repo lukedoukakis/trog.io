@@ -717,6 +717,7 @@ public class EntityPhysics : EntityComponent
     }
     IEnumerator FixWeaponPosition(GameObject weapon, Transform targetT, float time)
     {
+
         Rigidbody rbTarget = targetT.gameObject.GetComponentInParent<Rigidbody>();
         Rigidbody rbWeapon = weapon.GetComponent<Rigidbody>();
         if (rbTarget == null)
@@ -733,7 +734,15 @@ public class EntityPhysics : EntityComponent
         j.connectedBody = rbTarget;
         j.spring = 1;
         entityItems.ToggleItemOrientationUpdate(false);
-        yield return new WaitForSecondsRealtime(time);
+
+        Transform handleT = weapon.transform.Find("IKTargetT_Right");
+
+        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+        timer.Start();
+        while(timer.ElapsedMilliseconds / 1000f < time && Vector3.Distance(handRight.position, handleT.position) < .2f){
+            yield return null;
+        }
+        timer.Stop();
         Destroy(j);
         entityItems.ToggleItemOrientationUpdate(true);
     }
@@ -878,7 +887,8 @@ public class EntityPhysics : EntityComponent
 
     void CheckPhysicMaterial(){
         if(moveDir.magnitude > 0f){
-            worldCollider.sharedMaterial = noFrictionMat;
+            //worldCollider.sharedMaterial = noFrictionMat;
+            worldCollider.sharedMaterial = highFrictionMat;
         }
         else{
             worldCollider.sharedMaterial = highFrictionMat;

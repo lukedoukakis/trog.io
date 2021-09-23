@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8064325741052193540}
   - component: {fileID: 2752043527548095534}
   - component: {fileID: 6904770185470793555}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: ItemOrientation2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 5949524116420029916}
   - component: {fileID: 9197561382993444697}
   - component: {fileID: 886133157125786161}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: ItemOrientation5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 9042456375358757241}
   - component: {fileID: 5064572259244917180}
   - component: {fileID: 7272224839795252803}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: ItemOrientation1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -246,7 +246,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3433901283699760276}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: ItemOrientations
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -284,7 +284,7 @@ GameObject:
   - component: {fileID: 5258041652550075562}
   - component: {fileID: 5149573393671523357}
   - component: {fileID: 4675303938214697291}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: ItemOrientation3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -364,7 +364,7 @@ GameObject:
   - component: {fileID: 4118112946204849603}
   - component: {fileID: 876382038120533073}
   - component: {fileID: 1141280157772041301}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Leg (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -459,7 +459,7 @@ GameObject:
   - component: {fileID: 2470182783085482400}
   - component: {fileID: 7263176277880535626}
   - component: {fileID: 6671685427320293679}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Leg (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -553,7 +553,7 @@ GameObject:
   - component: {fileID: 8689403310168259154}
   - component: {fileID: 8444134635069306061}
   - component: {fileID: 12807204691006060}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: ItemOrientation0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -633,7 +633,7 @@ GameObject:
   - component: {fileID: 1506022771382524973}
   - component: {fileID: 7653752903502965292}
   - component: {fileID: 4905618759560575006}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Leg (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -727,7 +727,7 @@ GameObject:
   - component: {fileID: 7971107751408907878}
   - component: {fileID: 6040138169538632558}
   - component: {fileID: 6029174957522769595}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: ItemOrientation4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -804,7 +804,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3484437019518606282}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Clothing Rack
   m_TagString: ItemRack
   m_Icon: {fileID: 0}
@@ -843,7 +843,7 @@ GameObject:
   - component: {fileID: 4980077723488940065}
   - component: {fileID: 8506987400965758598}
   - component: {fileID: 4369742334463081421}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Leg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -938,7 +938,7 @@ GameObject:
   - component: {fileID: 1169978387486030187}
   - component: {fileID: 3331331307380714645}
   - component: {fileID: 8147566649055818139}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Leg (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
