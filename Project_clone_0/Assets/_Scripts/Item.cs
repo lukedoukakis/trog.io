@@ -66,7 +66,7 @@ public class Item : ScriptableObject
     public Image image;
 
     public enum Type{
-        Food, Weapon, Clothing, LargeLongObject, MiscSmall
+        Any, Food, Weapon, Clothing, LargeLongObject, MiscSmall
     }
 
     public enum HoldStyle{

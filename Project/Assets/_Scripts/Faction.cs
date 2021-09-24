@@ -68,6 +68,7 @@ public class Faction : ScriptableObject
     public static void AddItemOwned(Faction fac, Item item, int count, ObjectRack rack)
     {
 
+        //Debug.Log("Adding item: " + item.nme);
         fac.ownedItems.AddItem(item, count);
 
         if (fac.camp != null)

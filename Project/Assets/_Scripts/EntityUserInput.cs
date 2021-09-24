@@ -6,6 +6,8 @@ using UnityEngine;
 public class EntityUserInput : EntityComponent
 {
 
+    //public enum InteractionType{ TakeItem, PlaceItem, }
+
 
     public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump;
     public float mouseX, mouseY, mouseZ;
@@ -16,8 +18,6 @@ public class EntityUserInput : EntityComponent
 
     // todo: use all interactable layers
     public LayerMask LAYERMASK_INTERACTABLE;
-
-
     bool newInteract;
 
 
@@ -140,23 +140,35 @@ public class EntityUserInput : EntityComponent
         }
 
         else{
-            switch (hoveredInteractableObject.tag) {
-                case "Item" :
-                    entityItems.OnObjectInteract(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
-                    break;
-                case "Human" :
-                    // todo: human interact
-                    break;
-            }   
+            string t = hoveredInteractableObject.tag;
+            if(t == "Item"){
+                entityItems.OnObjectInteract(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+            }
+            else if (t.StartsWith("ObjectRack"))
+            {
+                if (t == "ObjectRack_Food")
+                {
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+                }
+                else if (t == "ObjectRack_Clothing")
+                {
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+                }
+                else if (t == "ObjectRack_Weapons")
+                {
+                    entityItems.DropEquippedWeapon((ObjectRack)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+                }
+                else{
+
+                }    
+            }
+            else if(t == "Workbench"){
+                entityItems.DropHolding((Workbench)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+            }
         }
         
     }
 
-    void CheckUse(){
-        if(Input.GetKeyUp(KeyCode.F)){
-            entityItems.OnHoldingUse();
-        }
-    }
 
 
     public void UpdateHoveredInteractable(){
@@ -172,11 +184,12 @@ public class EntityUserInput : EntityComponent
             //Log("hovered: " + hoveredInteractableObject.name);
         }
         else{
+            newInteract = true;
             hoveredInteractableObject = null;
             //Log("NO HOVERED INTERACTABLE GAMEOBJECT");
         }
 
-        if(newInteract){
+        if(newInteract || true){
             HandleInteractionPopup();
         }
 
@@ -247,6 +260,11 @@ public class EntityUserInput : EntityComponent
         }
     }
 
+    void CheckUse(){
+        if(Input.GetKeyUp(KeyCode.F)){
+            entityItems.OnHoldingUse();
+        }
+    }
 
     void Update(){
 
