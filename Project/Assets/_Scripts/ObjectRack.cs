@@ -78,7 +78,7 @@ public class ObjectRack : ScriptableObject
         }
     }
 
-    public void RemoveObjects(Item item, ref int countToRemove){
+    public virtual void RemoveObjects(Item item, ref int countToRemove){
 
 
         //Debug.Log("Removing " + countToRemove + " " + item.nme);

@@ -188,7 +188,7 @@ public class EntityItems : EntityComponent
         if (targetAttachedObject is ObjectRack)
         {
             // get rack reference from attached object and add the item to faction items with specified rack
-            Debug.Log("adding to object rack");
+            //Debug.Log("adding to object rack");
             ObjectRack rack = (ObjectRack)targetAttachedObject;
             //if (!rack.itemType.Equals(holding_item.type)) { rack = null; }
             Faction.AddItemOwned(entityInfo.faction, holding_item, 1, rack);
@@ -196,7 +196,7 @@ public class EntityItems : EntityComponent
         }
         else if (targetAttachedObject == null)
         {
-            Debug.Log("adding to ANY object rack");
+            //Debug.Log("adding to ANY object rack");
             holding_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
             Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, false);
             holding_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = true;
