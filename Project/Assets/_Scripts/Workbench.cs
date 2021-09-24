@@ -2,22 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Workbench : ScriptableObject
+public class Workbench : ObjectRack
 {
-    
-    public Camp camp;
-    public GameObject worldObject;
-
 
 
     public void SetWorkbench(Camp camp){
-        this.camp = camp;
-        this.worldObject = Utility.InstantiatePrefabSameName(CampResources.Prefab_Workbench);
+        base.SetObjectRack(camp, Item.Type.Any);
     }
 
-    public void PlaceOnWorkbench(){
-        // todo: place on workbench
-        // find available slot on workbench and place there
+
+    // workbench override for add objects
+    public override void AddObjects(Item item, ref int countToAdd){
+        
+        // do the regular thing
+        base.AddObjects(item, ref countToAdd);
+
+        // todo: workbench magic: look at recipes and highlight other items that can be added
+
+
     }
+
+    public Item CraftItem(Item item){
+        // todo: craft item
+
+        // consume items on table and generate new one
+
+
+
+        return Item.None;
+    }
+
 
 }

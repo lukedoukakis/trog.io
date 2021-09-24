@@ -38,6 +38,10 @@ public class ObjectRack : ScriptableObject
                 this.capacity = RackCapacity_Clothing;
                 worldObjectPrefab = CampResources.Prefab_ClothingRack;
                 break;
+            case Item.Type.Any : 
+                this.capacity = 3;
+                worldObjectPrefab = CampResources.Prefab_Workbench;
+                break;
             default:
                 this.capacity = RackCapacity_Food;
                 worldObjectPrefab = CampResources.Prefab_FoodRack;
@@ -53,7 +57,7 @@ public class ObjectRack : ScriptableObject
 
 
 
-    public void AddObjects(Item item, ref int countToAdd){
+    public virtual void AddObjects(Item item, ref int countToAdd){
         int c = countToAdd;
         for(int i = 0; i < c; ++i){ 
             if(!IsFull()){
