@@ -190,7 +190,8 @@ public class EntityItems : EntityComponent
             // get rack reference from attached object and add the item to faction items with specified rack
             //Debug.Log("adding to object rack");
             ObjectRack rack = (ObjectRack)targetAttachedObject;
-            //if (!rack.itemType.Equals(holding_item.type)) { rack = null; }
+            Enum rackItemType = rack.itemType;
+            //if (!rackItemType.Equals(holding_item.type) && !rackItemType.Equals(Item.Type.Any) ) { rack = null; }
             Faction.AddItemOwned(entityInfo.faction, holding_item, 1, rack);
             GameObject.Destroy(holding_object);
         }

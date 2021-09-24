@@ -17,6 +17,7 @@ public class ObjectRack : ScriptableObject
     public Camp camp;
     public Enum itemType;
     public int capacity;
+    public bool[] orientationAvailable;
     public List<GameObject> objects;
     public GameObject worldObject;
 
@@ -49,6 +50,7 @@ public class ObjectRack : ScriptableObject
                 break;
         }
         this.worldObject = Utility.InstantiatePrefabSameName(worldObjectPrefab);
+        orientationAvailable = new bool[this.capacity];
         ScriptableObjectReference reference = this.worldObject.AddComponent<ScriptableObjectReference>();
         reference.SetScriptableObjectReference(this);
 
@@ -106,16 +108,36 @@ public class ObjectRack : ScriptableObject
 
     // set a given object's orientation to fit properly in the rack
     public void SetObjectOrientation(GameObject o){
-        int index = objects.Count - 1;
-        string orientationName = "ItemOrientation" + index;
-        Debug.Log("SetItemOrientation(): orientation name: " + orientationName);
-        Transform orientation = Utility.FindDeepChild(worldObject.transform, "ItemOrientation" + index);
-        o.transform.position = orientation.position;
-        o.transform.rotation = orientation.rotation;
-        Utility.ToggleObjectPhysics(o, true, false);
-        FixedJoint joint = o.AddComponent<FixedJoint>();
-        //joint.spring = 1000f;
-        //joint.damper = 20000f;
+
+
+        for(int i = 0; i < capacity; ++i)
+        {
+            Transform orientation = Utility.FindDeepChild(worldObject.transform, "ItemOrientation" + i);
+            Debug.Log(orientation.childCount);
+            if (orientation.childCount == 0)
+            {
+                string orientationName = "ItemOrientation" + i;
+                //Debug.Log("SetItemOrientation(): orientation name: " + orientationName);
+                o.transform.position = orientation.position;
+                o.transform.rotation = orientation.rotation;
+                Utility.ToggleObjectPhysics(o, false, false);
+                o.transform.parent = orientation;
+                //FixedJoint joint = o.AddComponent<FixedJoint>();
+            }
+            
+        }
+
+
+        // int index = objects.Count - 1;
+        // string orientationName = "ItemOrientation" + index;
+        // Debug.Log("SetItemOrientation(): orientation name: " + orientationName);
+        // Transform orientation = Utility.FindDeepChild(worldObject.transform, "ItemOrientation" + index);
+        // o.transform.position = orientation.position;
+        // o.transform.rotation = orientation.rotation;
+        // Utility.ToggleObjectPhysics(o, true, false);
+        // FixedJoint joint = o.AddComponent<FixedJoint>();
+        // //joint.spring = 1000f;
+        // //joint.damper = 20000f;
     }
 
 
