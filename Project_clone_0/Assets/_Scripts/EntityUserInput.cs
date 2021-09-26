@@ -165,6 +165,11 @@ public class EntityUserInput : EntityComponent
             else if(t == "Workbench"){
                 entityItems.DropHolding((Workbench)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
             }
+            else if(t == "WorkbenchHammer"){
+                Workbench wb = (Workbench)(Utility.FindScriptableObjectReference(hoveredInteractableObject.transform).GetScriptableObject());
+                Debug.Log("finding workbench... wb name: " + wb.name);
+                wb.OnCraft();
+            }
         }
         
     }
@@ -248,6 +253,11 @@ public class EntityUserInput : EntityComponent
                     else{
                         txt += "Place " + item.nme;
                     }
+                    break;
+                case "WorkbenchHammer" :
+
+                    Workbench wb = (Workbench)(Utility.FindScriptableObjectReference(hoveredInteractableObject.transform).GetScriptableObject());
+                    txt += "TEST: workbench name: " + wb.name;
                     break;
                 // todo: handle other types of objects
                 default:

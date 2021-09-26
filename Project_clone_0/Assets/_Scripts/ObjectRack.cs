@@ -17,9 +17,10 @@ public class ObjectRack : ScriptableObject
     public Camp camp;
     public Enum itemType;
     public int capacity;
-    public bool[] orientationAvailable;
     public List<GameObject> objects;
     public GameObject worldObject;
+    public Transform worldObject_orientationParent;
+    public bool onDemandPlacement;  // whether new racks can be created when this one is filled up; if false, objects cannot be placed when attempting to place on this rack
 
 
     public void SetObjectRack(Camp camp, Enum itemType){
@@ -30,27 +31,32 @@ public class ObjectRack : ScriptableObject
             case Item.Type.Food :
                 this.capacity = RackCapacity_Food;
                 worldObjectPrefab = CampResources.Prefab_FoodRack;
+                onDemandPlacement = true;
                 break;
             case Item.Type.Weapon :
                 this.capacity = RackCapacity_Weapons;
                 worldObjectPrefab = CampResources.Prefab_WeaponsRack;
+                onDemandPlacement = true;
                 break;
             case Item.Type.Clothing : 
                 this.capacity = RackCapacity_Clothing;
                 worldObjectPrefab = CampResources.Prefab_ClothingRack;
+                onDemandPlacement = true;
                 break;
             case Item.Type.Any : 
                 this.capacity = 3;
                 worldObjectPrefab = CampResources.Prefab_Workbench;
+                onDemandPlacement = false;
                 break;
             default:
                 this.capacity = RackCapacity_Food;
                 worldObjectPrefab = CampResources.Prefab_FoodRack;
+                onDemandPlacement = true;
                 Debug.Log("unsupported itemType for ItemRack");
                 break;
         }
         this.worldObject = Utility.InstantiatePrefabSameName(worldObjectPrefab);
-        orientationAvailable = new bool[this.capacity];
+        this.worldObject_orientationParent = Utility.FindDeepChild(this.worldObject.transform, "ItemOrientations");
         ScriptableObjectReference reference = this.worldObject.AddComponent<ScriptableObjectReference>();
         reference.SetScriptableObjectReference(this);
 
@@ -73,9 +79,14 @@ public class ObjectRack : ScriptableObject
             }
             else{
 
-                // else, call to add remaining count to other racks
-                camp.AddObjectsAnyRack(item, ref countToAdd);
-                break;
+                // else, call to add remaining count to other racks if onDemandPlacement is true
+                if(onDemandPlacement){
+                    camp.AddObjectsAnyRack(item, ref countToAdd);
+                    break;
+                }
+                else{
+                    Debug.Log("Did not add object to rack, as the rack is full and the call did not prompt to search for another.");
+                }
             }
         }
     }
@@ -112,8 +123,8 @@ public class ObjectRack : ScriptableObject
 
         for(int i = 0; i < capacity; ++i)
         {
-            Transform orientation = Utility.FindDeepChild(worldObject.transform, "ItemOrientation" + i);
-            Debug.Log(orientation.childCount);
+            Transform orientation = worldObject_orientationParent.Find("ItemOrientation" + i);
+            //Debug.Log(orientation.childCount);
             if (orientation.childCount == 0)
             {
                 string orientationName = "ItemOrientation" + i;
@@ -131,7 +142,7 @@ public class ObjectRack : ScriptableObject
         // int index = objects.Count - 1;
         // string orientationName = "ItemOrientation" + index;
         // Debug.Log("SetItemOrientation(): orientation name: " + orientationName);
-        // Transform orientation = Utility.FindDeepChild(worldObject.transform, "ItemOrientation" + index);
+        // Transform orientation = worldObject_orientationParent.Find("ItemOrientation" + index)
         // o.transform.position = orientation.position;
         // o.transform.rotation = orientation.rotation;
         // Utility.ToggleObjectPhysics(o, true, false);

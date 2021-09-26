@@ -7,13 +7,18 @@ public class Workbench : ObjectRack
 {
 
 
-    List<Item> itemsOnTable;
+    List<Item> itemsOnTable;            // the current items on the table
+    List<Item> potentialCraftedItems;   // possible items that use at least the current items on the table
+    Item currentCraftableItem;          // item that will be crafted if the craft action is taken
+
     
 
 
     public void SetWorkbench(Camp camp){
         base.SetObjectRack(camp, Item.Type.Any);
         itemsOnTable = new List<Item>();
+        potentialCraftedItems = new List<Item>();
+        currentCraftableItem = null;
     }
 
 
@@ -23,7 +28,6 @@ public class Workbench : ObjectRack
         
         // do the regular thing
         base.AddObjects(item, ref countToAdd);
-
 
         // todo: workbench magic: look at recipes and highlight other items that can be added
         itemsOnTable.Add(item);
@@ -54,31 +58,36 @@ public class Workbench : ObjectRack
 
         Debug.Log("items on table count: " + itemsOnTable.Count);
         CraftingRecipe currentRecipe = new CraftingRecipe(itemsOnTable.Count > 0 ? itemsOnTable[0] : null, itemsOnTable.Count > 1 ? itemsOnTable[1] : null, itemsOnTable.Count > 2 ? itemsOnTable[2] : null);
+        
+        string s = "";
         foreach (Item item in currentRecipe.requiredItems)
         {
             if (item == null)
             {
-                Debug.Log("null");
+                s += "null, ";
             }
             else
             {
-                Debug.Log(item.nme);
-
+                s += item.nme + ", ";
             }
         }
+        Debug.Log("items on table: " + s);
 
-        Item matchingItem = CraftingRecipe.GetMatchingItem(currentRecipe);
-        List<Item> possibleItems = CraftingRecipe.GetOnTheWayItems(currentRecipe);
+        currentCraftableItem = CraftingRecipe.GetMatchingItem(currentRecipe);
+        potentialCraftedItems = CraftingRecipe.GetOnTheWayItems(currentRecipe);
+
+
+        Debug.Log("current craftable item: " + (currentCraftableItem == null ? "null" : currentCraftableItem.nme));
 
 
 
-        if(matchingItem == null){
-            Debug.Log("Matching item: null");
-        }
-        else{
-            Debug.Log("Matching item: " + matchingItem.nme);
+        // if(currentCraftableItem == null){
+        //     Debug.Log("Matching item: null");
+        // }
+        // else{
+        //     Debug.Log("Matching item: " + currentCraftableItem.nme);
 
-        }
+        // }
         // Debug.Log("\nPossible items: ");
         // foreach(Item item in possibleItems){
         //     Debug.Log(item.nme);
@@ -86,14 +95,36 @@ public class Workbench : ObjectRack
 
     }
 
-    public Item CraftItem(Item item){
+    // logic following when the player prompts to craft an item
+    public Item OnCraft(){
         // todo: craft item
+
+
+        //ConsumeIngredients();
+
+        Transform orientation = this.worldObject_orientationParent.Find("ItemOrientationCraftedItem");
+
+        GameObject obj = Utility.InstantiatePrefabSameName(currentCraftableItem.worldObject);
+        obj.transform.position = orientation.position;
+        obj.transform.rotation = orientation.rotation;
+
+        UpdateRecipes();
+
 
         // consume items on table and generate new one
 
 
 
         return Item.None;
+    }
+
+    void ConsumeIngredients(){
+        itemsOnTable.Clear();
+        foreach(Transform t in this.worldObject_orientationParent.GetComponentsInChildren<Transform>()){
+            if(t.tag == "Item"){
+                GameObject.Destroy(t.gameObject);
+            }
+        }
     }
 
 

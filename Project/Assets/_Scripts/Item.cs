@@ -112,7 +112,7 @@ public class CraftingRecipe
     // return item whose recipe matches the one given
     public static Item GetMatchingItem(CraftingRecipe compareRecipe){
         foreach(CraftingRecipe key in recipeDict.Keys){
-            Debug.Log("Comparing recipe: " + key.ToString());
+            //Debug.Log("Comparing recipe: " + key.ToString());
             bool match = true;
             for(int i = 0; i < key.requiredItems.Count; ++i){
                 if(key.requiredItems[i] == null){

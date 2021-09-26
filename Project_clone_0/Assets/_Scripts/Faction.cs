@@ -106,6 +106,12 @@ public class Faction : ScriptableObject
         }
     }
 
+
+    public static int GetItemCount(Faction fac, Item item){
+        return fac.ownedItems.GetItemCount(item);
+
+    }
+
     public static void RemoveItemTargeted(GameObject o, Faction fac){
         fac.targetedObjects.Remove(o);
     }

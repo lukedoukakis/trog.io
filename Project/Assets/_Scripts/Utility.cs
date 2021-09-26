@@ -102,4 +102,18 @@ public class Utility : MonoBehaviour
         
         return v;
     }
+
+
+    // return the first scriptable object reference found in a transform or any of its parents
+    public static ScriptableObjectReference FindScriptableObjectReference(Transform t){
+        Transform parent = t;
+        ScriptableObjectReference sor = parent.GetComponent<ScriptableObjectReference>();
+        while(sor == null){
+            parent = parent.parent;
+            if(parent == null){ break; }
+            sor = parent.GetComponent<ScriptableObjectReference>();
+        }
+        return sor;
+    }
+
 }

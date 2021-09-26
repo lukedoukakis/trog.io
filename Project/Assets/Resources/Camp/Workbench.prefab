@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1258310376026137952}
   - component: {fileID: 7582175555884753115}
   - component: {fileID: 6604959837680859914}
-  m_Layer: 19
+  m_Layer: 0
   m_Name: Surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -182,9 +182,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6202914481447937433}
-  m_Layer: 19
+  m_Layer: 0
   m_Name: Hammer
-  m_TagString: Untagged
+  m_TagString: WorkbenchHammer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -297,7 +297,7 @@ GameObject:
   - component: {fileID: 7167252199905641542}
   - component: {fileID: 4384810906398910908}
   - component: {fileID: 3439480521186648681}
-  m_Layer: 19
+  m_Layer: 0
   m_Name: Placeholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -418,7 +418,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4014193415654974386}
-  m_Layer: 19
+  m_Layer: 0
   m_Name: Workbench
   m_TagString: Workbench
   m_Icon: {fileID: 0}
@@ -459,7 +459,7 @@ GameObject:
   - component: {fileID: 3786185724190629604}
   - component: {fileID: 4663262393884676157}
   - component: {fileID: 6690009529138932728}
-  m_Layer: 19
+  m_Layer: 0
   m_Name: Leg (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -508,6 +508,85 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: 5545c0209390692469e993865aad03de, type: 2}
   - {fileID: 2100000, guid: 7fa664937a758064c9d53ed060a9750b, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!1 &3406565953364324225
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1315772896430031028}
+  - component: {fileID: 8934106982326566510}
+  - component: {fileID: 3219785703003194888}
+  m_Layer: 0
+  m_Name: ItemOrientationCraftedItem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1315772896430031028
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3406565953364324225}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0.878, y: 0.456, z: -0.034}
+  m_LocalScale: {x: 0.1648, y: 0.1648, z: 0.1648}
+  m_Children: []
+  m_Father: {fileID: 1093945066503547823}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!33 &8934106982326566510
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3406565953364324225}
+  m_Mesh: {fileID: 0}
+--- !u!23 &3219785703003194888
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3406565953364324225}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: bbe2c7293af197640a2b40018e79b9a6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -710,7 +789,7 @@ GameObject:
   - component: {fileID: 5443988064568123834}
   - component: {fileID: 6184044803016109568}
   - component: {fileID: 8228724232642110362}
-  m_Layer: 19
+  m_Layer: 0
   m_Name: Leg (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -790,7 +869,7 @@ GameObject:
   - component: {fileID: 4712772802914124136}
   - component: {fileID: 7834614960586187566}
   - component: {fileID: 8476622724182906473}
-  m_Layer: 19
+  m_Layer: 0
   m_Name: Leg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -889,6 +968,7 @@ Transform:
   - {fileID: 4098830942952840422}
   - {fileID: 6221045368140819591}
   - {fileID: 3631884225381676104}
+  - {fileID: 1315772896430031028}
   m_Father: {fileID: 4014193415654974386}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1137,7 +1217,7 @@ GameObject:
   - component: {fileID: 1939046297370033571}
   - component: {fileID: 3492086692671974013}
   - component: {fileID: 334184820290788736}
-  m_Layer: 19
+  m_Layer: 0
   m_Name: Leg (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
