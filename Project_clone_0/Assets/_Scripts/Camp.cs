@@ -7,7 +7,9 @@ public class Camp : ScriptableObject
 {
 
 
-    public static float BASE_CAMP_RADIUS;
+    public static float BASE_CAMP_RADIUS = 5f;
+
+
     public enum ComponentType{
         Bonfire,
         Workbench, 
@@ -74,6 +76,7 @@ public class Camp : ScriptableObject
 
     public void SetRadius(int population){
         this.radius = BASE_CAMP_RADIUS + (BASE_CAMP_RADIUS * population * 05f);
+        Debug.Log("Camp radius: " + radius);
     }
 
     // place and adjust camp layout for component placement
@@ -81,7 +84,7 @@ public class Camp : ScriptableObject
 
         layout = Instantiate(CampResources.Prefab_CampLayout, position, Quaternion.identity);
         foreach(Transform orientation in layout.transform){
-            Debug.Log("AdjustCampLayout(): adjusting orientation: " + orientation.name);
+            //Debug.Log("AdjustCampLayout(): adjusting orientation: " + orientation.name);
             Vector3 pos = orientation.position;
             pos.y = ChunkGenerator.ElevationAmplitude;
             RaycastHit hit;
@@ -135,7 +138,7 @@ public class Camp : ScriptableObject
                 break;
         }
 
-        Debug.Log("GetCampComponentOrientation(): orientation name: " + search);
+        //Debug.Log("GetCampComponentOrientation(): orientation name: " + search);
         return FindOrientationInCampLayout(search);
 
     }
@@ -152,6 +155,13 @@ public class Camp : ScriptableObject
         bonfire.worldObject.transform.position = targetOrientation.position;
         bonfire.worldObject.transform.rotation = targetOrientation.rotation;
         this.bonfire = bonfire;
+
+        // test: set sphere to visualize camp radius
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.localScale = Vector3.one * radius * .5f;
+        sphere.transform.position = targetOrientation.position;
+        sphere.GetComponent<SphereCollider>().enabled = false;
+        sphere.GetComponent<MeshRenderer>().sharedMaterial = Testing.instance.transparentMat;
     }
 
     public void PlaceWorkbench(){
@@ -290,6 +300,17 @@ public class Camp : ScriptableObject
         }
 
         return rackList;
+    }
+
+    public static bool EntityIsInsideCamp(EntityHandle handle){
+
+        Camp camp = handle.entityInfo.faction.camp;
+        if(camp == null){
+            return false;
+        }
+        else{
+            return Vector3.Distance(handle.transform.position, camp.layout.transform.position) <= camp.radius;
+        }
     }
 
 
