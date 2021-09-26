@@ -7,9 +7,10 @@ public class Workbench : ObjectRack
 {
 
 
-    List<Item> itemsOnTable;            // the current items on the table
-    List<Item> potentialCraftedItems;   // possible items that use at least the current items on the table
-    Item currentCraftableItem;          // item that will be crafted if the craft action is taken
+    public List<Item> itemsOnTable;            // the current items on the table
+    public List<Item> potentialCraftedItems;   // possible items that use at least the current items on the table
+    public Item currentCraftableItem;          // item that will be crafted if the craft action is taken
+    Transform hammerT;
 
     
 
@@ -19,6 +20,8 @@ public class Workbench : ObjectRack
         itemsOnTable = new List<Item>();
         potentialCraftedItems = new List<Item>();
         currentCraftableItem = null;
+        hammerT = Utility.FindDeepChild(worldObject.transform, "Hammer");
+        UpdateRecipes();
     }
 
 
@@ -31,7 +34,7 @@ public class Workbench : ObjectRack
 
         // todo: workbench magic: look at recipes and highlight other items that can be added
         itemsOnTable.Add(item);
-        Debug.Log("added item to table");
+        //Debug.Log("added item to table");
 
         UpdateRecipes();
 
@@ -54,30 +57,32 @@ public class Workbench : ObjectRack
 
 
 
+
     void UpdateRecipes(){
 
-        Debug.Log("items on table count: " + itemsOnTable.Count);
+        //Debug.Log("items on table count: " + itemsOnTable.Count);
         CraftingRecipe currentRecipe = new CraftingRecipe(itemsOnTable.Count > 0 ? itemsOnTable[0] : null, itemsOnTable.Count > 1 ? itemsOnTable[1] : null, itemsOnTable.Count > 2 ? itemsOnTable[2] : null);
         
-        string s = "";
-        foreach (Item item in currentRecipe.requiredItems)
-        {
-            if (item == null)
-            {
-                s += "null, ";
-            }
-            else
-            {
-                s += item.nme + ", ";
-            }
-        }
-        Debug.Log("items on table: " + s);
+        // string s = "";
+        // foreach (Item item in currentRecipe.requiredItems)
+        // {
+        //     if (item == null)
+        //     {
+        //         s += "null, ";
+        //     }
+        //     else
+        //     {
+        //         s += item.nme + ", ";
+        //     }
+        // }
+        // Debug.Log("items on table: " + s);
 
         currentCraftableItem = CraftingRecipe.GetMatchingItem(currentRecipe);
+        //Utility.FindDeepChild(hammerT, "HoverTrigger").GetComponent<BoxCollider>().enabled = !(currentCraftableItem == null);
+
         potentialCraftedItems = CraftingRecipe.GetOnTheWayItems(currentRecipe);
 
-
-        Debug.Log("current craftable item: " + (currentCraftableItem == null ? "null" : currentCraftableItem.nme));
+        //Debug.Log("current craftable item: " + (currentCraftableItem == null ? "null" : currentCraftableItem.nme));
 
 
 
@@ -88,43 +93,33 @@ public class Workbench : ObjectRack
         //     Debug.Log("Matching item: " + currentCraftableItem.nme);
 
         // }
-        // Debug.Log("\nPossible items: ");
-        // foreach(Item item in possibleItems){
+        // Debug.Log("Possible items: ");
+        // foreach(Item item in potentialCraftedItems){
         //     Debug.Log(item.nme);
         // }
 
     }
 
     // logic following when the player prompts to craft an item
-    public Item OnCraft(){
-        // todo: craft item
-
-
-        //ConsumeIngredients();
+    public void OnCraft(){
 
         Transform orientation = this.worldObject_orientationParent.Find("ItemOrientationCraftedItem");
-
         GameObject obj = Utility.InstantiatePrefabSameName(currentCraftableItem.worldObject);
         obj.transform.position = orientation.position;
         obj.transform.rotation = orientation.rotation;
 
+        ConsumeRecipeObjects();
         UpdateRecipes();
 
-
-        // consume items on table and generate new one
-
-
-
-        return Item.None;
     }
 
-    void ConsumeIngredients(){
-        itemsOnTable.Clear();
-        foreach(Transform t in this.worldObject_orientationParent.GetComponentsInChildren<Transform>()){
-            if(t.tag == "Item"){
-                GameObject.Destroy(t.gameObject);
-            }
+    void ConsumeRecipeObjects(){
+
+        foreach(Item item in itemsOnTable.ToArray()){
+            Faction.RemoveItemOwned(camp.faction, item, 1, this);
         }
+        itemsOnTable.Clear();
+        
     }
 
 

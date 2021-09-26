@@ -141,16 +141,17 @@ public class CraftingRecipe
 
         List<Item> items = new List<Item>();
         if(compareRecipe.Equals(CraftingRecipe.None)){ return items; }
-
-        // loop through all recipes, adding them to list if their recipes match for all non-null items in compareRecipe
+        
+        // loop through all recipes, adding them to list if their recipes contain all non-null items in compareRecipe
         CraftingRecipe recipe;
+        Item item;
         bool match;
         foreach(KeyValuePair<CraftingRecipe, Item> kvp in recipeDict){
             recipe = kvp.Key;
+            item = kvp.Value;
             match = true;
-            for(int i = 0; i < recipe.requiredItems.Count; ++i){
-                if(compareRecipe.requiredItems[i] == null){ break; }
-                if(recipe.requiredItems[i] != compareRecipe.requiredItems[i]){
+            foreach(Item recipeItem in compareRecipe.requiredItems.Where(i => i != null)){
+                if(!recipe.requiredItems.Contains(recipeItem)){
                     match = false;
                     break;
                 }

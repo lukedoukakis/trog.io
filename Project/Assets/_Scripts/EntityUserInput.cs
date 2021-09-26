@@ -167,7 +167,6 @@ public class EntityUserInput : EntityComponent
             }
             else if(t == "WorkbenchHammer"){
                 Workbench wb = (Workbench)(Utility.FindScriptableObjectReference(hoveredInteractableObject.transform).GetScriptableObject());
-                Debug.Log("finding workbench... wb name: " + wb.name);
                 wb.OnCraft();
             }
         }
@@ -211,10 +210,10 @@ public class EntityUserInput : EntityComponent
             Item item;
 
             // get the correct text based on the interactable object we are dealing with
-            string txt = "E: ";
+            string txt = "";
             switch (hoveredInteractableObject.tag){
                 case "Item" : 
-                    txt += "Take " + hoveredInteractableObject.name;
+                    txt += "E: Pick up " + hoveredInteractableObject.name;
                     break;
                 case "ObjectRack_Food" :
                     item = entityItems.holding_item;
@@ -222,7 +221,7 @@ public class EntityUserInput : EntityComponent
                         txt = "";
                     }
                     else{
-                        txt += "Place " + item.nme;
+                        txt += "E: Place " + item.nme;
                     }
                     break;
                 case "ObjectRack_Clothing" :
@@ -231,7 +230,7 @@ public class EntityUserInput : EntityComponent
                         txt = "";
                     }
                     else{
-                        txt += "Place " + item.nme;
+                        txt += "E: Place " + item.nme;
                     }
                     break;
 
@@ -241,7 +240,7 @@ public class EntityUserInput : EntityComponent
                         txt = "";
                     }
                     else{
-                        txt += "Place " + item.nme;
+                        txt += "E: Place " + item.nme;
                     }
                     break;
 
@@ -251,13 +250,13 @@ public class EntityUserInput : EntityComponent
                         txt = "";
                     }
                     else{
-                        txt += "Place " + item.nme;
+                        txt += "E: Place " + item.nme;
                     }
                     break;
                 case "WorkbenchHammer" :
 
                     Workbench wb = (Workbench)(Utility.FindScriptableObjectReference(hoveredInteractableObject.transform).GetScriptableObject());
-                    txt += "TEST: workbench name: " + wb.name;
+                    txt += !wb.IsEmpty() && wb.currentCraftableItem != null ? "E: Craft " + wb.currentCraftableItem.nme : "Drop resources onto the table to craft cool new things!";
                     break;
                 // todo: handle other types of objects
                 default:
