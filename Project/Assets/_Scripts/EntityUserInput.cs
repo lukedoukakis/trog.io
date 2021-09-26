@@ -122,7 +122,10 @@ public class EntityUserInput : EntityComponent
     void CheckInteraction(){
 
         if(Input.GetKeyUp(KeyCode.E)){
-            OnInteract();
+            OnInteractInput();
+        }
+        if(Input.GetKeyUp(KeyCode.F)){
+            OnDropInput();
         }
 
         if(Input.GetKeyUp(KeyCode.Alpha1)){
@@ -130,7 +133,7 @@ public class EntityUserInput : EntityComponent
         }
     }
    
-    void OnInteract(){
+    void OnInteractInput(){
 
         //Log("Hovered object: " + hoveredInteractableObject.name);
 
@@ -171,6 +174,10 @@ public class EntityUserInput : EntityComponent
             }
         }
         
+    }
+
+    void OnDropInput(){
+        entityItems.OnDropInput();
     }
 
 
@@ -269,11 +276,6 @@ public class EntityUserInput : EntityComponent
         }
     }
 
-    void CheckUse(){
-        if(Input.GetKeyUp(KeyCode.F)){
-            entityItems.OnHoldingUse();
-        }
-    }
 
     void Update(){
 
@@ -284,7 +286,6 @@ public class EntityUserInput : EntityComponent
             }
             HandleAttack();
             CheckInteraction();
-            CheckUse();
         
         }
 

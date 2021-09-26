@@ -20,6 +20,9 @@ public class EntityItems : EntityComponent
     public Transform meshParentT;
     public Item clothing;
 
+    // inventory
+    public ItemCollection inventory;
+
 
     
     // orientations in space for items
@@ -65,6 +68,8 @@ public class EntityItems : EntityComponent
         meshParentT = Utility.FindDeepChild(transform, "Human Model 2");
         clothing = null; // TODO: initialize to something
 
+        inventory = new ItemCollection();
+
         itemOrientationAnimator = orientationParent.GetComponent<Animator>();
     }
 
@@ -86,6 +91,8 @@ public class EntityItems : EntityComponent
                 break;
             case Item.ItemType.Clothing :
                 PickUpHolding(i, worldObject, attachedObject);
+                EquipClothing(holding_item);
+                ConsumeHolding(holding_item);
                 break;
             default:
                 PickUpHolding(i, worldObject, attachedObject);
@@ -97,6 +104,9 @@ public class EntityItems : EntityComponent
     }
 
     public void OnEmptyInteract(){
+
+    }
+    public void OnDropInput(){
         if(holding_item != null){
             DropHolding(null);
         }
@@ -230,35 +240,36 @@ public class EntityItems : EntityComponent
     }
 
 
-    public void OnHoldingUse(){
+    // public void OnHoldingUse(){
 
-        if(holding_item != null){
+    //     if(holding_item != null){
 
-            switch (holding_item.type) {
-                case Item.ItemType.Food :
-                    // todo: eating animation
-                    ConsumeHolding(holding_item);
-                    break;
+    //         switch (holding_item.type) {
+    //             case Item.ItemType.Food :
+    //                 // todo: eating animation
+    //                 ConsumeHolding(holding_item);
+    //                 break;
                 
-                case Item.ItemType.Clothing :
-                    // todo: clothing animation
-                    Item i = holding_item;
-                    EquipClothing(holding_item);
-                    ConsumeHolding(i);
-                    break;
+    //             case Item.ItemType.Clothing :
+    //                 // todo: clothing animation
+    //                 Item i = holding_item;
+    //                 EquipClothing(holding_item);
+    //                 ConsumeHolding(i);
+    //                 break;
 
-                default:
-                    break;
+    //             default:
+    //                 break;
 
 
-            }
+    //         }
 
 
             
-        }
+    //     }
 
 
-    }
+    // }
+
 
 
     // weapon

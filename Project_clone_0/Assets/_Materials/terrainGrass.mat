@@ -69,12 +69,12 @@ Material:
     - _MinimumNormal: 0.8
     - _MinimumNumberStacks: 2
     - _NoisePower: 2
-    - _NumberOfStacks: 8.3
+    - _NumberOfStacks: 7
     - _OffsetValue: 0
     - _ProceduralDistance: 5.5
     - _ProceduralStrength: 1.5
     - _RimMax: 0.62
-    - _RimMin: 0.241
+    - _RimMin: 0.661
     - _RimPower: 4.08
     - _TilingN1: 9.36
     - _TilingN2: 0.05
@@ -93,6 +93,6 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
     - _OffsetVector: {r: 1, g: 3, b: 1, a: 0}
-    - _ProjectedShadowColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 0.1509434, g: 0.1509434, b: 0.1509434, a: 1}
-    - _SelfShadowColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ProjectedShadowColor: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}
+    - _RimColor: {r: 0.4245283, g: 0.4245283, b: 0.4245283, a: 1}
+    - _SelfShadowColor: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 1}
