@@ -86,7 +86,7 @@ public class Camp : ScriptableObject
             pos.y = ChunkGenerator.ElevationAmplitude;
             RaycastHit hit;
             if(Physics.Raycast(pos, Vector3.down, out hit, ChunkGenerator.ElevationAmplitude, CampResources.LayerMask_Terrain)){
-                orientation.position = hit.point + Vector3.up * .25f;
+                orientation.position = hit.point + Vector3.up * .15f;
             }
             else{
                 orientation.position = Vector3.one * float.MaxValue;
