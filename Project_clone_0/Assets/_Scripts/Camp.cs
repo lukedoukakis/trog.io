@@ -7,12 +7,13 @@ public class Camp : ScriptableObject
 {
 
 
-    public static float BASE_CAMP_RADIUS;
+    public static float BASE_CAMP_RADIUS = 5f;
+
+
     public enum ComponentType{
         Bonfire,
         Workbench, 
         Tent,
-        Anvil,
         Rack_Food, 
         Rack_Weapons, 
         Rack_Clothing,
@@ -28,7 +29,6 @@ public class Camp : ScriptableObject
     public Bonfire bonfire;
     public Workbench workbench;
     public List<Tent> tents;
-    public Anvil anvil;
     public List<ObjectRack> racks_food;
     public List<ObjectRack> racks_weapons;
     public List<ObjectRack> racks_clothing;
@@ -64,7 +64,6 @@ public class Camp : ScriptableObject
         camp.SetCampLayout(position, Quaternion.identity);
         camp.PlaceBonfire();
         camp.PlaceWorkbench();
-        camp.PlaceAnvil();
         camp.UpdateTentCount();
         camp.AddItemsToCamp(faction.ownedItems);
         return camp;
@@ -77,6 +76,7 @@ public class Camp : ScriptableObject
 
     public void SetRadius(int population){
         this.radius = BASE_CAMP_RADIUS + (BASE_CAMP_RADIUS * population * 05f);
+        Debug.Log("Camp radius: " + radius);
     }
 
     // place and adjust camp layout for component placement
@@ -84,12 +84,12 @@ public class Camp : ScriptableObject
 
         layout = Instantiate(CampResources.Prefab_CampLayout, position, Quaternion.identity);
         foreach(Transform orientation in layout.transform){
-            Debug.Log("AdjustCampLayout(): adjusting orientation: " + orientation.name);
+            //Debug.Log("AdjustCampLayout(): adjusting orientation: " + orientation.name);
             Vector3 pos = orientation.position;
             pos.y = ChunkGenerator.ElevationAmplitude;
             RaycastHit hit;
             if(Physics.Raycast(pos, Vector3.down, out hit, ChunkGenerator.ElevationAmplitude, CampResources.LayerMask_Terrain)){
-                orientation.position = hit.point + Vector3.up * .25f;
+                orientation.position = hit.point + Vector3.up * .15f;
             }
             else{
                 orientation.position = Vector3.one * float.MaxValue;
@@ -132,16 +132,13 @@ public class Camp : ScriptableObject
             case ComponentType.Tent :
                 search = "OrientationTent" + tents.Count;
                 break;
-            case ComponentType.Anvil :
-                search = "OrientationAnvil";
-                break;
             default:
                 search = "OrientationBonfire";
                 Debug.Log("Getting component position for unsupported component type");
                 break;
         }
 
-        Debug.Log("GetCampComponentOrientation(): orientation name: " + search);
+        //Debug.Log("GetCampComponentOrientation(): orientation name: " + search);
         return FindOrientationInCampLayout(search);
 
     }
@@ -158,6 +155,13 @@ public class Camp : ScriptableObject
         bonfire.worldObject.transform.position = targetOrientation.position;
         bonfire.worldObject.transform.rotation = targetOrientation.rotation;
         this.bonfire = bonfire;
+
+        // test: set sphere to visualize camp radius
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.localScale = Vector3.one * radius * .5f;
+        sphere.transform.position = targetOrientation.position;
+        sphere.GetComponent<SphereCollider>().enabled = false;
+        sphere.GetComponent<MeshRenderer>().sharedMaterial = Testing.instance.transparentMat;
     }
 
     public void PlaceWorkbench(){
@@ -176,13 +180,13 @@ public class Camp : ScriptableObject
         List<ObjectRack> rackList = GetRackListForItemType(itemType);
         Enum componentType;
         switch (itemType) {
-            case Item.Type.Food :
+            case Item.ItemType.Food :
                 componentType = ComponentType.Rack_Food;
                 break;
-            case Item.Type.Weapon :
+            case Item.ItemType.Weapon :
                 componentType = ComponentType.Rack_Weapons;
                 break;
-            case Item.Type.Clothing :
+            case Item.ItemType.Clothing :
                 componentType = ComponentType.Rack_Clothing;
                 break;
             default :
@@ -195,15 +199,6 @@ public class Camp : ScriptableObject
         objectRack.worldObject.transform.rotation = targetOrientation.rotation;
         rackList.Add(objectRack);
         objectRack.AddObjects(item, ref count);
-    }
-
-    public void PlaceAnvil(){
-        Anvil anvil = ScriptableObject.CreateInstance<Anvil>();
-        anvil.SetAnvil(this);
-        Transform targetOrientation = GetCampComponentOrientation(ComponentType.Anvil);
-        anvil.worldObject.transform.position = targetOrientation.position;
-        anvil.worldObject.transform.rotation = targetOrientation.rotation;
-        this.anvil = anvil;
     }
 
     public void UpdateTentCount(){
@@ -290,17 +285,14 @@ public class Camp : ScriptableObject
         List<ObjectRack> rackList;
         rackList = racks_food;
         switch(itemType){
-            case Item.Type.Food :
+            case Item.ItemType.Food :
                 rackList = racks_food;
                 break;
-            case Item.Type.Weapon :
+            case Item.ItemType.Weapon :
                 rackList = racks_weapons;
                 break;
-            case Item.Type.Clothing :
+            case Item.ItemType.Clothing :
                 rackList = racks_clothing;
-                break;
-            case Item.Type.MiscSmall :
-                // todo
                 break;
             default:
                 Debug.Log("Unrecognized item type");
@@ -308,6 +300,17 @@ public class Camp : ScriptableObject
         }
 
         return rackList;
+    }
+
+    public static bool EntityIsInsideCamp(EntityHandle handle){
+
+        Camp camp = handle.entityInfo.faction.camp;
+        if(camp == null){
+            return false;
+        }
+        else{
+            return Vector3.Distance(handle.transform.position, camp.layout.transform.position) <= camp.radius;
+        }
     }
 
 

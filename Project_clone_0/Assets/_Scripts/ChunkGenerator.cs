@@ -392,7 +392,7 @@ public class ChunkGenerator : MonoBehaviour
                     // give rivers roughness
                     if(freshWaterValue < .99f){
                         rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
-                        freshWaterValue += rough * .1f;
+                        //freshWaterValue += rough * .1f;
                     }
                     
 

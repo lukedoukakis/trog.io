@@ -28,22 +28,22 @@ public class ObjectRack : ScriptableObject
         this.itemType = itemType;
         GameObject worldObjectPrefab;
         switch(itemType){
-            case Item.Type.Food :
+            case Item.ItemType.Food :
                 this.capacity = RackCapacity_Food;
                 worldObjectPrefab = CampResources.Prefab_FoodRack;
                 onDemandPlacement = true;
                 break;
-            case Item.Type.Weapon :
+            case Item.ItemType.Weapon :
                 this.capacity = RackCapacity_Weapons;
                 worldObjectPrefab = CampResources.Prefab_WeaponsRack;
                 onDemandPlacement = true;
                 break;
-            case Item.Type.Clothing : 
+            case Item.ItemType.Clothing : 
                 this.capacity = RackCapacity_Clothing;
                 worldObjectPrefab = CampResources.Prefab_ClothingRack;
                 onDemandPlacement = true;
                 break;
-            case Item.Type.Any : 
+            case Item.ItemType.Any : 
                 this.capacity = 3;
                 worldObjectPrefab = CampResources.Prefab_Workbench;
                 onDemandPlacement = false;

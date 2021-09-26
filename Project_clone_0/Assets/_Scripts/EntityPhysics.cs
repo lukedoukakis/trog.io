@@ -498,7 +498,7 @@ public class EntityPhysics : EntityComponent
         else{
 
             // if hand is free, support right hand with holding the weapon, if equipped
-            if(!handFree_right && entityItems.weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Axe)){
+            if(!handFree_right && entityItems.weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Axe)){
                 ikScript_handLeft.enabled = true;
                 ikScript_handLeft.Target = objectRight.transform.Find("IKTargetT_Left");
             }
@@ -659,10 +659,10 @@ public class EntityPhysics : EntityComponent
         }
         switch (weapItem.holdStyle)
         {
-            case Item.HoldStyle.Spear:
+            case Item.ItemHoldStyle.Spear:
                 triggerName += "Spear";
                 break;
-            case Item.HoldStyle.Axe:
+            case Item.ItemHoldStyle.Axe:
                 triggerName += "Axe";
                 break;
             default:

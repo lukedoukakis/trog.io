@@ -36,7 +36,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GrassTex:
-        m_Texture: {fileID: 2800000, guid: d1554ad204dd4fc46ac7b4de46f513ac, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5ddef0977dde72343992a79d27da33fe, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GroundTex:
@@ -45,7 +45,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 4e1d764fa7e47f34eae88e37253c2542, type: 3}
-        m_Scale: {x: 0.1, y: 0.1}
+        m_Scale: {x: 0.2, y: 0.2}
         m_Offset: {x: 0, y: 0}
     - _NoGrassTex:
         m_Texture: {fileID: 0}
@@ -69,12 +69,12 @@ Material:
     - _MinimumNormal: 0.8
     - _MinimumNumberStacks: 2
     - _NoisePower: 2
-    - _NumberOfStacks: 17
+    - _NumberOfStacks: 7
     - _OffsetValue: 0
     - _ProceduralDistance: 5.5
     - _ProceduralStrength: 1.5
     - _RimMax: 0.62
-    - _RimMin: 0.241
+    - _RimMin: 0.661
     - _RimPower: 4.08
     - _TilingN1: 9.36
     - _TilingN2: 0.05
@@ -93,6 +93,6 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
     - _OffsetVector: {r: 1, g: 3, b: 1, a: 0}
-    - _ProjectedShadowColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 0.1509434, g: 0.1509434, b: 0.1509434, a: 1}
-    - _SelfShadowColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ProjectedShadowColor: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}
+    - _RimColor: {r: 0.4245283, g: 0.4245283, b: 0.4245283, a: 1}
+    - _SelfShadowColor: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 1}

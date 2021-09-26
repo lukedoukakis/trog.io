@@ -20,6 +20,9 @@ public class EntityItems : EntityComponent
     public Transform meshParentT;
     public Item clothing;
 
+    // inventory
+    public ItemCollection inventory;
+
 
     
     // orientations in space for items
@@ -65,6 +68,8 @@ public class EntityItems : EntityComponent
         meshParentT = Utility.FindDeepChild(transform, "Human Model 2");
         clothing = null; // TODO: initialize to something
 
+        inventory = new ItemCollection();
+
         itemOrientationAnimator = orientationParent.GetComponent<Animator>();
     }
 
@@ -78,14 +83,16 @@ public class EntityItems : EntityComponent
     public void OnObjectInteract(GameObject worldObject, ScriptableObject attachedObject){
         Item i = Item.GetItemByName(worldObject.name);
         switch (i.type) {
-            case Item.Type.Food :
+            case Item.ItemType.Food :
                 PickUpHolding(i, worldObject, attachedObject);
                 break;
-            case Item.Type.Weapon :
+            case Item.ItemType.Weapon :
                 PickUpWeapon(i, worldObject, attachedObject);
                 break;
-            case Item.Type.Clothing :
+            case Item.ItemType.Clothing :
                 PickUpHolding(i, worldObject, attachedObject);
+                EquipClothing(holding_item);
+                ConsumeHolding(holding_item);
                 break;
             default:
                 PickUpHolding(i, worldObject, attachedObject);
@@ -97,6 +104,9 @@ public class EntityItems : EntityComponent
     }
 
     public void OnEmptyInteract(){
+
+    }
+    public void OnDropInput(){
         if(holding_item != null){
             DropHolding(null);
         }
@@ -187,13 +197,20 @@ public class EntityItems : EntityComponent
 
         if (targetAttachedObject is ObjectRack)
         {
-            // get rack reference from attached object and add the item to faction items with specified rack
-            //Debug.Log("adding to object rack");
             ObjectRack rack = (ObjectRack)targetAttachedObject;
             Enum rackItemType = rack.itemType;
-            //if (!rackItemType.Equals(holding_item.type) && !rackItemType.Equals(Item.Type.Any) ) { rack = null; }
-            Faction.AddItemOwned(entityInfo.faction, holding_item, 1, rack);
-            GameObject.Destroy(holding_object);
+            if(rackItemType.Equals(holding_item.type) || rackItemType.Equals(Item.ItemType.Any))
+            {
+                // get rack reference from attached object and add the item to faction items with specified rack
+                //Debug.Log("adding to object rack");
+                Faction.AddItemOwned(entityInfo.faction, holding_item, 1, rack);
+                GameObject.Destroy(holding_object);
+            }
+            else
+            {
+                //DropHolding(null);
+                return;
+            }
         }
         else if (targetAttachedObject == null)
         {
@@ -223,35 +240,36 @@ public class EntityItems : EntityComponent
     }
 
 
-    public void OnHoldingUse(){
+    // public void OnHoldingUse(){
 
-        if(holding_item != null){
+    //     if(holding_item != null){
 
-            switch (holding_item.type) {
-                case Item.Type.Food :
-                    // todo: eating animation
-                    ConsumeHolding(holding_item);
-                    break;
+    //         switch (holding_item.type) {
+    //             case Item.ItemType.Food :
+    //                 // todo: eating animation
+    //                 ConsumeHolding(holding_item);
+    //                 break;
                 
-                case Item.Type.Clothing :
-                    // todo: clothing animation
-                    Item i = holding_item;
-                    EquipClothing(holding_item);
-                    ConsumeHolding(i);
-                    break;
+    //             case Item.ItemType.Clothing :
+    //                 // todo: clothing animation
+    //                 Item i = holding_item;
+    //                 EquipClothing(holding_item);
+    //                 ConsumeHolding(i);
+    //                 break;
 
-                default:
-                    break;
+    //             default:
+    //                 break;
 
 
-            }
+    //         }
 
 
             
-        }
+    //     }
 
 
-    }
+    // }
+
 
 
     // weapon
@@ -430,12 +448,12 @@ public class EntityItems : EntityComponent
             {
                 Transform orientation_weaponEquipped;
                 Transform basePosition_weaponEquipped;
-                if (weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Spear))
+                if (weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Spear))
                 {
                     orientation_weaponEquipped = orientation_weaponEquipped_spear;
                     basePosition_weaponEquipped = basePosition_weaponEquipped_spear;
                 }
-                else if (weaponEquipped_item.holdStyle.Equals(Item.HoldStyle.Axe))
+                else if (weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Axe))
                 {
                     orientation_weaponEquipped = orientation_weaponEquipped_axe;
                     basePosition_weaponEquipped = basePosition_weaponEquipped_axe;

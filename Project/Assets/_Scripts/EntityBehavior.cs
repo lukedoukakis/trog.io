@@ -339,7 +339,7 @@ public class EntityBehavior : EntityComponent
         IEnumerator _Pickup(){
             Item i = a.item_target;
             GameObject o = a.obj;
-            if(i.type.Equals(Item.Type.Weapon)){
+            if(i.type.Equals(Item.ItemType.Weapon)){
                 yield return new WaitForSecondsRealtime(.25f);
                 TakeObject(o);
                 yield return new WaitForSecondsRealtime(.25f);
