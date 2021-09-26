@@ -85,13 +85,13 @@ public class EntityStats : EntityComponent
         Enum armorStatType;
         switch (attackerWeapon.damageType)
         {
-            case Item.DamageType.Blunt:
+            case Item.ItemDamageType.Blunt:
                 armorStatType = Stats.StatType.ArmorBlunt;
                 break;
-            case Item.DamageType.Slash:
+            case Item.ItemDamageType.Slash:
                 armorStatType = Stats.StatType.ArmorSlash;
                 break;
-            case Item.DamageType.Pierce:
+            case Item.ItemDamageType.Pierce:
                 armorStatType = Stats.StatType.ArmorPierce;
                 break;
             default:
@@ -146,7 +146,7 @@ public class EntityStats : EntityComponent
 
             // if clamped type (weapon, food, clothing), add straight to faction items - otherwise, drop on ground
             // (ATM, drops on ground no matter what)
-            if(Item.IsClampedType(item) && false){
+            if(Item.IsRackable(item) && false){
                 Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, count, null);
             }
             else{

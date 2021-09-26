@@ -170,13 +170,13 @@ public class Camp : ScriptableObject
         List<ObjectRack> rackList = GetRackListForItemType(itemType);
         Enum componentType;
         switch (itemType) {
-            case Item.Type.Food :
+            case Item.ItemType.Food :
                 componentType = ComponentType.Rack_Food;
                 break;
-            case Item.Type.Weapon :
+            case Item.ItemType.Weapon :
                 componentType = ComponentType.Rack_Weapons;
                 break;
-            case Item.Type.Clothing :
+            case Item.ItemType.Clothing :
                 componentType = ComponentType.Rack_Clothing;
                 break;
             default :
@@ -275,17 +275,14 @@ public class Camp : ScriptableObject
         List<ObjectRack> rackList;
         rackList = racks_food;
         switch(itemType){
-            case Item.Type.Food :
+            case Item.ItemType.Food :
                 rackList = racks_food;
                 break;
-            case Item.Type.Weapon :
+            case Item.ItemType.Weapon :
                 rackList = racks_weapons;
                 break;
-            case Item.Type.Clothing :
+            case Item.ItemType.Clothing :
                 rackList = racks_clothing;
-                break;
-            case Item.Type.MiscSmall :
-                // todo
                 break;
             default:
                 Debug.Log("Unrecognized item type");

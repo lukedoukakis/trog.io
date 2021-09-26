@@ -8,22 +8,34 @@ using UnityEngine.UI;
 public class Item : ScriptableObject
 {
 
+    public enum ItemType{
+        Any, Food, Weapon, Clothing, Misc
+    }
+
+    public enum ItemHoldStyle{
+        Hug, UnderArm, Spear, Axe, OverShoulder, Torch
+    }
+
+    public enum ItemDamageType{
+        Blunt, Pierce, Slash
+    };
+
 
 
 
     // Item defs
-    public static Item None = InitiailizeItem(0, "None", Type.Weapon, Stats.NONE, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
-    public static Item Torch = InitiailizeItem(1, "Torch", Type.Weapon, Stats.NONE, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
-    public static Item Stone = InitiailizeItem(2, "Stone", Type.MiscLarge, Stats.NONE, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject/Stone"), Resources.Load<Image>("Items/Stone/Image"));
-    public static Item SmallStone = InitiailizeItem(3, "SmallStone", Type.MiscSmall, Stats.NONE, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/SmallStone/Gameobject/SmallStone"), Resources.Load<Image>("Items/SmallStone/Image"));
-    public static Item Spear = InitiailizeItem(4, "Spear", Type.Weapon, Stats.WEAPON_SPEAR, HoldStyle.Spear, DamageType.Pierce, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Spear/Image"));
-    public static Item Axe = InitiailizeItem(5, "Axe", Type.Weapon, Stats.WEAPON_AXE, HoldStyle.Axe, DamageType.Slash, EmptyItemCollection, Resources.Load<GameObject>("Items/Axe/Gameobject/Axe"), Resources.Load<Image>("Items/Axe/Image"));
-    public static Item LogFir = InitiailizeItem(6, "LogFir", Type.MiscLarge, Stats.NONE, HoldStyle.Hug, DamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/LogFir/Gameobject/LogFir"), Resources.Load<Image>("Items/LogFir/Image"));
-    public static Item CarcassBear = InitiailizeItem(7, "CarcassBear", Type.MiscLarge, Stats.NONE, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/CarcassBear/Gameobject/CarcassBear"), Resources.Load<Image>("Items/CarcassBear/Image"));
+    public static Item None = InitiailizeItem(0, "None", ItemType.Weapon, Stats.NONE, ItemHoldStyle.Torch, ItemDamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
+    public static Item Torch = InitiailizeItem(1, "Torch", ItemType.Weapon, Stats.NONE, ItemHoldStyle.Torch, ItemDamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
+    public static Item Stone = InitiailizeItem(2, "Stone", ItemType.Misc, Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/Stone/Gameobject/Stone"), Resources.Load<Image>("Items/Stone/Image"));
+    public static Item SmallStone = InitiailizeItem(3, "SmallStone", ItemType.Misc, Stats.NONE, ItemHoldStyle.Torch, ItemDamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/SmallStone/Gameobject/SmallStone"), Resources.Load<Image>("Items/SmallStone/Image"));
+    public static Item Spear = InitiailizeItem(4, "Spear", ItemType.Weapon, Stats.WEAPON_SPEAR, ItemHoldStyle.Spear, ItemDamageType.Pierce, EmptyItemCollection, Resources.Load<GameObject>("Items/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Spear/Image"));
+    public static Item Axe = InitiailizeItem(5, "Axe", ItemType.Weapon, Stats.WEAPON_AXE, ItemHoldStyle.Axe, ItemDamageType.Slash, EmptyItemCollection, Resources.Load<GameObject>("Items/Axe/Gameobject/Axe"), Resources.Load<Image>("Items/Axe/Image"));
+    public static Item LogFir = InitiailizeItem(6, "LogFir", ItemType.Misc, Stats.NONE, ItemHoldStyle.Hug, ItemDamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/LogFir/Gameobject/LogFir"), Resources.Load<Image>("Items/LogFir/Image"));
+    public static Item CarcassBear = InitiailizeItem(7, "CarcassBear", ItemType.Misc, Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/CarcassBear/Gameobject/CarcassBear"), Resources.Load<Image>("Items/CarcassBear/Image"));
 
     // testing items
-    public static Item ClothingTest = InitiailizeItem(8, "ClothingTest", Type.Clothing, Stats.CLOTHING_TESTCLOTHING, HoldStyle.UnderArm, DamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/ClothingTest/Gameobject/ClothingTest"), Resources.Load<Image>("Items/ClothingTest/Image"));
-    public static Item FoodTest = InitiailizeItem(9, "FoodTest", Type.Food, Stats.FOOD_TESTFOOD, HoldStyle.Torch, DamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/FoodTest/Gameobject/FoodTest"), Resources.Load<Image>("Items/FoodTest/Image"));
+    public static Item ClothingTest = InitiailizeItem(8, "ClothingTest", ItemType.Clothing, Stats.CLOTHING_TESTCLOTHING, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/ClothingTest/Gameobject/ClothingTest"), Resources.Load<Image>("Items/ClothingTest/Image"));
+    public static Item FoodTest = InitiailizeItem(9, "FoodTest", ItemType.Food, Stats.FOOD_TESTFOOD, ItemHoldStyle.Torch, ItemDamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/FoodTest/Gameobject/FoodTest"), Resources.Load<Image>("Items/FoodTest/Image"));
 
 
 
@@ -49,8 +61,8 @@ public class Item : ScriptableObject
        
     }
 
-    public static bool IsClampedType(Item item){
-        return item.type.Equals(Item.Type.Food) || item.type.Equals(Item.Type.Weapon) || item.type.Equals(Item.Type.Clothing);
+    public static bool IsRackable(Item item){
+        return item.type.Equals(Item.ItemType.Food) || item.type.Equals(Item.ItemType.Weapon) || item.type.Equals(Item.ItemType.Clothing);
     }
 
 
@@ -65,18 +77,6 @@ public class Item : ScriptableObject
     public ItemCollection contents;
     public GameObject worldObject;
     public Image image;
-
-    public enum Type{
-        Any, Food, Weapon, Clothing, MiscLarge, MiscSmall
-    }
-
-    public enum HoldStyle{
-        Hug, UnderArm, Spear, Axe, OverShoulder, Torch
-    }
-
-    public enum DamageType{
-        Blunt, Pierce, Slash
-    };
 
 
     public static Item InitiailizeItem(int _id, string _nme, Enum _type, Stats _stats, Enum _holdStyle, Enum _damageType, ItemCollection _contents, GameObject _gameobject, Image _image){

@@ -217,7 +217,7 @@ public class EntityUserInput : EntityComponent
                     break;
                 case "ObjectRack_Food" :
                     item = entityItems.holding_item;
-                    if(item == null || !item.type.Equals(Item.Type.Food)){
+                    if(item == null || !item.type.Equals(Item.ItemType.Food)){
                         txt = "";
                     }
                     else{
@@ -226,7 +226,7 @@ public class EntityUserInput : EntityComponent
                     break;
                 case "ObjectRack_Clothing" :
                     item = entityItems.holding_item;
-                    if(item == null || !item.type.Equals(Item.Type.Clothing)){
+                    if(item == null || !item.type.Equals(Item.ItemType.Clothing)){
                         txt = "";
                     }
                     else{
