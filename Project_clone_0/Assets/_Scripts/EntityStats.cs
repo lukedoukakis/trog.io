@@ -145,13 +145,14 @@ public class EntityStats : EntityComponent
             count = kvp.Value;
 
             // if clamped type (weapon, food, clothing), add straight to faction items - otherwise, drop on ground
+            // (ATM, drops on ground no matter what)
             if(Item.IsClampedType(item) && false){
                 Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, count, null);
             }
             else{
-                GameObject looseObj = Utility.InstantiatePrefabSameName(item.worldObject);
-                looseObj.transform.position = this.gameObject.transform.position + Vector3.up * .1f;
-                looseObj.transform.rotation = this.transform.gameObject.transform.rotation;
+                GameObject dropObj = Utility.InstantiatePrefabSameName(item.worldObject);
+                dropObj.transform.position = this.gameObject.transform.position + Vector3.up * .1f;
+                dropObj.transform.rotation = this.transform.gameObject.transform.rotation;
             }
         }
         

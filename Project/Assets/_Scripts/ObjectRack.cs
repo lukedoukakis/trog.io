@@ -11,6 +11,7 @@ public class ObjectRack : ScriptableObject
     public static int RackCapacity_Food = 6;
     public static int RackCapacity_Weapons = 6;
     public static int RackCapacity_Clothing = 6;
+    public static int RackCapacity_MiscLarge = 6;
 
     // --
 
@@ -41,6 +42,11 @@ public class ObjectRack : ScriptableObject
             case Item.Type.Clothing : 
                 this.capacity = RackCapacity_Clothing;
                 worldObjectPrefab = CampResources.Prefab_ClothingRack;
+                onDemandPlacement = true;
+                break;
+            case Item.Type.MiscLarge : 
+                this.capacity = RackCapacity_MiscLarge;
+                worldObjectPrefab = CampResources.Prefab_MiscLargeRack;
                 onDemandPlacement = true;
                 break;
             case Item.Type.Any : 

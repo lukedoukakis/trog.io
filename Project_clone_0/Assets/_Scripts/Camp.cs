@@ -12,7 +12,6 @@ public class Camp : ScriptableObject
         Bonfire,
         Workbench, 
         Tent,
-        Anvil,
         Rack_Food, 
         Rack_Weapons, 
         Rack_Clothing,
@@ -28,7 +27,6 @@ public class Camp : ScriptableObject
     public Bonfire bonfire;
     public Workbench workbench;
     public List<Tent> tents;
-    public Anvil anvil;
     public List<ObjectRack> racks_food;
     public List<ObjectRack> racks_weapons;
     public List<ObjectRack> racks_clothing;
@@ -64,7 +62,6 @@ public class Camp : ScriptableObject
         camp.SetCampLayout(position, Quaternion.identity);
         camp.PlaceBonfire();
         camp.PlaceWorkbench();
-        camp.PlaceAnvil();
         camp.UpdateTentCount();
         camp.AddItemsToCamp(faction.ownedItems);
         return camp;
@@ -132,9 +129,6 @@ public class Camp : ScriptableObject
             case ComponentType.Tent :
                 search = "OrientationTent" + tents.Count;
                 break;
-            case ComponentType.Anvil :
-                search = "OrientationAnvil";
-                break;
             default:
                 search = "OrientationBonfire";
                 Debug.Log("Getting component position for unsupported component type");
@@ -195,15 +189,6 @@ public class Camp : ScriptableObject
         objectRack.worldObject.transform.rotation = targetOrientation.rotation;
         rackList.Add(objectRack);
         objectRack.AddObjects(item, ref count);
-    }
-
-    public void PlaceAnvil(){
-        Anvil anvil = ScriptableObject.CreateInstance<Anvil>();
-        anvil.SetAnvil(this);
-        Transform targetOrientation = GetCampComponentOrientation(ComponentType.Anvil);
-        anvil.worldObject.transform.position = targetOrientation.position;
-        anvil.worldObject.transform.rotation = targetOrientation.rotation;
-        this.anvil = anvil;
     }
 
     public void UpdateTentCount(){
