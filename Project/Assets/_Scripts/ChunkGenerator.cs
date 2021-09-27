@@ -130,7 +130,7 @@ public class ChunkGenerator : MonoBehaviour
     void Init()
     {
 
-        Debug.Log("seed: " + Seed.ToString());
+        //Debug.Log("seed: " + Seed.ToString());
 
         //RiverGenerator.Generate();
 

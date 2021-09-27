@@ -8,22 +8,17 @@ public class ItemCollection
     public Dictionary<Item, int> items;
 
 
-
-    public ItemCollection(Dictionary<Item, int>[] _items){
-        this.items = _items[0];
-        if(_items.Length > 1){
-            for(int i = 1; i < _items.Length; ++i){
-                foreach(KeyValuePair<Item, int> kvp in _items[i]){
-                    AddItem(kvp.Key, kvp.Value);
-                }
-            }
-        }
+    public ItemCollection(){
+        this.items = new Dictionary<Item, int>();
     }
     public ItemCollection(Dictionary<Item, int> _items){
         this.items = _items;
     }
-    public ItemCollection(){
+    public ItemCollection(ItemCollection ic){
         this.items = new Dictionary<Item, int>();
+        foreach(KeyValuePair<Item, int> kvp in ic.items){
+            this.AddItem(kvp.Key, kvp.Value);
+        }
     }
 
 
@@ -64,4 +59,7 @@ public class ItemCollection
         }
         return s;
     }
+
+
+    public static ItemCollection EmptyItemCollection = new ItemCollection(new Dictionary<Item, int>());
 }

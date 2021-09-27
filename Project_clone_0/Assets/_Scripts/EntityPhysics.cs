@@ -691,7 +691,6 @@ public class EntityPhysics : EntityComponent
     void StopAttackHitTime(){
         attackCanHit = false;
         if(attackHit){
-            OnWeaponHitRemove();
             attackHit = false;
         }
     }
@@ -699,7 +698,7 @@ public class EntityPhysics : EntityComponent
         GameObject hitObject = collider.gameObject;
         //Debug.Log(hitObject.layer);
 
-        if (hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature"))
+        if(hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature"))
         {
             Log("HIT!!!! " + collider.gameObject.name);
             collider.gameObject.GetComponentInParent<EntityHitDetection>().OnHit(this.entityHandle);
@@ -709,6 +708,13 @@ public class EntityPhysics : EntityComponent
             {
                 StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
             }
+
+            StopAttackHitTime();
+        }
+        else if(hitObject.layer == LayerMask.NameToLayer("Item"))
+        {
+            Log("HIT!!!! " + collider.gameObject.name);
+            collider.gameObject.GetComponentInParent<ItemHitDetection>().OnHit(this.entityHandle);
         }
         
         
@@ -748,7 +754,7 @@ public class EntityPhysics : EntityComponent
     }
 
     public void OnWeaponHitRemove(){ 
-        // todo: weapon no longer at fixed point
+        
     }
 
     void AttackBite(Transform target){

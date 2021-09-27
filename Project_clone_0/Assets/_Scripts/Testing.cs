@@ -18,6 +18,7 @@ public class Testing : MonoBehaviour
         instance = this;
     }
 
+
     public void OnFactionCreation(){
         AddItemsToFaction();
     }
@@ -47,7 +48,7 @@ public class Testing : MonoBehaviour
             }
             if (Input.GetKeyUp(KeyCode.LeftControl))
             {
-                GameObject.Find("Torch").transform.position = playerHandle.transform.position + Vector3.up * 3f;
+                //GameObject.Find("Torch").transform.position = playerHandle.transform.position + Vector3.up * 3f;
             }
             if (Input.GetKeyUp(KeyCode.K))
             {
@@ -61,6 +62,10 @@ public class Testing : MonoBehaviour
             {
                 PlayerCommand.current.SendCommand("Attack TribeMember");
             }
+
+
+
+            //Debug.Log(Camp.EntityIsInsideCamp(playerHandle));
         }
 
 

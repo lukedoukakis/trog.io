@@ -121,8 +121,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.8598581, y: 6.625133, z: 0.64360374}
-  m_Center: {x: 0.01221559, y: 2.2336886, z: -0.12756011}
+  m_Size: {x: 0.8598581, y: 6.625133, z: 0.93456674}
+  m_Center: {x: 0.01221559, y: 2.2336886, z: 0.01792132}
 --- !u!1 &4470734378966398637
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 1830408283554421847}
   - component: {fileID: 1770823087911575398}
   - component: {fileID: 8006518876415813049}
+  - component: {fileID: 8305115610008764074}
   - component: {fileID: 8069356996403466961}
   m_Layer: 13
   m_Name: LogFir
@@ -238,10 +239,23 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.09980011
+  m_Radius: 0.20921907
   m_Height: 4.160252
   m_Direction: 1
-  m_Center: {x: 0.005125299, y: 1.5078237, z: -0.002259642}
+  m_Center: {x: 0.0014106035, y: 1.5078237, z: 0.016193062}
+--- !u!114 &8305115610008764074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4470734378966398637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b6bf48bce3a9dc40893c47b91f42dc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemNme: LogFir
 --- !u!114 &8069356996403466961
 MonoBehaviour:
   m_ObjectHideFlags: 0

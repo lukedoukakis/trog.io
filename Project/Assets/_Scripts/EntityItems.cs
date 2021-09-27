@@ -209,7 +209,7 @@ public class EntityItems : EntityComponent
         }
         else if (targetAttachedObject == null)
         {
-            if(Item.IsRackable(holding_item)){
+            if(Camp.EntityIsInsideCamp(entityHandle) && Item.IsRackable(holding_item)){
                 Faction.AddItemOwned(entityInfo.faction, holding_item, 1, null);
                 GameObject.Destroy(holding_object);
             }
@@ -235,7 +235,7 @@ public class EntityItems : EntityComponent
 
     public void ConsumeHolding(Item item)
     {
-        entityStats.AddStatsModifier(holding_item.stats);
+        entityStats.AddStatsModifier(holding_item.baseStats);
         GameObject.Destroy(holding_object);
         holding_item = null;
         holding_object = null;
@@ -317,7 +317,7 @@ public class EntityItems : EntityComponent
         weaponEquipped_object = worldObject;
 
         // add stats
-        entityStats.AddStatsModifier(item.stats);
+        entityStats.AddStatsModifier(item.wielderStatsModifier);
 
         // turn off physics
         Utility.ToggleObjectPhysics(weaponEquipped_object, false, false);
@@ -340,14 +340,14 @@ public class EntityItems : EntityComponent
         if (weaponEquipped_item != null)
         {
             Utility.ToggleObjectPhysics(weaponEquipped_object, false, false);
-            entityStats.AddStatsModifier(weaponEquipped_item.stats);
+            entityStats.AddStatsModifier(weaponEquipped_item.wielderStatsModifier);
             weaponEquipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().SetOwner(entityHandle);
         }
 
         if (weaponUnequipped_item != null)
         {
             Utility.ToggleObjectPhysics(weaponUnequipped_object, false, false);
-            entityStats.RemoveStatsModifier(weaponUnequipped_item.stats);
+            entityStats.RemoveStatsModifier(weaponUnequipped_item.wielderStatsModifier);
             if (weaponUnequipped_object != null)
             {
                 weaponUnequipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().RemoveOwner();
@@ -390,7 +390,7 @@ public class EntityItems : EntityComponent
             meshParentT.Find(clothing.nme).gameObject.SetActive(false);
 
             // remove stats
-            entityStats.RemoveStatsModifier(clothing.stats);
+            entityStats.RemoveStatsModifier(clothing.wielderStatsModifier);
 
             clothing = null;
         }

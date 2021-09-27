@@ -15,7 +15,7 @@ public class EntityHitDetection : EntityComponent
             entityInfo.species = species;
             entityInfo.Init();
             entityStats = gameObject.AddComponent<EntityStats>();
-            entityStats.FindAndSetEntityReferences();
+            //entityStats.FindAndSetEntityReferences();
         }
 
 

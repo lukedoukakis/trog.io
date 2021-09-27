@@ -29,8 +29,10 @@ public class EntityInfo : EntityComponent
 
     public void Init(){
         id = UnityEngine.Random.Range(0, int.MaxValue);
-        speciesInfo = SpeciesInfo.GetSpeciesInfo(species);
-        faction = speciesInfo.baseFaction;
+        if(species != Species.Any){
+            speciesInfo = SpeciesInfo.GetSpeciesInfo(species);
+            faction = speciesInfo.baseFaction;
+        }
         FindAndSetEntityReferences();
     }
 
@@ -46,18 +48,18 @@ public class SpeciesInfo : ScriptableObject{
     public BehaviorProfile behaviorProfile;
 
     public static SpeciesInfo InstantiateSpeciesInfo(Faction baseFaction, ItemCollection baseDrop, Stats baseStats, IkProfile ikProfile, BehaviorProfile behaviorProfile){
-        SpeciesInfo si = ScriptableObject.CreateInstance<SpeciesInfo>();
-        si.baseFaction = baseFaction;
-        si.baseDrop = baseDrop;
-        si.baseStats = baseStats;
-        si.ikProfile = ikProfile;
-        si.behaviorProfile = behaviorProfile;
+        SpeciesInfo speciesInfo = ScriptableObject.CreateInstance<SpeciesInfo>();
+        speciesInfo.baseFaction = baseFaction;
+        speciesInfo.baseDrop = baseDrop;
+        speciesInfo.baseStats = baseStats;
+        speciesInfo.ikProfile = ikProfile;
+        speciesInfo.behaviorProfile = behaviorProfile;
         
-        return si;
+        return speciesInfo;
     }
 
     public static SpeciesInfo GetSpeciesInfo(Species spec){
-        //Debug.Log(spec.ToString());
+        //Debug.Log("GetSpeciesInfo(): " + spec.ToString());
         return SpeciesInfoDict[spec];
     }
 
@@ -67,18 +69,17 @@ public class SpeciesInfo : ScriptableObject{
                 Faction.InstantiateFaction(Species.Human.ToString(), false),
                 new ItemCollection(
                     new Dictionary<Item, int>{
-                        // todo: drops for human
+
                     }
-                    
                 ),
-                Stats.BASE_HUMAN,
+                Stats.InstantiateStats(1f,1f,1f,.7f,1f,1f,1f,1f,1f,1f,1f,1f),
                 IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", false, true, 3f, 5f, 1f, .58f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Aggressive,
                     new List<AttackType>(){AttackType.Weapon},
                     new List<ActionParameters>(){ ActionParameters.GenerateActionParameters(ActionType.Follow, null, -1, null, null, -1, EntityBehavior.distanceThreshold_combat, EntityOrientation.BodyRotationMode.Target, true)},
                     0f,
-                    false)            
+                    false)
             )
 
         },
@@ -88,11 +89,10 @@ public class SpeciesInfo : ScriptableObject{
                 Faction.InstantiateFaction(Species.Bear.ToString(), false),
                 new ItemCollection(
                     new Dictionary<Item, int>{
-                        {Item.CarcassBear, 1}
+                        {Item.CarcassBear, 1},
                     }
-                    
                 ),
-                Stats.BASE_BEAR,
+                Stats.InstantiateStats(2f, .5f, 6f, .5f, 1f, 1f, 1.1f, 1f, 1f, 1f, 1f, 10f),
                 IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end", "leg_lower_left_end", "", "", "arm_lower_right_end", "arm_lower_left_end", "", "", true, false, 3f, 10f, 2.25f, .58f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Aggressive,
@@ -110,11 +110,10 @@ public class SpeciesInfo : ScriptableObject{
                 new ItemCollection(
                     new Dictionary<Item, int>{
                         // todo: deer carcass
-                        {Item.CarcassBear, 1}
+                        {Item.CarcassBear, 1},
                     }
-                    
                 ),
-                Stats.BASE_DEER,
+                Stats.InstantiateStats(1f, .75f, .1f, .5f, 1f, 1f, 1.1f, 1f, 1f, 1f, 1f, 10f),
                 IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end_end", "leg_lower_left_end_end", "", "", "arm_lower_right_end_end_end", "arm_lower_left_end_end_end", "", "", true, false, 3f, 10f, 2.25f, .58f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Timid,
@@ -131,11 +130,10 @@ public class SpeciesInfo : ScriptableObject{
                 null,
                 new ItemCollection(
                     new Dictionary<Item, int>{
-                        // todo: finish drop for tree
                         {Item.LogFir, 1},
                     }
                 ),
-                Stats.BASE_TREE,
+                Stats.InstantiateStats(3f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f),
                 null,
                 null
             )

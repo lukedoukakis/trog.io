@@ -7,7 +7,7 @@ public class Camp : ScriptableObject
 {
 
 
-    public static float BASE_CAMP_RADIUS = 5f;
+    public static float BASE_CAMP_RADIUS = 8f;
 
 
     public enum ComponentType{
@@ -81,8 +81,10 @@ public class Camp : ScriptableObject
     }
 
     public void SetRadius(int population){
-        this.radius = BASE_CAMP_RADIUS + (BASE_CAMP_RADIUS * population * 05f);
-        Debug.Log("Camp radius: " + radius);
+        // this.radius = BASE_CAMP_RADIUS + (BASE_CAMP_RADIUS * population * 05f);
+
+        this.radius = BASE_CAMP_RADIUS;
+        //Debug.Log("Camp radius: " + radius);
     }
 
     // place and adjust camp layout for component placement
@@ -170,7 +172,7 @@ public class Camp : ScriptableObject
 
         // test: set sphere to visualize camp radius
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        sphere.transform.localScale = Vector3.one * radius * .5f;
+        sphere.transform.localScale = Vector3.one * radius * 2f;
         sphere.transform.position = targetOrientation.position;
         sphere.GetComponent<SphereCollider>().enabled = false;
         sphere.GetComponent<MeshRenderer>().sharedMaterial = Testing.instance.transparentMat;

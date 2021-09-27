@@ -9,6 +9,7 @@ public class EntityStats : EntityComponent
 
     public List<Stats> statsModifiers;
     public Stats statsCombined;
+    public ItemCollection drops;
 
 
     public static float BASE_AMOUNT_HP = 100;
@@ -24,11 +25,23 @@ public class EntityStats : EntityComponent
 
         statsModifiers = new List<Stats>();
         statsCombined = Stats.InstantiateStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        EntityInfo info = GetComponent<EntityInfo>();
+
+        if(entityInfo != null){
+            AddSpeciesBaseModifier();
+            SetBaseHpAndStamina();
+            drops = entityInfo.speciesInfo.baseDrop;
+        }
+    
+
+    }
+
+    public void AddSpeciesBaseModifier(){
         AddStatsModifier(entityInfo.speciesInfo.baseStats);
+    }
+
+    public void SetBaseHpAndStamina(){
         hp = (int)(BASE_AMOUNT_HP * Stats.GetStatValue(statsCombined, Stats.StatType.Health));
         stamina = (int)(BASE_AMOUNT_STAMINA * Stats.GetStatValue(statsCombined, Stats.StatType.Stamina));
-
     }
 
 
@@ -134,8 +147,7 @@ public class EntityStats : EntityComponent
     // drop drops - if they're clothing, food or weapons, add to attacker's faction
     void SpawnDrops(EntityHandle receiverHandle){
 
-        ItemCollection drops = entityInfo.speciesInfo.baseDrop;
-        Debug.Log("Adding drops to entity \'" + receiverHandle.entityInfo.nickname + "\' faction: " + drops.ToString());
+        //Debug.Log("Adding drops to entity \'" + receiverHandle.entityInfo.nickname + "\' faction: " + drops.ToString());
         // todo: add supplemental drops based on specific properties of this entity (?)
 
         Item item;
@@ -144,15 +156,19 @@ public class EntityStats : EntityComponent
             item = kvp.Key;
             count = kvp.Value;
 
-            // if clamped type (weapon, food, clothing), add straight to faction items - otherwise, drop on ground
-            // (ATM, drops on ground no matter what)
-            if(Item.IsRackable(item) && false){
+            // if attacker is in their camp, send items straight to racks, otherwise drop on ground
+            // FOR NOW: DROP ON GROUND
+            if(Camp.EntityIsInsideCamp(receiverHandle) && false){
                 Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, count, null);
             }
-            else{
-                GameObject dropObj = Utility.InstantiatePrefabSameName(item.worldObject);
-                dropObj.transform.position = this.gameObject.transform.position + Vector3.up * .1f;
-                dropObj.transform.rotation = this.transform.gameObject.transform.rotation;
+            else
+            {
+                for (int i = 0; i < count; ++i)
+                {
+                    GameObject dropObj = Utility.InstantiatePrefabSameName(item.worldObject);
+                    dropObj.transform.position = this.gameObject.transform.position + Vector3.up * .1f;
+                    dropObj.transform.rotation = this.transform.gameObject.transform.rotation;
+                }
             }
         }
         
@@ -208,156 +224,14 @@ public class Stats : ScriptableObject
         0f
     );
 
-    // ----
-    // definitions
-    public static Stats BASE_HUMAN = InstantiateStats(
-        1f,
-        1f,
-        1f,
-        .7f,
-        1f,
-        1f,
-        1f,
-        1f,
-        1f,
-        1f,
-        1f,
-        1f
-    );
-
-    public static Stats BASE_BEAR = InstantiateStats(
-        2f,
-        .5f,
-        6f,
-        .5f,
-        1f,
-        1f,
-        1.1f,
-        1f,
-        1f,
-        1f,
-        1f,
-        10f
-    );
-
-    public static Stats BASE_DEER = InstantiateStats(
-        1f,
-        .75f,
-        .1f,
-        .5f,
-        .7f,
-        1f,
-        1.1f,
-        1f,
-        1f,
-        1f,
-        1f,
-        10f
-    );
-
-    public static Stats BASE_TREE = InstantiateStats(
-        3f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        float.MaxValue,
-        0f,
-        float.MaxValue,
-        0f
-    );
-
-    public static Stats BASE_CACTUS = InstantiateStats(
-        2f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        2f,
-        0f,
-        2f,
-        0f
-    );
-    public static Stats WOOD_PIECE = InstantiateStats(
-        .1f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        float.MaxValue,
-        0f,
-        float.MaxValue,
-        0f
-    );
     
-    public static Stats FOOD_TESTFOOD = InstantiateStats(
-        1f,
-        1f,
-        1f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f
-    );
+    public static Stats ITEM_WIELDERMODIFIER_TESTFOOD = InstantiateStats(1f,1f,1f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
 
-    public static Stats WEAPON_SPEAR = InstantiateStats(
-        0f,
-        0f,
-        3f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f
-    );
+    public static Stats ITEM_WIELDERMODIFIER_SPEAR = InstantiateStats(0f,0f,3f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
 
-    public static Stats WEAPON_AXE = InstantiateStats(
-        0f,
-        0f,
-        3f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f
-    );
+    public static Stats ITEM_WIELDERMODIFIER_AXE = InstantiateStats(0f,0f,3f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
 
-    public static Stats CLOTHING_TESTCLOTHING = InstantiateStats(
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        0f,
-        3f,
-        0f,
-        0f,
-        0f,
-        1f
-    );
+    public static Stats ITEM_WIELDERMODIFIER_TESTCLOTHING = InstantiateStats(0f,0f,0f,0f,0f,0f,0f,3f,0f,0f,0f,1f);
 
 
 
@@ -499,18 +373,6 @@ public class Stats : ScriptableObject
         return stats;
     }
 
-    // get stats from species
-    public static Stats GetEntityBaseStats(string identifier)
-    {
-        return BASE_STATS_MAP[identifier];
-    }
-
-
-    static Dictionary<string, Stats> BASE_STATS_MAP = new Dictionary<string, Stats>(){
-        { "Human", BASE_HUMAN },
-        { "Tree", BASE_TREE },
-        { "Cactus", BASE_CACTUS },
-    };
 
 
 
