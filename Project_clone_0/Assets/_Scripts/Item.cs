@@ -9,7 +9,7 @@ public class Item : ScriptableObject
 {
 
     public enum ItemType{
-        Any, Food, Weapon, Clothing, Misc
+        Any, Food, Weapon, Clothing, Wood, Bone, Misc
     }
 
     public enum ItemHoldStyle{
@@ -36,6 +36,7 @@ public class Item : ScriptableObject
     // testing items
     public static Item ClothingTest = InitiailizeItem(8, "ClothingTest", ItemType.Clothing, Stats.CLOTHING_TESTCLOTHING, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/ClothingTest/Gameobject/ClothingTest"), Resources.Load<Image>("Items/ClothingTest/Image"));
     public static Item FoodTest = InitiailizeItem(9, "FoodTest", ItemType.Food, Stats.FOOD_TESTFOOD, ItemHoldStyle.Torch, ItemDamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/FoodTest/Gameobject/FoodTest"), Resources.Load<Image>("Items/FoodTest/Image"));
+    public static Item WoodPiece = InitiailizeItem(10, "WoodPiece", ItemType.Wood, Stats.WOOD_PIECE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, EmptyItemCollection, Resources.Load<GameObject>("Items/WoodPiece/Gameobject/WoodPiece"), Resources.Load<Image>("Items/WoodPiece/Image"));
 
 
 
@@ -52,6 +53,8 @@ public class Item : ScriptableObject
         
         { "ClothingTest", ClothingTest },
         { "FoodTest", FoodTest },
+        { "WoodPiece", WoodPiece },
+
     };
     public static Item GetItemByName(string _nme){
 
@@ -62,7 +65,7 @@ public class Item : ScriptableObject
     }
 
     public static bool IsRackable(Item item){
-        return item.type.Equals(Item.ItemType.Food) || item.type.Equals(Item.ItemType.Weapon) || item.type.Equals(Item.ItemType.Clothing);
+        return item.type.Equals(Item.ItemType.Food) || item.type.Equals(Item.ItemType.Weapon) || item.type.Equals(Item.ItemType.Clothing) || item.type.Equals(Item.ItemType.Wood) || item.type.Equals(Item.ItemType.Bone);
     }
 
 

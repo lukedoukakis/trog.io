@@ -264,9 +264,9 @@ public class Stats : ScriptableObject
         0f,
         0f,
         0f,
-        8f,
+        float.MaxValue,
         0f,
-        8f,
+        float.MaxValue,
         0f
     );
 
@@ -282,6 +282,20 @@ public class Stats : ScriptableObject
         2f,
         0f,
         2f,
+        0f
+    );
+    public static Stats WOOD_PIECE = InstantiateStats(
+        .1f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        0f,
+        float.MaxValue,
+        0f,
+        float.MaxValue,
         0f
     );
     

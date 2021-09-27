@@ -5,15 +5,16 @@ using UnityEngine;
 public class CampResources : MonoBehaviour
 {
     
-    public static GameObject Prefab_CampLayout = Resources.Load<GameObject>("Camp/Camp Layout");
-    public static GameObject Prefab_BonfireUnlit = Resources.Load<GameObject>("Camp/Bonfire");
-    public static GameObject Prefab_BonfireLit = Resources.Load<GameObject>("Camp/Bonfire");
-    public static GameObject Prefab_Workbench = Resources.Load<GameObject>("Camp/Workbench");
-    public static GameObject Prefab_FoodRack = Resources.Load<GameObject>("Camp/Food Rack");
-    public static GameObject Prefab_WeaponsRack = Resources.Load<GameObject>("Camp/Weapons Rack");
-    public static GameObject Prefab_ClothingRack = Resources.Load<GameObject>("Camp/Clothing Rack");
-    public static GameObject Prefab_MiscLargeRack = Resources.Load<GameObject>("Camp/MiscLarge Rack");
-    public static GameObject Prefab_Tent = Resources.Load<GameObject>("Camp/Tent");
+    public static GameObject PREFAB_CAMPLAYOUT = Resources.Load<GameObject>("Camp/Camp Layout");
+    public static GameObject PREFAB_BONFIRE_UNLIT = Resources.Load<GameObject>("Camp/Bonfire");
+    public static GameObject PREFAB_BONFIRE_LIT = Resources.Load<GameObject>("Camp/Bonfire");
+    public static GameObject PREFAB_WORKBENCH = Resources.Load<GameObject>("Camp/Workbench");
+    public static GameObject PREFAB_RACK_FOOD = Resources.Load<GameObject>("Camp/Food Rack");
+    public static GameObject PREFAB_RACK_WEAPONS = Resources.Load<GameObject>("Camp/Weapons Rack");
+    public static GameObject PREFAB_RACK_CLOTHING = Resources.Load<GameObject>("Camp/Clothing Rack");
+    public static GameObject PREFAB_RACK_WOOD = Resources.Load<GameObject>("Camp/Wood Rack");
+    public static GameObject PREFAB_RACK_BONE = Resources.Load<GameObject>("Camp/Bone Rack");
+    public static GameObject PREFAB_TENT = Resources.Load<GameObject>("Camp/Tent");
 
 
 

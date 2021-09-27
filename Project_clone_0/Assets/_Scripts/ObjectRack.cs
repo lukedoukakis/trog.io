@@ -11,6 +11,8 @@ public class ObjectRack : ScriptableObject
     public static int RackCapacity_Food = 6;
     public static int RackCapacity_Weapons = 6;
     public static int RackCapacity_Clothing = 6;
+    public static int RackCapacity_Wood = 6;
+    public static int RackCapacity_Bone = 6;
 
     // --
 
@@ -30,27 +32,37 @@ public class ObjectRack : ScriptableObject
         switch(itemType){
             case Item.ItemType.Food :
                 this.capacity = RackCapacity_Food;
-                worldObjectPrefab = CampResources.Prefab_FoodRack;
+                worldObjectPrefab = CampResources.PREFAB_RACK_FOOD;
                 onDemandPlacement = true;
                 break;
             case Item.ItemType.Weapon :
                 this.capacity = RackCapacity_Weapons;
-                worldObjectPrefab = CampResources.Prefab_WeaponsRack;
+                worldObjectPrefab = CampResources.PREFAB_RACK_WEAPONS;
                 onDemandPlacement = true;
                 break;
             case Item.ItemType.Clothing : 
                 this.capacity = RackCapacity_Clothing;
-                worldObjectPrefab = CampResources.Prefab_ClothingRack;
+                worldObjectPrefab = CampResources.PREFAB_RACK_CLOTHING;
+                onDemandPlacement = true;
+                break;
+            case Item.ItemType.Wood : 
+                this.capacity = RackCapacity_Wood;
+                worldObjectPrefab = CampResources.PREFAB_RACK_WOOD;
+                onDemandPlacement = true;
+                break;
+            case Item.ItemType.Bone : 
+                this.capacity = RackCapacity_Bone;
+                worldObjectPrefab = CampResources.PREFAB_RACK_BONE;
                 onDemandPlacement = true;
                 break;
             case Item.ItemType.Any : 
                 this.capacity = 3;
-                worldObjectPrefab = CampResources.Prefab_Workbench;
+                worldObjectPrefab = CampResources.PREFAB_WORKBENCH;
                 onDemandPlacement = false;
                 break;
             default:
                 this.capacity = RackCapacity_Food;
-                worldObjectPrefab = CampResources.Prefab_FoodRack;
+                worldObjectPrefab = CampResources.PREFAB_RACK_FOOD;
                 onDemandPlacement = true;
                 Debug.Log("unsupported itemType for ItemRack");
                 break;

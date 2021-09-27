@@ -39,7 +39,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 200718921797524884}
-  m_Mesh: {fileID: 2676764211204920984, guid: d7ad634caa1c049d49b730cc6d29c683, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!23 &6904770185470793555
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -118,7 +118,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 761123093345465270}
-  m_Mesh: {fileID: 2676764211204920984, guid: d7ad634caa1c049d49b730cc6d29c683, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!23 &886133157125786161
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -197,7 +197,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1007604959970767373}
-  m_Mesh: {fileID: 2676764211204920984, guid: d7ad634caa1c049d49b730cc6d29c683, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!23 &7272224839795252803
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -356,7 +356,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2429292047928468182}
-  m_Mesh: {fileID: 2676764211204920984, guid: d7ad634caa1c049d49b730cc6d29c683, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!23 &4675303938214697291
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -435,7 +435,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4219230397707793263}
-  m_Mesh: {fileID: 2676764211204920984, guid: d7ad634caa1c049d49b730cc6d29c683, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!23 &12807204691006060
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -514,7 +514,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4535406598944169065}
-  m_Mesh: {fileID: 2676764211204920984, guid: d7ad634caa1c049d49b730cc6d29c683, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!23 &6029174957522769595
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -564,7 +564,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3484437019518606282}
   m_Layer: 0
-  m_Name: MiscLarge Rack
+  m_Name: Wood Rack
   m_TagString: ObjectRack_Weapons
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -20,9 +20,6 @@ public class EntityItems : EntityComponent
     public Transform meshParentT;
     public Item clothing;
 
-    // inventory
-    public ItemCollection inventory;
-
 
     
     // orientations in space for items
@@ -67,8 +64,6 @@ public class EntityItems : EntityComponent
 
         meshParentT = Utility.FindDeepChild(transform, "Human Model 2");
         clothing = null; // TODO: initialize to something
-
-        inventory = new ItemCollection();
 
         itemOrientationAnimator = orientationParent.GetComponent<Animator>();
     }
@@ -214,10 +209,17 @@ public class EntityItems : EntityComponent
         }
         else if (targetAttachedObject == null)
         {
-            //Debug.Log("adding to ANY object rack");
-            holding_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
-            Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, false);
-            holding_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = true;
+            if(Item.IsRackable(holding_item)){
+                Faction.AddItemOwned(entityInfo.faction, holding_item, 1, null);
+                GameObject.Destroy(holding_object);
+            }
+            else
+            {
+                //Debug.Log("adding to ANY object rack");
+                holding_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
+                Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, false);
+                holding_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = true;
+            }
         }
         else
         {

@@ -17,6 +17,8 @@ public class Camp : ScriptableObject
         Rack_Food, 
         Rack_Weapons, 
         Rack_Clothing,
+        Rack_Wood,
+        Rack_Bone
     }
 
 
@@ -32,6 +34,8 @@ public class Camp : ScriptableObject
     public List<ObjectRack> racks_food;
     public List<ObjectRack> racks_weapons;
     public List<ObjectRack> racks_clothing;
+    public List<ObjectRack> racks_wood;
+    public List<ObjectRack> racks_bone;
 
 
 
@@ -58,6 +62,8 @@ public class Camp : ScriptableObject
         camp.racks_food = new List<ObjectRack>();
         camp.racks_weapons = new List<ObjectRack>();
         camp.racks_clothing = new List<ObjectRack>();
+        camp.racks_wood = new List<ObjectRack>();
+        camp.racks_bone = new List<ObjectRack>();
         camp.tents = new List<Tent>();
         camp.SetOrigin(position);
         camp.SetRadius(faction.members.Count);
@@ -82,7 +88,7 @@ public class Camp : ScriptableObject
     // place and adjust camp layout for component placement
     public void SetCampLayout(Vector3 position, Quaternion rotation){
 
-        layout = Instantiate(CampResources.Prefab_CampLayout, position, Quaternion.identity);
+        layout = Instantiate(CampResources.PREFAB_CAMPLAYOUT, position, Quaternion.identity);
         foreach(Transform orientation in layout.transform){
             //Debug.Log("AdjustCampLayout(): adjusting orientation: " + orientation.name);
             Vector3 pos = orientation.position;
@@ -128,6 +134,12 @@ public class Camp : ScriptableObject
                 break;
             case ComponentType.Rack_Clothing :
                 search = "OrientationClothingRack" + racks_clothing.Count;
+                break;
+            case ComponentType.Rack_Wood :
+                search = "OrientationWoodRack" + racks_wood.Count;
+                break;
+            case ComponentType.Rack_Bone :
+                search = "OrientationBoneRack" + racks_wood.Count;
                 break;
             case ComponentType.Tent :
                 search = "OrientationTent" + tents.Count;
@@ -188,6 +200,12 @@ public class Camp : ScriptableObject
                 break;
             case Item.ItemType.Clothing :
                 componentType = ComponentType.Rack_Clothing;
+                break;
+            case Item.ItemType.Wood :
+                componentType = ComponentType.Rack_Wood;
+                break;
+            case Item.ItemType.Bone :
+                componentType = ComponentType.Rack_Bone;
                 break;
             default :
                 componentType = ComponentType.Rack_Food;
@@ -293,6 +311,12 @@ public class Camp : ScriptableObject
                 break;
             case Item.ItemType.Clothing :
                 rackList = racks_clothing;
+                break;
+            case Item.ItemType.Wood :
+                rackList = racks_wood;
+                break;
+            case Item.ItemType.Bone :
+                rackList = racks_bone;
                 break;
             default:
                 Debug.Log("Unrecognized item type");
