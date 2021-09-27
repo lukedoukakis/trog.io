@@ -6,6 +6,9 @@ public class Testing : MonoBehaviour
 {
 
 
+    public bool godMode;
+
+
     public EntityHandle playerHandle;
     public Faction faction;
 

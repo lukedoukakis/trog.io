@@ -87,6 +87,10 @@ public class EntityStats : EntityComponent
 
     public void TakeDamage(EntityHandle attackerHandle){
 
+        if(isLocalPlayer && Testing.instance.godMode){
+            return;
+        }
+
         // get attacker's relevant stats and (if applicable) weapon
         Stats attackerStats = attackerHandle.entityStats.statsCombined;
         EntityItems attackerItems = attackerHandle.entityItems;
@@ -135,11 +139,10 @@ public class EntityStats : EntityComponent
     void OnHealthEmptied(EntityHandle attackerHandle){
         Debug.Log("DED");
 
-
-        SpawnDrops(attackerHandle);
-        
         // todo: death 'animation'/being destroyed visuals
         GameObject.Destroy(this.gameObject);
+
+        SpawnDrops(attackerHandle);
 
     }
 
