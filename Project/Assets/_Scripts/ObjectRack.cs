@@ -22,6 +22,7 @@ public class ObjectRack : ScriptableObject
     public List<GameObject> objects;
     public GameObject worldObject;
     public Transform worldObject_orientationParent;
+    List<Transform> orientations;
     public bool onDemandPlacement;  // whether new racks can be created when this one is filled up; if false, objects cannot be placed when attempting to place on this rack
     public bool allowObjectPhysics; // if true, physics are deactivated for objects added to the rack
     public bool allowMovement;
@@ -87,6 +88,12 @@ public class ObjectRack : ScriptableObject
         }
         this.worldObject = Utility.InstantiatePrefabSameName(worldObjectPrefab);
         this.worldObject_orientationParent = Utility.FindDeepChild(this.worldObject.transform, "ItemOrientations");
+        this.orientations = worldObject_orientationParent.GetComponentsInChildren<Transform>().Where(ortn => ortn.tag == "Orientation").ToList();
+        if(allowRotation){
+            foreach(Transform orientation in orientations){
+                orientation.rotation = Utility.GetRandomRotation(360f);
+            }
+        }
         ScriptableObjectReference reference = this.worldObject.AddComponent<ScriptableObjectReference>();
         reference.SetScriptableObjectReference(this);
 
@@ -150,12 +157,10 @@ public class ObjectRack : ScriptableObject
     // set a given object's orientation to fit properly in the rack
     public void SetObjectOrientation(GameObject o){
 
-        List<Transform> orientations = worldObject_orientationParent.GetComponentsInChildren<Transform>().Where(ortn => ortn.tag == "Orientation").ToList();
-
         for(int i = 0; i < capacity; ++i)
         {
+
             Transform orientation = orientations[i];
-            //Transform orientation = worldObject_orientationParent.Find("ItemOrientation" + i);
             
             //Debug.Log(orientation.childCount);
             if (orientation.childCount == 0)
@@ -170,16 +175,13 @@ public class ObjectRack : ScriptableObject
                     if(!allowMovement){
                         rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
                     }
-                    if(!allowRotation){
+                    if(!allowRotation || true){
                         rb.constraints = rb.constraints | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
                     }
 
-                    rb.drag = 100f;
-                    rb.angularDrag = 100f;
-                    
-                    
-                    //rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-                    
+                    rb.drag = 1000f;
+                    rb.angularDrag = 1000f;
+                  
                     
                 }
                 break;
