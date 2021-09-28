@@ -12,7 +12,7 @@ public class ObjectRack : ScriptableObject
     public static int RackCapacity_Weapons = 6;
     public static int RackCapacity_Clothing = 6;
     public static int RackCapacity_Wood = 30;
-    public static int RackCapacity_Bone = 60;
+    public static int RackCapacity_Bone = 28;
 
     // --
 
@@ -157,7 +157,7 @@ public class ObjectRack : ScriptableObject
     // set a given object's orientation to fit properly in the rack
     public void SetObjectOrientation(GameObject o){
 
-        for(int i = 0; i < capacity; ++i)
+        for(int i = capacity - 1; i >= 0; --i)
         {
 
             Transform orientation = orientations[i];

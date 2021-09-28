@@ -103,7 +103,7 @@ public class EntityPhysics : EntityComponent
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         layerMask_water = LayerMask.GetMask("Water");
-        layerMask_walkable = LayerMask.GetMask("Terrain", "Feature");
+        layerMask_walkable = LayerMask.GetMask("Default", "Terrain", "Feature", "Item");
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");

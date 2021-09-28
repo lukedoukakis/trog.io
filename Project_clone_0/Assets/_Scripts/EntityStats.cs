@@ -163,7 +163,7 @@ public class EntityStats : EntityComponent
 
             // if attacker is in their camp, send items straight to racks, otherwise drop on ground
             // FOR NOW: DROP ON GROUND
-            if(inCamp && false){
+            if(inCamp){
                 Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, count, null);
             }
             else

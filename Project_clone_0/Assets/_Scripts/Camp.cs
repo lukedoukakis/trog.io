@@ -141,7 +141,7 @@ public class Camp : ScriptableObject
                 search = "OrientationWoodRack" + racks_wood.Count;
                 break;
             case ComponentType.Rack_Bone :
-                search = "OrientationBoneRack" + racks_wood.Count;
+                search = "OrientationBoneRack" + racks_bone.Count;
                 break;
             case ComponentType.Tent :
                 search = "OrientationTent" + tents.Count;

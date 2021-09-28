@@ -190,7 +190,7 @@ public class EntityItems : EntityComponent
     public void DropHolding(ScriptableObject targetAttachedObject){
         if(holding_item == null) { return; }
 
-        Debug.Log("Dropping");
+        //Debug.Log("Dropping");
 
         if (targetAttachedObject is ObjectRack)
         {
