@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: hammerMat
+  m_Name: wood_toneDark
   m_Shader: {fileID: -6465566751694194690, guid: 21d586b92db687f40831fc51479d9060,
     type: 3}
   m_ShaderKeywords: _SPECULAR_SETUP
@@ -202,7 +202,7 @@ Material:
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.4056604, g: 0.2504589, b: 0.13203098, a: 0}
-    - Color_EB41B935: {r: 0.2735849, g: 0.18123583, b: 0.06323425, a: 0}
+    - Color_EB41B935: {r: 0.2924528, g: 0.22317153, b: 0.13656995, a: 0}
     - _BaseColor: {r: 0.3018868, g: 0.2190159, b: 0, a: 1}
     - _BaseColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}

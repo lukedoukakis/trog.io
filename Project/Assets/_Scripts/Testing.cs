@@ -33,7 +33,7 @@ public class Testing : MonoBehaviour
         Faction.AddItemOwned(faction, Item.Spear, 2, null);
         Faction.AddItemOwned(faction, Item.Axe, 2, null);
         Faction.AddItemOwned(faction, Item.WoodPiece, 32, null);
-        for(int i = 0; i < 60 / 4; ++i){
+        for(int i = 0; i < 28 / 4; ++i){
             Faction.AddItemOwned(faction, Item.BonePiece1, 1, null);
             Faction.AddItemOwned(faction, Item.BonePiece2, 1, null);
             Faction.AddItemOwned(faction, Item.BonePiece3, 1, null);
