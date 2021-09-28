@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 4426589440524350429}
   - component: {fileID: 2793859892045931791}
   m_Layer: 13
-  m_Name: BonePiece
+  m_Name: BonePiece2
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -133,12 +133,12 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5047736665473453654}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 6255d09799e94174b977f5f9f3b19a7c, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.17322671, y: 0.6192886, z: 0.2057355}
-  m_Center: {x: 0.006136492, y: 0.13263366, z: -0.02545464}
+  m_Size: {x: 0.10868875, y: 0.54976773, z: 0.2057355}
+  m_Center: {x: 0.001999449, y: 0.1276679, z: -0.02545464}
 --- !u!114 &2793859892045931791
 MonoBehaviour:
   m_ObjectHideFlags: 0

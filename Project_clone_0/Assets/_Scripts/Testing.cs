@@ -32,7 +32,8 @@ public class Testing : MonoBehaviour
         Faction.AddItemOwned(faction, Item.FoodTest, 2, null);
         Faction.AddItemOwned(faction, Item.Spear, 2, null);
         Faction.AddItemOwned(faction, Item.Axe, 2, null);
-        Faction.AddItemOwned(faction, Item.WoodPiece, 30, null);
+        Faction.AddItemOwned(faction, Item.WoodPiece, 32, null);
+        Faction.AddItemOwned(faction, Item.BonePiece2, 60, null);
     }
 
 

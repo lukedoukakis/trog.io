@@ -190,6 +190,8 @@ public class EntityItems : EntityComponent
     public void DropHolding(ScriptableObject targetAttachedObject){
         if(holding_item == null) { return; }
 
+        Debug.Log("Dropping");
+
         if (targetAttachedObject is ObjectRack)
         {
             ObjectRack rack = (ObjectRack)targetAttachedObject;
@@ -207,15 +209,17 @@ public class EntityItems : EntityComponent
                 return;
             }
         }
+
         else if (targetAttachedObject == null)
         {
             if(Camp.EntityIsInsideCamp(entityHandle) && Item.IsRackable(holding_item)){
+                //Debug.Log("Adding to rack");
                 Faction.AddItemOwned(entityInfo.faction, holding_item, 1, null);
                 GameObject.Destroy(holding_object);
             }
             else
             {
-                //Debug.Log("adding to ANY object rack");
+                //Debug.Log("Dropping on ground");
                 holding_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
                 Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, false);
                 holding_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = true;

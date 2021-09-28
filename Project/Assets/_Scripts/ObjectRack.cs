@@ -12,7 +12,7 @@ public class ObjectRack : ScriptableObject
     public static int RackCapacity_Weapons = 6;
     public static int RackCapacity_Clothing = 6;
     public static int RackCapacity_Wood = 30;
-    public static int RackCapacity_Bone = 100;
+    public static int RackCapacity_Bone = 60;
 
     // --
 
@@ -23,8 +23,9 @@ public class ObjectRack : ScriptableObject
     public GameObject worldObject;
     public Transform worldObject_orientationParent;
     public bool onDemandPlacement;  // whether new racks can be created when this one is filled up; if false, objects cannot be placed when attempting to place on this rack
-    public bool freezeObjects; // if true, physics are deactivated for objects added to the rack
-    public bool singlePlacementPoint; // if true, objects are placed at a single position on the rack, rather than finding an open position
+    public bool allowObjectPhysics; // if true, physics are deactivated for objects added to the rack
+    public bool allowMovement;
+    public bool allowRotation;
 
     public void SetObjectRack(Camp camp, Enum itemType){
         this.camp = camp;
@@ -35,43 +36,47 @@ public class ObjectRack : ScriptableObject
                 this.capacity = RackCapacity_Food;
                 worldObjectPrefab = CampResources.PREFAB_RACK_FOOD;
                 onDemandPlacement = true;
-                freezeObjects = true;
-                singlePlacementPoint = false;
+                allowObjectPhysics = true;
+                allowMovement = false;
+                allowRotation = false;
                 break;
             case Item.ItemType.Weapon :
                 this.capacity = RackCapacity_Weapons;
                 worldObjectPrefab = CampResources.PREFAB_RACK_WEAPONS;
                 onDemandPlacement = true;
-                freezeObjects = true;
-                singlePlacementPoint = false;
+                allowObjectPhysics = true;
+                allowMovement = false;
+                allowRotation = false;
                 break;
             case Item.ItemType.Clothing : 
                 this.capacity = RackCapacity_Clothing;
                 worldObjectPrefab = CampResources.PREFAB_RACK_CLOTHING;
                 onDemandPlacement = true;
-                freezeObjects = true;
-                singlePlacementPoint = false;
+                allowObjectPhysics = true;
+                allowMovement = false;
+                allowRotation = false;
                 break;
             case Item.ItemType.Wood : 
                 this.capacity = RackCapacity_Wood;
                 worldObjectPrefab = CampResources.PREFAB_RACK_WOOD;
                 onDemandPlacement = true;
-                freezeObjects = false;
-                singlePlacementPoint = true;
+                allowObjectPhysics = false;
+                allowMovement = false;
+                allowRotation = false;
                 break;
             case Item.ItemType.Bone : 
                 this.capacity = RackCapacity_Bone;
                 worldObjectPrefab = CampResources.PREFAB_RACK_BONE;
                 onDemandPlacement = true;
-                freezeObjects = false;
-                singlePlacementPoint = true;
+                allowObjectPhysics = false;
+                allowMovement = false;
+                allowRotation = true;
                 break;
             case Item.ItemType.Any : 
                 this.capacity = 3;
                 worldObjectPrefab = CampResources.PREFAB_WORKBENCH;
                 onDemandPlacement = false;
-                freezeObjects = true;
-                singlePlacementPoint = false;
+                allowObjectPhysics = true;
                 break;
             default:
                 this.capacity = RackCapacity_Food;
@@ -158,14 +163,24 @@ public class ObjectRack : ScriptableObject
                 o.transform.position = orientation.position;
                 o.transform.rotation = orientation.rotation;
                 o.transform.parent = orientation;
-                if(freezeObjects){
+                if(allowObjectPhysics){
                     Utility.ToggleObjectPhysics(o, false, true, true, false);
-                }
-                else{
+
                     Rigidbody rb = o.GetComponent<Rigidbody>();
-                    rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-                    //rb.drag = 5f;
-                    //rb.angularDrag = 5f;
+                    if(!allowMovement){
+                        rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+                    }
+                    if(!allowRotation){
+                        rb.constraints = rb.constraints | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+                    }
+
+                    rb.drag = 100f;
+                    rb.angularDrag = 100f;
+                    
+                    
+                    //rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+                    
+                    
                 }
                 break;
                 

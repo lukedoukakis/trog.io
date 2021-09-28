@@ -174,7 +174,9 @@ public class EntityStats : EntityComponent
                     GameObject dropObj = Utility.InstantiatePrefabSameName(item.worldObject);
                     dropObj.transform.position = this.gameObject.transform.position + (Vector3.up * placementHeightOffset);
                     dropObj.transform.rotation = this.transform.gameObject.transform.rotation;
-                    dropObj.GetComponent<Rigidbody>().AddForce(Utility.GetRandomVector(300f) + Vector3.up * 600f);
+                    Vector3 randomDirection = Utility.GetRandomVector(300f);
+                    randomDirection.y = 0f;
+                    dropObj.GetComponent<Rigidbody>().AddForce(randomDirection + Vector3.up * 600f);
                     placementHeightOffset += .3f;
                 }
             }
