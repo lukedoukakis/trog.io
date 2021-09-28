@@ -48,24 +48,28 @@ public class Utility : MonoBehaviour
     }
 
 
-    public static void ToggleObjectPhysics(GameObject o, bool value, bool toggleTriggers){
+    public static void ToggleObjectPhysics(GameObject o, bool nonTriggers, bool triggers, bool rigidbodies, bool gravity){
         if (o != null)
         {
-            Collider[] cols = o.GetComponentsInChildren<BoxCollider>();
-            Rigidbody[] rbs = o.GetComponentsInChildren<Rigidbody>();
+            Collider[] cols = o.GetComponentsInChildren<Collider>();
             if (cols.Length > 0)
             {
                 foreach(Collider col in cols){
-                    if(!col.isTrigger || toggleTriggers)
-                    {
-                        col.enabled = value;
+                    if(col.isTrigger){
+                        col.enabled = triggers;
+                    }
+                    else{
+                        col.enabled = nonTriggers;
                     }
                 }
             }
+
+            Rigidbody[] rbs = o.GetComponentsInChildren<Rigidbody>();
             if (rbs.Length > 0)
             {
                 foreach(Rigidbody rb in rbs){
-                    rb.isKinematic = !value;
+                    rb.isKinematic = !rigidbodies;
+                    rb.useGravity = gravity;
                 }
             }
         }   
@@ -101,6 +105,14 @@ public class Utility : MonoBehaviour
         
         
         return v;
+    }
+
+    public static Vector3 GetRandomVector(float magnitude){
+        return new Vector3(UnityEngine.Random.Range(-100f, 100f), UnityEngine.Random.Range(-100f, 100f), UnityEngine.Random.Range(-100f, 100f)).normalized * magnitude;
+    }
+
+    public static Quaternion GetRandomRotation(float maxDegrees){
+        return Quaternion.Euler(UnityEngine.Random.Range(0f, maxDegrees), UnityEngine.Random.Range(0f, maxDegrees), UnityEngine.Random.Range(0f, maxDegrees));
     }
 
 

@@ -161,6 +161,14 @@ public class EntityUserInput : EntityComponent
                 {
                     entityItems.DropEquippedWeapon((ObjectRack)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
                 }
+                else if (t == "ObjectRack_Wood")
+                {
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+                }
+                else if (t == "ObjectRack_Bone")
+                {
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+                }
                 else{
 
                 }    
@@ -244,6 +252,24 @@ public class EntityUserInput : EntityComponent
                 case "ObjectRack_Weapons" :
                     item = entityItems.weaponEquipped_item;
                     if(item == null){
+                        txt = "";
+                    }
+                    else{
+                        txt += "E: Place " + item.nme;
+                    }
+                    break;
+                case "ObjectRack_Wood" :
+                    item = entityItems.holding_item;
+                    if(item == null || !item.type.Equals(Item.ItemType.Wood)){
+                        txt = "";
+                    }
+                    else{
+                        txt += "E: Place " + item.nme;
+                    }
+                    break;
+                case "ObjectRack_Bone" :
+                    item = entityItems.holding_item;
+                    if(item == null || !item.type.Equals(Item.ItemType.Bone)){
                         txt = "";
                     }
                     else{

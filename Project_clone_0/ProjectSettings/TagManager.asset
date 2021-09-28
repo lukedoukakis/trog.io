@@ -20,6 +20,9 @@ TagManager:
   - ObjectRack_Clothing
   - ObjectRack_Weapons
   - WorkbenchHammer
+  - ObjectRack_Wood
+  - ObjectRack_Bone
+  - Orientation
   layers:
   - Default
   - TransparentFX

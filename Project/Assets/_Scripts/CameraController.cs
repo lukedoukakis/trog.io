@@ -30,7 +30,7 @@ public class CameraController : MonoBehaviour
 
     void Awake(){
         current = this;
-        targetOffset = currentOffset = Vector3.right * .75f;
+        targetOffset = currentOffset = Vector3.right * 0f;
     }
     // Start is called before the first frame update
     void Start()

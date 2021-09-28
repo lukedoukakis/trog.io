@@ -71,9 +71,9 @@ public class CraftingRecipe
 
     public static Dictionary<CraftingRecipe, Item> recipeDict = new Dictionary<CraftingRecipe, Item>()
     {
-        { new CraftingRecipe(Item.LogFir, null, null), Item.Torch },
-        { new CraftingRecipe(Item.LogFir, Item.SmallStone, null), Item.Spear },
-        { new CraftingRecipe(Item.LogFir, Item.Stone, null), Item.Axe },
+        { new CraftingRecipe(Item.WoodPiece, null, null), Item.Torch },
+        { new CraftingRecipe(Item.WoodPiece, Item.SmallStone, null), Item.Spear },
+        { new CraftingRecipe(Item.WoodPiece, Item.Stone, null), Item.Axe },
     };
 
     // public override bool Equals(object obj)

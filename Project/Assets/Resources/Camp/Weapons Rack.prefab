@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6904770185470793555}
   m_Layer: 0
   m_Name: ItemOrientation2
-  m_TagString: Untagged
+  m_TagString: Orientation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 886133157125786161}
   m_Layer: 0
   m_Name: ItemOrientation5
-  m_TagString: Untagged
+  m_TagString: Orientation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -171,7 +171,7 @@ GameObject:
   - component: {fileID: 7272224839795252803}
   m_Layer: 0
   m_Name: ItemOrientation1
-  m_TagString: Untagged
+  m_TagString: Orientation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -425,7 +425,7 @@ GameObject:
   - component: {fileID: 4675303938214697291}
   m_Layer: 0
   m_Name: ItemOrientation3
-  m_TagString: Untagged
+  m_TagString: Orientation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -694,7 +694,7 @@ GameObject:
   - component: {fileID: 12807204691006060}
   m_Layer: 0
   m_Name: ItemOrientation0
-  m_TagString: Untagged
+  m_TagString: Orientation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -868,7 +868,7 @@ GameObject:
   - component: {fileID: 6029174957522769595}
   m_Layer: 0
   m_Name: ItemOrientation4
-  m_TagString: Untagged
+  m_TagString: Orientation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

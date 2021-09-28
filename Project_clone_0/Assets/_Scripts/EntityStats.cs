@@ -155,22 +155,27 @@ public class EntityStats : EntityComponent
 
         Item item;
         int count;
+
+        bool inCamp = Camp.EntityIsInsideCamp(receiverHandle);
         foreach(KeyValuePair<Item, int> kvp in drops.items){
             item = kvp.Key;
             count = kvp.Value;
 
             // if attacker is in their camp, send items straight to racks, otherwise drop on ground
             // FOR NOW: DROP ON GROUND
-            if(Camp.EntityIsInsideCamp(receiverHandle) && false){
+            if(inCamp && false){
                 Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, count, null);
             }
             else
             {
+                float placementHeightOffset = 0f;
                 for (int i = 0; i < count; ++i)
                 {
                     GameObject dropObj = Utility.InstantiatePrefabSameName(item.worldObject);
-                    dropObj.transform.position = this.gameObject.transform.position + Vector3.up * .1f;
+                    dropObj.transform.position = this.gameObject.transform.position + (Vector3.up * placementHeightOffset);
                     dropObj.transform.rotation = this.transform.gameObject.transform.rotation;
+                    dropObj.GetComponent<Rigidbody>().AddForce(Utility.GetRandomVector(300f) + Vector3.up * 600f);
+                    placementHeightOffset += .3f;
                 }
             }
         }

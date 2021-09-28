@@ -255,12 +255,15 @@ public class Camp : ScriptableObject
     public void AddItemsToCamp(ItemCollection itemsToAdd){
         Item item;
         int countToRemove;
-        foreach(KeyValuePair<Item, int> kvp in itemsToAdd.items){
+        foreach (KeyValuePair<Item, int> kvp in itemsToAdd.items)
+        {
             item = kvp.Key;
             countToRemove = kvp.Value;
             AddObjectsAnyRack(item, ref countToRemove);
         }
+
     }
+        
 
     public void RemoveItemsFromCamp(ItemCollection itemsToRemove){
         Item item;
@@ -341,3 +344,4 @@ public class Camp : ScriptableObject
 
 
 }
+
