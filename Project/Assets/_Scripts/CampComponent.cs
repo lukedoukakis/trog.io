@@ -16,7 +16,9 @@ public class CampComponent : MonoBehaviour
     }
 
     public void PlayEntryAnimation(){
-        animator.SetTrigger("Entry");
+        if(animator != null){
+            animator.SetTrigger("Entry");
+        }
     }
 
 

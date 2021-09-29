@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Faction : ScriptableObject
+public class Faction : MonoBehaviour
 {
 
 
@@ -59,14 +59,29 @@ public class Faction : ScriptableObject
         fac.targetedObjects.Add(o);
     }
 
-    public static void AddItemOwned(Faction fac, ItemCollection itemCollection, ObjectRack rack, Transform originT){
-        foreach(KeyValuePair<Item, int> kvp in itemCollection.items){
-            AddItemOwned(fac, kvp.Key, kvp.Value, rack, originT);
+    public static void AddItemOwned(Faction fac, ItemCollection itemCollection, ObjectRack rack, Transform originT, float delay)
+    {
+        foreach (KeyValuePair<Item, int> kvp in itemCollection.items)
+        {
+            AddItemOwned(fac, kvp.Key, kvp.Value, rack, originT, delay);
         }
+
     }
 
-    public static void AddItemOwned(Faction fac, Item item, int count, ObjectRack rack, Transform originT)
+    public static void AddItemOwned(Faction fac, Item item, int count, ObjectRack rack, Transform originT, float delay)
     {
+        fac.StartCoroutine(fac._AddItemOwned(fac, item, count, rack, originT, delay));
+    }
+    IEnumerator _AddItemOwned(Faction fac, Item item, int count, ObjectRack rack, Transform originT, float delay)
+    {
+
+        // wait for delay
+        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+        timer.Start();
+        while (timer.ElapsedMilliseconds / 1000f < delay)
+        {
+            yield return null;
+        }
 
         //Debug.Log("Adding item: " + item.nme);
         fac.ownedItems.AddItem(item, count);
@@ -86,6 +101,7 @@ public class Faction : ScriptableObject
             }
         }
     }
+    
 
     public static void RemoveItemOwned(Faction fac, Item item, int count, ObjectRack rack)
     {
@@ -143,7 +159,7 @@ public class Faction : ScriptableObject
 
 
     public static Faction InstantiateFaction(string _factionName, bool _isPlayerFaction){
-        Faction f = ScriptableObject.CreateInstance<Faction>();
+        Faction f = GameManager.current.gameObject.AddComponent<Faction>();
         f.id = UnityEngine.Random.Range(0, int.MaxValue);
         f.factionName = _factionName;
         f.members = new List<EntityHandle>();

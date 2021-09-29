@@ -142,43 +142,75 @@ public class EntityStats : EntityComponent
         // todo: death 'animation'/being destroyed visuals
         GameObject.Destroy(this.gameObject);
 
-        SpawnDrops(attackerHandle);
+        SpawnDrops(this.transform.position, attackerHandle);
 
     }
 
 
-    // drop drops - if they're clothing, food or weapons, add to attacker's faction
-    void SpawnDrops(EntityHandle receiverHandle){
+    // drop drops
+    void SpawnDrops(Vector3 dropSpot, EntityHandle receiverHandle){
 
-        //Debug.Log("Adding drops to entity \'" + receiverHandle.entityInfo.nickname + "\' faction: " + drops.ToString());
+        Debug.Log("Adding drops to entity \'" + receiverHandle.entityInfo.nickname + "\' faction: " + drops.ToString());
         // todo: add supplemental drops based on specific properties of this entity (?)
 
         Item item;
+        GameObject worldObject;
         int count;
-
         bool inCamp = Camp.EntityIsInsideCamp(receiverHandle);
-        foreach(KeyValuePair<Item, int> kvp in drops.items){
+
+        List<Tuple<Item, GameObject>> totalDropsList = new List<Tuple<Item, GameObject>>();
+
+        // first, get a list of each item and spawned gameobject dropped on the ground
+        foreach(KeyValuePair<Item, int> kvp in drops.items)
+        {
             item = kvp.Key;
             count = kvp.Value;
 
-            // if attacker is in their camp and the item is rackable, send items straight to racks
-            if(inCamp && Item.IsRackable(item)){
-                Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, count, null, transform);
+            float placementHeightOffset = 0f;
+            for (int i = 0; i < count; ++i)
+            {
+                worldObject = Utility.InstantiatePrefabSameName(item.worldObject);
+                worldObject.transform.position = dropSpot + (Vector3.up * placementHeightOffset);
+                worldObject.transform.rotation = Utility.GetRandomRotation(360f);
+                Vector3 randomDirection = Utility.GetRandomVector(300f);
+                randomDirection.y = 0f;
+                worldObject.GetComponent<Rigidbody>().AddForce(randomDirection + Vector3.up * 600f);
+                placementHeightOffset += .3f;
+                //yield return new WaitForSecondsRealtime(ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
+                totalDropsList.Add(Tuple.Create<Item, GameObject>(item, worldObject));
             }
-            // otherwise, drop on ground
+        }
+        //Debug.Log("Finished dropping on ground...");
+
+        
+        // for each object on the ground
+        for(int i = 0; i < totalDropsList.Count; ++i)
+        {
+            item = totalDropsList[i].Item1;
+            worldObject = totalDropsList[i].Item2;
+            if(inCamp){
+                // if attacker is in their camp
+                if(Item.IsRackable(item)){
+                    Debug.Log("adding drops straight to faction");
+                    // if the item is rackable, add item straight to racks
+                    float delay = .5f + (i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
+                    GameObject temp = new GameObject();
+                    temp.transform.position = worldObject.transform.position;
+                    Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, 1, null, temp.transform, delay);
+                    Utility.DestroyInSeconds(worldObject, delay);
+                    Utility.DestroyInSeconds(temp, 5f);
+                }
+                else
+                {
+                    Debug.Log("drops staying on ground");
+                    // do nothing
+                }
+            }
             else
             {
-                float placementHeightOffset = 0f;
-                for (int i = 0; i < count; ++i)
-                {
-                    GameObject dropObj = Utility.InstantiatePrefabSameName(item.worldObject);
-                    dropObj.transform.position = this.gameObject.transform.position + (Vector3.up * placementHeightOffset);
-                    dropObj.transform.rotation = this.transform.gameObject.transform.rotation;
-                    Vector3 randomDirection = Utility.GetRandomVector(300f);
-                    randomDirection.y = 0f;
-                    dropObj.GetComponent<Rigidbody>().AddForce(randomDirection + Vector3.up * 600f);
-                    placementHeightOffset += .3f;
-                }
+                Debug.Log("adding drops to inventory");
+                // if not in camp, add to reciver's inventory and delay small timestep
+                receiverHandle.entityItems.AddToInventory(item, worldObject, .5f + i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
             }
         }
         

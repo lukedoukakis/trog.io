@@ -20,6 +20,8 @@ public class EntityItems : EntityComponent
     public Transform meshParentT;
     public Item clothing;
 
+    public ItemCollection inventory;
+
 
     
     // orientations in space for items
@@ -64,6 +66,8 @@ public class EntityItems : EntityComponent
 
         meshParentT = Utility.FindDeepChild(transform, "Human Model 2");
         clothing = null; // TODO: initialize to something
+
+        inventory = new ItemCollection();
 
         itemOrientationAnimator = orientationParent.GetComponent<Animator>();
     }
@@ -200,7 +204,7 @@ public class EntityItems : EntityComponent
             {
                 // get rack reference from attached object and add the item to faction items with specified rack
                 //Debug.Log("adding to object rack");
-                Faction.AddItemOwned(entityInfo.faction, holding_item, 1, rack, transform);
+                Faction.AddItemOwned(entityInfo.faction, holding_item, 1, rack, transform, 0f);
                 GameObject.Destroy(holding_object);
             }
             else
@@ -214,7 +218,7 @@ public class EntityItems : EntityComponent
         {
             if(Camp.EntityIsInsideCamp(entityHandle) && Item.IsRackable(holding_item)){
                 //Debug.Log("Adding to rack");
-                Faction.AddItemOwned(entityInfo.faction, holding_item, 1, null, transform);
+                Faction.AddItemOwned(entityInfo.faction, holding_item, 1, null, transform, 0f);
                 GameObject.Destroy(holding_object);
             }
             else
@@ -284,13 +288,13 @@ public class EntityItems : EntityComponent
         {
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)targetAttachedObject;
-            Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1, rack, transform);
+            Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1, rack, transform, 0f);
             GameObject.Destroy(weaponEquipped_object);
         }
         else if (targetAttachedObject == null)
         {
             if(Camp.EntityIsInsideCamp(entityHandle)){
-                Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1,null, transform);
+                Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1,null, transform, 0f);
                 GameObject.Destroy(weaponEquipped_object);
             }
             else
@@ -394,7 +398,7 @@ public class EntityItems : EntityComponent
         if (clothing != null)
         {
 
-            Faction.AddItemOwned(entityInfo.faction, clothing, 1, null, transform);
+            Faction.AddItemOwned(entityInfo.faction, clothing, 1, null, transform, 0f);
 
             // unequip clothing on model
             meshParentT.Find(clothing.nme).gameObject.SetActive(false);
@@ -405,6 +409,38 @@ public class EntityItems : EntityComponent
             clothing = null;
         }
     }
+
+
+    // inventory
+
+    public void AddToInventory(Item item, GameObject worldObject, float delay)
+    {
+        inventory.AddItem(item, 1);
+        StartCoroutine(_MoveObject());
+
+        IEnumerator _MoveObject(){
+            Utility.ToggleObjectPhysics(worldObject, false, false, false, false);
+
+            // wait for delay
+            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            while (timer.ElapsedMilliseconds / 1000f < delay)
+            {
+                yield return null;
+            }
+
+            // move object to player location before destroying
+            while (Vector3.Distance(worldObject.transform.position, transform.position) > .5f)
+            {
+                worldObject.transform.position = Vector3.Lerp(worldObject.transform.position, transform.position, ObjectRack.OBJECT_MOVEMENT_ANIMATION_SPEED * Time.deltaTime);
+                worldObject.transform.Rotate(Vector3.right * 10f);
+                yield return null;
+            }
+            GameObject.Destroy(worldObject);
+        }
+    }
+
+
 
     public void OnItemsChange()
     {

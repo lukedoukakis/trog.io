@@ -24,8 +24,8 @@ public class ItemHitDetection : MonoBehaviour
             stats.AddStatsModifier(item.baseStats);
             stats.SetBaseHpAndStamina();
             stats.drops = item.drops;
-            Debug.Log("Item: " + item.nme);
-            Debug.Log("drops null?: " + item.drops.items == null);
+            //Debug.Log("Item: " + item.nme);
+            //Debug.Log("drops null?: " + item.drops.items == null);
         }
 
 

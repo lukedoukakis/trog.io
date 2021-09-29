@@ -6,6 +6,12 @@ using UnityEngine;
 public class Utility : MonoBehaviour
 {
 
+    public static Utility instance;
+
+    void Awake(){
+        instance = this;
+    }
+
     public static Transform FindDeepChild(Transform parentT, string name)
     {
         Queue<Transform> queue = new Queue<Transform>();
@@ -126,6 +132,15 @@ public class Utility : MonoBehaviour
             sor = parent.GetComponent<ObjectReference>();
         }
         return sor;
+    }
+
+    public static void DestroyInSeconds(GameObject o, float seconds){
+        instance.StartCoroutine(instance._DestroyInSeconds(o, seconds));
+    }
+    IEnumerator _DestroyInSeconds(GameObject o, float seconds)
+    {
+        yield return new WaitForSecondsRealtime(seconds);
+        GameObject.Destroy(o);
     }
 
 }

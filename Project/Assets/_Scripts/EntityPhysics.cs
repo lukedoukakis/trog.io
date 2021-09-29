@@ -718,7 +718,10 @@ public class EntityPhysics : EntityComponent
         else if(hitObject.layer == LayerMask.NameToLayer("Item"))
         {
             Log("HIT!!!! " + collider.gameObject.name);
-            collider.gameObject.GetComponentInParent<ItemHitDetection>().OnHit(this.entityHandle);
+            ItemHitDetection ihd = collider.gameObject.GetComponentInParent<ItemHitDetection>();
+            if(ihd != null){
+                ihd.OnHit(this.entityHandle);
+            }
         }
         
         
