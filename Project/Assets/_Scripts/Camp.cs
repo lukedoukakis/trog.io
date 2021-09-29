@@ -8,6 +8,7 @@ public class Camp : MonoBehaviour
 
 
     public static float BASE_CAMP_RADIUS = 8f;
+    public static float CAMP_COMPONENT_PLACING_TIME_GAP = .2f;
 
 
     public enum ComponentType{
@@ -55,7 +56,7 @@ public class Camp : MonoBehaviour
         // determine if flat enough
         return true;
     }
-    public static Camp PlaceCamp(Faction faction, Transform originT){
+    public static Camp PlaceCamp(Faction faction, Transform originT){        
         Camp camp = GameManager.current.gameObject.AddComponent<Camp>();
         faction.camp = camp;
         camp.faction = faction;
@@ -68,11 +69,25 @@ public class Camp : MonoBehaviour
         camp.SetOrigin(originT.position);
         camp.SetRadius(faction.members.Count);
         camp.SetCampLayout(originT.position, Quaternion.identity);
-        camp.PlaceBonfire();
-        camp.PlaceWorkbench();
-        camp.UpdateTentCount();
-        camp.AddItemsToCamp(faction.ownedItems, originT);
+        camp.PlaceCampComponents(originT);
         return camp;
+
+
+    }
+
+    public void PlaceCampComponents(Transform originT){
+
+        StartCoroutine(_PlaceCampComponents());
+
+        IEnumerator _PlaceCampComponents(){
+            PlaceBonfire();
+            yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
+            PlaceWorkbench();
+            yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
+            UpdateTentCount();
+            yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
+            AddItemsToCamp(faction.ownedItems, originT);
+        }
     }
 
 

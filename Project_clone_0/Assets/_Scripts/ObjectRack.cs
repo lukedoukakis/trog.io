@@ -7,7 +7,8 @@ using UnityEngine;
 public class ObjectRack : MonoBehaviour
 {
     
-    public static float objectSnapSpeed = 15f;
+    public static float OBJECT_MOVEMENT_ANIMATION_SPEED = 15f;
+    public static float OBJECT_PLACEMENT_DELAY_TIMESTEP = .1f;
     
     public static int RackCapacity_Food = 6;
     public static int RackCapacity_Weapons = 6;
@@ -117,7 +118,7 @@ public class ObjectRack : MonoBehaviour
                 // if room in the rack, add the item to it
                 GameObject o = Utility.InstantiatePrefabSameName(item.worldObject);
                 objects.Add(o);
-                SetObjectOrientation(o, originT);
+                SetObjectOrientation(o, originT, OBJECT_PLACEMENT_DELAY_TIMESTEP * i);
                 o.GetComponent<ObjectReference>().SetObjectReference(this);
                 --countToAdd;
             }
@@ -163,7 +164,7 @@ public class ObjectRack : MonoBehaviour
     }   
 
     // set a given object's orientation to fit properly in the rack
-    public void SetObjectOrientation(GameObject o, Transform originT){
+    public void SetObjectOrientation(GameObject o, Transform originT, float delay){
 
 
         StartCoroutine(_SetObjectOrientation(o));
@@ -177,19 +178,23 @@ public class ObjectRack : MonoBehaviour
 
                 if (orientation.childCount == 0)
                 {
-                
-
                     _o.transform.parent = orientation;
 
                     // animate movement of object to rack
                     Utility.ToggleObjectPhysics(o, false, false, false, false);
-                    o.transform.position = originT.transform.position;
-                    o.transform.rotation = Utility.GetRandomRotation(360f);
+                    System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+                    timer.Start();
+                    while (timer.ElapsedMilliseconds / 1000f < delay)
+                    {
+                        o.transform.position = originT.transform.position;
+                        yield return null;
+                    }
+                    timer.Stop();
                     Vector3 targetPos = orientation.position;
                     Quaternion targetRot = orientation.rotation;
                     while(Vector3.Distance(_o.transform.position, targetPos) > .1f)
                     {
-                        _o.transform.position = Vector3.Lerp(_o.transform.position, targetPos, objectSnapSpeed * Time.deltaTime);
+                        _o.transform.position = Vector3.Lerp(_o.transform.position, targetPos, OBJECT_MOVEMENT_ANIMATION_SPEED * Time.deltaTime);
                         o.transform.Rotate(Vector3.right * 10f);
                         //_o.transform.rotation = Quaternion.Slerp(_o.transform.rotation, targetRot, objectSnapSpeed * Time.deltaTime);
                         yield return null;
