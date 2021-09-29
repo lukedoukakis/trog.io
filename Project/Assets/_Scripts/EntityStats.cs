@@ -163,7 +163,7 @@ public class EntityStats : EntityComponent
 
             // if attacker is in their camp and the item is rackable, send items straight to racks, otherwise drop on ground
             if(inCamp && Item.IsRackable(item)){
-                Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, count, null);
+                Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, count, null, transform);
             }
             else
             {

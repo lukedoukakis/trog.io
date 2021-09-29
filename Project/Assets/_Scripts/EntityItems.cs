@@ -75,7 +75,7 @@ public class EntityItems : EntityComponent
     }
 
     // client method when an object is interacted with
-    public void OnObjectInteract(GameObject worldObject, ScriptableObject attachedObject){
+    public void OnObjectInteract(GameObject worldObject, object attachedObject){
         Item i = Item.GetItemByName(worldObject.name);
         switch (i.type) {
             case Item.ItemType.Food :
@@ -114,7 +114,7 @@ public class EntityItems : EntityComponent
     }
 
 
-    public void PickUpWeapon(Item item, GameObject worldObject, ScriptableObject attachedObject){
+    public void PickUpWeapon(Item item, GameObject worldObject, object attachedObject){
 
         Debug.Log("Picking up weapon: " + item.nme);
 
@@ -156,7 +156,7 @@ public class EntityItems : EntityComponent
 
     // holding
 
-    public void PickUpHolding(Item item, GameObject worldObject, ScriptableObject attachedObject){
+    public void PickUpHolding(Item item, GameObject worldObject, object attachedObject){
 
         GameObject o;
 
@@ -187,7 +187,7 @@ public class EntityItems : EntityComponent
         Utility.ToggleObjectPhysics(holding_object, false, false, true, false);
     }
 
-    public void DropHolding(ScriptableObject targetAttachedObject){
+    public void DropHolding(object targetAttachedObject){
         if(holding_item == null) { return; }
 
         //Debug.Log("Dropping");
@@ -200,7 +200,7 @@ public class EntityItems : EntityComponent
             {
                 // get rack reference from attached object and add the item to faction items with specified rack
                 //Debug.Log("adding to object rack");
-                Faction.AddItemOwned(entityInfo.faction, holding_item, 1, rack);
+                Faction.AddItemOwned(entityInfo.faction, holding_item, 1, rack, transform);
                 GameObject.Destroy(holding_object);
             }
             else
@@ -214,13 +214,13 @@ public class EntityItems : EntityComponent
         {
             if(Camp.EntityIsInsideCamp(entityHandle) && Item.IsRackable(holding_item)){
                 //Debug.Log("Adding to rack");
-                Faction.AddItemOwned(entityInfo.faction, holding_item, 1, null);
+                Faction.AddItemOwned(entityInfo.faction, holding_item, 1, null, transform);
                 GameObject.Destroy(holding_object);
             }
             else
             {
                 //Debug.Log("Dropping on ground");
-                holding_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
+                holding_object.GetComponent<ObjectReference>().SetObjectReference(null);
                 Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, false);
                 holding_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = true;
                 Utility.ToggleObjectPhysics(holding_object, true, true, true, true);
@@ -278,17 +278,17 @@ public class EntityItems : EntityComponent
 
     // weapon
 
-    public void DropEquippedWeapon(ScriptableObject targetAttachedObject){
+    public void DropEquippedWeapon(object targetAttachedObject){
         if (targetAttachedObject is ObjectRack)
         {
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)targetAttachedObject;
-            Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1, rack);
+            Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1, rack, transform);
             GameObject.Destroy(weaponEquipped_object);
         }
         else if (targetAttachedObject == null)
         {
-            weaponEquipped_object.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(null);
+            weaponEquipped_object.GetComponent<ObjectReference>().SetObjectReference(null);
             Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.worldCollider, false);
             weaponEquipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = true;
             Utility.ToggleObjectPhysics(weaponEquipped_object, true, true, true, true);
@@ -386,7 +386,7 @@ public class EntityItems : EntityComponent
         if (clothing != null)
         {
 
-            Faction.AddItemOwned(entityInfo.faction, clothing, 1, null);
+            Faction.AddItemOwned(entityInfo.faction, clothing, 1, null, transform);
 
             // unequip clothing on model
             meshParentT.Find(clothing.nme).gameObject.SetActive(false);

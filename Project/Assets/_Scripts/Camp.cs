@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Camp : ScriptableObject
+public class Camp : MonoBehaviour
 {
 
 
@@ -56,7 +56,7 @@ public class Camp : ScriptableObject
         return true;
     }
     public static Camp PlaceCamp(Faction faction, Vector3 position){
-        Camp camp = ScriptableObject.CreateInstance<Camp>();
+        Camp camp = GameManager.current.gameObject.AddComponent<Camp>();
         faction.camp = camp;
         camp.faction = faction;
         camp.racks_food = new List<ObjectRack>();
@@ -180,7 +180,7 @@ public class Camp : ScriptableObject
     }
 
     public void PlaceWorkbench(){
-        Workbench workbench = ScriptableObject.CreateInstance<Workbench>();
+        Workbench workbench = GameManager.current.gameObject.AddComponent<Workbench>();
         workbench.SetWorkbench(this);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Workbench);
         workbench.worldObject.transform.position = targetOrientation.position;
@@ -190,7 +190,7 @@ public class Camp : ScriptableObject
 
 
     public void PlaceObjectRack(Enum itemType, Item item, ref int count){
-        ObjectRack objectRack =  ScriptableObject.CreateInstance<ObjectRack>();
+        ObjectRack objectRack =  GameManager.current.gameObject.AddComponent<ObjectRack>();
         objectRack.SetObjectRack(this, itemType);
         List<ObjectRack> rackList = GetRackListForItemType(itemType);
         Enum componentType;
@@ -345,4 +345,5 @@ public class Camp : ScriptableObject
 
 
 }
+
 

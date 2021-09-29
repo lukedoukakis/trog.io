@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ObjectRack : ScriptableObject
+public class ObjectRack : MonoBehaviour
 {
     
     
@@ -94,8 +94,8 @@ public class ObjectRack : ScriptableObject
                 orientation.rotation = Utility.GetRandomRotation(360f);
             }
         }
-        ScriptableObjectReference reference = this.worldObject.AddComponent<ScriptableObjectReference>();
-        reference.SetScriptableObjectReference(this);
+        ObjectReference reference = this.worldObject.AddComponent<ObjectReference>();
+        reference.SetObjectReference(this);
 
         objects = new List<GameObject>();
     }
@@ -103,6 +103,9 @@ public class ObjectRack : ScriptableObject
 
 
     public virtual void AddObjects(Item item, ref int countToAdd){
+
+        // StartCoroutine(_AddObjects(item, ref countToAdd));
+
         int c = countToAdd;
         for(int i = 0; i < c; ++i){ 
             if(!IsFull()){
@@ -111,7 +114,7 @@ public class ObjectRack : ScriptableObject
                 GameObject o = Utility.InstantiatePrefabSameName(item.worldObject);
                 objects.Add(o);
                 SetObjectOrientation(o);
-                o.GetComponent<ScriptableObjectReference>().SetScriptableObjectReference(this);
+                o.GetComponent<ObjectReference>().SetObjectReference(this);
                 --countToAdd;
             }
             else{
@@ -126,6 +129,11 @@ public class ObjectRack : ScriptableObject
                 }
             }
         }
+
+        // IEnumerator _AddObjects(Item item_, ref int countToAdd_){
+        //     yield return null;
+        // }
+
     }
 
     public virtual void RemoveObjects(Item item, ref int countToRemove){
