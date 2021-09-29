@@ -32,8 +32,8 @@ public class Testing : MonoBehaviour
         Faction.AddItemOwned(faction, Item.FoodTest, 2, null);
         Faction.AddItemOwned(faction, Item.Spear, 2, null);
         Faction.AddItemOwned(faction, Item.Axe, 2, null);
-        Faction.AddItemOwned(faction, Item.WoodPiece, 32, null);
-        Faction.AddItemOwned(faction, Item.BonePiece2, 120, null);
+        Faction.AddItemOwned(faction, Item.WoodPiece, 12, null);
+        Faction.AddItemOwned(faction, Item.BonePiece2, 13, null);
         // for(int i = 0; i < 120 / 4; ++i){
         //     Faction.AddItemOwned(faction, Item.BonePiece1, 1, null);
         //     Faction.AddItemOwned(faction, Item.BonePiece2, 1, null);
@@ -56,10 +56,6 @@ public class Testing : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.R))
             {
                 playerHandle.gameObject.transform.position = new Vector3(Random.Range(-50000f, 50000f), 4500f, Random.Range(-50000f, 50000f));
-            }
-            if (Input.GetKeyUp(KeyCode.LeftControl))
-            {
-                //GameObject.Find("Torch").transform.position = playerHandle.transform.position + Vector3.up * 3f;
             }
             if (Input.GetKeyUp(KeyCode.K))
             {

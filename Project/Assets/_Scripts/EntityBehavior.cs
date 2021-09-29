@@ -115,7 +115,7 @@ public class EntityBehavior : EntityComponent
     public ActionParameters NextAction(){
         timeSince_creatureSense = baseTimeStep_creatureSense;
         if(actions.Count == 0){
-            Debug.Log("Actions empty -> goto/idle sequence");
+            //Debug.Log("Actions empty -> goto/idle sequence");
             ActionParameters goTo = ActionParameters.GetPredefinedActionParameters("Go To Random Nearby Spot", entityHandle);
             ActionParameters idle = ActionParameters.GetPredefinedActionParameters("Idle For 5 Seconds", entityHandle);
             InsertAction(goTo);

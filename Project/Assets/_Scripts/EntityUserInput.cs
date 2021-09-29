@@ -9,7 +9,7 @@ public class EntityUserInput : EntityComponent
     //public enum InteractionType{ TakeItem, PlaceItem, }
 
 
-    public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump;
+    public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressCrouch;
     public float mouseX, mouseY, mouseZ;
 
     Quaternion targetRot;
@@ -74,6 +74,7 @@ public class EntityUserInput : EntityComponent
         pressRight = Input.GetKey(KeyCode.D);
         pressSprint = Input.GetKey(KeyCode.LeftShift);
         pressJump = Input.GetKey(KeyCode.Space);
+        pressCrouch = Input.GetKey(KeyCode.LeftControl);
 
         if (pressForward)
         {
@@ -99,6 +100,9 @@ public class EntityUserInput : EntityComponent
             if(entityPhysics.CanJump()){
                 entityPhysics.Jump();
             }
+        }
+        if(pressCrouch){
+            entityPhysics.OnCrouchInput();
         }
 
         move = move.normalized;

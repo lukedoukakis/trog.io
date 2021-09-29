@@ -28,6 +28,7 @@ public class EntityPhysics : EntityComponent
     public static float wallCastDistance = 1f;
     float groundCastDistance;
     float distanceFromGround;
+
     public static float JumpForce = 2800f;
     public static float ThrowForce = 100f;
     public static float AccelerationScale = 12f;
@@ -48,6 +49,9 @@ public class EntityPhysics : EntityComponent
     public static float landScrunch_recoverySpeed = .75f;
     public static float landScrunch_airTimeThreshhold = 1.2f;
     public float landScrunch;
+    public static float crouchSpeed = .75f;
+    public static float crouch_airTimeThreshhold = 1.2f;
+    public float crouch;
     public bool handFree_right, handFree_left;
 
 
@@ -519,7 +523,7 @@ public class EntityPhysics : EntityComponent
 
     public void Move(Vector3 direction, float speed){
         float speedStat = speed * Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed);
-        sprinting = entityBehavior.urgent || (isLocalPlayer && entityUserInputMovement.pressSprint);
+        sprinting = entityBehavior.urgent || (isLocalPlayer && entityUserInput.pressSprint);
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
         rb.AddForce(move * speedStat, ForceMode.Force);
         
@@ -700,7 +704,7 @@ public class EntityPhysics : EntityComponent
 
         if(hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature"))
         {
-            Log("HIT!!!! " + collider.gameObject.name);
+            //Log("HIT!!!! " + collider.gameObject.name);
             collider.gameObject.GetComponentInParent<EntityHitDetection>().OnHit(this.entityHandle);
 
             // apply fixed weapon position effect if applicable
@@ -884,12 +888,26 @@ public class EntityPhysics : EntityComponent
     void CheckScrunch(){
         if(groundTime < 1f - landScrunch_recoverySpeed){
             landScrunch = Mathf.Sin(Mathf.InverseLerp(0f, 1f - landScrunch_recoverySpeed, groundTime) * Mathf.PI * 1.25f);
-            float at = Mathf.Lerp(0f, 1f, airTime / landScrunch_airTimeThreshhold);
-            landScrunch = Mathf.Lerp(0f, at, landScrunch);
+            float fromAirTime = Mathf.Lerp(0f, 1f, this.airTime / landScrunch_airTimeThreshhold);
+            landScrunch = Mathf.Lerp(0f, Mathf.Max(fromAirTime), landScrunch);
         }else{
             landScrunch = 0f;
         }
     }
+
+
+    void CheckCrouch(){
+
+    }
+
+    public void OnCrouchInput(){
+        crouch += crouchSpeed * Time.deltaTime;
+        if(crouch > 1f){
+            crouch = 1f;
+        }
+    }
+
+
 
     void CheckPhysicMaterial(){
         if(moveDir.magnitude > 0f){
@@ -982,7 +1000,8 @@ public class EntityPhysics : EntityComponent
         CheckGround();
         //CheckWall();
         CheckWater();
-        CheckScrunch();
+        //CheckScrunch();
+        CheckCrouch();
         LimitSpeed();
         SetGravity();
     }
@@ -994,6 +1013,13 @@ public class EntityPhysics : EntityComponent
         jumpTime += dTime;
         offWallTime += dTime;
         offWaterTime += dTime;
+
+        if(crouch > 0f){
+            crouch -= (crouchSpeed / 2f) * dTime;
+        }
+        else if(crouch < 0f){
+            crouch = 0f;
+        }
 
         if(Input.GetKeyUp(KeyCode.P)){
             acceleration *= 2f;

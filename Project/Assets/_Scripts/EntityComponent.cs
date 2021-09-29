@@ -15,7 +15,7 @@ public class EntityComponent : NetworkBehaviour
     [HideInInspector] public EntityStatus entityStatus;
     [HideInInspector] public EntityItems entityItems;
     [HideInInspector] public EntityHitDetection entityHitDetection;
-    [HideInInspector] public EntityUserInput entityUserInputMovement;
+    [HideInInspector] public EntityUserInput entityUserInput;
     [HideInInspector] public EntityCommandServer entityCommandServer;
 
 
@@ -33,7 +33,7 @@ public class EntityComponent : NetworkBehaviour
         entityStatus = GetComponent<EntityStatus>();
         entityItems = GetComponent<EntityItems>();
         entityHitDetection = GetComponent<EntityHitDetection>();
-        entityUserInputMovement = GetComponent<EntityUserInput>();
+        entityUserInput = GetComponent<EntityUserInput>();
         entityCommandServer = GetComponent<EntityCommandServer>();
     }
 

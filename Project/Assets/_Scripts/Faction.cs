@@ -59,13 +59,13 @@ public class Faction : ScriptableObject
         fac.targetedObjects.Add(o);
     }
 
-    public static void AddItemOwned(Faction fac, ItemCollection itemCollection, ObjectRack rack){
+    public static void AddItemOwned(Faction fac, ItemCollection itemCollection, ObjectRack rack, Transform originT){
         foreach(KeyValuePair<Item, int> kvp in itemCollection.items){
-            AddItemOwned(fac, kvp.Key, kvp.Value, rack);
+            AddItemOwned(fac, kvp.Key, kvp.Value, rack, originT);
         }
     }
 
-    public static void AddItemOwned(Faction fac, Item item, int count, ObjectRack rack)
+    public static void AddItemOwned(Faction fac, Item item, int count, ObjectRack rack, Transform originT)
     {
 
         //Debug.Log("Adding item: " + item.nme);

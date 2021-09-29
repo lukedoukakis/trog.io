@@ -137,7 +137,7 @@ public class EntityStats : EntityComponent
     }
 
     void OnHealthEmptied(EntityHandle attackerHandle){
-        Debug.Log("DED");
+        //Debug.Log("DED");
 
         // todo: death 'animation'/being destroyed visuals
         GameObject.Destroy(this.gameObject);
@@ -161,9 +161,8 @@ public class EntityStats : EntityComponent
             item = kvp.Key;
             count = kvp.Value;
 
-            // if attacker is in their camp, send items straight to racks, otherwise drop on ground
-            // FOR NOW: DROP ON GROUND
-            if(inCamp){
+            // if attacker is in their camp and the item is rackable, send items straight to racks, otherwise drop on ground
+            if(inCamp && Item.IsRackable(item)){
                 Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, count, null);
             }
             else
