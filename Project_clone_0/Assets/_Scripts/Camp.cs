@@ -8,7 +8,7 @@ public class Camp : MonoBehaviour
 
 
     public static float BASE_CAMP_RADIUS = 8f;
-    public static float CAMP_COMPONENT_PLACING_TIME_GAP = .2f;
+    public static float CAMP_COMPONENT_PLACING_TIME_GAP = .1f;
 
 
     public enum ComponentType{
@@ -66,9 +66,10 @@ public class Camp : MonoBehaviour
         camp.racks_wood = new List<ObjectRack>();
         camp.racks_bone = new List<ObjectRack>();
         camp.tents = new List<Tent>();
-        camp.SetOrigin(originT.position);
+        Vector3 campPlacementPos = originT.position + originT.forward * 2f;
+        camp.SetOrigin(campPlacementPos);
         camp.SetRadius(faction.members.Count);
-        camp.SetCampLayout(originT.position, Quaternion.identity);
+        camp.SetCampLayout(campPlacementPos, originT.rotation);
         camp.PlaceCampComponents(originT);
         return camp;
 
@@ -105,7 +106,7 @@ public class Camp : MonoBehaviour
     // place and adjust camp layout for component placement
     public void SetCampLayout(Vector3 position, Quaternion rotation){
 
-        layout = Instantiate(CampResources.PREFAB_CAMPLAYOUT, position, Quaternion.identity);
+        layout = Instantiate(CampResources.PREFAB_CAMPLAYOUT, position, rotation);
         foreach(Transform orientation in layout.transform){
             //Debug.Log("AdjustCampLayout(): adjusting orientation: " + orientation.name);
             Vector3 pos = orientation.position;
@@ -205,6 +206,7 @@ public class Camp : MonoBehaviour
 
 
     public void PlaceObjectRack(Enum itemType, Item item, ref int count, Transform originT){
+
         ObjectRack objectRack =  GameManager.current.gameObject.AddComponent<ObjectRack>();
         objectRack.SetObjectRack(this, itemType);
         List<ObjectRack> rackList = GetRackListForItemType(itemType);

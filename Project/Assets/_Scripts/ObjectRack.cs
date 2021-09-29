@@ -118,7 +118,7 @@ public class ObjectRack : MonoBehaviour
                 // if room in the rack, add the item to it
                 GameObject o = Utility.InstantiatePrefabSameName(item.worldObject);
                 objects.Add(o);
-                SetObjectOrientation(o, originT, OBJECT_PLACEMENT_DELAY_TIMESTEP * i);
+                SetObjectOrientation(o, originT, OBJECT_PLACEMENT_DELAY_TIMESTEP * (i+3));
                 o.GetComponent<ObjectReference>().SetObjectReference(this);
                 --countToAdd;
             }
@@ -182,14 +182,16 @@ public class ObjectRack : MonoBehaviour
 
                     // animate movement of object to rack
                     Utility.ToggleObjectPhysics(o, false, false, false, false);
+                    o.SetActive(false);
                     System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
                     timer.Start();
                     while (timer.ElapsedMilliseconds / 1000f < delay)
                     {
-                        o.transform.position = originT.transform.position;
                         yield return null;
                     }
                     timer.Stop();
+                    o.transform.position = originT.transform.position;
+                    o.SetActive(true);
                     Vector3 targetPos = orientation.position;
                     Quaternion targetRot = orientation.rotation;
                     while(Vector3.Distance(_o.transform.position, targetPos) > .1f)
