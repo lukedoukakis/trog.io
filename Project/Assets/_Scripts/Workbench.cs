@@ -26,11 +26,11 @@ public class Workbench : ObjectRack
 
 
     // workbench override for add objects
-    public override void AddObjects(Item item, ref int countToAdd){
+    public override void AddObjects(Item item, ref int countToAdd, Transform originT, ref int newRacksCount){
         //Debug.Log("Workbench: AddObjects()");
         
         // do the regular thing
-        base.AddObjects(item, ref countToAdd);
+        base.AddObjects(item, ref countToAdd, originT, ref newRacksCount);
 
         // todo: workbench magic: look at recipes and highlight other items that can be added
         itemsOnTable.Add(item);

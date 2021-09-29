@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tent : ScriptableObject
+public class Tent : CampComponent
 {
     
     public Camp camp;
-    public GameObject worldObject;
 
 
 
     public void SetTent(Camp camp){
         this.camp = camp;
-        this.worldObject = Utility.InstantiatePrefabSameName(CampResources.PREFAB_TENT);
+        SetWorldObject(Utility.InstantiatePrefabSameName(CampResources.PREFAB_TENT));
     }
 
     public void DeleteSelf(){

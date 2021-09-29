@@ -149,36 +149,36 @@ public class EntityUserInput : EntityComponent
         else{
             string t = hoveredInteractableObject.tag;
             if(t == "Item"){
-                entityItems.OnObjectInteract(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+                entityItems.OnObjectInteract(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
             }
             else if (t.StartsWith("ObjectRack"))
             {
                 if (t == "ObjectRack_Food")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
                 }
                 else if (t == "ObjectRack_Clothing")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
                 }
                 else if (t == "ObjectRack_Weapons")
                 {
-                    entityItems.DropEquippedWeapon((ObjectRack)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+                    entityItems.DropEquippedWeapon((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
                 }
                 else if (t == "ObjectRack_Wood")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
                 }
                 else if (t == "ObjectRack_Bone")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
                 }
                 else{
 
                 }    
             }
             else if(t == "Workbench"){
-                entityItems.DropHolding((Workbench)hoveredInteractableObject.GetComponent<ScriptableObjectReference>().GetScriptableObject());
+                entityItems.DropHolding((Workbench)hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
             }
             else if(t == "WorkbenchHammer"){
                 Workbench wb = (Workbench)(Utility.FindScriptableObjectReference(hoveredInteractableObject.transform).GetScriptableObject());

@@ -117,15 +117,26 @@ public class Utility : MonoBehaviour
 
 
     // return the first scriptable object reference found in a transform or any of its parents
-    public static ScriptableObjectReference FindScriptableObjectReference(Transform t){
+    public static ObjectReference FindScriptableObjectReference(Transform t){
         Transform parent = t;
-        ScriptableObjectReference sor = parent.GetComponent<ScriptableObjectReference>();
+        ObjectReference sor = parent.GetComponent<ObjectReference>();
         while(sor == null){
             parent = parent.parent;
             if(parent == null){ break; }
-            sor = parent.GetComponent<ScriptableObjectReference>();
+            sor = parent.GetComponent<ObjectReference>();
         }
         return sor;
     }
 
+}
+
+
+public class Ref<T>
+{
+    private T backing;
+    public T Value { get { return backing; } set { backing = value; } }
+    public Ref(T reference)
+    {
+        backing = reference;
+    }
 }
