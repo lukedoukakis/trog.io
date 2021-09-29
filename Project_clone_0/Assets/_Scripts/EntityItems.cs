@@ -279,6 +279,7 @@ public class EntityItems : EntityComponent
     // weapon
 
     public void DropEquippedWeapon(object targetAttachedObject){
+        
         if (targetAttachedObject is ObjectRack)
         {
             // get rack reference from attached object and add the item to faction items with specified rack
@@ -288,10 +289,17 @@ public class EntityItems : EntityComponent
         }
         else if (targetAttachedObject == null)
         {
-            weaponEquipped_object.GetComponent<ObjectReference>().SetObjectReference(null);
-            Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.worldCollider, false);
-            weaponEquipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = true;
-            Utility.ToggleObjectPhysics(weaponEquipped_object, true, true, true, true);
+            if(Camp.EntityIsInsideCamp(entityHandle)){
+                Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1,null, transform);
+                GameObject.Destroy(weaponEquipped_object);
+            }
+            else
+            {
+                weaponEquipped_object.GetComponent<ObjectReference>().SetObjectReference(null);
+                Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.worldCollider, false);
+                weaponEquipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = true;
+                Utility.ToggleObjectPhysics(weaponEquipped_object, true, true, true, true);
+            }
         }
         // todo: case human
 
