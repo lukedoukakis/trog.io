@@ -77,11 +77,11 @@ public class Faction : ScriptableObject
             {
                 ItemCollection newItems = new ItemCollection();
                 newItems.AddItem(item, count);
-                fac.camp.AddItemsToCamp(newItems);
+                fac.camp.AddItemsToCamp(newItems, originT);
             }
             else
             {
-                rack.AddObjects(item, ref count);
+                rack.AddObjects(item, ref count, originT);
             }
         }
     }

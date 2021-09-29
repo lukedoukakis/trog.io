@@ -7,6 +7,7 @@ using UnityEngine;
 public class ObjectRack : MonoBehaviour
 {
     
+    public static float objectSnapSpeed = 15f;
     
     public static int RackCapacity_Food = 6;
     public static int RackCapacity_Weapons = 6;
@@ -25,7 +26,7 @@ public class ObjectRack : MonoBehaviour
     List<Transform> orientations;
     public bool onDemandPlacement;  // whether new racks can be created when this one is filled up; if false, objects cannot be placed when attempting to place on this rack
     public bool allowObjectPhysics; // if true, physics are deactivated for objects added to the rack
-    public bool allowMovement;
+    public bool allowLateralTranslation;
     public bool allowRotation;
 
     public void SetObjectRack(Camp camp, Enum itemType){
@@ -37,52 +38,57 @@ public class ObjectRack : MonoBehaviour
                 this.capacity = RackCapacity_Food;
                 worldObjectPrefab = CampResources.PREFAB_RACK_FOOD;
                 onDemandPlacement = true;
-                allowObjectPhysics = true;
-                allowMovement = false;
+                allowObjectPhysics = false;
+                allowLateralTranslation = false;
                 allowRotation = false;
                 break;
             case Item.ItemType.Weapon :
                 this.capacity = RackCapacity_Weapons;
                 worldObjectPrefab = CampResources.PREFAB_RACK_WEAPONS;
                 onDemandPlacement = true;
-                allowObjectPhysics = true;
-                allowMovement = false;
+                allowObjectPhysics = false;
+                allowLateralTranslation = false;
                 allowRotation = false;
                 break;
             case Item.ItemType.Clothing : 
                 this.capacity = RackCapacity_Clothing;
                 worldObjectPrefab = CampResources.PREFAB_RACK_CLOTHING;
                 onDemandPlacement = true;
-                allowObjectPhysics = true;
-                allowMovement = false;
+                allowObjectPhysics = false;
+                allowLateralTranslation = false;
                 allowRotation = false;
                 break;
             case Item.ItemType.Wood : 
                 this.capacity = RackCapacity_Wood;
                 worldObjectPrefab = CampResources.PREFAB_RACK_WOOD;
                 onDemandPlacement = true;
-                allowObjectPhysics = false;
-                allowMovement = false;
+                allowObjectPhysics = true;
+                allowLateralTranslation = false;
                 allowRotation = false;
                 break;
             case Item.ItemType.Bone : 
                 this.capacity = RackCapacity_Bone;
                 worldObjectPrefab = CampResources.PREFAB_RACK_BONE;
                 onDemandPlacement = true;
-                allowObjectPhysics = false;
-                allowMovement = false;
+                allowObjectPhysics = true;
+                allowLateralTranslation = true;
                 allowRotation = true;
                 break;
             case Item.ItemType.Any : 
                 this.capacity = 3;
                 worldObjectPrefab = CampResources.PREFAB_WORKBENCH;
                 onDemandPlacement = false;
-                allowObjectPhysics = true;
+                allowObjectPhysics = false;
+                allowLateralTranslation = false;
+                allowRotation = false;
                 break;
             default:
                 this.capacity = RackCapacity_Food;
                 worldObjectPrefab = CampResources.PREFAB_RACK_FOOD;
                 onDemandPlacement = true;
+                allowObjectPhysics = false;
+                allowLateralTranslation = false;
+                allowRotation = false;
                 Debug.Log("unsupported itemType for ItemRack");
                 break;
         }
@@ -102,9 +108,7 @@ public class ObjectRack : MonoBehaviour
 
 
 
-    public virtual void AddObjects(Item item, ref int countToAdd){
-
-        // StartCoroutine(_AddObjects(item, ref countToAdd));
+    public virtual void AddObjects(Item item, ref int countToAdd, Transform originT){
 
         int c = countToAdd;
         for(int i = 0; i < c; ++i){ 
@@ -113,7 +117,7 @@ public class ObjectRack : MonoBehaviour
                 // if room in the rack, add the item to it
                 GameObject o = Utility.InstantiatePrefabSameName(item.worldObject);
                 objects.Add(o);
-                SetObjectOrientation(o);
+                SetObjectOrientation(o, originT);
                 o.GetComponent<ObjectReference>().SetObjectReference(this);
                 --countToAdd;
             }
@@ -121,7 +125,7 @@ public class ObjectRack : MonoBehaviour
 
                 // else, call to add remaining count to other racks if onDemandPlacement is true
                 if(onDemandPlacement){
-                    camp.AddObjectsAnyRack(item, ref countToAdd);
+                    camp.AddObjectsAnyRack(item, ref countToAdd, originT);
                     break;
                 }
                 else{
@@ -129,10 +133,6 @@ public class ObjectRack : MonoBehaviour
                 }
             }
         }
-
-        // IEnumerator _AddObjects(Item item_, ref int countToAdd_){
-        //     yield return null;
-        // }
 
     }
 
@@ -163,41 +163,104 @@ public class ObjectRack : MonoBehaviour
     }   
 
     // set a given object's orientation to fit properly in the rack
-    public void SetObjectOrientation(GameObject o){
+    public void SetObjectOrientation(GameObject o, Transform originT){
 
-        for(int i = capacity - 1; i >= 0; --i)
+
+        StartCoroutine(_SetObjectOrientation(o));
+
+        IEnumerator _SetObjectOrientation(GameObject _o)
         {
-
-            Transform orientation = orientations[i];
-            
-            //Debug.Log(orientation.childCount);
-            if (orientation.childCount == 0)
+            for (int i = capacity - 1; i >= 0; --i)
             {
-                o.transform.position = orientation.position;
-                o.transform.rotation = orientation.rotation;
-                o.transform.parent = orientation;
-                if(allowObjectPhysics){
-                    Utility.ToggleObjectPhysics(o, false, true, true, false);
 
-                    Rigidbody rb = o.GetComponent<Rigidbody>();
-                    if(!allowMovement){
-                        rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+                Transform orientation = orientations[i];
+
+                if (orientation.childCount == 0)
+                {
+                
+
+                    _o.transform.parent = orientation;
+
+                    // animate movement of object to rack
+                    Utility.ToggleObjectPhysics(o, false, false, false, false);
+                    o.transform.position = originT.transform.position;
+                    o.transform.rotation = Utility.GetRandomRotation(360f);
+                    Vector3 targetPos = orientation.position;
+                    Quaternion targetRot = orientation.rotation;
+                    while(Vector3.Distance(_o.transform.position, targetPos) > .1f)
+                    {
+                        _o.transform.position = Vector3.Lerp(_o.transform.position, targetPos, objectSnapSpeed * Time.deltaTime);
+                        o.transform.Rotate(Vector3.right * 10f);
+                        //_o.transform.rotation = Quaternion.Slerp(_o.transform.rotation, targetRot, objectSnapSpeed * Time.deltaTime);
+                        yield return null;
                     }
-                    if(!allowRotation || true){
-                        rb.constraints = rb.constraints | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+                    _o.transform.position = targetPos;
+                    _o.transform.rotation = targetRot;
+
+                    // set physics accordingly to anchor the object in place
+                    if (allowObjectPhysics)
+                    {
+                        Utility.ToggleObjectPhysics(_o, true, true, true, true);
+
+                        Rigidbody rb = _o.GetComponent<Rigidbody>();
+                        if (!allowLateralTranslation)
+                        {
+                            rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+                        }
+                        if (!allowRotation || true)
+                        {
+                            rb.constraints = rb.constraints | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+                        }
+
+                        //rb.drag = 1000f;
+                        //rb.angularDrag = 1000f;
+
+                    }
+                    else{
+                        Utility.ToggleObjectPhysics(_o, true, true, false, false);
                     }
 
-                    rb.drag = 1000f;
-                    rb.angularDrag = 1000f;
+                    break;
+
+                }
+
+            }
+        }
+
+
+        // for(int i = capacity - 1; i >= 0; --i)
+        // {
+
+        //     Transform orientation = orientations[i];
+            
+        //     //Debug.Log(orientation.childCount);
+        //     if (orientation.childCount == 0)
+        //     {
+        //         o.transform.position = orientation.position;
+        //         o.transform.rotation = orientation.rotation;
+        //         o.transform.parent = orientation;
+        //         if(allowObjectPhysics){
+        //             Utility.ToggleObjectPhysics(o, false, true, true, false);
+
+        //             Rigidbody rb = o.GetComponent<Rigidbody>();
+        //             if(!allowMovement){
+        //                 rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+        //             }
+        //             if(!allowRotation || true){
+        //                 rb.constraints = rb.constraints | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        //             }
+
+        //             rb.drag = 1000f;
+        //             rb.angularDrag = 1000f;
                   
                     
-                }
-                break;
+        //         }
+        //         break;
                 
-                //FixedJoint joint = o.AddComponent<FixedJoint>();
-            }
+        //         //FixedJoint joint = o.AddComponent<FixedJoint>();
+        //     }
             
-        }
+        // }
     }
 
 

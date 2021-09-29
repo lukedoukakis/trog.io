@@ -43,9 +43,9 @@ public class Camp : MonoBehaviour
 
 
     // client method to place a Camp
-    public static void TryPlaceCamp(Faction faction, Vector3 position){
-        if(CanPlaceCamp(position)){
-            PlaceCamp(faction, position);
+    public static void TryPlaceCamp(Faction faction, Transform originT){
+        if(CanPlaceCamp(originT.position)){
+            PlaceCamp(faction, originT);
         }
         else{
             Debug.Log("Can't place camp - doesn't fit requirements");
@@ -55,7 +55,7 @@ public class Camp : MonoBehaviour
         // determine if flat enough
         return true;
     }
-    public static Camp PlaceCamp(Faction faction, Vector3 position){
+    public static Camp PlaceCamp(Faction faction, Transform originT){
         Camp camp = GameManager.current.gameObject.AddComponent<Camp>();
         faction.camp = camp;
         camp.faction = faction;
@@ -65,13 +65,13 @@ public class Camp : MonoBehaviour
         camp.racks_wood = new List<ObjectRack>();
         camp.racks_bone = new List<ObjectRack>();
         camp.tents = new List<Tent>();
-        camp.SetOrigin(position);
+        camp.SetOrigin(originT.position);
         camp.SetRadius(faction.members.Count);
-        camp.SetCampLayout(position, Quaternion.identity);
+        camp.SetCampLayout(originT.position, Quaternion.identity);
         camp.PlaceBonfire();
         camp.PlaceWorkbench();
         camp.UpdateTentCount();
-        camp.AddItemsToCamp(faction.ownedItems);
+        camp.AddItemsToCamp(faction.ownedItems, originT);
         return camp;
     }
 
@@ -189,7 +189,7 @@ public class Camp : MonoBehaviour
     }
 
 
-    public void PlaceObjectRack(Enum itemType, Item item, ref int count){
+    public void PlaceObjectRack(Enum itemType, Item item, ref int count, Transform originT){
         ObjectRack objectRack =  GameManager.current.gameObject.AddComponent<ObjectRack>();
         objectRack.SetObjectRack(this, itemType);
         List<ObjectRack> rackList = GetRackListForItemType(itemType);
@@ -219,7 +219,7 @@ public class Camp : MonoBehaviour
         objectRack.worldObject.transform.position = targetOrientation.position;
         objectRack.worldObject.transform.rotation = targetOrientation.rotation;
         rackList.Add(objectRack);
-        objectRack.AddObjects(item, ref count);
+        objectRack.AddObjects(item, ref count, originT);
     }
 
     public void UpdateTentCount(){
@@ -253,14 +253,14 @@ public class Camp : MonoBehaviour
     }
 
 
-    public void AddItemsToCamp(ItemCollection itemsToAdd){
+    public void AddItemsToCamp(ItemCollection itemsToAdd, Transform originT){
         Item item;
         int countToRemove;
         foreach (KeyValuePair<Item, int> kvp in itemsToAdd.items)
         {
             item = kvp.Key;
             countToRemove = kvp.Value;
-            AddObjectsAnyRack(item, ref countToRemove);
+            AddObjectsAnyRack(item, ref countToRemove, originT);
         }
 
     }
@@ -276,18 +276,18 @@ public class Camp : MonoBehaviour
         }
     }
 
-    public void AddObjectsAnyRack(Item item, ref int count){
+    public void AddObjectsAnyRack(Item item, ref int count, Transform originT){
         List<ObjectRack> rackList = GetRackListForItemType(item.type);
          foreach(ObjectRack rack in rackList){
             if(!rack.IsFull()){
-                rack.AddObjects(item, ref count);
+                rack.AddObjects(item, ref count, originT);
                 break;
             }
         }
 
         // if still objects to add, place a new rack
         if(count > 0){
-            PlaceObjectRack(item.type, item, ref count);
+            PlaceObjectRack(item.type, item, ref count, originT);
         }
     }   
 

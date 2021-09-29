@@ -51,7 +51,7 @@ public class Testing : MonoBehaviour
         {
             if (Input.GetKeyUp(KeyCode.C))
             {
-                Camp.TryPlaceCamp(playerHandle.entityInfo.faction, GameManager.current.localPlayer.transform.position);
+                Camp.TryPlaceCamp(playerHandle.entityInfo.faction, GameManager.current.localPlayer.transform);
             }
             if (Input.GetKeyUp(KeyCode.R))
             {
