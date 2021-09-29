@@ -85,9 +85,9 @@ public class Camp : MonoBehaviour
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             PlaceWorkbench();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
-            UpdateTentCount();
-            yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             AddItemsToCamp(faction.ownedItems, originT);
+            yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
+            UpdateTentCount();
         }
     }
 
@@ -180,7 +180,7 @@ public class Camp : MonoBehaviour
 
 
     public void PlaceBonfire(){
-        Bonfire bonfire = ScriptableObject.CreateInstance<Bonfire>();
+        Bonfire bonfire = GameManager.current.gameObject.AddComponent<Bonfire>();
         bonfire.SetBonfire(this, faction.ownedItems.GetItemCount(Item.LogFir) > 1f, 1f, 1f);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Bonfire);
         bonfire.worldObject.transform.position = targetOrientation.position;
@@ -205,38 +205,61 @@ public class Camp : MonoBehaviour
     }
 
 
-    public void PlaceObjectRack(Enum itemType, Item item, ref int count, Transform originT){
+    public ObjectRack PlaceObjectRack(Enum itemType, float delay){
 
-        ObjectRack objectRack =  GameManager.current.gameObject.AddComponent<ObjectRack>();
+
+        ObjectRack objectRack = GameManager.current.gameObject.AddComponent<ObjectRack>();
         objectRack.SetObjectRack(this, itemType);
         List<ObjectRack> rackList = GetRackListForItemType(itemType);
         Enum componentType;
-        switch (itemType) {
-            case Item.ItemType.Food :
+        switch (itemType)
+        {
+            case Item.ItemType.Food:
                 componentType = ComponentType.Rack_Food;
                 break;
-            case Item.ItemType.Weapon :
+            case Item.ItemType.Weapon:
                 componentType = ComponentType.Rack_Weapons;
                 break;
-            case Item.ItemType.Clothing :
+            case Item.ItemType.Clothing:
                 componentType = ComponentType.Rack_Clothing;
                 break;
-            case Item.ItemType.Wood :
+            case Item.ItemType.Wood:
                 componentType = ComponentType.Rack_Wood;
                 break;
-            case Item.ItemType.Bone :
+            case Item.ItemType.Bone:
                 componentType = ComponentType.Rack_Bone;
                 break;
-            default :
+            default:
                 componentType = ComponentType.Rack_Food;
                 Debug.Log("Placing item rack for unsupported item type: " + itemType);
                 break;
         }
         Transform targetOrientation = GetCampComponentOrientation(componentType);
-        objectRack.worldObject.transform.position = targetOrientation.position;
-        objectRack.worldObject.transform.rotation = targetOrientation.rotation;
         rackList.Add(objectRack);
-        objectRack.AddObjects(item, ref count, originT);
+
+        StartCoroutine(_SetObjectRackOrientationAfterDelay());
+
+        return objectRack;
+
+        IEnumerator _SetObjectRackOrientationAfterDelay()
+        {
+            
+            // delay for time
+            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            while (timer.ElapsedMilliseconds / 1000f < delay)
+            {
+                yield return null;
+            }
+            timer.Stop();
+
+            // place the rack accordingly and play entry animation
+            objectRack.worldObject.transform.position = targetOrientation.position;
+            objectRack.worldObject.transform.rotation = targetOrientation.rotation;
+            objectRack.PlayEntryAnimation();
+
+        }
+  
     }
 
     public void UpdateTentCount(){
@@ -256,7 +279,7 @@ public class Camp : MonoBehaviour
         }
     }
     public void PlaceTent(){
-        Tent tent = ScriptableObject.CreateInstance<Tent>();
+        Tent tent = GameManager.current.gameObject.AddComponent<Tent>();
         tent.SetTent(this);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Tent);
         tent.worldObject.transform.position = targetOrientation.position;
@@ -272,12 +295,13 @@ public class Camp : MonoBehaviour
 
     public void AddItemsToCamp(ItemCollection itemsToAdd, Transform originT){
         Item item;
-        int countToRemove;
+        int councountToAdd;
+        int zeroRacksRef = 0;
         foreach (KeyValuePair<Item, int> kvp in itemsToAdd.items)
         {
             item = kvp.Key;
-            countToRemove = kvp.Value;
-            AddObjectsAnyRack(item, ref countToRemove, originT);
+            councountToAdd = kvp.Value;
+            AddObjectsAnyRack(item, ref councountToAdd, originT, ref zeroRacksRef);
         }
 
     }
@@ -293,18 +317,21 @@ public class Camp : MonoBehaviour
         }
     }
 
-    public void AddObjectsAnyRack(Item item, ref int count, Transform originT){
+
+    public void AddObjectsAnyRack(Item item, ref int count, Transform originT, ref int newRacksCount){
         List<ObjectRack> rackList = GetRackListForItemType(item.type);
          foreach(ObjectRack rack in rackList){
             if(!rack.IsFull()){
-                rack.AddObjects(item, ref count, originT);
+                rack.AddObjects(item, ref count, originT, ref newRacksCount);
                 break;
             }
         }
 
         // if still objects to add, place a new rack
         if(count > 0){
-            PlaceObjectRack(item.type, item, ref count, originT);
+            ++newRacksCount;
+            ObjectRack newRack = PlaceObjectRack(item.type, CAMP_COMPONENT_PLACING_TIME_GAP * newRacksCount);
+            newRack.AddObjects(item, ref count, originT, ref newRacksCount);
         }
     }   
 

@@ -81,7 +81,8 @@ public class Faction : ScriptableObject
             }
             else
             {
-                rack.AddObjects(item, ref count, originT);
+                int zeroRacksRef = 0;
+                rack.AddObjects(item, ref count, originT, ref zeroRacksRef);
             }
         }
     }
