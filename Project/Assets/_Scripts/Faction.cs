@@ -59,7 +59,7 @@ public class Faction : MonoBehaviour
         fac.targetedObjects.Add(o);
     }
 
-    public static void AddItemOwned(Faction fac, ItemCollection itemCollection, ObjectRack rack, Transform originT, float delay)
+    public static void AddItemsOwned(Faction fac, ItemCollection itemCollection, ObjectRack rack, Transform originT, float delay)
     {
         foreach (KeyValuePair<Item, int> kvp in itemCollection.items)
         {
@@ -67,7 +67,6 @@ public class Faction : MonoBehaviour
         }
 
     }
-
     public static void AddItemOwned(Faction fac, Item item, int count, ObjectRack rack, Transform originT, float delay)
     {
         fac.StartCoroutine(fac._AddItemOwned(fac, item, count, rack, originT, delay));
@@ -168,5 +167,11 @@ public class Faction : MonoBehaviour
         f.isPlayerFaction = _isPlayerFaction;
         f.targetedObjects = new List<GameObject>();
         return f;
+    }
+
+
+    public static bool FactionCampExists(Faction faction)
+    {
+        return !(faction.camp == null);
     }
 }

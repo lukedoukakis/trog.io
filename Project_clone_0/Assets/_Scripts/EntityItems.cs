@@ -418,18 +418,13 @@ public class EntityItems : EntityComponent
         inventory.AddItem(item, 1);
         StartCoroutine(_MoveObject());
 
-        IEnumerator _MoveObject(){
-            Utility.ToggleObjectPhysics(worldObject, false, false, false, false);
+        IEnumerator _MoveObject()
+        {
 
-            // wait for delay
-            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-            timer.Start();
-            while (timer.ElapsedMilliseconds / 1000f < delay)
-            {
-                yield return null;
-            }
+            yield return new WaitForSecondsRealtime(delay);
 
             // move object to player location before destroying
+            Utility.ToggleObjectPhysics(worldObject, false, false, false, false);
             while (Vector3.Distance(worldObject.transform.position, transform.position) > .5f)
             {
                 worldObject.transform.position = Vector3.Lerp(worldObject.transform.position, transform.position, ObjectRack.OBJECT_MOVEMENT_ANIMATION_SPEED * Time.deltaTime);
@@ -530,12 +525,19 @@ public class EntityItems : EntityComponent
         }
     }
 
+    public void OnCampBorderCross(){
+        //Debug.Log("OnCampBorderCross()");
+        Faction.AddItemsOwned(entityInfo.faction, inventory, null, transform, 0f);
+        inventory = new ItemCollection();
+    }
+
 
     // ---
 
     void Update(){
 
         UpdateItemOrientations();
+
     
     }
 

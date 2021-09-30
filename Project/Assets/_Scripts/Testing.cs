@@ -33,13 +33,12 @@ public class Testing : MonoBehaviour
         Faction.AddItemOwned(faction, Item.Spear, 2, null, playerHandle.transform, 0f);
         Faction.AddItemOwned(faction, Item.Axe, 2, null, playerHandle.transform, 0f);
         Faction.AddItemOwned(faction, Item.WoodPiece, 100, null, playerHandle.transform, 0f);
-        Faction.AddItemOwned(faction, Item.BonePiece2, 100, null, playerHandle.transform, 0f);
-        // for(int i = 0; i < 120 / 4; ++i){
-        //     Faction.AddItemOwned(faction, Item.BonePiece1, 1, null, playerHandle.transform);
-        //     Faction.AddItemOwned(faction, Item.BonePiece2, 1, null, playerHandle.transform);
-        //     Faction.AddItemOwned(faction, Item.BonePiece3, 1, null, playerHandle.transform);
-        //     Faction.AddItemOwned(faction, Item.BonePiece4, 1, null, playerHandle.transform);
-        // }
+        // Faction.AddItemOwned(faction, Item.BonePiece2, 100, null, playerHandle.transform, 0f);
+        for(int i = 0; i < 120 / 3; ++i){
+            Faction.AddItemOwned(faction, Item.BonePiece1, 1, null, playerHandle.transform, 0f);
+            Faction.AddItemOwned(faction, Item.BonePiece2, 1, null, playerHandle.transform, 0f);
+            Faction.AddItemOwned(faction, Item.BonePiece3, 1, null, playerHandle.transform, 0f);
+        }
     }
 
 

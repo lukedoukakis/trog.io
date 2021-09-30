@@ -8,7 +8,7 @@ public class ObjectReference : MonoBehaviour
 
     object objectReference;
 
-    public object GetScriptableObject(){
+    public object GetObjectReference(){
         return objectReference;
     }
 

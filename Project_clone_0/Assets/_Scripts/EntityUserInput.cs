@@ -149,39 +149,39 @@ public class EntityUserInput : EntityComponent
         else{
             string t = hoveredInteractableObject.tag;
             if(t == "Item"){
-                entityItems.OnObjectInteract(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
+                entityItems.OnObjectInteract(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
             }
             else if (t.StartsWith("ObjectRack"))
             {
                 if (t == "ObjectRack_Food")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
                 }
                 else if (t == "ObjectRack_Clothing")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
                 }
                 else if (t == "ObjectRack_Weapons")
                 {
-                    entityItems.DropEquippedWeapon((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
+                    entityItems.DropEquippedWeapon((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
                 }
                 else if (t == "ObjectRack_Wood")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
                 }
                 else if (t == "ObjectRack_Bone")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
                 }
                 else{
 
                 }    
             }
             else if(t == "Workbench"){
-                entityItems.DropHolding((Workbench)hoveredInteractableObject.GetComponent<ObjectReference>().GetScriptableObject());
+                entityItems.DropHolding((Workbench)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
             }
             else if(t == "WorkbenchHammer"){
-                Workbench wb = (Workbench)(Utility.FindScriptableObjectReference(hoveredInteractableObject.transform).GetScriptableObject());
+                Workbench wb = (Workbench)(Utility.FindScriptableObjectReference(hoveredInteractableObject.transform).GetObjectReference());
                 wb.OnCraft();
             }
         }
@@ -292,7 +292,7 @@ public class EntityUserInput : EntityComponent
                     break;
                 case "WorkbenchHammer" :
 
-                    Workbench wb = (Workbench)(Utility.FindScriptableObjectReference(hoveredInteractableObject.transform).GetScriptableObject());
+                    Workbench wb = (Workbench)(Utility.FindScriptableObjectReference(hoveredInteractableObject.transform).GetObjectReference());
                     txt += !wb.IsEmpty() && wb.currentCraftableItem != null ? "E: Craft " + wb.currentCraftableItem.nme : "Drop resources onto the table to craft cool new things!";
                     break;
                 // todo: handle other types of objects

@@ -171,13 +171,17 @@ public class EntityStats : EntityComponent
             {
                 worldObject = Utility.InstantiatePrefabSameName(item.worldObject);
                 worldObject.transform.position = dropSpot + (Vector3.up * placementHeightOffset);
-                worldObject.transform.rotation = Utility.GetRandomRotation(360f);
-                Vector3 randomDirection = Utility.GetRandomVector(300f);
-                randomDirection.y = 0f;
-                worldObject.GetComponent<Rigidbody>().AddForce(randomDirection + Vector3.up * 600f);
+                if(Item.IsRackable(item))
+                {
+                    worldObject.transform.rotation = Utility.GetRandomRotation(360f);
+                    Vector3 randomDirection = Utility.GetRandomVector(1f);
+                    randomDirection.y = 0f;
+                    worldObject.GetComponent<Rigidbody>().AddForce((randomDirection * 300f) + (Vector3.up * 3000f));
+                    totalDropsList.Add(Tuple.Create<Item, GameObject>(item, worldObject));
+                }
                 placementHeightOffset += .3f;
                 //yield return new WaitForSecondsRealtime(ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
-                totalDropsList.Add(Tuple.Create<Item, GameObject>(item, worldObject));
+                
             }
         }
         //Debug.Log("Finished dropping on ground...");
@@ -188,9 +192,10 @@ public class EntityStats : EntityComponent
         {
             item = totalDropsList[i].Item1;
             worldObject = totalDropsList[i].Item2;
+            bool rackable = Item.IsRackable(item);
             if(inCamp){
                 // if attacker is in their camp
-                if(Item.IsRackable(item)){
+                if(rackable){
                     Debug.Log("adding drops straight to faction");
                     // if the item is rackable, add item straight to racks
                     float delay = .5f + (i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
@@ -208,9 +213,13 @@ public class EntityStats : EntityComponent
             }
             else
             {
-                Debug.Log("adding drops to inventory");
-                // if not in camp, add to reciver's inventory and delay small timestep
-                receiverHandle.entityItems.AddToInventory(item, worldObject, .5f + i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
+                if(rackable)
+                {
+                    Debug.Log("adding drops to inventory");
+                    // if not in camp, add to reciver's inventory and delay small timestep
+                    receiverHandle.entityItems.AddToInventory(item, worldObject, .5f + i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
+                }
+                
             }
         }
         

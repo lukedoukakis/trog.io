@@ -53,6 +53,7 @@ public class EntityPhysics : EntityComponent
     public static float crouch_airTimeThreshhold = 1.2f;
     public float crouch;
     public bool handFree_right, handFree_left;
+    public bool insideCamp;
 
 
     public float ROTATION_Y_THIS;
@@ -1052,8 +1053,21 @@ public class EntityPhysics : EntityComponent
 
 
     void OnTriggerEnter(Collider col){
-        if(col.gameObject.layer == LayerMask.NameToLayer("Feature")){
+        int layer = col.gameObject.layer;
+        if(layer == LayerMask.NameToLayer("Feature")){
             worldCollider.sharedMaterial = noFrictionMat;
+        }
+
+        // check if crossing into own camp border
+        else if(layer == LayerMask.NameToLayer("CampBorder"))
+        {
+            ObjectReference objectReference = col.gameObject.GetComponent<ObjectReference>();
+            if(objectReference != null){
+                if(objectReference.GetObjectReference() == entityInfo.faction.camp)
+                {
+                    entityItems.OnCampBorderCross();
+                }
+            }
         }
         
     }

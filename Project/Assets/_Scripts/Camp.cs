@@ -6,7 +6,6 @@ using UnityEngine;
 public class Camp : MonoBehaviour
 {
 
-
     public static float BASE_CAMP_RADIUS = 8f;
     public static float CAMP_COMPONENT_PLACING_TIME_GAP = .1f;
 
@@ -28,6 +27,8 @@ public class Camp : MonoBehaviour
     public Vector3 origin;
     public float radius;
     public GameObject layout;
+    GameObject borderSphere;
+
 
     public Bonfire bonfire;
     public Workbench workbench;
@@ -68,7 +69,7 @@ public class Camp : MonoBehaviour
         camp.tents = new List<Tent>();
         Vector3 campPlacementPos = originT.position + originT.forward * 2f;
         camp.SetOrigin(campPlacementPos);
-        camp.SetRadius(faction.members.Count);
+        camp.UpdateRadius(faction.members.Count);
         camp.SetCampLayout(campPlacementPos, originT.rotation);
         camp.PlaceCampComponents(originT);
         return camp;
@@ -81,6 +82,7 @@ public class Camp : MonoBehaviour
         StartCoroutine(_PlaceCampComponents());
 
         IEnumerator _PlaceCampComponents(){
+            PlaceBorderSphere();
             PlaceBonfire();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             PlaceWorkbench();
@@ -96,10 +98,15 @@ public class Camp : MonoBehaviour
         this.origin = position;
     }
 
-    public void SetRadius(int population){
-        // this.radius = BASE_CAMP_RADIUS + (BASE_CAMP_RADIUS * population * 05f);
+    public void UpdateRadius(int population){
 
         this.radius = BASE_CAMP_RADIUS;
+        
+        if(borderSphere != null)
+        {
+            UpdateBorderSphere();
+        }
+    
         //Debug.Log("Camp radius: " + radius);
     }
 
@@ -179,6 +186,29 @@ public class Camp : MonoBehaviour
     }
 
 
+    public void PlaceBorderSphere(){
+        UpdateBorderSphere();
+    }
+
+    public void UpdateBorderSphere()
+    {
+        if(borderSphere == null){
+            Transform targetOrientation = GetCampComponentOrientation(ComponentType.Bonfire);
+            borderSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            borderSphere.layer = LayerMask.NameToLayer("CampBorder");
+            borderSphere.transform.position = targetOrientation.position;
+            Rigidbody rb = borderSphere.AddComponent<Rigidbody>();
+            rb.isKinematic = true;
+            ObjectReference objectReference = borderSphere.AddComponent<ObjectReference>();
+            objectReference.SetObjectReference(this);
+            Destroy(borderSphere.GetComponent<MeshRenderer>());
+        }
+        Destroy(borderSphere.GetComponent<SphereCollider>());
+        borderSphere.transform.localScale = Vector3.one * radius * 2f;
+        SphereCollider collider = borderSphere.AddComponent<SphereCollider>();
+        collider.isTrigger = true;
+    }
+
     public void PlaceBonfire(){
         Bonfire bonfire = GameManager.current.gameObject.AddComponent<Bonfire>();
         bonfire.SetBonfire(this, faction.ownedItems.GetItemCount(Item.LogFir) > 1f, 1f, 1f);
@@ -187,12 +217,7 @@ public class Camp : MonoBehaviour
         bonfire.worldObject.transform.rotation = targetOrientation.rotation;
         this.bonfire = bonfire;
 
-        // test: set sphere to visualize camp radius
-        // GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        // sphere.transform.localScale = Vector3.one * radius * 2f;
-        // sphere.transform.position = targetOrientation.position;
-        // sphere.GetComponent<SphereCollider>().enabled = false;
-        // sphere.GetComponent<MeshRenderer>().sharedMaterial = Testing.instance.transparentMat;
+        SetOrigin(targetOrientation.position);
     }
 
     public void PlaceWorkbench(){
@@ -383,7 +408,7 @@ public class Camp : MonoBehaviour
             return false;
         }
         else{
-            return Vector3.Distance(handle.transform.position, camp.layout.transform.position) <= camp.radius;
+            return Vector3.Distance(handle.transform.position, camp.origin) <= camp.radius;
         }
     }
 
