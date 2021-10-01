@@ -594,6 +594,8 @@ public class EntityPhysics : EntityComponent
 
             Vector3 throwDir = entityOrientation.body.forward + (Vector3.up * 0f);
             Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
+            projectileRb.centerOfMass = Vector3.up * .622f;
+            projectileRb.angularDrag = 5f;
             float addForceTime = .2f;
             System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
             timer.Start();

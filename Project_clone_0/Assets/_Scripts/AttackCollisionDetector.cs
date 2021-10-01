@@ -8,6 +8,7 @@ public class AttackCollisionDetector : MonoBehaviour
     EntityHandle owner;
     Collider thisCollider;
     bool isProjectile;
+    FixedJoint joint;
 
     void Awake(){
         thisCollider = GetComponent<Collider>();
@@ -28,7 +29,7 @@ public class AttackCollisionDetector : MonoBehaviour
     {
         if(owner != null)
         {
-            return isProjectile || owner.entityPhysics.attackCanHit;
+            return (isProjectile && joint == null) || owner.entityPhysics.attackCanHit;
         }
         else{
             return false;
@@ -40,18 +41,33 @@ public class AttackCollisionDetector : MonoBehaviour
         isProjectile = value;
     }
 
+
+    public void AddFixedJoint(GameObject attachedObject)
+    {
+        RemoveFixedJoint();
+        joint = transform.root.gameObject.AddComponent<FixedJoint>();
+        joint.connectedBody = attachedObject.GetComponentInParent<Rigidbody>();
+        if (joint.connectedBody == null)
+        {
+            joint.connectedBody = attachedObject.gameObject.GetComponentInChildren<Rigidbody>();
+        }
+    }
+
+    public void RemoveFixedJoint()
+    {
+        if(joint != null)
+        {
+            Destroy(joint);
+        }
+    }
+
     void OnTriggerEnter(Collider otherCollider){
         //Debug.Log("TRIGGER ENTER");
         if(CanCollide()){
             owner.entityPhysics.OnAttackHit(otherCollider);
             if(isProjectile)
             {
-                FixedJoint joint = gameObject.AddComponent<FixedJoint>();
-                joint.connectedBody = otherCollider.gameObject.GetComponentInParent<Rigidbody>();
-                if(joint.connectedBody == null)
-                {
-                    joint.connectedBody = otherCollider.gameObject.GetComponentInChildren<Rigidbody>();
-                }
+                AddFixedJoint(otherCollider.gameObject);
             }
         }
     }

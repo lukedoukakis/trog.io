@@ -47,8 +47,8 @@ public class EntityOrientation : EntityComponent
       
         rb = GetComponent<Rigidbody>();
         body = Utility.FindDeepChildWithTag(this.transform, "Body");
+        //body = Utility.FindDeepChildWithTag(this.transform, "Body2");
         head = Utility.FindDeepChild(body, "B-head");
-        //bodyT = Utility.FindDeepChild(transform, "Human Model 2");
         if(tag == "Player"){
             bodyRotationSpeed = bodyRotationSpeed_player;
         }
@@ -136,7 +136,7 @@ public class EntityOrientation : EntityComponent
                 }
                 dir += (Vector3.up * bodyLean * -1f);
                 Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
-                body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
+                body.rotation = Quaternion.Slerp(body.rotation, rot, .01f);
                 break;
 
             default:

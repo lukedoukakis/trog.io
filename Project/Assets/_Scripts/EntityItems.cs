@@ -339,7 +339,10 @@ public class EntityItems : EntityComponent
         Utility.ToggleObjectPhysics(weaponEquipped_object, false, false, false, false);
 
         // set weapon hit detection owner
-        weaponEquipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().SetOwner(entityHandle);
+        AttackCollisionDetector acd = weaponEquipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>();
+        acd.SetOwner(entityHandle);
+        acd.RemoveFixedJoint();
+        acd.SetIsProjectile(false);
     }
 
     public void ToggleWeaponEquipped(){
