@@ -134,7 +134,7 @@ public class EntityBehavior : EntityComponent
     public void ExecuteAction(ActionParameters a){
         Transform t = null;
         if(a.obj == null){ t = null; }else{ t = a.obj.transform; }
-        entityAnimation.SetBodyRotationMode(a.bodyRotationMode, t);
+        entityOrientation.SetBodyRotationMode(a.bodyRotationMode, t);
         switch(a.type){
             case ActionType.Idle :
                 Idle(a);

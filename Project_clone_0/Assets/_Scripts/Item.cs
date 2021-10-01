@@ -90,7 +90,7 @@ public class Item : ScriptableObject
     public Enum holdStyle;
     public Enum damageType;
     public ItemCollection drops;
-    public GameObject worldObject;
+    public GameObject worldObjectPrefab;
     public Image image;
 
 
@@ -104,7 +104,7 @@ public class Item : ScriptableObject
         item.holdStyle = _holdStyle;
         item.damageType = _damageType;
         item.drops = _drops;
-        item.worldObject = _gameobject;
+        item.worldObjectPrefab = _gameobject;
         item.image = _image;
 
 

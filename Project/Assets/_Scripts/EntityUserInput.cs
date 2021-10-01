@@ -10,6 +10,7 @@ public class EntityUserInput : EntityComponent
 
 
     public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressCrouch;
+    public bool pressToggleAttackRanged;
     public float mouseX, mouseY, mouseZ;
 
     Quaternion targetRot;
@@ -33,8 +34,9 @@ public class EntityUserInput : EntityComponent
     }
 
 
-    void Start(){
-
+    void Start()
+    {
+        pressToggleAttackRanged = false;
     }
 
     
@@ -75,6 +77,7 @@ public class EntityUserInput : EntityComponent
         pressSprint = Input.GetKey(KeyCode.LeftShift);
         pressJump = Input.GetKey(KeyCode.Space);
         pressCrouch = Input.GetKey(KeyCode.LeftControl);
+        pressToggleAttackRanged = Input.GetKeyDown(KeyCode.X);
 
         if (pressForward)
         {
@@ -104,6 +107,11 @@ public class EntityUserInput : EntityComponent
         if(pressCrouch){
             entityPhysics.OnCrouchInput();
         }
+        if(pressToggleAttackRanged){
+            entityItems.ToggleWeaponRanged();
+        }
+
+
 
         move = move.normalized;
 

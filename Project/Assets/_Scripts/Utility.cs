@@ -81,6 +81,27 @@ public class Utility : MonoBehaviour
         }   
     }
 
+    public static void IgnorePhysicsCollisions(GameObject o, Collider colliderToIgnore)
+    {
+        Collider[] cols = o.GetComponentsInChildren<Collider>();
+        if (cols.Length > 0)
+        {
+            foreach (Collider col in cols)
+            {
+                Physics.IgnoreCollision(col, colliderToIgnore, true);
+            }
+        }
+    }
+
+    public static void IgnorePhysicsCollisions(GameObject o, Collider[] collidersToIgnore)
+    {
+        foreach(Collider colliderToIgnore in collidersToIgnore)
+        {
+            IgnorePhysicsCollisions(o, colliderToIgnore);
+        }
+    }
+
+
     public static bool IsBetween(float testValue, float bound1, float bound2)
     {
         if (bound1 > bound2)

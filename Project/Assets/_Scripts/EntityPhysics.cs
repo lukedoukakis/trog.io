@@ -22,20 +22,19 @@ public class EntityPhysics : EntityComponent
     public Transform hips, head, handRight, handLeft, fingerRight, fingerLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float groundCastDistance_player = .3f;
-    public static float groundCastDistance_npc = .3f;
-    public static float groundCastDistance_far = 100f;
-    public static float wallCastDistance = 1f;
+    public static float BASE_CASTDISTANCE_GROUND_PLAYER = .3f;
+    public static float BASE_CASTDISTANCE_GROUND_NPC = .3f;
+    public static float BASE_CASTDISTANCE_WALL = 1f;
     float groundCastDistance;
     float distanceFromGround;
 
-    public static float JumpForce = 2800f;
-    public static float ThrowForce = 100f;
-    public static float AccelerationScale = 12f;
-    public static float MaxSpeedScale = 11f;
-    public static float JumpCoolDown = .15f;
-    public static float weaponChargeTime_max = 3f;
-    public static float weaponHitTime_max = .25f;
+    public static float BASE_FORCE_JUMP = 2800f;
+    public static float BASE_FORCE_THROW = 400f;
+    public static float BASE_ACCELERATION = 12f;
+    public static float BASE_MAX_SPEED = 11f;
+    public static float BASE_COOLDOWN_JUMP = .15f;
+    public static float WEAPON_CHARGETIME_MAX = 3f;
+    public static float WEAPON_HITTIME_MAX = .25f;
 
 
     public Vector3 moveDir;
@@ -83,7 +82,6 @@ public class EntityPhysics : EntityComponent
 
 
     // other settings
-    bool rangedMode;
     float weaponChargeTime;
     bool weaponCharging;
     float weaponChargeAmount;
@@ -143,9 +141,9 @@ public class EntityPhysics : EntityComponent
         waterSense = Utility.FindDeepChild(transform, "WaterSense");
         kneeHeightT = Utility.FindDeepChild(transform, "KneeHeight");
         if(tag == "Player"){
-            groundCastDistance = groundCastDistance_player;
+            groundCastDistance = BASE_CASTDISTANCE_GROUND_PLAYER;
         }else if(tag == "Npc"){
-            groundCastDistance = groundCastDistance_npc;
+            groundCastDistance = BASE_CASTDISTANCE_GROUND_NPC;
         }
 
         ikEnabled = true;
@@ -180,8 +178,8 @@ public class EntityPhysics : EntityComponent
         ikScripts_upperBody = new FastIKFabric[]{ ikScript_handRight, ikScript_handLeft, ikScript_fingerRight, ikScript_fingerLeft };
         iKTargetAnimator = ikParent.GetComponent<Animator>();
 
-        acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * AccelerationScale;
-        maxSpeed_run = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * MaxSpeedScale;
+        acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * BASE_ACCELERATION;
+        maxSpeed_run = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * BASE_MAX_SPEED;
         maxSpeed_sprint = maxSpeed_run * 1.5f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * .75f;
@@ -303,13 +301,13 @@ public class EntityPhysics : EntityComponent
             else
             {
                 // in the air
-                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + entityAnimation.body.right * 0f, ref plantPosFootLeft);
-                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityAnimation.body.forward * .5f + entityAnimation.body.right * .1f, ref plantPosFootRight);
+                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + entityOrientation.body.right * 0f, ref plantPosFootLeft);
+                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityOrientation.body.forward * .5f + entityOrientation.body.right * .1f, ref plantPosFootRight);
                 updateTime_footRight = .2f;
                 updateTime_footLeft = .7f;
                 if(quadripedal){
-                    SetPlantPosition(targetHandLeft, basePositionHandLeft, Vector3.up * .1f + entityAnimation.body.right * 0f, ref plantPosHandLeft);
-                    SetPlantPosition(targetHandRight, basePositionHandRight, Vector3.up * .3f + entityAnimation.body.forward * .5f + entityAnimation.body.right * .1f, ref plantPosHandRight);
+                    SetPlantPosition(targetHandLeft, basePositionHandLeft, Vector3.up * .1f + entityOrientation.body.right * 0f, ref plantPosHandLeft);
+                    SetPlantPosition(targetHandRight, basePositionHandRight, Vector3.up * .3f + entityOrientation.body.forward * .5f + entityOrientation.body.right * .1f, ref plantPosHandRight);
                     updateTime_handRight = .2f;
                     updateTime_handLeft = .7f;
                 }
@@ -360,7 +358,7 @@ public class EntityPhysics : EntityComponent
             // moving
             vertFootLeft = Vector3.up * GetRunCycleVerticality(updateTime_footLeft, water);
             vertFootRight = Vector3.up * GetRunCycleVerticality(updateTime_footRight, water);
-            Vector3 toeForward = (entityAnimation.body.forward + transform.forward).normalized;
+            Vector3 toeForward = (entityOrientation.body.forward + transform.forward).normalized;
             if (hasFingersAndToes)
             {
                 targetToeRight.position = targetFootRight.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) + .2f);
@@ -379,12 +377,12 @@ public class EntityPhysics : EntityComponent
             vertFootLeft = vertFootRight = Vector3.up * GetRunCycleVerticality(.65f, water);
             if (hasFingersAndToes)
             {
-                targetToeRight.position = targetFootRight.position + entityAnimation.body.forward.normalized + Vector3.down;
-                targetToeLeft.position = targetFootLeft.position + entityAnimation.body.forward.normalized + Vector3.down;
+                targetToeRight.position = targetFootRight.position + entityOrientation.body.forward.normalized + Vector3.down;
+                targetToeLeft.position = targetFootLeft.position + entityOrientation.body.forward.normalized + Vector3.down;
                 if (quadripedal)
                 {
-                    targetFingerRight.position = targetHandRight.position + entityAnimation.body.forward.normalized + Vector3.down;
-                    targetFingerLeft.position = targetHandLeft.position + entityAnimation.body.forward.normalized + Vector3.down;
+                    targetFingerRight.position = targetHandRight.position + entityOrientation.body.forward.normalized + Vector3.down;
+                    targetFingerLeft.position = targetHandLeft.position + entityOrientation.body.forward.normalized + Vector3.down;
                 }
             }
             
@@ -417,7 +415,7 @@ public class EntityPhysics : EntityComponent
 
     public void CyclePlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime, bool water){
 
-        float forwardReachDistance = water ? 0f : runCycle_limbForwardReachDistance * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityAnimation.bodyLean * .1f);
+        float forwardReachDistance = water ? 0f : runCycle_limbForwardReachDistance * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityOrientation.bodyLean * .1f);
         plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
         updateTime = Mathf.Max(updateTime, 1f) - 1f;
     }
@@ -538,14 +536,14 @@ public class EntityPhysics : EntityComponent
     }
     public void Jump(){
         if(!jumping){
-            StartCoroutine(_Jump(JumpForce));
+            StartCoroutine(_Jump(BASE_FORCE_JUMP));
         }
     }
     IEnumerator _Jump(float power){
         jumping = true;
         jumpOpposite = !jumpOpposite;
-        if(groundTime <= JumpCoolDown){
-            float t = JumpCoolDown - groundTime;
+        if(groundTime <= BASE_COOLDOWN_JUMP){
+            float t = BASE_COOLDOWN_JUMP - groundTime;
             yield return new WaitForSecondsRealtime(t);
         }
         Vector3 vel = rb.velocity;
@@ -560,7 +558,7 @@ public class EntityPhysics : EntityComponent
         yield return null;
     }
     public void Vault(){
-        Jump(JumpForce*.7f);
+        Jump(BASE_FORCE_JUMP*.7f);
     }
 
     public bool CanJump(){
@@ -579,41 +577,43 @@ public class EntityPhysics : EntityComponent
 
     // attacking
 
-    public void LaunchProjectile(GameObject projectilePrefab){
+    public void LaunchProjectile(Item item, Transform referenceWeaponT, bool pointTowardsDirection){
 
         StartCoroutine(_LaunchProjectile());
 
         IEnumerator _LaunchProjectile(){
 
+            GameObject projectile = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
+            AttackCollisionDetector acd =  projectile.transform.Find("HitZone").GetComponent<AttackCollisionDetector>();
+            acd.SetOwner(entityHandle);
+            acd.SetIsProjectile(true);
+            projectile.transform.SetPositionAndRotation(referenceWeaponT.position, referenceWeaponT.rotation);
+            Utility.ToggleObjectPhysics(projectile, true, true, true, true);
+            Utility.IgnorePhysicsCollisions(projectile, gameObject.GetComponentInChildren<Collider>());
+            Utility.IgnorePhysicsCollisions(projectile, entityItems.weaponEquipped_object.GetComponentsInChildren<Collider>());
+
+            Vector3 throwDir = entityOrientation.body.forward + (Vector3.up * 0f);
+            Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
+            float addForceTime = .2f;
+            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            float force = BASE_FORCE_THROW * Mathf.Lerp(1f, 1.5f, Mathf.InverseLerp(0f, BASE_MAX_SPEED, GetHorizVelocity().magnitude));
+            projectileRb.velocity = rb.velocity;
+
+            while(timer.ElapsedMilliseconds / 1000f < addForceTime){
+                projectileRb.AddForce(throwDir * force);
+                yield return null;
+            }
+            timer.Stop();
+
+
             
-            GameObject temp = new GameObject();
-            temp.transform.position = transform.position + transform.forward;
-            temp.transform.SetParent(transform);
-            //entityAnimation.SetBodyRotationMode(EntityAnimation.BodyRotationMode.Target, temp.transform);
-            //entityAnimation.SetFreeBodyRotationMode(false);
-            yield return new WaitForSeconds(.2f);
-            GameObject projectile = GameObject.Instantiate(projectilePrefab, handRight.position, Quaternion.identity);
-            Physics.IgnoreCollision(projectile.GetComponent<Collider>(), worldCollider);
-            Vector3 targetPos, throwDir;
-
-            if (isLocalPlayer){
-                targetPos = Camera.main.transform.position + (Camera.main.transform.up * 100f) + (Camera.main.transform.forward * 1000f);
-            }
-            else
-            {
-                targetPos = Vector3.zero;
-            }
-
-            throwDir = targetPos - transform.position;
-            projectile.GetComponent<Rigidbody>().velocity = (throwDir.normalized * ThrowForce) + rb.velocity;
-            StartCoroutine(Utility.DespawnObject(projectile, 5f));
 
 
             yield return new WaitForSeconds(.075f);
             //entityAnimation.SetFreeBodyRotationMode(true);
             //entityAnimation.SetBodyRotationMode(EntityAnimation.BodyRotationMode.Target, null);
 
-            GameObject.Destroy(temp);
 
         }
 
@@ -625,7 +625,7 @@ public class EntityPhysics : EntityComponent
 
         switch (attackType) {
             case (AttackType.Weapon) :
-                AttackWeapon(target);
+                OnWeaponAttack(target);
                 break;
             case (AttackType.Bite) :
                 AttackBite(target);
@@ -642,51 +642,97 @@ public class EntityPhysics : EntityComponent
         }
     }
 
-    void AttackWeapon(Transform target){
+    void OnWeaponAttack(Transform target)
+    {
+        Item weapon = entityItems.weaponEquipped_item;
+        bool ranged = entityItems.rangedMode;
+        bool charging = weaponChargeTime == 0f;
 
-        Animator a = entityItems.itemOrientationAnimator;
-
-        Item weapItem = entityItems.weaponEquipped_item;
-        string triggerName;
         if (weaponChargeTime == 0f)
         {
-            BeginWeaponChargeTime();
-            triggerName = "Charge";
+            OnWeaponChargeBegin(weapon, ranged);
         }
         else
         {
-            StopWeaponChargeTime();
-            triggerName = "Release";
-            BeginAttackHitTime();
-            if(entityItems.weaponEquipped_item == null){
-                LaunchProjectile(Item.SmallStone.worldObject);
-            }
-        }
-        switch (weapItem.holdStyle)
-        {
-            case Item.ItemHoldStyle.Spear:
-                triggerName += "Spear";
-                break;
-            case Item.ItemHoldStyle.Axe:
-                triggerName += "Axe";
-                break;
-            default:
-                Log("Trying to attack with a weapon with no specified hold style!!!");
-                break;
+            OnWeaponRelease(weapon, ranged);
         }
 
-        triggerName += rangedMode ? "Ranged" : "Melee";
-        a.SetTrigger(triggerName);
+        StartAttackAnimation(charging, weapon, ranged);
         
     }
-    void BeginWeaponChargeTime(){
+    void OnWeaponChargeBegin(Item weapon, bool ranged){
         weaponCharging = true;
         weaponChargeAmount = .001f;
     }
-    void StopWeaponChargeTime(){
+    void OnWeaponRelease(Item weapon, bool ranged){
         weaponCharging = false;
-        weaponChargeAmount = Mathf.InverseLerp(0f, weaponChargeTime_max, weaponChargeTime);
+        weaponChargeAmount = Mathf.InverseLerp(0f, WEAPON_CHARGETIME_MAX, weaponChargeTime);
         weaponChargeTime = 0f;
+        if(!ranged)
+        {
+            BeginAttackHitTime();
+        }
+        if(weapon.holdStyle.Equals(Item.ItemHoldStyle.Spear) && ranged)
+        {
+            // if ranged mode and using spear, launch the weapon
+            LaunchProjectile(weapon, entityItems.weaponEquipped_object.transform, true);
+        }
+    }
+
+    void StartAttackAnimation(bool charging, Item weapon, bool ranged)
+    {
+        if(weapon.holdStyle.Equals(Item.ItemHoldStyle.Spear))
+        {
+            if (charging)
+            {
+                if (ranged)
+                {
+                    entityItems.itemOrientationAnimator.SetTrigger("ChargeSpearRanged");
+                }
+                else
+                {
+                    entityItems.itemOrientationAnimator.SetTrigger("ChargeSpearMelee");
+                }
+            }
+            else
+            {
+                if (ranged)
+                {
+                    entityItems.itemOrientationAnimator.SetTrigger("ReleaseSpearRanged");
+                }
+                else
+                {
+                    entityItems.itemOrientationAnimator.SetTrigger("ReleaseSpearMelee");
+                }
+            }
+            
+            
+        }
+        else if(weapon.holdStyle.Equals(Item.ItemHoldStyle.Axe))
+        {
+            if (charging)
+            {
+                if (ranged)
+                {
+                    entityItems.itemOrientationAnimator.SetTrigger("ChargeAxeRanged");
+                }
+                else
+                {
+                    entityItems.itemOrientationAnimator.SetTrigger("ChargeAxeMelee");
+                }
+            }
+            else
+            {
+                if (ranged)
+                {
+                    entityItems.itemOrientationAnimator.SetTrigger("ReleaseAxeRanged");
+                }
+                else
+                {
+                    entityItems.itemOrientationAnimator.SetTrigger("ReleaseAxeMelee");
+                }
+            }
+        }
     }
 
     void BeginAttackHitTime(){
@@ -815,7 +861,7 @@ public class EntityPhysics : EntityComponent
 
     void CheckGround(){
         Vector3 vel = rb.velocity;
-        if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, groundCastDistance_far, layerMask_walkable)){
+        if(Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, 100f, layerMask_walkable)){
             distanceFromGround = Vector3.Distance(groundInfo.point, transform.position);
             if(distanceFromGround < groundCastDistance){
                 if(!GROUNDTOUCH){
@@ -842,7 +888,7 @@ public class EntityPhysics : EntityComponent
         bool w = false;
         if(offWallTime > .4f){
             if(moveDir.magnitude > 0){
-                if(Physics.Raycast(wallSense.position, transform.forward, out wallInfo, wallCastDistance) || Physics.Raycast(wallSense.position, entityAnimation.body.forward, out wallInfo, wallCastDistance)){
+                if(Physics.Raycast(wallSense.position, transform.forward, out wallInfo, BASE_CASTDISTANCE_WALL) || Physics.Raycast(wallSense.position, entityOrientation.body.forward, out wallInfo, BASE_CASTDISTANCE_WALL)){
                     string tag = wallInfo.collider.gameObject.tag;
                     if(tag != "Npc" && tag != "Player" && tag != "Body"){
                         w = true;
@@ -871,7 +917,7 @@ public class EntityPhysics : EntityComponent
             if(!IN_WATER){
                 IN_WATER = true;
                 //animator.SetTrigger("Water");
-                entityAnimation.SetBodyRotationMode(EntityOrientation.BodyRotationMode.Target, null);
+                entityOrientation.SetBodyRotationMode(EntityOrientation.BodyRotationMode.Target, null);
             }
             ApplyFlotationForce(waterY - y);
         }
@@ -880,7 +926,7 @@ public class EntityPhysics : EntityComponent
                 IN_WATER = false;
                 offWaterTime = 0f;
                 //animator.SetTrigger("Land");
-                entityAnimation.SetBodyRotationMode(EntityOrientation.BodyRotationMode.Target, entityAnimation.bodyRotationTarget);
+                entityOrientation.SetBodyRotationMode(EntityOrientation.BodyRotationMode.Target, entityOrientation.bodyRotationTarget);
             }
         }
     }
@@ -1040,7 +1086,7 @@ public class EntityPhysics : EntityComponent
         if(attackCanHit){
             //Log("Weapon can hit");
             attackHitTime += dTime;
-            if(attackHitTime >= weaponHitTime_max){
+            if(attackHitTime >= WEAPON_HITTIME_MAX){
                 StopAttackHitTime();
                 //Log("Weapon cannot hit");
             }
@@ -1062,7 +1108,8 @@ public class EntityPhysics : EntityComponent
         else if(layer == LayerMask.NameToLayer("CampBorder"))
         {
             ObjectReference objectReference = col.gameObject.GetComponent<ObjectReference>();
-            if(objectReference != null){
+            if(objectReference != null)
+            {
                 if(objectReference.GetObjectReference() == entityInfo.faction.camp)
                 {
                     entityItems.OnCampBorderCross();

@@ -15,6 +15,7 @@ public class EntityItems : EntityComponent
     public Item weaponEquipped_item;
     public Item weaponUnequipped_item;
     public GameObject weaponEquipped_object, weaponUnequipped_object;
+    public bool rangedMode;
 
     // clothing
     public Transform meshParentT;
@@ -76,6 +77,7 @@ public class EntityItems : EntityComponent
     void Start()
     {
         ToggleItemOrientationUpdate(true);
+        SetWeaponRangedMode(false);
     }
 
     // client method when an object is interacted with
@@ -131,7 +133,7 @@ public class EntityItems : EntityComponent
             ObjectRack rack = (ObjectRack)attachedObject;
             Faction rackFac = rack.camp.faction;
             Faction.RemoveItemOwned(rackFac, item, 1, rack);
-            o = Utility.InstantiatePrefabSameName(item.worldObject);
+            o = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
             o.transform.position = worldObject.transform.position;
             o.transform.rotation = worldObject.transform.rotation;
         }
@@ -170,7 +172,7 @@ public class EntityItems : EntityComponent
             ObjectRack rack = (ObjectRack)attachedObject;
             Faction rackFac = rack.camp.faction;
             Faction.RemoveItemOwned(rackFac, item, 1, rack);
-            o = Utility.InstantiatePrefabSameName(item.worldObject);
+            o = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
             o.transform.position = worldObject.transform.position;
             o.transform.rotation = worldObject.transform.rotation;
         }
@@ -367,11 +369,21 @@ public class EntityItems : EntityComponent
                 weaponUnequipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().RemoveOwner();
             }
         }
-
-
-
         OnItemsChange();
         
+    }
+
+
+    public void ToggleWeaponRanged()
+    {
+        SetWeaponRangedMode(!rangedMode);
+    }
+    public void SetWeaponRangedMode(bool rangedStatus){
+        if(rangedStatus != rangedMode)
+        {
+            rangedMode = rangedStatus;
+            Debug.Log("Ranged mode: " + rangedMode);
+        }
     }
 
     // ---

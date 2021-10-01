@@ -115,7 +115,7 @@ public class ObjectRack : CampComponent
             if(!IsFull()){
 
                 // if room in the rack, add the item to it
-                GameObject o = Utility.InstantiatePrefabSameName(item.worldObject);
+                GameObject o = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
                 objects.Add(o);
                 SetObjectOrientation(o, originT, (OBJECT_PLACEMENT_DELAY_TIMESTEP * countAdded) + (Camp.CAMP_COMPONENT_PLACING_TIME_GAP * newRacksCount));
                 o.GetComponent<ObjectReference>().SetObjectReference(this);

@@ -104,7 +104,7 @@ public class Workbench : ObjectRack
     public void OnCraft(){
 
         Transform orientation = this.worldObject_orientationParent.Find("ItemOrientationCraftedItem");
-        GameObject obj = Utility.InstantiatePrefabSameName(currentCraftableItem.worldObject);
+        GameObject obj = Utility.InstantiatePrefabSameName(currentCraftableItem.worldObjectPrefab);
         obj.transform.position = orientation.position;
         obj.transform.rotation = orientation.rotation;
 

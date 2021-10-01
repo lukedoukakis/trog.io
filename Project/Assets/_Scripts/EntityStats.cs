@@ -169,7 +169,7 @@ public class EntityStats : EntityComponent
             float placementHeightOffset = 0f;
             for (int i = 0; i < count; ++i)
             {
-                worldObject = Utility.InstantiatePrefabSameName(item.worldObject);
+                worldObject = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
                 worldObject.transform.position = dropSpot + (Vector3.up * placementHeightOffset);
                 if(Item.IsRackable(item))
                 {

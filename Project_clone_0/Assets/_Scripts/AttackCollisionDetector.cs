@@ -7,9 +7,11 @@ public class AttackCollisionDetector : MonoBehaviour
 
     EntityHandle owner;
     Collider thisCollider;
+    bool isProjectile;
 
     void Awake(){
         thisCollider = GetComponent<Collider>();
+        isProjectile = false;
     }
     
 
@@ -22,14 +24,35 @@ public class AttackCollisionDetector : MonoBehaviour
         thisCollider.enabled = false;
     }
 
-    bool CanCollide(){
-        return owner != null && owner.entityPhysics.attackCanHit;
+    bool CanCollide()
+    {
+        if(owner != null)
+        {
+            return isProjectile || owner.entityPhysics.attackCanHit;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public void SetIsProjectile(bool value)
+    {
+        isProjectile = value;
     }
 
     void OnTriggerEnter(Collider otherCollider){
         //Debug.Log("TRIGGER ENTER");
         if(CanCollide()){
             owner.entityPhysics.OnAttackHit(otherCollider);
+            if(isProjectile)
+            {
+                FixedJoint joint = gameObject.AddComponent<FixedJoint>();
+                joint.connectedBody = otherCollider.gameObject.GetComponentInParent<Rigidbody>();
+                if(joint.connectedBody == null)
+                {
+                    joint.connectedBody = otherCollider.gameObject.GetComponentInChildren<Rigidbody>();
+                }
+            }
         }
     }
 
