@@ -57,8 +57,8 @@ Rigidbody:
   m_GameObject: {fileID: 8069827555116078467}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 1
-  m_AngularDrag: 1
+  m_Drag: 0
+  m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
@@ -82,12 +82,12 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   hovering: 0
   selecting: 0
@@ -112,12 +112,12 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   id: 0
   nickname: Player
@@ -142,12 +142,12 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   statsModifiers: []
   statsCombined: {fileID: 0}
@@ -172,17 +172,19 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
+  behaviorProfile: {fileID: 0}
   home: {fileID: 0}
   move: {x: 0, y: 0, z: 0}
   urgent: 0
-  timestep_creatureSense: 0
+  timeSince_creatureSense: 0
+  timeSince_attack: 0
   activeAction: {fileID: 0}
   actions: []
 --- !u!114 &8069827555116078489
@@ -203,12 +205,12 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   rb: {fileID: 0}
   body: {fileID: 0}
@@ -236,12 +238,12 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   worldCollider: {fileID: 0}
   highFrictionMat: {fileID: 0}
@@ -254,6 +256,7 @@ MonoBehaviour:
     m_Bits: 0
   rb: {fileID: 0}
   animator: {fileID: 0}
+  iKTargetAnimator: {fileID: 0}
   gyro: {fileID: 0}
   body: {fileID: 0}
   bodyPartTs: []
@@ -290,8 +293,10 @@ MonoBehaviour:
   maxSpeed_climb: 0
   maxSpeed_swim: 0
   landScrunch: 0
+  crouch: 0
   handFree_right: 0
   handFree_left: 0
+  insideCamp: 0
   ROTATION_Y_THIS: 0
   ROTATION_Y_LAST: 0
   GROUNDTOUCH: 0
@@ -341,8 +346,8 @@ MonoBehaviour:
   runCycle_lerpTightness: 0
   runCycle_limbVerticalDisplacement: 0
   runCycle_limbForwardReachDistance: 0
-  weaponCanHit: 0
-  weaponHit: 0
+  attackCanHit: 0
+  attackHit: 0
 --- !u!114 &8069827555116078495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -361,12 +366,12 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   hp: 0
   alive: 0
@@ -388,12 +393,12 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   holding_item: {fileID: 0}
   holding_object: {fileID: 0}
@@ -401,6 +406,7 @@ MonoBehaviour:
   weaponUnequipped_item: {fileID: 0}
   weaponEquipped_object: {fileID: 0}
   weaponUnequipped_object: {fileID: 0}
+  rangedMode: 0
   meshParentT: {fileID: 0}
   clothing: {fileID: 0}
   orientationParent: {fileID: 0}
@@ -442,12 +448,12 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   pressForward: 0
   pressBack: 0
@@ -455,11 +461,16 @@ MonoBehaviour:
   pressRight: 0
   pressSprint: 0
   pressJump: 0
+  pressCrouch: 0
+  pressToggleAttackRanged: 0
   mouseX: 0
   mouseY: 0
   mouseZ: 0
   hoveredInteractableObject: {fileID: 0}
   interactableObjects: []
+  LAYERMASK_INTERACTABLE:
+    serializedVersion: 2
+    m_Bits: 0
   move: {x: 0, y: 0, z: 0}
 --- !u!114 &5176456060878539918
 MonoBehaviour:
@@ -479,12 +490,12 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   species: 1
 --- !u!114 &8374234257668663390
@@ -505,12 +516,12 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   npcPrefab: {fileID: 0}
 --- !u!114 &2947814671508615466

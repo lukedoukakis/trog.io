@@ -87,61 +87,57 @@ public class EntityOrientation : EntityComponent
             bodyLean = 0f;
         }
 
-        switch (bodyRotationMode)
+        if(bodyRotationMode.Equals(BodyRotationMode.Normal))
+        {
+            Vector3 dirForward = transform.forward;
+            bool moving = entityPhysics.IsMoving();
+            Vector3 dirMovement = moving ? entityPhysics.GetHorizVelocity() : dirForward;
+            dirMovement.y = 0f;
+            dirMovement = dirMovement.normalized;
+            Vector3 dirCombined = Vector3.Lerp(dirForward, dirMovement, 1f);
+
+            dirCombined += (Vector3.up * bodyLean * -1f * (1f - (Vector3.Distance(dirForward, dirMovement) / 2f)));
+
+            Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
+            body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
+
+            body.position = transform.position;
+        }
+        else if(bodyRotationMode.Equals(BodyRotationMode.Target))
         {
 
-            // normal rotation
-            case BodyRotationMode.Normal:
+
+            Vector3 dirForward = transform.forward;
+            bool moving = entityPhysics.IsMoving();
+            Vector3 dirMovement = moving ? entityPhysics.GetHorizVelocity() : dirForward;
+            dirMovement.y = 0f;
+            dirMovement = dirMovement.normalized;
+            Vector3 dirCombined = Vector3.Lerp(dirForward, dirMovement, .5f);
+
+            dirCombined += (Vector3.up * bodyLean * -1f * (1f - (Vector3.Distance(dirForward, dirMovement) / 2f)));
+
+            Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
+            body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
+
+            body.position = transform.position;
 
 
-                bool moving = entityPhysics.IsMoving();
-                Vector3 dirHoriz = moving ? rb.velocity : body.forward;
-                dirHoriz.y = 0;
-                dirHoriz = dirHoriz.normalized;
-                Vector3 direction = Vector3.RotateTowards(body.forward, dirHoriz, bodyRotationSpeed, 0f).normalized;
-                
-                direction += Vector3.up * (bodyLean * -1f);
 
-                Quaternion rotation = Quaternion.LookRotation(direction);
-                if (entityPhysics.GROUNDTOUCH)
-                {
-                    Vector3 v = (rotation.eulerAngles) - (bodyRotationLast.eulerAngles);
-                    angularVelocityY = Mathf.Lerp(bodyAngularVelocity.y, v.y, .5f);
-                    angularVelocityY = Mathf.Clamp(angularVelocityY, -5f, 5f);
-                    float dif = angularVelocityY - angularVelocityY_last;
-                    if (Math.Abs(dif) > angularVelocityY_maxDelta)
-                    {
-                        angularVelocityY = angularVelocityY_last + (angularVelocityY_maxDelta * Mathf.Sign(dif));
-                    }
-                }
-                else
-                {
-                    angularVelocityY = 0f;
-                }
-                rotation *= Quaternion.Euler(Vector3.forward * angularVelocityY * -1f);
-                body.rotation = rotation;
-      
-            
+            // Vector3 dir;
+            // if (bodyRotationTarget != null)
+            // {
+            //     dir = (bodyRotationTarget.position - body.position).normalized;
+            // }
+            // else
+            // {
+            //     dir = transform.forward;
+            // }
+            // dir += (Vector3.up * bodyLean * -1f);
+            // Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
+            // body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
 
-                break;
-
-            // targeting rotation
-            case BodyRotationMode.Target:
-                Vector3 dir;
-                if(bodyRotationTarget != null){
-                    dir = (bodyRotationTarget.position - body.position).normalized;
-                }
-                else{
-                    dir = transform.forward;
-                }
-                dir += (Vector3.up * bodyLean * -1f);
-                Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
-                body.rotation = Quaternion.Slerp(body.rotation, rot, .01f);
-                break;
-
-            default:
-                Log("UpdateBodyRotation: bodyRotationMode not recognized: " + bodyRotationMode);
-                    break;
+            // body.position = transform.position;
+        
         };
 
         

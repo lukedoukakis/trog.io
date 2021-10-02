@@ -44,7 +44,7 @@ public class EntityUserInput : EntityComponent
     void ApplyMouseInput(){
 
         float sensitivity = 5f;
-        float smoothing = 300f * Time.deltaTime;
+        float smoothing = 100f * Time.deltaTime;
 
         if(GameManager.cameraMode == 0){
             
