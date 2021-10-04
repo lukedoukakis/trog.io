@@ -13,6 +13,7 @@ public class EntityUserInput : EntityComponent
     public bool pressToggleAttackRanged;
     public float mouseX, mouseY, mouseZ;
 
+    Transform selectionOrigin;
     Quaternion targetRot;
     public GameObject hoveredInteractableObject;
     public List<GameObject> interactableObjects;
@@ -30,6 +31,7 @@ public class EntityUserInput : EntityComponent
 
         base.Awake();
 
+        selectionOrigin = Utility.FindDeepChild(transform, "SelectionOrigin");
         LAYERMASK_INTERACTABLE = LayerMask.GetMask("HoverTrigger");
     }
 
@@ -206,8 +208,9 @@ public class EntityUserInput : EntityComponent
         Transform cameraT = Camera.main.transform;
         RaycastHit hit;
 
-        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
-            
+        //if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
+        if(Physics.SphereCast(selectionOrigin.position, .3f, entityOrientation.body.forward, out hit, 1f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
+
             // set hoveredInteractableObject to parent of collider hit
             GameObject hovered = hit.collider.transform.parent.gameObject;
             newInteract = hovered != hoveredInteractableObject;

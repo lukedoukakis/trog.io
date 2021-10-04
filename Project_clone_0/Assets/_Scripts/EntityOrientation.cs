@@ -112,7 +112,7 @@ public class EntityOrientation : EntityComponent
             Vector3 dirMovement = moving ? entityPhysics.GetHorizVelocity() : dirForward;
             dirMovement.y = 0f;
             dirMovement = dirMovement.normalized;
-            Vector3 dirCombined = Vector3.Lerp(dirForward, dirMovement, .5f);
+            Vector3 dirCombined = Vector3.Lerp(dirForward, dirMovement, .35f);
 
             dirCombined += (Vector3.up * bodyLean * -1f * (1f - (Vector3.Distance(dirForward, dirMovement) / 2f)));
 

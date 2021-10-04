@@ -40,6 +40,10 @@ public class AttackCollisionDetector : MonoBehaviour
     {
         isProjectile = value;
     }
+    public bool GetIsProjectile()
+    {
+        return isProjectile;
+    }
 
 
     public void AddFixedJoint(GameObject attachedObject)
@@ -68,6 +72,7 @@ public class AttackCollisionDetector : MonoBehaviour
             if(isProjectile)
             {
                 AddFixedJoint(otherCollider.gameObject);
+                SetIsProjectile(false);
             }
         }
     }

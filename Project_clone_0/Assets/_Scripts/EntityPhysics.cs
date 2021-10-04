@@ -577,44 +577,52 @@ public class EntityPhysics : EntityComponent
 
     // attacking
 
-    public void LaunchProjectile(Item item, Transform referenceWeaponT, bool pointTowardsDirection){
+    public void ThrowWeapon(bool pointTowardsDirection){
 
         StartCoroutine(_LaunchProjectile());
 
         IEnumerator _LaunchProjectile(){
 
-            GameObject projectile = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
+            GameObject projectile = entityItems.weaponEquipped_object;
             AttackCollisionDetector acd =  projectile.transform.Find("HitZone").GetComponent<AttackCollisionDetector>();
             acd.SetOwner(entityHandle);
             acd.SetIsProjectile(true);
-            projectile.transform.SetPositionAndRotation(referenceWeaponT.position, referenceWeaponT.rotation);
             Utility.ToggleObjectPhysics(projectile, true, true, true, true);
             Utility.IgnorePhysicsCollisions(projectile, gameObject.GetComponentInChildren<Collider>());
-            Utility.IgnorePhysicsCollisions(projectile, entityItems.weaponEquipped_object.GetComponentsInChildren<Collider>());
 
-            Vector3 throwDir = entityOrientation.body.forward + (Vector3.up * 0f);
+            Vector3 throwDir = entityOrientation.body.forward + (Vector3.up * .25f);
             Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
             projectileRb.centerOfMass = Vector3.up * .622f;
             projectileRb.angularDrag = 5f;
             float addForceTime = .2f;
-            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-            timer.Start();
             float force = BASE_FORCE_THROW * Mathf.Lerp(1f, 1.5f, Mathf.InverseLerp(0f, BASE_MAX_SPEED, GetHorizVelocity().magnitude));
             projectileRb.velocity = rb.velocity;
 
-            while(timer.ElapsedMilliseconds / 1000f < addForceTime){
+            Transform t = new GameObject().transform;
+            Vector3 lookAtPos;
+            for(int i = 0; i < addForceTime * 100f; ++i)
+            {
                 projectileRb.AddForce(throwDir * force);
+                t.position = projectile.transform.position;
+                lookAtPos = projectile.transform.position + projectileRb.velocity.normalized;
+                t.LookAt(lookAtPos, transform.forward * -1f);
+                projectile.transform.rotation = t.rotation;
+                yield return new WaitForFixedUpdate();
+            }
+
+            entityItems.weaponEquipped_item = null;
+            entityItems.weaponEquipped_object = null;
+            entityItems.OnItemsChange();
+
+            while(acd.GetIsProjectile())
+            {
+                t.position = projectile.transform.position;
+                lookAtPos = projectile.transform.position + projectileRb.velocity.normalized;
+                t.LookAt(lookAtPos, transform.forward * -1f);
+                projectile.transform.rotation = Quaternion.Slerp(projectile.transform.rotation, t.rotation, 30f * Time.deltaTime);
                 yield return null;
             }
-            timer.Stop();
-
-
-            
-
-
-            yield return new WaitForSeconds(.075f);
-            //entityAnimation.SetFreeBodyRotationMode(true);
-            //entityAnimation.SetBodyRotationMode(EntityAnimation.BodyRotationMode.Target, null);
+            GameObject.Destroy(t.gameObject); 
 
 
         }
@@ -677,7 +685,7 @@ public class EntityPhysics : EntityComponent
         if(weapon.holdStyle.Equals(Item.ItemHoldStyle.Spear) && ranged)
         {
             // if ranged mode and using spear, launch the weapon
-            LaunchProjectile(weapon, entityItems.weaponEquipped_object.transform, true);
+            ThrowWeapon(true);
         }
     }
 
@@ -919,7 +927,7 @@ public class EntityPhysics : EntityComponent
             if(!IN_WATER){
                 IN_WATER = true;
                 //animator.SetTrigger("Water");
-                entityOrientation.SetBodyRotationMode(EntityOrientation.BodyRotationMode.Target, null);
+                //entityOrientation.SetBodyRotationMode(EntityOrientation.BodyRotationMode.Target, null);
             }
             ApplyFlotationForce(waterY - y);
         }
@@ -928,7 +936,7 @@ public class EntityPhysics : EntityComponent
                 IN_WATER = false;
                 offWaterTime = 0f;
                 //animator.SetTrigger("Land");
-                entityOrientation.SetBodyRotationMode(EntityOrientation.BodyRotationMode.Target, entityOrientation.bodyRotationTarget);
+                //entityOrientation.SetBodyRotationMode(EntityOrientation.BodyRotationMode.Target, entityOrientation.bodyRotationTarget);
             }
         }
     }
