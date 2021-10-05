@@ -7,12 +7,12 @@ public class AttackCollisionDetector : MonoBehaviour
 
     EntityHandle owner;
     Collider thisCollider;
-    bool isProjectile;
+    Projectile projectile;
     FixedJoint joint;
 
     void Awake(){
         thisCollider = GetComponent<Collider>();
-        isProjectile = false;
+        projectile = null;
     }
     
 
@@ -29,20 +29,20 @@ public class AttackCollisionDetector : MonoBehaviour
     {
         if(owner != null)
         {
-            return (isProjectile && joint == null) || owner.entityPhysics.attackCanHit;
+            return projectile != null || owner.entityPhysics.meleeAttackCanHit;
         }
         else{
             return false;
         }
     }
 
-    public void SetIsProjectile(bool value)
+    public void SetProjectile(Projectile projectile)
     {
-        isProjectile = value;
+        this.projectile = projectile;
     }
-    public bool GetIsProjectile()
+    public Projectile GetProjectile()
     {
-        return isProjectile;
+        return projectile;
     }
 
 
@@ -67,12 +67,13 @@ public class AttackCollisionDetector : MonoBehaviour
 
     void OnTriggerEnter(Collider otherCollider){
         //Debug.Log("TRIGGER ENTER");
-        if(CanCollide()){
-            owner.entityPhysics.OnAttackHit(otherCollider);
-            if(isProjectile)
+        if(CanCollide())
+        {
+            owner.entityPhysics.OnAttackHit(otherCollider, projectile);
+            if(projectile != null)
             {
                 AddFixedJoint(otherCollider.gameObject);
-                SetIsProjectile(false);
+                SetProjectile(null);
             }
         }
     }

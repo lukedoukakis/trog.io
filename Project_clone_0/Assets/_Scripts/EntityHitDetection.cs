@@ -7,7 +7,7 @@ public class EntityHitDetection : EntityComponent
     
     [SerializeField] Species species;
 
-    public void OnHit(EntityHandle attackerHandle){
+    public void OnHit(EntityHandle attackerHandle, Projectile projectile){
 
         // add and set up info and stats if they don't exist
         if(entityInfo == null){
@@ -20,7 +20,7 @@ public class EntityHitDetection : EntityComponent
 
 
         // take damage from the hit
-        entityStats.TakeDamage(attackerHandle);
+        entityStats.TakeDamage(attackerHandle, projectile);
 
 
     }

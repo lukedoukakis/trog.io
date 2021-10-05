@@ -86,7 +86,7 @@ public class EntityPhysics : EntityComponent
     bool weaponCharging;
     float weaponChargeAmount;
     float attackHitTime;
-    public bool attackCanHit;
+    public bool meleeAttackCanHit;
     public bool attackHit;
 
 
@@ -581,17 +581,17 @@ public class EntityPhysics : EntityComponent
 
         StartCoroutine(_LaunchProjectile());
 
-        IEnumerator _LaunchProjectile(){
-
-            GameObject projectile = entityItems.weaponEquipped_object;
-            AttackCollisionDetector acd =  projectile.transform.Find("HitZone").GetComponent<AttackCollisionDetector>();
+        IEnumerator _LaunchProjectile()
+        {
+            Projectile projectile = Projectile.InstantiateProjectile(entityItems.weaponEquipped_item, entityItems.weaponEquipped_object, entityStats.statsCombined);
+            AttackCollisionDetector acd =  projectile.worldObject.transform.Find("HitZone").GetComponent<AttackCollisionDetector>();
             acd.SetOwner(entityHandle);
-            acd.SetIsProjectile(true);
-            Utility.ToggleObjectPhysics(projectile, true, true, true, true);
-            Utility.IgnorePhysicsCollisions(projectile, gameObject.GetComponentInChildren<Collider>());
+            acd.SetProjectile(projectile);
+            Utility.ToggleObjectPhysics(projectile.worldObject, true, true, true, true);
+            Utility.IgnorePhysicsCollisions(projectile.worldObject, gameObject.GetComponentInChildren<Collider>());
 
             Vector3 throwDir = entityOrientation.body.forward + (Vector3.up * .25f);
-            Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
+            Rigidbody projectileRb = projectile.worldObject.GetComponent<Rigidbody>();
             projectileRb.centerOfMass = Vector3.up * .622f;
             projectileRb.angularDrag = 5f;
             float addForceTime = .2f;
@@ -603,10 +603,10 @@ public class EntityPhysics : EntityComponent
             for(int i = 0; i < addForceTime * 100f; ++i)
             {
                 projectileRb.AddForce(throwDir * force);
-                t.position = projectile.transform.position;
-                lookAtPos = projectile.transform.position + projectileRb.velocity.normalized;
+                t.position = projectile.worldObject.transform.position;
+                lookAtPos = projectile.worldObject.transform.position + projectileRb.velocity.normalized;
                 t.LookAt(lookAtPos, transform.forward * -1f);
-                projectile.transform.rotation = t.rotation;
+                //projectile.worldObject.transform.rotation = t.rotation;
                 yield return new WaitForFixedUpdate();
             }
 
@@ -614,12 +614,12 @@ public class EntityPhysics : EntityComponent
             entityItems.weaponEquipped_object = null;
             entityItems.OnItemsChange();
 
-            while(acd.GetIsProjectile())
+            while(acd.GetProjectile() != null)
             {
-                t.position = projectile.transform.position;
-                lookAtPos = projectile.transform.position + projectileRb.velocity.normalized;
+                t.position = projectile.worldObject.transform.position;
+                lookAtPos = projectile.worldObject.transform.position + projectileRb.velocity.normalized;
                 t.LookAt(lookAtPos, transform.forward * -1f);
-                projectile.transform.rotation = Quaternion.Slerp(projectile.transform.rotation, t.rotation, 30f * Time.deltaTime);
+                //projectile.worldObject.transform.rotation = Quaternion.Slerp(projectile.transform.rotation, t.rotation, 30f * Time.deltaTime);
                 yield return null;
             }
             GameObject.Destroy(t.gameObject); 
@@ -747,22 +747,22 @@ public class EntityPhysics : EntityComponent
 
     void BeginAttackHitTime(){
         attackHitTime = 0f;
-        attackCanHit = true;
+        meleeAttackCanHit = true;
     }
     void StopAttackHitTime(){
-        attackCanHit = false;
+        meleeAttackCanHit = false;
         if(attackHit){
             attackHit = false;
         }
     }
-    public void OnAttackHit(Collider collider){
+    public void OnAttackHit(Collider collider, Projectile projectile){
         GameObject hitObject = collider.gameObject;
         //Debug.Log(hitObject.layer);
 
         if(hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature"))
         {
             //Log("HIT!!!! " + collider.gameObject.name);
-            collider.gameObject.GetComponentInParent<EntityHitDetection>().OnHit(this.entityHandle);
+            collider.gameObject.GetComponentInParent<EntityHitDetection>().OnHit(this.entityHandle, projectile);
 
             // apply fixed weapon position effect if applicable
             if (entityItems != null)
@@ -777,7 +777,7 @@ public class EntityPhysics : EntityComponent
             Log("HIT!!!! " + collider.gameObject.name);
             ItemHitDetection ihd = collider.gameObject.GetComponentInParent<ItemHitDetection>();
             if(ihd != null){
-                ihd.OnHit(this.entityHandle);
+                ihd.OnHit(this.entityHandle, projectile);
             }
         }
         
@@ -1093,7 +1093,7 @@ public class EntityPhysics : EntityComponent
         if(weaponCharging){
             weaponChargeTime += dTime;
         }
-        if(attackCanHit){
+        if(meleeAttackCanHit){
             //Log("Weapon can hit");
             attackHitTime += dTime;
             if(attackHitTime >= WEAPON_HITTIME_MAX){
@@ -1120,7 +1120,8 @@ public class EntityPhysics : EntityComponent
             ObjectReference objectReference = col.gameObject.GetComponent<ObjectReference>();
             if(objectReference != null)
             {
-                if(objectReference.GetObjectReference() == entityInfo.faction.camp)
+                if(System.Object.ReferenceEquals(objectReference.GetObjectReference(), entityInfo.faction.camp))
+                //if(objectReference.GetObjectReference() == entityInfo.faction.camp)
                 {
                     entityItems.OnCampBorderCross();
                 }

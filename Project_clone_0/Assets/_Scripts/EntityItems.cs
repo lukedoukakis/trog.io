@@ -342,7 +342,7 @@ public class EntityItems : EntityComponent
         AttackCollisionDetector acd = weaponEquipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>();
         acd.SetOwner(entityHandle);
         acd.RemoveFixedJoint();
-        acd.SetIsProjectile(false);
+        acd.SetProjectile(null);
     }
 
     public void ToggleWeaponEquipped(){

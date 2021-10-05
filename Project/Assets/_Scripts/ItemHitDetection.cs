@@ -16,7 +16,7 @@ public class ItemHitDetection : MonoBehaviour
         item = Item.GetItemByName(itemNme);
     }
 
-    public void OnHit(EntityHandle attackerHandle){
+    public void OnHit(EntityHandle attackerHandle, Projectile projectile){
 
         // add and set up info and stats if they don't exist
         if(stats == null){
@@ -30,7 +30,7 @@ public class ItemHitDetection : MonoBehaviour
 
 
         // take damage from the hit
-        stats.TakeDamage(attackerHandle);
+        stats.TakeDamage(attackerHandle, projectile);
 
 
     }

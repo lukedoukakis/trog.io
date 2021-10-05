@@ -85,16 +85,26 @@ public class EntityStats : EntityComponent
     }
 
 
-    public void TakeDamage(EntityHandle attackerHandle){
+    public void TakeDamage(EntityHandle attackerHandle, Projectile projectile){
 
         if(isLocalPlayer && Testing.instance.godMode){
             return;
         }
 
         // get attacker's relevant stats and (if applicable) weapon
-        Stats attackerStats = attackerHandle.entityStats.statsCombined;
-        EntityItems attackerItems = attackerHandle.entityItems;
-        Item attackerWeapon = attackerItems == null ? Item.None : attackerItems.weaponEquipped_item;
+        Stats attackerStats;
+        Item attackerWeapon;
+        if(projectile == null)
+        {
+            EntityItems attackerItems = attackerHandle.entityItems;
+            attackerWeapon = attackerItems == null ? Item.None : attackerItems.weaponEquipped_item;
+            attackerStats = attackerHandle.entityStats.statsCombined;
+        }
+        else
+        {
+            attackerStats = projectile.stats;
+            attackerWeapon = projectile.item;
+        }
         float attackerAttack = Stats.GetStatValue(attackerStats, Stats.StatType.Attack);
 
         // get this entity's relevant stats
