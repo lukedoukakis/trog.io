@@ -290,7 +290,7 @@ public class Stats : ScriptableObject
 
     public static Stats ITEM_WIELDERMODIFIER_SPEAR = InstantiateStats(0f,0f,3f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
 
-    public static Stats ITEM_WIELDERMODIFIER_AXE = InstantiateStats(0f,0f,3f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
+    public static Stats ITEM_WIELDERMODIFIER_AXE = InstantiateStats(0f,0f,3f,0f,-.5f,0f,0f,0f,0f,0f,0f,0f);
 
     public static Stats ITEM_WIELDERMODIFIER_TESTCLOTHING = InstantiateStats(0f,0f,0f,0f,0f,0f,0f,3f,0f,0f,0f,1f);
 
