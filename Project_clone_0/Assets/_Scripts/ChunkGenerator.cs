@@ -87,8 +87,6 @@ public class ChunkGenerator : MonoBehaviour
     public static List<GameObject> activeCreatures;
     public static List<GameObject> Features;
     public static List<GameObject> Creatures;
-    [Range(0f, 1f)] public float treeDensity;
-    public float treeScale;
     public static readonly float creatureDespawnTimestep = 5f;
     public static float creatureDespawnTime = 0f;
     
@@ -355,8 +353,8 @@ public class ChunkGenerator : MonoBehaviour
                 mountainValue = Mathf.Pow(mountainValue, 2f);
                 //mountainValue = Mathf.InverseLerp(0f, Mathf.Pow(.75f, 2f), mountainValue);
                 mountainValue *= Mathf.InverseLerp(minE, maxE+1f, elevationValue);
-                mountainValue *= .5f;
-                mtnCap = .03f;
+                mountainValue *= 1f;
+                mtnCap = .06f;
                 if(mountainValue > mtnCap){
                     mountainValue = mtnCap;
                 }
@@ -633,7 +631,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
-    public static IEnumerator GenerateSpawns(ChunkData cd, float temp, float humid, float wetness, float height, float x, float z, float xOffset, float zOffset){
+    public static IEnumerator GenerateSpawns(ChunkData cd, float temp, float humid, float wetness, float height, float x, float z, float xOffset, float zOffset, float skewHoriz){
 
         SpawnParameters spawnParameters;
         float placementDensity;
@@ -661,8 +659,8 @@ public class ChunkGenerator : MonoBehaviour
                 {
                     bundleName = SpawnParameters.GetBundleName(feature.name);
                     randomPositionOffset = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
-                    spawnPosition = new Vector3(x + xOffset, height * ElevationAmplitude, z + zOffset) + randomPositionOffset;
-                    spawnScale = Vector3.one * spawnParameters.scale * ChunkGenerator.current.treeScale;
+                    spawnPosition = new Vector3(x + xOffset + skewHoriz, height * ElevationAmplitude, z + zOffset + skewHoriz) + randomPositionOffset;
+                    spawnScale = Vector3.one * spawnParameters.scale;
                     o = GameObject.Instantiate(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent.transform);
                     o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
 
@@ -751,18 +749,20 @@ public class ChunkGenerator : MonoBehaviour
         // set terrain vertices according to HeightMap, and set colors
         // NOTE: vertex index = (z * (ChunkSize + 2) + x
         float height;
-        float rockiness = 0;
-        //float skewHoriz;
+        float rockiness;
+        float skewHoriz;
+        float[,] skewHorizMap = new float[ChunkSize + 2, ChunkSize + 2];
         for (int i = 0, z = 0; z < ChunkSize + 2; z++)
         {
             for (int x = 0; x < ChunkSize + 2; x++)
             {
                 height = HeightMap[x, z] * ElevationAmplitude;
-                //rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 30f, (z + zOffset) / 30f) * Mathf.PerlinNoise(height / 50f, 0f), 2f);
-                //skewHoriz = (rockiness * 2f - 1f) * 36f * RockProtrusion;
-                //TerrainVertices[i] = new Vector3(x + xOffset + skewHoriz, height, z + zOffset + skewHoriz);
-                TerrainVertices[i] = new Vector3(x + xOffset, height, z + zOffset);
-                // TerrainVertices[i] = new Vector3(x + xOffset, HeightMap[x, z] * ElevationAmplitude, z + zOffset);
+                rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 30f, (z + zOffset) / 30f), 2f);
+                skewHoriz = (rockiness * 2f - 1f) * 36f * RockProtrusion;
+                skewHoriz *= Mathf.InverseLerp(SeaLevel, SeaLevel + (meter * 20f), HeightMap[x, z]);
+                skewHorizMap[x, z] = skewHoriz;
+                TerrainVertices[i] = new Vector3(x + xOffset + skewHoriz, height, z + zOffset + skewHoriz);
+                //TerrainVertices[i] = new Vector3(x + xOffset, height, z + zOffset);
                 TerrainColors[i] = SetVertexColor(x + xOffset, z + zOffset, HeightMap[x, z], MountainMap[x, z], TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], FreshWaterMap[x, z], rockiness);
                 i++;
             }
@@ -810,7 +810,7 @@ public class ChunkGenerator : MonoBehaviour
                 if(z > 0 && x > 0 && TreeMap[x, z]){
                     normalIndex = (z * (ChunkSize + 2)) + x;
                     if(normals[normalIndex].y >= GrassNormal){
-                        StartCoroutine(GenerateSpawns(cd, TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], HeightMap[x, z], x, z, xOffset, zOffset));
+                        StartCoroutine(GenerateSpawns(cd, TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], HeightMap[x, z], x, z, xOffset, zOffset, skewHorizMap[x, z]));
                     }
                 }
                 

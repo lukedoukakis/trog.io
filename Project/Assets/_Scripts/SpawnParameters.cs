@@ -57,18 +57,18 @@ public class SpawnParameters
     public static Dictionary<string, SpawnParameters> SpawnParametersDict = new Dictionary<string, SpawnParameters>(){
 
         // terrain features
-        {"TreeAcacia", new SpawnParameters(2f, hgtDry, q3, q3, new Vector2(.1f, .1f), false)},
-        {"TreeJungle", new SpawnParameters(2f, hgtDry, q4, q4, new Vector2(.7f, .7f), false)},
-        {"TreeFir", new SpawnParameters(2.5f, hgtDry, h1, h2, new Vector2(.1f, .4f), false)},
-        {"TreePalm", new SpawnParameters(2.5f, hgtDry, q4, h2, new Vector2(.1f, .1f), false)},
+        {"TreeAcacia", new SpawnParameters(.5f, hgtDry, q3, q3, new Vector2(.1f, .1f), false)},
+        {"TreeJungle", new SpawnParameters(.5f, hgtDry, q4, q4, new Vector2(.7f, .7f), false)},
+        {"TreeFir", new SpawnParameters(.625f, hgtDry, h1, h2, new Vector2(.1f, .5f), false)},
+        {"TreePalm", new SpawnParameters(.625f, hgtDry, q4, h2, new Vector2(.1f, .1f), false)},
         //{"TreeOak", new FeatureAttributes(2f, hgtDry, h1, q1, new Vector2(.1f, .4f), false)},
-        {"Grass", new SpawnParameters(2f, hgtWater, q3, q3, new Vector2(.1f, .1f), true)},
-        {"Plant", new SpawnParameters(1f, hgtDry, h2, h2, new Vector2(.1f, .8f), true)},
-        {"Reed", new SpawnParameters(1f, hgtWater, all, all, new Vector2(.42f, .42f), true)},
-        {"Mushroom", new SpawnParameters(1.5f, hgtDry, h2, q3, new Vector2(.1f, .1f), true)},
-        {"Bush", new SpawnParameters(1.5f, hgtDry, h1, all, new Vector2(.1f, .5f), true)},
-        {"DeadBush", new SpawnParameters(3f, hgtDry, h1, h1, new Vector2(.15f, .15f), true)},
-        {"Cactus", new SpawnParameters(2.5f, hgtDry, q1, q1, new Vector2(.1f, .1f), false)},
+        {"Grass", new SpawnParameters(.5f, hgtWater, q3, q3, new Vector2(.1f, .1f), true)},
+        {"Plant", new SpawnParameters(.25f, hgtDry, h2, h2, new Vector2(.1f, .8f), true)},
+        {"Reed", new SpawnParameters(.25f, hgtWater, all, all, new Vector2(.42f, .42f), true)},
+        {"Mushroom", new SpawnParameters(.75f, hgtDry, h2, q3, new Vector2(.1f, .1f), true)},
+        {"Bush", new SpawnParameters(.375f, hgtDry, h1, all, new Vector2(.1f, .5f), true)},
+        {"DeadBush", new SpawnParameters(.75f, hgtDry, h1, h1, new Vector2(.15f, .15f), true)},
+        {"Cactus", new SpawnParameters(.625f, hgtDry, q1, q1, new Vector2(.1f, .1f), false)},
 
         // creatures
         {"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(.01f, .01f), true)},

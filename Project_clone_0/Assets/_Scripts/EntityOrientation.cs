@@ -107,7 +107,7 @@ public class EntityOrientation : EntityComponent
         {
 
 
-            Vector3 dirForward = transform.forward;
+            Vector3 dirForward = bodyRotationTarget == null ? transform.forward : (bodyRotationTarget.position - body.position).normalized;
             bool moving = entityPhysics.IsMoving();
             Vector3 dirMovement = moving ? entityPhysics.GetHorizVelocity() : dirForward;
             dirMovement.y = 0f;
