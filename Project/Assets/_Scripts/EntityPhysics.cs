@@ -30,7 +30,7 @@ public class EntityPhysics : EntityComponent
 
     public static float BASE_FORCE_JUMP = 2800f;
     public static float BASE_FORCE_THROW = 400f;
-    public static float BASE_ACCELERATION = 8f;
+    public static float BASE_ACCELERATION = 15f;
     public static float BASE_MAX_SPEED = 11f;
     public static float BASE_COOLDOWN_JUMP = .15f;
     public static float WEAPON_CHARGETIME_MAX = 3f;
