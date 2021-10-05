@@ -68,6 +68,9 @@ public class EntityPhysics : EntityComponent
     public Transform basePositionHips, basePositionFootRight, basePositionFootLeft, basePositionHandRight, basePositionHandLeft;
     public Transform targetHips, targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft, targetFingerRight, targetFingerLeft;
     public Vector3 plantPosFootRight, plantPosFootLeft, plantPosHandRight, plantPosHandLeft;
+    public Transform poleHandRight;
+    public Transform polePosition_handRight_underhandGrip, polePosition_handRight_overhandGrip;
+    public Transform polePositionTarget_handRight;
     public float updateTime_footRight, updateTime_footLeft, updateTime_handRight, updateTime_handLeft, updateTime_hips;
 
     // ikProfile settings
@@ -193,6 +196,11 @@ public class EntityPhysics : EntityComponent
         updateTime_handRight = .5f;
         updateTime_handLeft = 0f;
         updateTime_hips = 0f;
+
+        poleHandRight = ikParent.Find("PoleHandRight");
+        polePosition_handRight_underhandGrip = ikParent.Find("PolePositionHandRightUnderhand");
+        polePosition_handRight_overhandGrip = ikParent.Find("PolePositionHandRightOverhand");
+        polePositionTarget_handRight = polePosition_handRight_underhandGrip;
 
         if(!quadripedal){
             handFree_right = handFree_left = true;
@@ -330,13 +338,20 @@ public class EntityPhysics : EntityComponent
                 UpdateIKForCarryingItems();
             }
         }
+
+        UpdateWeaponPolePosition();
+
         
         float footPlantTimeUpdateSpeed = runCycle_strideFrequency * Time.deltaTime;
         float hipsUpdateSpeed = footPlantTimeUpdateSpeed / 6f;
-        updateTime_footRight += footPlantTimeUpdateSpeed;
-        updateTime_footLeft += footPlantTimeUpdateSpeed;
-        updateTime_handRight += footPlantTimeUpdateSpeed;
-        updateTime_handLeft += footPlantTimeUpdateSpeed;
+        if(IsMoving())
+        {
+            updateTime_footRight += footPlantTimeUpdateSpeed;
+            updateTime_footLeft += footPlantTimeUpdateSpeed;
+            updateTime_handRight += footPlantTimeUpdateSpeed;
+            updateTime_handLeft += footPlantTimeUpdateSpeed;
+        }
+        
         updateTime_hips += hipsUpdateSpeed;
 
 
@@ -470,42 +485,79 @@ public class EntityPhysics : EntityComponent
         
     }
 
+    public void UpdateWeaponPoleTarget()
+    {
+
+        //Debug.Log("updating weapon pole target");
+
+        Item weapon = entityItems.weaponEquipped_item;
+        if (weapon.holdStyle.Equals(Item.ItemHoldStyle.Spear))
+        {
+            if (entityItems.rangedMode)
+            {
+                polePositionTarget_handRight = polePosition_handRight_underhandGrip;
+            }
+            else
+            {
+                polePositionTarget_handRight = polePosition_handRight_overhandGrip;
+            }
+        }
+        else if (weapon.holdStyle.Equals(Item.ItemHoldStyle.Axe))
+        {
+            polePositionTarget_handRight = polePosition_handRight_underhandGrip;
+        }
+    }
+
+    public void UpdateWeaponPolePosition()
+    {
+        float speed = 30f * Time.deltaTime;
+
+        poleHandRight.position = Vector3.Lerp(poleHandRight.position, polePositionTarget_handRight.position, speed);
+    }
+
     public void UpdateIKForCarryingItems(){
 
         if(quadripedal){
             return;
         }
 
-        GameObject objectRight = entityItems.weaponEquipped_object;
-        GameObject objectLeft = entityItems.holding_object;
+        GameObject weaponObject = entityItems.weaponEquipped_object;
+        GameObject holdingObject = entityItems.holding_object;
 
 
         // right hand
-        if(objectRight != null){
+        if(weaponObject != null)
+        {
             ikScript_handRight.enabled = true;
             handFree_right = false;
-            ikScript_handRight.Target = objectRight.transform.Find("IKTargetT_Right");
+            ikScript_handRight.Target = weaponObject.transform.Find("IKTargetT_Right");
+            UpdateWeaponPoleTarget();
         }
-        else{
+        else
+        {
             ikScript_handRight.enabled = false;
             ikScript_handRight.Target = ikParent.Find("TargetHandRight");
             handFree_right = true;
         }
         
         // left hand
-        if(objectLeft != null){
+        if(holdingObject != null)
+        {
             ikScript_handLeft.enabled = true;
-            ikScript_handLeft.Target = objectLeft.transform.Find("IKTargetT_Left");
+            ikScript_handLeft.Target = holdingObject.transform.Find("IKTargetT_Left");
             handFree_left = false;
         }
-        else{
+        else
+        {
 
             // if hand is free, support right hand with holding the weapon, if equipped
-            if(!handFree_right && entityItems.weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Axe)){
+            if(!handFree_right && entityItems.weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Axe))
+            {
                 ikScript_handLeft.enabled = true;
-                ikScript_handLeft.Target = objectRight.transform.Find("IKTargetT_Left");
+                ikScript_handLeft.Target = weaponObject.transform.Find("IKTargetT_Left");
             }
-            else{
+            else
+            {
                 ikScript_handLeft.enabled = false;
                 ikScript_handLeft.Target = ikParent.transform.Find("TargetHandLeft");
             }
@@ -589,40 +641,30 @@ public class EntityPhysics : EntityComponent
             acd.SetProjectile(projectile);
             Utility.ToggleObjectPhysics(projectile.worldObject, true, true, true, true);
             Utility.IgnorePhysicsCollisions(projectile.worldObject, gameObject.GetComponentInChildren<Collider>());
+            entityItems.SetUpdateWeaponOrientation(false);
 
             Vector3 throwDir = entityOrientation.body.forward + (Vector3.up * .25f);
             Rigidbody projectileRb = projectile.worldObject.GetComponent<Rigidbody>();
             projectileRb.centerOfMass = Vector3.up * .622f;
             projectileRb.angularDrag = 5f;
-            float addForceTime = .2f;
+            float throwTime = .5f;
+            float addforceTime = .2f;
             float force = BASE_FORCE_THROW * Mathf.Lerp(1f, 1.5f, Mathf.InverseLerp(0f, BASE_MAX_SPEED, GetHorizVelocity().magnitude));
             projectileRb.velocity = rb.velocity;
 
-            Transform t = new GameObject().transform;
-            Vector3 lookAtPos;
-            for(int i = 0; i < addForceTime * 100f; ++i)
+            for(int i = 0; i < throwTime * 100f; ++i)
             {
-                projectileRb.AddForce(throwDir * force);
-                t.position = projectile.worldObject.transform.position;
-                lookAtPos = projectile.worldObject.transform.position + projectileRb.velocity.normalized;
-                t.LookAt(lookAtPos, transform.forward * -1f);
-                //projectile.worldObject.transform.rotation = t.rotation;
+                if(i < addforceTime * 100f)
+                {
+                    projectileRb.AddForce(throwDir * force);
+                }
                 yield return new WaitForFixedUpdate();
             }
 
             entityItems.weaponEquipped_item = null;
             entityItems.weaponEquipped_object = null;
+            entityItems.SetUpdateWeaponOrientation(true);
             entityItems.OnItemsChange();
-
-            while(acd.GetProjectile() != null)
-            {
-                t.position = projectile.worldObject.transform.position;
-                lookAtPos = projectile.worldObject.transform.position + projectileRb.velocity.normalized;
-                t.LookAt(lookAtPos, transform.forward * -1f);
-                //projectile.worldObject.transform.rotation = Quaternion.Slerp(projectile.transform.rotation, t.rotation, 30f * Time.deltaTime);
-                yield return null;
-            }
-            GameObject.Destroy(t.gameObject); 
 
 
         }
@@ -809,7 +851,7 @@ public class EntityPhysics : EntityComponent
 
         System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
         timer.Start();
-        while(timer.ElapsedMilliseconds / 1000f < time && Vector3.Distance(handRight.position, handleT.position) < .2f){
+        while(timer.ElapsedMilliseconds / 1000f < time && Vector3.Distance(handRight.position, handleT.position) < .5f){
             yield return null;
         }
         timer.Stop();
@@ -1041,7 +1083,7 @@ public class EntityPhysics : EntityComponent
     }
 
     public bool IsMoving(){
-        return GetHorizVelocity().magnitude > .1f;
+        return GetHorizVelocity().magnitude > .2f;
     }
 
     bool GroundIsClose(){

@@ -36,6 +36,7 @@ public class EntityItems : EntityComponent
     public Transform basePosition_holding;
 
     bool itemOrientationUpdateEnabled;
+    bool updateWeaponEquippedOrientation;
     public Animator itemOrientationAnimator;
 
     public static float lerpSpeed_holding = 30f;
@@ -78,6 +79,7 @@ public class EntityItems : EntityComponent
     {
         ToggleItemOrientationUpdate(true);
         SetWeaponRangedMode(false);
+        SetUpdateWeaponOrientation(true);
     }
 
     // client method when an object is interacted with
@@ -385,7 +387,9 @@ public class EntityItems : EntityComponent
         if(rangedStatus != rangedMode)
         {
             rangedMode = rangedStatus;
+            entityPhysics.UpdateWeaponPoleTarget();
             Debug.Log("Ranged mode: " + rangedMode);
+
         }
     }
 
@@ -483,7 +487,10 @@ public class EntityItems : EntityComponent
     }
 
 
-
+    public void SetUpdateWeaponOrientation(bool value)
+    {
+        updateWeaponEquippedOrientation = value;
+    }
 
     void UpdateItemOrientations()
     {
@@ -502,33 +509,36 @@ public class EntityItems : EntityComponent
         // handle equipped weapon orientation
         if (itemOrientationUpdateEnabled)
         {
-            if (weaponEquipped_object != null)
+            if (updateWeaponEquippedOrientation)
             {
-                Transform orientation_weaponEquipped;
-                Transform basePosition_weaponEquipped;
-                if (weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Spear))
+                if (weaponEquipped_object != null)
                 {
-                    orientation_weaponEquipped = orientation_weaponEquipped_spear;
-                    basePosition_weaponEquipped = basePosition_weaponEquipped_spear;
-                }
-                else if (weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Axe))
-                {
-                    orientation_weaponEquipped = orientation_weaponEquipped_axe;
-                    basePosition_weaponEquipped = basePosition_weaponEquipped_axe;
-                }
-                else
-                {
-                    orientation_weaponEquipped = basePosition_weaponEquipped = null;
-                }
+                    Transform orientation_weaponEquipped;
+                    Transform basePosition_weaponEquipped;
+                    if (weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Spear))
+                    {
+                        orientation_weaponEquipped = orientation_weaponEquipped_spear;
+                        basePosition_weaponEquipped = basePosition_weaponEquipped_spear;
+                    }
+                    else if (weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Axe))
+                    {
+                        orientation_weaponEquipped = orientation_weaponEquipped_axe;
+                        basePosition_weaponEquipped = basePosition_weaponEquipped_axe;
+                    }
+                    else
+                    {
+                        orientation_weaponEquipped = basePosition_weaponEquipped = null;
+                    }
 
-                orientation_weaponEquipped.position = basePosition_weaponEquipped.position;
-                orientation_weaponEquipped.rotation = basePosition_weaponEquipped.rotation;
-                Vector3 targetPos = orientation_weaponEquipped.position;
-                Quaternion targetRot = orientation_weaponEquipped.rotation;
-                Vector3 currentPos = weaponEquipped_object.transform.position;
-                Quaternion currentRot = weaponEquipped_object.transform.rotation;
-                weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, lerpSpeed_weapon * Time.deltaTime);
-                weaponEquipped_object.transform.rotation = Quaternion.Slerp(currentRot, targetRot, float.MaxValue);
+                    orientation_weaponEquipped.position = basePosition_weaponEquipped.position;
+                    orientation_weaponEquipped.rotation = basePosition_weaponEquipped.rotation;
+                    Vector3 targetPos = orientation_weaponEquipped.position;
+                    Quaternion targetRot = orientation_weaponEquipped.rotation;
+                    Vector3 currentPos = weaponEquipped_object.transform.position;
+                    Quaternion currentRot = weaponEquipped_object.transform.rotation;
+                    weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, lerpSpeed_weapon * Time.deltaTime);
+                    weaponEquipped_object.transform.rotation = Quaternion.Slerp(currentRot, targetRot, float.MaxValue);
+                }
             }
         }
         
