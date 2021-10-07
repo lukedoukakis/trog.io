@@ -196,13 +196,13 @@ public class EntityPhysics : EntityComponent
         updateTime_handRight = .5f;
         updateTime_handLeft = 0f;
         updateTime_hips = 0f;
-
-        poleHandRight = ikParent.Find("PoleHandRight");
-        polePosition_handRight_underhandGrip = ikParent.Find("PolePositionHandRightUnderhand");
-        polePosition_handRight_overhandGrip = ikParent.Find("PolePositionHandRightOverhand");
-        polePositionTarget_handRight = polePosition_handRight_underhandGrip;
-
+        
         if(!quadripedal){
+            poleHandRight = ikParent.Find("PoleHandRight");
+            polePosition_handRight_underhandGrip = ikParent.Find("PolePositionHandRightUnderhand");
+            polePosition_handRight_overhandGrip = ikParent.Find("PolePositionHandRightOverhand");
+            polePositionTarget_handRight = polePosition_handRight_underhandGrip;
+
             handFree_right = handFree_left = true;
         }
         else{
@@ -223,7 +223,11 @@ public class EntityPhysics : EntityComponent
         }
 
         ToggleIK(true);
-        UpdateIKForCarryingItems();
+
+        if(!quadripedal)
+        {
+            UpdateIKForCarryingItems();
+        }
     }
 
     public void ToggleIK(bool value){
@@ -335,21 +339,28 @@ public class EntityPhysics : EntityComponent
             if(!IN_WATER){
                 ToggleIK(true);
                 IKUpdate();
-                UpdateIKForCarryingItems();
+                if (!quadripedal)
+                {
+                    UpdateWeaponPolePosition();
+                }
             }
         }
 
-        UpdateWeaponPolePosition();
+        if(!quadripedal)
+        {
+            UpdateWeaponPolePosition();
+        }
 
         
         float footPlantTimeUpdateSpeed = runCycle_strideFrequency * Time.deltaTime;
+        float handPlantTimeUpdateSpeed = quadripedal ? footPlantTimeUpdateSpeed : footPlantTimeUpdateSpeed * .25f;
         float hipsUpdateSpeed = footPlantTimeUpdateSpeed / 6f;
         if(IsMoving())
         {
             updateTime_footRight += footPlantTimeUpdateSpeed;
             updateTime_footLeft += footPlantTimeUpdateSpeed;
-            updateTime_handRight += footPlantTimeUpdateSpeed;
-            updateTime_handLeft += footPlantTimeUpdateSpeed;
+            updateTime_handRight += handPlantTimeUpdateSpeed;
+            updateTime_handLeft += handPlantTimeUpdateSpeed;
         }
         
         updateTime_hips += hipsUpdateSpeed;
