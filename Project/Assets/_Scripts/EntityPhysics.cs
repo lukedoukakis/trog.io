@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DitzelGames.FastIK;
+using System.Linq;
 
 public class EntityPhysics : EntityComponent
 {
@@ -269,6 +270,12 @@ public class EntityPhysics : EntityComponent
 
             UpdateLimbPositions(IN_WATER);
 
+            // if(!quadripedal)
+            // {
+            //     HandleHandPlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, ikScript_handRight, ref updateTime_handRight, handFree_right, IN_WATER);
+            //     HandleHandPlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ikScript_handLeft, ref updateTime_handLeft, handFree_left, IN_WATER);
+            // }
+
             if (groundIsClose || IN_WATER)
             {
                 // not in the air
@@ -279,23 +286,29 @@ public class EntityPhysics : EntityComponent
                     // check if plant points need update
                     if (updateTime_footRight >= 1f)
                     {
-                        CyclePlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight, IN_WATER);
+                        CycleFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight, IN_WATER);
                     }
                     if (updateTime_footLeft >= 1f)
                     {
-                        CyclePlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, ref updateTime_footLeft, IN_WATER);
+                        CycleFootPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, ref updateTime_footLeft, IN_WATER);
                     }
 
                     // if quadripedal, check for hand placement update as well
                     if(quadripedal){
                         if (updateTime_handRight >= 1f)
                         {
-                            CyclePlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, ref updateTime_handRight, IN_WATER);
+                            CycleFootPlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, ref updateTime_handRight, IN_WATER);
                         }
                         if (updateTime_handLeft >= 1f)
                         {
-                            CyclePlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ref updateTime_handLeft, IN_WATER);
+                            CycleFootPlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ref updateTime_handLeft, IN_WATER);
                         }
+                    }
+
+                    // if not quaddripedal, check for hand ik update
+                    else
+                    {
+
                     }
 
                 }
@@ -326,11 +339,11 @@ public class EntityPhysics : EntityComponent
             }
 
             // update plant positions for accuracy
-            UpdatePlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, groundIsClose);
-            UpdatePlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, groundIsClose);
+            UpdateFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, groundIsClose);
+            UpdateFootPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, groundIsClose);
             if(quadripedal){
-                UpdatePlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, groundIsClose);
-                UpdatePlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, groundIsClose);
+                UpdateFootPlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, groundIsClose);
+                UpdateFootPlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, groundIsClose);
             }
             ApplyFootPositionRestraints();
 
@@ -439,20 +452,20 @@ public class EntityPhysics : EntityComponent
 
 
 
-    public void CyclePlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, ref float updateTime, bool water){
+    public void CycleFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, ref float updateTime, bool water){
 
         float forwardReachDistance = water ? 0f : runCycle_limbForwardReachDistance * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityOrientation.bodyLean * .1f);
-        plantPos = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
+        plantPositionPointer = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
         updateTime = Mathf.Max(updateTime, 1f) - 1f;
     }
-    public void UpdatePlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPos, bool onGround){
+    public void UpdateFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, bool onGround){
         // move plantPos down until hits terrain
         if (onGround)
         {
             RaycastHit hit;
-            if (Physics.Raycast(plantPos, Vector3.down, out hit, 100f, layerMask_walkable))
+            if (Physics.Raycast(plantPositionPointer, Vector3.down, out hit, 100f, layerMask_walkable))
             {
-                plantPos.y = hit.point.y + distanceFromGround;
+                plantPositionPointer.y = hit.point.y + distanceFromGround;
             }
         }
         Vector3 pos = targetIk.position;
@@ -482,6 +495,60 @@ public class EntityPhysics : EntityComponent
             targetHandLeft.position = pos;
         }
     }
+
+
+    public void HandleHandPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, FastIKFabric ikScript, ref float updateTime, bool handFree, bool water)
+    {
+
+        Debug.Log("Handling hand plant pos");
+
+        if(!handFree){ return; }
+
+        Vector3 referencePosition = kneeHeightT.position;
+
+        // if plant pos out of range, set hand plant position to the nearest nearby obstacle
+        bool needsUpdate = Vector3.Distance(plantPositionPointer, referencePosition) > 2f; 
+
+        if (needsUpdate)
+        {
+            Debug.Log("needs update");
+
+            RaycastHit[] hits = Physics.SphereCastAll(referencePosition + (Vector3.up * 2f), 1f, Vector3.down, 3f, layerMask_walkable, QueryTriggerInteraction.Ignore).Where(hit => !hit.point.Equals(Vector3.zero) && hit.point.y >= referencePosition.y).ToArray();
+            Debug.Log("hits: " + hits.Length);
+            
+            if (hits.Length > 0f)
+            {
+                ikScript.enabled = true;
+
+                float min = float.MaxValue;
+                Vector3 targetHandPos = Vector3.zero;
+                foreach (RaycastHit hit in hits)
+                {
+                    Debug.Log("..." + hit.collider.gameObject.name);
+                    float distance = Vector3.Distance(referencePosition, hit.point);
+                    if (distance < min && hit.point.y >= referencePosition.y);
+                    {
+                        min = distance;
+                        targetHandPos = hit.point;
+                    }
+                }
+
+                Debug.Log("DISTANCE: " + Vector3.Distance(referencePosition, targetHandPos));
+                targetIk.position = targetHandPos;
+                plantPositionPointer = targetHandPos;
+            }
+            else
+            {
+                ikScript.enabled = false;
+            }
+            
+        }
+        
+
+    
+    }
+
+
 
     public void SetPlantPosition(Transform targetIk, Transform targetTransform, Vector3 offset, ref Vector3 positionPointer){
         Vector3 pos = targetTransform.position + offset;
