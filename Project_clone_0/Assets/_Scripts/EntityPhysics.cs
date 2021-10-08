@@ -23,8 +23,8 @@ public class EntityPhysics : EntityComponent
     public Transform hips, head, handRight, handLeft, fingerRight, fingerLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float BASE_CASTDISTANCE_GROUND_PLAYER = .3f;
-    public static float BASE_CASTDISTANCE_GROUND_NPC = .3f;
+    public static float BASE_CASTDISTANCE_GROUND_PLAYER = .1f;
+    public static float BASE_CASTDISTANCE_GROUND_NPC = .5f;
     public static float BASE_CASTDISTANCE_WALL = 1f;
     float groundCastDistance;
     float distanceFromGround;
@@ -40,10 +40,12 @@ public class EntityPhysics : EntityComponent
 
     public Vector3 moveDir;
     public bool onWalkableGround;
-    public bool jumping, jumpOpposite, sprinting;
+    public bool jumping, jumpOffLeft, jumpOffRight, sprinting;
+    Vector3 jumpPoint;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
     public float acceleration;
     public float maxSpeed_run, maxSpeed_sprint, maxSpeed_climb, maxSpeed_swim;
+
 
 
     public static float landScrunch_recoverySpeed = .75f;
@@ -54,6 +56,8 @@ public class EntityPhysics : EntityComponent
     public float crouch;
     public bool handFree_right, handFree_left;
     public bool insideCamp;
+    public bool handGrab;
+    public float speedLimitModifier_launch;
 
 
     public float ROTATION_Y_THIS;
@@ -114,6 +118,7 @@ public class EntityPhysics : EntityComponent
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
+        speedLimitModifier_launch = 1f;
 
         ikProfile = entityInfo.speciesInfo.ikProfile;
         quadripedal = ikProfile.quadripedal;
@@ -270,15 +275,17 @@ public class EntityPhysics : EntityComponent
 
             UpdateLimbPositions(IN_WATER);
 
-            // if(!quadripedal)
-            // {
-            //     HandleHandPlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, ikScript_handRight, ref updateTime_handRight, handFree_right, IN_WATER);
-            //     HandleHandPlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ikScript_handLeft, ref updateTime_handLeft, handFree_left, IN_WATER);
-            // }
+            if(!quadripedal)
+            {
+                handGrab = HandleHandGrab(targetHandRight, basePositionHandRight, ref plantPosHandRight, ikScript_handRight, (body.right + body.forward).normalized, ref updateTime_handRight, handFree_right, IN_WATER);
+                handGrab = handGrab || HandleHandGrab(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ikScript_handLeft, ((body.right * -1f) + body.forward).normalized, ref updateTime_handLeft, handFree_left, IN_WATER);
+            }
 
+
+            // if on the ground
             if (groundIsClose || IN_WATER)
             {
-                // not in the air
+
                 if (moving || IN_WATER)
                 {
                     // moving
@@ -305,12 +312,6 @@ public class EntityPhysics : EntityComponent
                         }
                     }
 
-                    // if not quaddripedal, check for hand ik update
-                    else
-                    {
-
-                    }
-
                 }
                 else
                 {
@@ -323,11 +324,30 @@ public class EntityPhysics : EntityComponent
                     }
                 }
             }
+
+            // in the air
             else
             {
-                // in the air
-                SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + entityOrientation.body.right * 0f, ref plantPosFootLeft);
-                SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityOrientation.body.forward * .5f + entityOrientation.body.right * .1f, ref plantPosFootRight);
+                // if jumping, set foot plant point on jump point
+                if(jumpOffRight && groundIsClose)
+                {
+                    SetPlantPosition(targetFootRight, basePositionFootRight, jumpPoint - basePositionFootRight.position, ref plantPosFootRight);
+                }
+                else
+                {
+                    SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityOrientation.body.forward * .5f + entityOrientation.body.right * .1f, ref plantPosFootRight);
+                }
+                if(jumpOffLeft && groundIsClose)
+                {
+                    SetPlantPosition(targetFootLeft, basePositionFootLeft, jumpPoint - basePositionFootLeft.position, ref plantPosFootLeft);
+                }
+                else
+                {
+                    SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + entityOrientation.body.right * 0f, ref plantPosFootLeft);
+                }
+    
+                
+                
                 updateTime_footRight = .2f;
                 updateTime_footLeft = .7f;
                 if(quadripedal){
@@ -476,14 +496,21 @@ public class EntityPhysics : EntityComponent
     public void ApplyFootPositionRestraints(){
         Vector3 pos;
 
-        pos = targetFootRight.position;
-        pos.y = Mathf.Min(pos.y, kneeHeightT.position.y);
-        targetFootRight.position = pos;
+        if (!jumpOffRight)
+        {
+            pos = targetFootRight.position;
+            pos.y = Mathf.Min(pos.y, kneeHeightT.position.y);
+            targetFootRight.position = pos;
+        }
 
-        pos = targetFootLeft.position;
-        pos.y = Mathf.Min(pos.y, kneeHeightT.position.y);
-        targetFootLeft.position = pos;
+        if (!jumpOffLeft)
+        {
+            pos = targetFootLeft.position;
+            pos.y = Mathf.Min(pos.y, kneeHeightT.position.y);
+            targetFootLeft.position = pos;
 
+        }
+        
         if (quadripedal)
         {
             pos = targetHandRight.position;
@@ -497,24 +524,34 @@ public class EntityPhysics : EntityComponent
     }
 
 
-    public void HandleHandPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, FastIKFabric ikScript, ref float updateTime, bool handFree, bool water)
+    public bool HandleHandGrab(Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, FastIKFabric ikScript, Vector3 directionToLook, ref float updateTime, bool handFree, bool water)
     {
 
-        Debug.Log("Handling hand plant pos");
+        //Debug.Log("Handling hand plant pos");
 
-        if(!handFree){ return; }
+        if(!handFree){ return false; }
 
-        Vector3 referencePosition = kneeHeightT.position;
+        Vector3 referencePosition = obstacleHeightSense.position;
+        float handSpeed = 50f * Time.deltaTime;
+
+
+        // if(body.transform.InverseTransformDirection(plantPositionPointer - referencePosition).z < 0f){
+        //     Debug.Log("Behind");
+        // }
 
         // if plant pos out of range, set hand plant position to the nearest nearby obstacle
-        bool needsUpdate = Vector3.Distance(plantPositionPointer, referencePosition) > 2f; 
+        bool needsUpdate =
+            Vector3.Distance(plantPositionPointer, referencePosition) > 2f
+            || plantPositionPointer.y < referencePosition.y
+            //|| body.transform.InverseTransformDirection(plantPositionPointer - referencePosition).z < 0f
+            ;
 
         if (needsUpdate)
         {
-            Debug.Log("needs update");
+            //Debug.Log("needs update");
 
-            RaycastHit[] hits = Physics.SphereCastAll(referencePosition + (Vector3.up * 2f), 1f, Vector3.down, 3f, layerMask_walkable, QueryTriggerInteraction.Ignore).Where(hit => !hit.point.Equals(Vector3.zero) && hit.point.y >= referencePosition.y).ToArray();
-            Debug.Log("hits: " + hits.Length);
+            RaycastHit[] hits = Physics.SphereCastAll(referencePosition + Vector3.up * .25f, .5f, directionToLook, 1.6f, layerMask_walkable, QueryTriggerInteraction.Ignore).Where(hit => hit.point.y >= referencePosition.y).ToArray();
+            //Debug.Log("hits: " + hits.Length);
             
             if (hits.Length > 0f)
             {
@@ -524,25 +561,30 @@ public class EntityPhysics : EntityComponent
                 Vector3 targetHandPos = Vector3.zero;
                 foreach (RaycastHit hit in hits)
                 {
-                    Debug.Log("..." + hit.collider.gameObject.name);
+                    //Debug.Log("..." + hit.collider.gameObject.name);
                     float distance = Vector3.Distance(referencePosition, hit.point);
-                    if (distance < min && hit.point.y >= referencePosition.y);
+                    if (distance < min && hit.point.y >= referencePosition.y)
                     {
                         min = distance;
                         targetHandPos = hit.point;
                     }
                 }
 
-                Debug.Log("DISTANCE: " + Vector3.Distance(referencePosition, targetHandPos));
-                targetIk.position = targetHandPos;
+                //Debug.Log("DISTANCE: " + Vector3.Distance(referencePosition, targetHandPos));
                 plantPositionPointer = targetHandPos;
+                targetIk.position = Vector3.Lerp(targetIk.position, plantPositionPointer, handSpeed);
             }
             else
             {
                 ikScript.enabled = false;
-            }
-            
+                return false;
+            }   
         }
+        else{
+            targetIk.position = Vector3.Lerp(targetIk.position, plantPositionPointer, handSpeed);
+        }
+
+        return true;
         
 
     
@@ -671,7 +713,22 @@ public class EntityPhysics : EntityComponent
     }
     IEnumerator _Jump(float power){
         jumping = true;
-        jumpOpposite = !jumpOpposite;
+        Vector3 horVelDir = GetHorizVelocity().normalized;
+        Vector3 rightFootForwardNess = Vector3.Project(footRight.position - transform.position, horVelDir);
+        Vector3 leftFootForwardness = Vector3.Project(footRight.position - transform.position, horVelDir);
+        if(rightFootForwardNess.magnitude > leftFootForwardness.magnitude)
+        {
+            jumpOffRight = true;
+            jumpOffLeft = false;
+            jumpPoint = footRight.position;
+        }
+        else
+        {
+            jumpOffRight = true;
+            jumpOffLeft = false;
+            jumpPoint = footLeft.position;
+        }
+
         if(groundTime <= BASE_COOLDOWN_JUMP){
             float t = BASE_COOLDOWN_JUMP - groundTime;
             yield return new WaitForSecondsRealtime(t);
@@ -683,7 +740,17 @@ public class EntityPhysics : EntityComponent
         rb.AddForce(direction * power, ForceMode.Force);
         jumpTime = 0;
         groundTime = 0;
+        if(handGrab && IsMoving())
+        {
+            float tFinal = 10f;
+            for (float t = 0f; t <= tFinal; ++t)
+            {
+                speedLimitModifier_launch = 1f + (Mathf.Sin(t / tFinal * Mathf.PI) * 10f);
+                yield return new WaitForSecondsRealtime(.01f);
+            }
+        }
         yield return new WaitForSecondsRealtime(.2f);
+        jumpOffRight = jumpOffLeft = false;
         jumping = false;
         yield return null;
     }
@@ -692,7 +759,7 @@ public class EntityPhysics : EntityComponent
     }
 
     public bool CanJump(){
-        if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_walkable)){
+        if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_walkable) || handGrab){
             return true;
         }
         return false;
@@ -980,7 +1047,7 @@ public class EntityPhysics : EntityComponent
             for (int i = 0; i < 50f; ++i)
             {
                 rb.AddForce(dir);
-                yield return null;
+                yield return new WaitForSecondsRealtime(.01f);
             }
         }
     }
@@ -1101,42 +1168,41 @@ public class EntityPhysics : EntityComponent
 
     void LimitSpeed(){
 
+
         Vector3 horvel = rb.velocity;
         float ySpeed = horvel.y;
         horvel.y = 0f;
 
         float max;
-        if(WALLTOUCH){
-            max = 0f;
-            if(ySpeed > maxSpeed_climb/.5f){
-                if(ySpeed > maxSpeed_climb){
-                    ySpeed = maxSpeed_climb;
-                }
-            }
-            else{
-                ySpeed = maxSpeed_climb/.5f;
-            }
-            
-        }else{
-            if(IN_WATER){
-                max = maxSpeed_swim;
-            }
-            else{
-                max = sprinting ? maxSpeed_sprint : maxSpeed_run;
-                if(!jumping && ySpeed > maxSpeed_climb){
-                    ySpeed = maxSpeed_climb; 
-                }
-            }
+
+        if (IN_WATER)
+        {
+            max = maxSpeed_swim;
         }
-        if(!jumping){
-            //max = Mathf.Lerp(max, max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y), 30f * Time.deltaTime);
+        else
+        {
+            max = sprinting ? maxSpeed_sprint : maxSpeed_run;
+            if (!jumping && ySpeed > maxSpeed_climb)
+            {
+                ySpeed = maxSpeed_climb;
+            }
         }
 
-        if(horvel.magnitude > max){
+        if (!jumping)
+        {
+            max = Mathf.Lerp(max, max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y), 30f * Time.deltaTime);
+        }
+
+        max *= speedLimitModifier_launch;
+
+        if (horvel.magnitude > max)
+        {
             horvel = horvel.normalized * max;
             horvel.y = ySpeed;
             rb.velocity = horvel;
         }
+        
+    
 
         
     }

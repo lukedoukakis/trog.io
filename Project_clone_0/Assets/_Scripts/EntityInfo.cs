@@ -78,7 +78,7 @@ public class SpeciesInfo : ScriptableObject{
                     BehaviorType.Aggressive,
                     new List<AttackType>(){AttackType.Weapon},
                     new List<ActionParameters>(){ ActionParameters.GenerateActionParameters(ActionType.Follow, null, -1, null, null, -1, EntityBehavior.distanceThreshold_combat, EntityOrientation.BodyRotationMode.Target, true)},
-                    0f,
+                    .5f,
                     false)
             )
 

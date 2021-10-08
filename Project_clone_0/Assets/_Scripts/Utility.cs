@@ -164,6 +164,11 @@ public class Utility : MonoBehaviour
         GameObject.Destroy(o);
     }
 
+    public static bool RandomBoolean()
+    {
+        return UnityEngine.Random.value >= 0.5f;
+    }
+
 }
 
 
