@@ -13,6 +13,7 @@ public class EntityPhysics : EntityComponent
     public PhysicMaterial noFrictionMat;
     public LayerMask layerMask_water;
     public LayerMask layerMask_walkable;
+    public LayerMask layerMask_feature;
 
     public Rigidbody rb;
     public Animator animator;
@@ -115,6 +116,7 @@ public class EntityPhysics : EntityComponent
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         layerMask_water = LayerMask.GetMask("Water");
         layerMask_walkable = LayerMask.GetMask("Default", "Terrain", "Feature", "Item");
+        layerMask_feature = LayerMask.GetMask("Feature");
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
@@ -532,7 +534,7 @@ public class EntityPhysics : EntityComponent
         if(!handFree){ return false; }
 
         Vector3 referencePosition = obstacleHeightSense.position;
-        float handSpeed = 50f * Time.deltaTime;
+        float handSpeed = 15f * Time.deltaTime;
 
 
         // if(body.transform.InverseTransformDirection(plantPositionPointer - referencePosition).z < 0f){
@@ -550,7 +552,7 @@ public class EntityPhysics : EntityComponent
         {
             //Debug.Log("needs update");
 
-            RaycastHit[] hits = Physics.SphereCastAll(referencePosition + Vector3.up * .25f, .5f, directionToLook, 1.6f, layerMask_walkable, QueryTriggerInteraction.Ignore).Where(hit => hit.point.y >= referencePosition.y).ToArray();
+            RaycastHit[] hits = Physics.SphereCastAll(referencePosition + Vector3.up * .25f, .5f, directionToLook, .75f, layerMask_feature, QueryTriggerInteraction.Ignore).Where(hit => hit.point.y >= referencePosition.y).ToArray();
             //Debug.Log("hits: " + hits.Length);
             
             if (hits.Length > 0f)
@@ -675,13 +677,14 @@ public class EntityPhysics : EntityComponent
             {
                 ikScript_handLeft.enabled = true;
                 ikScript_handLeft.Target = weaponObject.transform.Find("IKTargetT_Left");
+                handFree_left = false;
             }
             else
             {
                 ikScript_handLeft.enabled = false;
                 ikScript_handLeft.Target = ikParent.transform.Find("TargetHandLeft");
+                handFree_left = true;
             }
-            handFree_left = true;
         }
 
 
@@ -1080,6 +1083,7 @@ public class EntityPhysics : EntityComponent
                 onWalkableGround = false;
             }
         }
+        rb.drag = onWalkableGround ? 5f : 0f;
     }
 
     void CheckWall(){
@@ -1249,7 +1253,7 @@ public class EntityPhysics : EntityComponent
         CheckWater();
         //CheckScrunch();
         CheckCrouch();
-        //LimitSpeed();
+        LimitSpeed();
         SetGravity();
     }
 

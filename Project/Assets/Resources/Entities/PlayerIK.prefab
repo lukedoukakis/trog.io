@@ -285,6 +285,9 @@ MonoBehaviour:
   layerMask_walkable:
     serializedVersion: 2
     m_Bits: 0
+  layerMask_feature:
+    serializedVersion: 2
+    m_Bits: 0
   rb: {fileID: 0}
   animator: {fileID: 0}
   iKTargetAnimator: {fileID: 0}
@@ -311,7 +314,8 @@ MonoBehaviour:
   moveDir: {x: 0, y: 0, z: 0}
   onWalkableGround: 0
   jumping: 0
-  jumpOpposite: 0
+  jumpOffLeft: 0
+  jumpOffRight: 0
   sprinting: 0
   offWallTime: 0
   offWaterTime: 0
@@ -328,6 +332,8 @@ MonoBehaviour:
   handFree_right: 0
   handFree_left: 0
   insideCamp: 0
+  handGrab: 0
+  speedLimitModifier_launch: 0
   ROTATION_Y_THIS: 0
   ROTATION_Y_LAST: 0
   GROUNDTOUCH: 0
@@ -365,6 +371,10 @@ MonoBehaviour:
   plantPosFootLeft: {x: 0, y: 0, z: 0}
   plantPosHandRight: {x: 0, y: 0, z: 0}
   plantPosHandLeft: {x: 0, y: 0, z: 0}
+  poleHandRight: {fileID: 0}
+  polePosition_handRight_underhandGrip: {fileID: 0}
+  polePosition_handRight_overhandGrip: {fileID: 0}
+  polePositionTarget_handRight: {fileID: 0}
   updateTime_footRight: 0
   updateTime_footLeft: 0
   updateTime_handRight: 0
@@ -377,7 +387,7 @@ MonoBehaviour:
   runCycle_lerpTightness: 0
   runCycle_limbVerticalDisplacement: 0
   runCycle_limbForwardReachDistance: 0
-  attackCanHit: 0
+  meleeAttackCanHit: 0
   attackHit: 0
 --- !u!114 &8069827555116078495
 MonoBehaviour:
