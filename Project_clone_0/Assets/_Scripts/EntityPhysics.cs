@@ -742,10 +742,11 @@ public class EntityPhysics : EntityComponent
         groundTime = 0;
         if(handGrab && IsMoving())
         {
-            float tFinal = 10f;
-            for (float t = 0f; t <= tFinal; ++t)
+            float tFinal = 20f;
+            for (float t = Mathf.Round(tFinal * .4f); t <= tFinal; ++t)
             {
-                speedLimitModifier_launch = 1f + (Mathf.Sin(t / tFinal * Mathf.PI) * 10f);
+                //Debug.Log(Mathf.Sin(t / tFinal * Mathf.PI));
+                speedLimitModifier_launch = 1f + (Mathf.Sin(t / tFinal * Mathf.PI) * 20f);
                 yield return new WaitForSecondsRealtime(.01f);
             }
         }
@@ -1248,7 +1249,7 @@ public class EntityPhysics : EntityComponent
         CheckWater();
         //CheckScrunch();
         CheckCrouch();
-        LimitSpeed();
+        //LimitSpeed();
         SetGravity();
     }
 

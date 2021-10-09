@@ -1726,7 +1726,7 @@ Rigidbody:
   m_GameObject: {fileID: 4382853551925318238}
   serializedVersion: 2
   m_Mass: 50
-  m_Drag: 0
+  m_Drag: 1
   m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -3558,7 +3558,7 @@ Rigidbody:
   m_GameObject: {fileID: 8500120811289837541}
   serializedVersion: 2
   m_Mass: 50
-  m_Drag: 0
+  m_Drag: 1
   m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -3594,7 +3594,7 @@ CharacterJoint:
     spring: 0
     damper: 0
   m_Swing1Limit:
-    limit: 40
+    limit: 177
     bounciness: 0
     contactDistance: 0
   m_Swing2Limit:
