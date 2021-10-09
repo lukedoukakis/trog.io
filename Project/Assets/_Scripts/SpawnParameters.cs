@@ -59,7 +59,7 @@ public class SpawnParameters
         // terrain features
         {"TreeAcacia", new SpawnParameters(.5f, hgtDry, q3, q3, new Vector2(.1f, .1f), false)},
         {"TreeJungle", new SpawnParameters(.5f, hgtDry, q4, q4, new Vector2(.7f, .7f), false)},
-        {"TreeFir", new SpawnParameters(.625f, hgtDry, h1, h2, new Vector2(.1f, .5f), false)},
+        {"TreeFir", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(.1f, .5f), false)},
         {"TreePalm", new SpawnParameters(.625f, hgtDry, q4, h2, new Vector2(.1f, .1f), false)},
         //{"TreeOak", new FeatureAttributes(2f, hgtDry, h1, q1, new Vector2(.1f, .4f), false)},
         {"Grass", new SpawnParameters(.5f, hgtWater, q3, q3, new Vector2(.1f, .1f), true)},

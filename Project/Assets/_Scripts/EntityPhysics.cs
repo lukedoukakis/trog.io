@@ -24,13 +24,13 @@ public class EntityPhysics : EntityComponent
     public Transform hips, head, handRight, handLeft, fingerRight, fingerLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float BASE_CASTDISTANCE_GROUND_PLAYER = .1f;
+    public static float BASE_CASTDISTANCE_GROUND_PLAYER = .3f;
     public static float BASE_CASTDISTANCE_GROUND_NPC = .5f;
     public static float BASE_CASTDISTANCE_WALL = 1f;
     float groundCastDistance;
     float distanceFromGround;
 
-    public static float BASE_FORCE_JUMP = 2800f;
+    public static float BASE_FORCE_JUMP = 360f;
     public static float BASE_FORCE_THROW = 400f;
     public static float BASE_ACCELERATION = 15f;
     public static float BASE_MAX_SPEED = 11f;
@@ -279,8 +279,8 @@ public class EntityPhysics : EntityComponent
 
             if(!quadripedal)
             {
-                handGrab = HandleHandGrab(targetHandRight, basePositionHandRight, ref plantPosHandRight, ikScript_handRight, (body.right + body.forward).normalized, ref updateTime_handRight, handFree_right, IN_WATER);
-                handGrab = handGrab || HandleHandGrab(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ikScript_handLeft, ((body.right * -1f) + body.forward).normalized, ref updateTime_handLeft, handFree_left, IN_WATER);
+                handGrab = HandleHandGrab(handRight, targetHandRight, basePositionHandRight, ref plantPosHandRight, ikScript_handRight, (body.right + body.forward).normalized, ref updateTime_handRight, handFree_right, IN_WATER);
+                handGrab = handGrab || HandleHandGrab(handLeft, targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ikScript_handLeft, ((body.right * -1f) + body.forward).normalized, ref updateTime_handLeft, handFree_left, IN_WATER);
             }
 
 
@@ -498,20 +498,16 @@ public class EntityPhysics : EntityComponent
     public void ApplyFootPositionRestraints(){
         Vector3 pos;
 
-        if (!jumpOffRight)
-        {
-            pos = targetFootRight.position;
-            pos.y = Mathf.Min(pos.y, kneeHeightT.position.y);
-            targetFootRight.position = pos;
-        }
+        pos = targetFootRight.position;
+        pos.y = Mathf.Min(pos.y, kneeHeightT.position.y);
+        targetFootRight.position = pos;
 
-        if (!jumpOffLeft)
-        {
-            pos = targetFootLeft.position;
-            pos.y = Mathf.Min(pos.y, kneeHeightT.position.y);
-            targetFootLeft.position = pos;
 
-        }
+        pos = targetFootLeft.position;
+        pos.y = Mathf.Min(pos.y, kneeHeightT.position.y);
+        targetFootLeft.position = pos;
+
+        
         
         if (quadripedal)
         {
@@ -526,12 +522,12 @@ public class EntityPhysics : EntityComponent
     }
 
 
-    public bool HandleHandGrab(Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, FastIKFabric ikScript, Vector3 directionToLook, ref float updateTime, bool handFree, bool water)
+    public bool HandleHandGrab(Transform hand, Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, FastIKFabric ikScript, Vector3 directionToLook, ref float updateTime, bool handFree, bool water)
     {
 
         //Debug.Log("Handling hand plant pos");
 
-        if(!handFree){ return false; }
+        if(!handFree || onWalkableGround){ return false; }
 
         Vector3 referencePosition = obstacleHeightSense.position;
         float handSpeed = 15f * Time.deltaTime;
@@ -543,13 +539,14 @@ public class EntityPhysics : EntityComponent
 
         // if plant pos out of range, set hand plant position to the nearest nearby obstacle
         bool needsUpdate =
-            Vector3.Distance(plantPositionPointer, referencePosition) > 2f
+            Vector3.Distance(plantPositionPointer, referencePosition) > 1.5f
             || plantPositionPointer.y < referencePosition.y
             //|| body.transform.InverseTransformDirection(plantPositionPointer - referencePosition).z < 0f
             ;
 
         if (needsUpdate)
         {
+            Destroy(gameObject.GetComponent<SpringJoint>());
             //Debug.Log("needs update");
 
             RaycastHit[] hits = Physics.SphereCastAll(referencePosition + Vector3.up * .25f, .5f, directionToLook, .75f, layerMask_feature, QueryTriggerInteraction.Ignore).Where(hit => hit.point.y >= referencePosition.y).ToArray();
@@ -575,6 +572,8 @@ public class EntityPhysics : EntityComponent
                 //Debug.Log("DISTANCE: " + Vector3.Distance(referencePosition, targetHandPos));
                 plantPositionPointer = targetHandPos;
                 targetIk.position = Vector3.Lerp(targetIk.position, plantPositionPointer, handSpeed);
+                SpringJoint j = gameObject.AddComponent<SpringJoint>();
+                j.connectedAnchor = plantPositionPointer;
             }
             else
             {
@@ -740,19 +739,28 @@ public class EntityPhysics : EntityComponent
         vel.y = 0f;
         rb.velocity = vel;
         Vector3 direction = Vector3.up;
-        rb.AddForce(direction * power, ForceMode.Force);
+        //rb.AddForce(direction * power, ForceMode.Force);
         jumpTime = 0;
         groundTime = 0;
-        if(handGrab && IsMoving())
+        bool moving = IsMoving();
+        float tFinal = 20f;
+        for (float t = Mathf.Round(tFinal * .4f), f = 0; t <= tFinal; ++t)
         {
-            float tFinal = 20f;
-            for (float t = Mathf.Round(tFinal * .4f); t <= tFinal; ++t)
+            if (f < 10f)
             {
-                //Debug.Log(Mathf.Sin(t / tFinal * Mathf.PI));
-                speedLimitModifier_launch = 1f + (Mathf.Sin(t / tFinal * Mathf.PI) * 20f);
-                yield return new WaitForSecondsRealtime(.01f);
+                rb.AddForce(direction * power, ForceMode.Force);
             }
+            if (handGrab && moving)
+            {
+                speedLimitModifier_launch = 1f + (Mathf.Sin(t / tFinal * Mathf.PI) * 20f);
+            }
+            ++f;
+            yield return new WaitForSecondsRealtime(.01f);
+            
+
         }
+        speedLimitModifier_launch = 1f;
+        
         yield return new WaitForSecondsRealtime(.2f);
         jumpOffRight = jumpOffLeft = false;
         jumping = false;
@@ -763,7 +771,7 @@ public class EntityPhysics : EntityComponent
     }
 
     public bool CanJump(){
-        if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_walkable) || handGrab){
+        if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_walkable) || (handGrab && rb.velocity.y < 0f)){
             return true;
         }
         return false;
@@ -1047,8 +1055,8 @@ public class EntityPhysics : EntityComponent
 
         IEnumerator _Lunge()
         {
-            Vector3 dir = ((direction).normalized + Vector3.up * .5f) * 1000f * entityBehavior.behaviorProfile.lungePower;
-            for (int i = 0; i < 50f; ++i)
+            Vector3 dir = ((direction).normalized + Vector3.up * .5f) * 200f * entityBehavior.behaviorProfile.lungePower;
+            for (int i = 0; i < 25f; ++i)
             {
                 rb.AddForce(dir);
                 yield return new WaitForSecondsRealtime(.01f);
@@ -1187,10 +1195,6 @@ public class EntityPhysics : EntityComponent
         else
         {
             max = sprinting ? maxSpeed_sprint : maxSpeed_run;
-            if (!jumping && ySpeed > maxSpeed_climb)
-            {
-                ySpeed = maxSpeed_climb;
-            }
         }
 
         if (!jumping)

@@ -44,6 +44,7 @@ public class ChunkGenerator : MonoBehaviour
     [SerializeField] Material terrainMaterial;
     [SerializeField] Material grassMaterial;
     [SerializeField] Material[] SnowMaterials;
+    [SerializeField] Material[] FadeMaterials;
 
 
     [SerializeField] PhysicMaterial physicMaterial;
@@ -79,6 +80,7 @@ public class ChunkGenerator : MonoBehaviour
     [Range(0, 1)] public float persistance;
     public float lacunarity;
     [Range(0, 1)] public float RockProtrusion;
+    [Range(0, 1)] public float mountainSize;
 
 
 
@@ -120,6 +122,11 @@ public class ChunkGenerator : MonoBehaviour
             }
 
             UpdateWaterPosition();
+
+            foreach(Material mat in FadeMaterials)
+            {
+                mat.SetVector("_TargetVector", GameManager.current.localPlayerHandle.entityPhysics.obstacleHeightSense.position);
+            }
 
         }
 
@@ -295,7 +302,6 @@ public class ChunkGenerator : MonoBehaviour
 
         float temperatureValue, humidityValue, elevationValue, mountainValue, freshWaterValue, wetnessValue, heightValue, heightValue_water;
         bool treeValue;
-        float mtnCap;
         float rough;
 
         // loop start
@@ -333,9 +339,9 @@ public class ChunkGenerator : MonoBehaviour
                 float bm0 = Mathf.PerlinNoise((x + xOffset + 100000.01f) / 1600f, (z + zOffset + 100000.01f) / 1600f) * 2f - 1f;
                 float bm1 = Mathf.PerlinNoise((x + xOffset + 200000.01f) / 1600f, (z + zOffset + 200000.01f) / 1600f) * 2f - 1f;
                 float bigMound = Mathf.Min(bm0, bm1);
-                bigMound = Mathf.Pow(Mathf.Abs(bigMound) * -1f + 1f, 3f);
+                bigMound = Mathf.Pow(Mathf.Abs(bigMound) * -1f + 1f, 5f);
                 float bigMoundCap = .036f;
-                bigMound *= bigMoundCap * (1f - Mathf.InverseLerp(.25f, .75f, temperatureValue));;
+                bigMound *= bigMoundCap * (1f - Mathf.InverseLerp(.25f, .75f, temperatureValue));
                 elevationValue += bigMound;
                 float maxE = Mathf.Pow(1f + .5f, .5f) - 1f;
                 float minE = Mathf.Pow(0f + .5f, .5f) - 1f;
@@ -354,9 +360,8 @@ public class ChunkGenerator : MonoBehaviour
                 //mountainValue = Mathf.InverseLerp(0f, Mathf.Pow(.75f, 2f), mountainValue);
                 mountainValue *= Mathf.InverseLerp(minE, maxE+1f, elevationValue);
                 mountainValue *= 1f;
-                mtnCap = .06f;
-                if(mountainValue > mtnCap){
-                    mountainValue = mtnCap;
+                if(mountainValue > mountainSize){
+                    mountainValue = mountainSize;
                 }
                 //Debug.Log(mountainValue);
 
@@ -571,7 +576,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 TemperatureMap[x, z] = temperatureValue;
                 HumidityMap[x, z] = humidityValue;
-                MountainMap[x, z] = mountainValue / mtnCap;
+                MountainMap[x, z] = mountainValue / mountainSize;
                 ElevationMap[x, z] = elevationValue;
                 FreshWaterMap[x, z] = freshWaterValue;
                 WetnessMap[x, z] = wetnessValue;
@@ -658,7 +663,7 @@ public class ChunkGenerator : MonoBehaviour
                 if ((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0)
                 {
                     bundleName = SpawnParameters.GetBundleName(feature.name);
-                    randomPositionOffset = (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
+                    randomPositionOffset = 0f * (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
                     spawnPosition = new Vector3(x + xOffset + skewHoriz, height * ElevationAmplitude, z + zOffset + skewHoriz) + randomPositionOffset;
                     spawnScale = Vector3.one * spawnParameters.scale;
                     o = GameObject.Instantiate(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent.transform);
@@ -757,9 +762,12 @@ public class ChunkGenerator : MonoBehaviour
             for (int x = 0; x < ChunkSize + 2; x++)
             {
                 height = HeightMap[x, z] * ElevationAmplitude;
-                rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 30f, (z + zOffset) / 30f), 2f);
+                rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 50f, (z + zOffset) / 50f), 1f);
+                rockiness *= Mathf.PerlinNoise(((height + (x + xOffset) + (z + zOffset)) / 20f), 0f);
+                rockiness += (Mathf.PerlinNoise((x + xOffset) / 2f, (z + zOffset) / 2f) * 2f - 1f) * .02f;
+                rockiness *= Mathf.InverseLerp(0f, .1f, MountainMap[x, z]);
                 skewHoriz = (rockiness * 2f - 1f) * 36f * RockProtrusion;
-                skewHoriz *= Mathf.InverseLerp(SeaLevel, SeaLevel + (meter * 20f), HeightMap[x, z]);
+                skewHoriz *= Mathf.InverseLerp(SeaLevel, SeaLevel + (meter * 20f), HeightMap[x, z]); // smooth down rockiness at sea level
                 skewHorizMap[x, z] = skewHoriz;
                 TerrainVertices[i] = new Vector3(x + xOffset + skewHoriz, height, z + zOffset + skewHoriz);
                 //TerrainVertices[i] = new Vector3(x + xOffset, height, z + zOffset);

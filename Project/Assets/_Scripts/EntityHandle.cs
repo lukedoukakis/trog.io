@@ -33,7 +33,7 @@ public class EntityHandle : EntityComponent
         CameraController.current.Init(this.transform);
 
         // init player specific entity settings
-        transform.position = new Vector3(0f, 4800f, 0f);
+        transform.position = new Vector3(0f, ChunkGenerator.ElevationAmplitude, 0f);
         StartCoroutine(entityCommandServer.SetNewFactionWhenReady(this.gameObject));
 
         // spawn initial tribe members
