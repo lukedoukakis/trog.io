@@ -9612,7 +9612,7 @@ GameObject:
   - component: {fileID: 3882535010369916060}
   m_Layer: 15
   m_Name: Bonfire
-  m_TagString: Untagged
+  m_TagString: Bonfire
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9628,6 +9628,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 2437231676508400400}
   - {fileID: 5472113574584379014}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -9670,6 +9671,50 @@ Transform:
   m_Father: {fileID: 5472113574584379014}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7327595288722281835
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2437231676508400400}
+  - component: {fileID: 1911757520066577955}
+  m_Layer: 18
+  m_Name: HoverTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2437231676508400400
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7327595288722281835}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.53893, y: 0.68037, z: 0.53893}
+  m_Children: []
+  m_Father: {fileID: 3882535010369916060}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1911757520066577955
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7327595288722281835}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.400796, y: 1.172104, z: 2.3216593}
+  m_Center: {x: -0.0037048159, y: 0.62788653, z: 0.056475826}
 --- !u!1 &7423991686681507293
 GameObject:
   m_ObjectHideFlags: 0
@@ -14993,7 +15038,7 @@ PrefabInstance:
     - target: {fileID: 7532768034682075876, guid: d0b9379e7f9960b4d93b123d4ea9d724,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7532768034682075876, guid: d0b9379e7f9960b4d93b123d4ea9d724,
         type: 3}

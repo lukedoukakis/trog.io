@@ -401,6 +401,48 @@ public class Camp : MonoBehaviour
         return rackList;
     }
 
+
+    public void CastFoodIntoBonfire(EntityHandle casterHandle)
+    {
+        EntityItems casterItems = casterHandle.entityItems;
+        Item foodItem = casterItems.holding_item;
+        GameObject foodObject = casterItems.holding_object;
+
+        if (foodItem == null) {
+            // todo: tell how you can make this happen tooltip
+            return;
+        }
+        
+        StartCoroutine(_CastFoodIntoBonfire());
+
+
+        IEnumerator _CastFoodIntoBonfire()
+        {
+            casterItems.holding_item = null;
+            casterItems.holding_object = null;
+            casterItems.OnItemsChange();
+
+            Transform foodT = foodObject.transform;
+            Vector3 castTargetPosition = bonfire.transform.position;
+            float castSpeed = 10f;
+            while(Vector3.Distance(foodT.position, castTargetPosition) > .1f)
+            {
+                foodT.position = Vector3.Lerp(foodT.position, castTargetPosition, castSpeed * Time.deltaTime);
+                yield return null;
+            }
+            // todo: play particles for food casted into fire
+            GameObject.Destroy(foodObject);
+            OnFoodCast(foodItem);
+        }
+    
+    }
+
+    void OnFoodCast(Item foodItem)
+    {
+        // todo: birth new tribe member
+        // todo: play particles for new tribe member birth
+    }
+
     public static bool EntityIsInsideCamp(EntityHandle handle){
 
         Camp camp = handle.entityInfo.faction.camp;

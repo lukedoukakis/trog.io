@@ -161,6 +161,9 @@ public class EntityUserInput : EntityComponent
             if(t == "Item"){
                 entityItems.OnObjectInteract(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
             }
+            else if(t == "Bonfire"){
+                entityInfo.faction.camp.CastFoodIntoBonfire(entityHandle);
+            }
             else if (t.StartsWith("ObjectRack"))
             {
                 if (t == "ObjectRack_Food")
@@ -244,6 +247,16 @@ public class EntityUserInput : EntityComponent
             switch (hoveredInteractableObject.tag){
                 case "Item" : 
                     txt += "E: Pick up " + hoveredInteractableObject.name;
+                    break;
+                case "Bonfire" : 
+                    item = entityItems.holding_item;
+                    if(item == null || !item.type.Equals(Item.ItemType.Food)){
+                        txt = "";
+                    }
+                    else
+                    {
+                        txt += "E: Cook " + item.nme;
+                    }
                     break;
                 case "ObjectRack_Food" :
                     item = entityItems.holding_item;
