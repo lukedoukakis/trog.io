@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Camp : MonoBehaviour
 {
@@ -30,6 +31,7 @@ public class Camp : MonoBehaviour
     GameObject borderSphere;
 
 
+    // camp components
     public Bonfire bonfire;
     public Workbench workbench;
     public List<Tent> tents;
@@ -40,8 +42,7 @@ public class Camp : MonoBehaviour
     public List<ObjectRack> racks_bone;
 
 
-
-
+    public List<Transform> tribeMemberStandPositions;
 
 
     // client method to place a Camp
@@ -72,6 +73,7 @@ public class Camp : MonoBehaviour
         camp.UpdateRadius(faction.members.Count);
         camp.SetCampLayout(campPlacementPos, originT.rotation);
         camp.PlaceCampComponents(originT);
+        camp.SetTribeMemberStandingPositions();
         return camp;
 
 
@@ -91,6 +93,11 @@ public class Camp : MonoBehaviour
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             UpdateTentCount();
         }
+    }
+
+    public void SetTribeMemberStandingPositions()
+    {
+        tribeMemberStandPositions = layout.transform.GetComponentsInChildren<Transform>().Where(t => t.name.StartsWith("OrientationTribeMemberStandPosition")).ToList();
     }
 
 
