@@ -38,7 +38,7 @@ public class ActionParameters : ScriptableObject
     public float maxTime;
 
     public static ActionParameters GenerateActionParameters(Enum _type, GameObject _obj, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent){
-        ActionParameters a = ScriptableObject.CreateInstance<ActionParameters>();
+        ActionParameters a = ActionParameters.GenerateActionParameters();
         a.type = _type;
         a.obj = _obj;
         a.number = _number;
@@ -51,48 +51,45 @@ public class ActionParameters : ScriptableObject
 
         return a;
     }
-    public static ActionParameters GenerateAction(){
-        ActionParameters a = ScriptableObject.CreateInstance<ActionParameters>();
-        a.type = null;
-        a.obj = null;
-        a.number = -1;
-        a.item_result = null;
-        a.item_target = null;
-        a.maxTime = -1;
-        a.distanceThreshold = -1;
-        a.bodyRotationMode = EntityOrientation.BodyRotationMode.Normal;
-        a.urgent = false;
-        return a;
-    }
 
     // some predefined actions
-    public static ActionParameters GetPredefinedActionParameters(string command, EntityHandle handle){
+    public static ActionParameters GenerateActionParameters(string command, EntityHandle calleeHandle){
 
-        ActionParameters a = ActionParameters.GenerateAction();
+
+        Transform calleeHomeT = calleeHandle.entityBehavior.homeT;
+        Destroy(calleeHomeT.gameObject);
+        calleeHandle.entityBehavior.homeT = new GameObject().transform;
+        calleeHomeT = calleeHandle.entityBehavior.homeT;
+
+        ActionParameters a = ActionParameters.GenerateActionParameters();
         switch(command){
             case "Idle" :
                 a.type = ActionType.Idle;
                 break;
             case "Go Home" :
-                a.type = ActionType.GoTo;
-                a.obj = handle.entityBehavior.home.gameObject;
+                a.type = ActionType.Follow;
+                Transform newHomeT = calleeHandle.entityInfo.faction.camp.GetOpenTribeMemberStandPosition();
+                calleeHomeT.transform.position = newHomeT.position;
+                calleeHomeT.transform.SetParent(newHomeT);
+                a.obj = calleeHomeT.gameObject;
                 a.distanceThreshold = EntityBehavior.distanceThreshold_spot;
+                a.urgent = false;
                 break;
             case "Follow Player" :
                 a.type = ActionType.Follow;
-                a.obj = Player.current.gameObject;
+                a.obj = GameManager.current.localPlayer.gameObject;
                 a.distanceThreshold = EntityBehavior.distanceThreshold_spot;
                 break;
             case "Run From Player" :
                 a.type = ActionType.RunFrom;
-                a.obj = Player.current.gameObject;
+                a.obj = GameManager.current.localPlayer.gameObject;
                 a.distanceThreshold = EntityBehavior.distanceThreshhold_pursuit;
                 a.urgent = true;
                 break;
             case "Attack Player" :
                 a.type = ActionType.Chase;
-                a.obj = Player.current.gameObject;
-                a.maxTime = handle.entityBehavior.GetChaseTime();
+                a.obj = GameManager.current.localPlayer.gameObject;
+                a.maxTime = calleeHandle.entityBehavior.GetChaseTime();
                 a.urgent = true;
                 break;
             case "Idle For 5 Seconds" :
@@ -102,7 +99,7 @@ public class ActionParameters : ScriptableObject
             case "Go To Random Nearby Spot" :
                 a.type = ActionType.GoTo;
                 GameObject temp = new GameObject();
-                temp.transform.position = Utility.GetRandomVectorOffset(handle.transform.position, 10f, true);
+                temp.transform.position = Utility.GetRandomVectorOffset(calleeHandle.transform.position, 10f, true);
                 a.obj = temp;
                 a.maxTime = 10f;
                 a.distanceThreshold = EntityBehavior.distanceThreshold_spot;
@@ -132,9 +129,9 @@ public class ActionParameters : ScriptableObject
                 a.urgent = true;
                 // a.obj = GameObject.FindGameObjectWithTag("Player");
 
-                EntityHandle[] members = handle.entityInfo.faction.members.ToArray();
+                EntityHandle[] members = calleeHandle.entityInfo.faction.members.ToArray();
                 foreach(EntityHandle h in members){
-                    if(h != handle){
+                    if(h != calleeHandle){
                         a.obj = h.gameObject;
                     }
                 }
@@ -149,6 +146,20 @@ public class ActionParameters : ScriptableObject
         //Debug.Log("CreateAction() done");
         return a;
         
+    }
+
+    public static ActionParameters GenerateActionParameters(){
+        ActionParameters a = ScriptableObject.CreateInstance<ActionParameters>();
+        a.type = null;
+        a.obj = null;
+        a.number = -1;
+        a.item_result = null;
+        a.item_target = null;
+        a.maxTime = -1;
+        a.distanceThreshold = -1;
+        a.bodyRotationMode = EntityOrientation.BodyRotationMode.Normal;
+        a.urgent = false;
+        return a;
     }
 
 

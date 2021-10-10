@@ -10,7 +10,7 @@ public class EntityBehavior : EntityComponent
 {
 
     public BehaviorProfile behaviorProfile;
-    public Transform home;
+    public Transform homeT;
     public Vector3 move;
     public bool urgent;
 
@@ -18,7 +18,7 @@ public class EntityBehavior : EntityComponent
     public static float randomOffsetRange = 1f;
     public static float distanceThreshold_none = -1f;
     public static float distanceThreshold_point = .1f;
-    public static float distanceThreshold_spot = 2f;
+    public static float distanceThreshold_spot = .5f;
     public static float distanceThreshhold_lungeAttack = 10f;
     public static float distanceThreshold_combat = 15f;
     public static float distanceThreshhold_pursuit = 100f;
@@ -57,7 +57,7 @@ public class EntityBehavior : EntityComponent
 
         base.Awake();
 
-        home = GameObject.FindGameObjectWithTag("Home").transform;
+        homeT = new GameObject().transform;
         randomOffset = new Vector3(UnityEngine.Random.Range(randomOffsetRange*-1f, randomOffsetRange), 0f, UnityEngine.Random.Range(randomOffsetRange*-1f, 0));
         actionLayers = new Dictionary<string, ActionParameters>{
             {"Command", null},
@@ -116,8 +116,8 @@ public class EntityBehavior : EntityComponent
         timeSince_creatureSense = baseTimeStep_creatureSense;
         if(actions.Count == 0){
             //Debug.Log("Actions empty -> goto/idle sequence");
-            ActionParameters goTo = ActionParameters.GetPredefinedActionParameters("Go To Random Nearby Spot", entityHandle);
-            ActionParameters idle = ActionParameters.GetPredefinedActionParameters("Idle For 5 Seconds", entityHandle);
+            ActionParameters goTo = ActionParameters.GenerateActionParameters("Go To Random Nearby Spot", entityHandle);
+            ActionParameters idle = ActionParameters.GenerateActionParameters("Idle For 5 Seconds", entityHandle);
             InsertAction(goTo);
             InsertAction(idle);
         }
@@ -242,7 +242,7 @@ public class EntityBehavior : EntityComponent
                     move = GetNavigationDirection(a.obj.transform, false);
                     entityPhysics.moveDir = move;
                 }
-                SetHeadLookAt(a.obj.transform.position, -1f);
+                //SetHeadLookAt(a.obj.transform.position, -1f);
                 yield return null;
             }
         }
@@ -300,7 +300,7 @@ public class EntityBehavior : EntityComponent
     
             }
 
-            if (!reverse) { SetHeadLookAt(a.obj.transform.position, -1f); }
+            if (!reverse && urgent) { SetHeadLookAt(a.obj.transform.position, -1f); }
 
             yield return null;
 
@@ -324,7 +324,7 @@ public class EntityBehavior : EntityComponent
             Faction.AddItemTargeted(entityInfo.faction, target);
             ActionParameters goToObject = ActionParameters.GenerateActionParameters(ActionType.GoTo, target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Normal, false);
             ActionParameters pickupObject = ActionParameters.GenerateActionParameters(ActionType.Pickup, target, -1, Item.GetItemByName(target.name), null, -1, -1f, EntityOrientation.BodyRotationMode.Normal, false);
-            ActionParameters followPlayer = ActionParameters.GetPredefinedActionParameters("Follow Player", entityHandle);
+            ActionParameters followPlayer = ActionParameters.GenerateActionParameters("Follow Player", entityHandle);
             InsertAction(pickupObject);
             InsertAction(goToObject);
             NextAction();

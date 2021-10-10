@@ -99,6 +99,18 @@ public class Camp : MonoBehaviour
     {
         tribeMemberStandPositions = layout.transform.GetComponentsInChildren<Transform>().Where(t => t.name.StartsWith("OrientationTribeMemberStandPosition")).ToList();
     }
+    public Transform GetOpenTribeMemberStandPosition()
+    {
+        foreach(Transform standPosition in tribeMemberStandPositions)
+        {
+            if(standPosition.childCount < 1)
+            {
+                return standPosition;
+            }
+        }
+        Debug.Log("No open standing position");
+        return null;
+    }
 
 
     public void SetOrigin(Vector3 position){
@@ -199,21 +211,25 @@ public class Camp : MonoBehaviour
 
     public void UpdateBorderSphere()
     {
-        if(borderSphere == null){
+        if(borderSphere == null)
+        {
             Transform targetOrientation = GetCampComponentOrientation(ComponentType.Bonfire);
+            Rigidbody rb;
+            ObjectReference objectReference;
+
             borderSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             borderSphere.layer = LayerMask.NameToLayer("CampBorder");
             borderSphere.transform.position = targetOrientation.position;
-            Rigidbody rb = borderSphere.AddComponent<Rigidbody>();
+            borderSphere.transform.localScale = Vector3.one * radius * 2f;
+            Destroy(borderSphere.GetComponent<SphereCollider>());
+            SphereCollider collider = borderSphere.AddComponent<SphereCollider>();
+            collider.isTrigger = true;
+            rb = borderSphere.AddComponent<Rigidbody>();
             rb.isKinematic = true;
-            ObjectReference objectReference = borderSphere.AddComponent<ObjectReference>();
+            objectReference = borderSphere.AddComponent<ObjectReference>();
             objectReference.SetObjectReference(this);
             Destroy(borderSphere.GetComponent<MeshRenderer>());
         }
-        Destroy(borderSphere.GetComponent<SphereCollider>());
-        borderSphere.transform.localScale = Vector3.one * radius * 2f;
-        SphereCollider collider = borderSphere.AddComponent<SphereCollider>();
-        collider.isTrigger = true;
     }
 
     public void PlaceBonfire(){

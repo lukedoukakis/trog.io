@@ -24,13 +24,13 @@ public class EntityPhysics : EntityComponent
     public Transform hips, head, handRight, handLeft, fingerRight, fingerLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float BASE_CASTDISTANCE_GROUND_PLAYER = .3f;
-    public static float BASE_CASTDISTANCE_GROUND_NPC = .5f;
+    public static float BASE_CASTDISTANCE_GROUND_PLAYER = .1f;
+    public static float BASE_CASTDISTANCE_GROUND_NPC = .1f;
     public static float BASE_CASTDISTANCE_WALL = 1f;
     float groundCastDistance;
     float distanceFromGround;
 
-    public static float BASE_FORCE_JUMP = 360f;
+    public static float BASE_FORCE_JUMP = 180f;
     public static float BASE_FORCE_THROW = 400f;
     public static float BASE_ACCELERATION = 15f;
     public static float BASE_MAX_SPEED = 11f;
@@ -1316,6 +1316,7 @@ public class EntityPhysics : EntityComponent
     }
 
 
+
     void OnTriggerEnter(Collider col){
         int layer = col.gameObject.layer;
         if(layer == LayerMask.NameToLayer("Feature")){
@@ -1331,15 +1332,38 @@ public class EntityPhysics : EntityComponent
                 if(System.Object.ReferenceEquals(objectReference.GetObjectReference(), entityInfo.faction.camp))
                 //if(objectReference.GetObjectReference() == entityInfo.faction.camp)
                 {
-                    entityItems.OnCampBorderCross();
+                    //Debug.Log("Border Enter");
+                    entityItems.OnCampBorderEnter();
+                    if(isLocalPlayer)
+                    {
+                        PlayerCommand.current.SendCommand("Go Home");
+                    }
                 }
             }
         }
         
     }
     void OnTriggerExit(Collider col){
-        if(col.gameObject.layer == LayerMask.NameToLayer("Feature")){
+        int layer = col.gameObject.layer;
+        if(layer == LayerMask.NameToLayer("Feature")){
             worldCollider.sharedMaterial = highFrictionMat;
+        }
+        else if(layer == LayerMask.NameToLayer("CampBorder"))
+        {
+            ObjectReference objectReference = col.gameObject.GetComponent<ObjectReference>();
+            if(objectReference != null)
+            {
+                if(System.Object.ReferenceEquals(objectReference.GetObjectReference(), entityInfo.faction.camp))
+                //if(objectReference.GetObjectReference() == entityInfo.faction.camp)
+                {
+                    //Debug.Log("Border Exit");
+                    entityItems.OnCampBorderExit();
+                    if(isLocalPlayer)
+                    {
+                        PlayerCommand.current.SendCommand("Follow Player");
+                    }
+                }
+            }
         }
     }
 }

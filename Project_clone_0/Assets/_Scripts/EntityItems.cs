@@ -550,10 +550,18 @@ public class EntityItems : EntityComponent
         }
     }
 
-    public void OnCampBorderCross(){
+    public void OnCampBorderEnter(){
         //Debug.Log("OnCampBorderCross()");
         Faction.AddItemsOwned(entityInfo.faction, inventory, null, transform, 0f);
         inventory = new ItemCollection();
+        // todo: command tribe memebrs to line up to orientations
+    }
+
+    public void OnCampBorderExit(){
+        //Debug.Log("OnCampBorderCross()");
+        Faction.AddItemsOwned(entityInfo.faction, inventory, null, transform, 0f);
+        inventory = new ItemCollection();
+        // todo: command tribe memebrs to follow
     }
 
 

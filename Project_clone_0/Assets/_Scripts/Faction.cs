@@ -22,13 +22,13 @@ public class Faction : MonoBehaviour
 
     // send command to all party members within radius
     public void SendPartyCommand(string command, Vector3 callPosition, float radius){
-        EntityBehavior behavior;
-        foreach(EntityHandle handle in party.ToArray()){
+        EntityBehavior calleeBehavior;
+        foreach(EntityHandle calleeHandle in party.ToArray()){
             //Debug.Log("party member do shit");
-            if(Vector3.Distance(callPosition, handle.transform.position) <= radius)
+            if(Vector3.Distance(callPosition, calleeHandle.transform.position) <= radius)
             {
-                behavior = handle.entityBehavior;
-                behavior.InsertActionImmediate(ActionParameters.GetPredefinedActionParameters(command, behavior.entityHandle), true);
+                calleeBehavior = calleeHandle.entityBehavior;
+                calleeBehavior.InsertActionImmediate(ActionParameters.GenerateActionParameters(command, calleeBehavior.entityHandle), true);
             }
         }
         //Debug.Log("Commands sent!");
