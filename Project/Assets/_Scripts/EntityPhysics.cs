@@ -954,19 +954,32 @@ public class EntityPhysics : EntityComponent
             attackHit = false;
         }
     }
-    public void OnAttackHit(Collider collider, Projectile projectile){
+    public void OnAttackHit(Collider collider, Vector3 hitPoint, Projectile projectile){
         GameObject hitObject = collider.gameObject;
         //Debug.Log(hitObject.layer);
 
         if(hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature"))
         {
+            EntityHitDetection ehd = collider.gameObject.GetComponentInParent<EntityHitDetection>();
             //Log("HIT!!!! " + collider.gameObject.name);
-            collider.gameObject.GetComponentInParent<EntityHitDetection>().OnHit(this.entityHandle, projectile);
+            ehd.OnHit(this.entityHandle, projectile);
 
             // apply fixed weapon position effect if applicable
             if (entityItems != null)
             {
                 StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
+            }
+
+            // play particles based on hit creature's speciesInfo particles
+            GameObject particlesPrefab = SpeciesInfo.GetSpeciesInfo(ehd.species).onHitParticlesPrefab;
+            if(particlesPrefab != null)
+            {
+                Debug.Log("Playing particles");
+                GameObject particleObj = GameObject.Instantiate(particlesPrefab);
+                particleObj.transform.position = hitPoint;
+                particleObj.transform.rotation = transform.rotation;
+                particleObj.GetComponent<ParticleSystem>().Play();
+                Utility.DestroyInSeconds(particleObj, 1f);
             }
 
             StopAttackHitTime();

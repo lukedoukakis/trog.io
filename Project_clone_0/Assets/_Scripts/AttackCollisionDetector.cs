@@ -69,7 +69,7 @@ public class AttackCollisionDetector : MonoBehaviour
         //Debug.Log("TRIGGER ENTER");
         if(CanCollide())
         {
-            owner.entityPhysics.OnAttackHit(otherCollider, projectile);
+            owner.entityPhysics.OnAttackHit(otherCollider, thisCollider.bounds.center, projectile);
             if(projectile != null)
             {
                 AddFixedJoint(otherCollider.gameObject);

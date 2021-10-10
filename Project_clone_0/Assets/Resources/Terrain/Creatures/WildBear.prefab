@@ -277,6 +277,9 @@ MonoBehaviour:
   layerMask_walkable:
     serializedVersion: 2
     m_Bits: 0
+  layerMask_feature:
+    serializedVersion: 2
+    m_Bits: 0
   rb: {fileID: 0}
   animator: {fileID: 0}
   iKTargetAnimator: {fileID: 0}
@@ -303,7 +306,8 @@ MonoBehaviour:
   moveDir: {x: 0, y: 0, z: 0}
   onWalkableGround: 0
   jumping: 0
-  jumpOpposite: 0
+  jumpOffLeft: 0
+  jumpOffRight: 0
   sprinting: 0
   offWallTime: 0
   offWaterTime: 0
@@ -320,6 +324,8 @@ MonoBehaviour:
   handFree_right: 0
   handFree_left: 0
   insideCamp: 0
+  handGrab: 0
+  speedLimitModifier_launch: 0
   ROTATION_Y_THIS: 0
   ROTATION_Y_LAST: 0
   GROUNDTOUCH: 0

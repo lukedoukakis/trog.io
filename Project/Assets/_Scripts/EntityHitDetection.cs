@@ -5,7 +5,7 @@ using UnityEngine;
 public class EntityHitDetection : EntityComponent
 {
     
-    [SerializeField] Species species;
+    [SerializeField] public Species species;
 
     public void OnHit(EntityHandle attackerHandle, Projectile projectile){
 

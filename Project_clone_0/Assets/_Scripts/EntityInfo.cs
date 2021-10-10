@@ -46,14 +46,16 @@ public class SpeciesInfo : ScriptableObject{
     public Stats baseStats;
     public IkProfile ikProfile;
     public BehaviorProfile behaviorProfile;
+    public GameObject onHitParticlesPrefab;
 
-    public static SpeciesInfo InstantiateSpeciesInfo(Faction baseFaction, ItemCollection baseDrop, Stats baseStats, IkProfile ikProfile, BehaviorProfile behaviorProfile){
+    public static SpeciesInfo InstantiateSpeciesInfo(Faction baseFaction, ItemCollection baseDrop, Stats baseStats, IkProfile ikProfile, BehaviorProfile behaviorProfile, GameObject onHitParticlesPrefab){
         SpeciesInfo speciesInfo = ScriptableObject.CreateInstance<SpeciesInfo>();
         speciesInfo.baseFaction = baseFaction;
         speciesInfo.baseDrop = baseDrop;
         speciesInfo.baseStats = baseStats;
         speciesInfo.ikProfile = ikProfile;
         speciesInfo.behaviorProfile = behaviorProfile;
+        speciesInfo.onHitParticlesPrefab = onHitParticlesPrefab;
         
         return speciesInfo;
     }
@@ -65,7 +67,8 @@ public class SpeciesInfo : ScriptableObject{
 
     static Dictionary<Species, SpeciesInfo> SpeciesInfoDict = new Dictionary<Species, SpeciesInfo>(){
         {
-            Species.Human, SpeciesInfo.InstantiateSpeciesInfo(
+            Species.Human, SpeciesInfo.InstantiateSpeciesInfo
+            (
                 Faction.InstantiateFaction(Species.Human.ToString(), false),
                 new ItemCollection(
                     new Dictionary<Item, int>{
@@ -79,9 +82,10 @@ public class SpeciesInfo : ScriptableObject{
                     new List<AttackType>(){AttackType.Weapon},
                     new List<ActionParameters>(){ ActionParameters.GenerateActionParameters(ActionType.Follow, null, -1, null, null, -1, EntityBehavior.distanceThreshold_combat, EntityOrientation.BodyRotationMode.Target, true)},
                     .5f,
-                    false)
+                    false
+                ),
+                ParticleController.instance.TreeDebris
             )
-
         },
 
         {
@@ -99,7 +103,9 @@ public class SpeciesInfo : ScriptableObject{
                     new List<AttackType>(){AttackType.Swipe},
                     new List<ActionParameters>(){ },
                     .75f,
-                    false)
+                    false
+                ),
+                ParticleController.instance.TreeDebris
             )
 
         },
@@ -120,7 +126,9 @@ public class SpeciesInfo : ScriptableObject{
                     new List<AttackType>(){ AttackType.Swipe },
                     new List<ActionParameters>(){ },
                     .75f,
-                    false)
+                    false
+                ),
+                ParticleController.instance.TreeDebris
             )
 
         },
@@ -135,7 +143,8 @@ public class SpeciesInfo : ScriptableObject{
                 ),
                 Stats.InstantiateStats(3f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f),
                 null,
-                null
+                null,
+                ParticleController.instance.TreeDebris
             )
 
         },
