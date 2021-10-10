@@ -29,7 +29,7 @@ public class Stats : ScriptableObject
     );
 
     
-    public static Stats ITEM_WIELDERMODIFIER_TESTFOOD = InstantiateStats(1f,1f,1f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
+    public static Stats ITEM_WIELDERMODIFIER_MEAT = InstantiateStats(1f,1f,1f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
 
     public static Stats ITEM_WIELDERMODIFIER_SPEAR = InstantiateStats(0f,0f,3f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
 

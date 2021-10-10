@@ -31,6 +31,7 @@ public class Item : ScriptableObject
 
     // Item defs
     public static Item None = InitiailizeItem("None", ItemType.Weapon, Stats.NONE, Stats.NONE, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
+    public static Item Meat = InitiailizeItem("Meat", ItemType.Food, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_MEAT, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, Resources.Load<GameObject>("Items/Food/Meat/Gameobject/Meat"), Resources.Load<Image>("Items/Food/Meat/Image"));
     public static Item WoodPiece = InitiailizeItem("WoodPiece", ItemType.Wood, Stats.NONE, Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt,ItemCollection. EmptyItemCollection, Resources.Load<GameObject>("Items/WoodPiece/Gameobject/WoodPiece"), Resources.Load<Image>("Items/WoodPiece/Image"));
     public static Item BonePiece1 = InitiailizeItem("BonePiece1", ItemType.Bone, Stats.NONE, Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, Resources.Load<GameObject>("Items/Bones/BonePiece1/Gameobject/BonePiece1"), Resources.Load<Image>("Items/Bones/BonePiece1/Image"));
     public static Item BonePiece2 = InitiailizeItem("BonePiece2", ItemType.Bone, Stats.NONE, Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, Resources.Load<GameObject>("Items/Bones/BonePiece2/Gameobject/BonePiece2"), Resources.Load<Image>("Items/Bones/BonePiece2/Image"));
@@ -41,9 +42,8 @@ public class Item : ScriptableObject
     public static Item SmallStone = InitiailizeItem("SmallStone", ItemType.Misc, Stats.NONE, Stats.NONE, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, Resources.Load<GameObject>("Items/SmallStone/Gameobject/SmallStone"), Resources.Load<Image>("Items/SmallStone/Image"));
     public static Item Spear = InitiailizeItem("Spear", ItemType.Weapon, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_SPEAR, ItemHoldStyle.Spear, ItemDamageType.Pierce, ItemCollection.EmptyItemCollection, Resources.Load<GameObject>("Items/Weapons/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Weapons/Spear/Image"));
     public static Item Axe = InitiailizeItem("Axe", ItemType.Weapon, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_AXE, ItemHoldStyle.Axe, ItemDamageType.Slash, ItemCollection.EmptyItemCollection, Resources.Load<GameObject>("Items/Weapons/Axe/Gameobject/Axe"), Resources.Load<Image>("Items/Weapons/Axe/Image"));
-    public static Item CarcassBear = InitiailizeItem("CarcassBear", ItemType.Misc, Stats.InstantiateStats(.1f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{BonePiece1, 2}, {BonePiece2, 1}, {BonePiece3, 1},}), Resources.Load<GameObject>("Items/Carcasses/CarcassBear/Gameobject/CarcassBear"), Resources.Load<Image>("Items/Carcasses/CarcassBear/Image"));
+    public static Item CarcassBear = InitiailizeItem("CarcassBear", ItemType.Misc, Stats.InstantiateStats(.1f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{BonePiece1, 2}, {BonePiece2, 1}, {BonePiece3, 1}, {Meat, 2}}), Resources.Load<GameObject>("Items/Carcasses/CarcassBear/Gameobject/CarcassBear"), Resources.Load<Image>("Items/Carcasses/CarcassBear/Image"));
     public static Item ClothingTest = InitiailizeItem("ClothingTest", ItemType.Clothing, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_TESTCLOTHING, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, Resources.Load<GameObject>("Items/Clothing/ClothingTest/Gameobject/ClothingTest"), Resources.Load<Image>("Items/Clothing/ClothingTest/Image"));
-    public static Item FoodTest = InitiailizeItem("FoodTest", ItemType.Food, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_TESTFOOD, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, Resources.Load<GameObject>("Items/Food/FoodTest/Gameobject/FoodTest"), Resources.Load<Image>("Items/Food/FoodTest/Image"));
     public static Item LogFir = InitiailizeItem("LogFir", ItemType.Misc, Stats.InstantiateStats(.1f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.Hug, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{WoodPiece, 4},}), Resources.Load<GameObject>("Items/LogFir/Gameobject/LogFir"), Resources.Load<Image>("Items/LogFir/Image"));
     
     public static Dictionary<string, Item> Items = new Dictionary<string, Item>
@@ -62,7 +62,7 @@ public class Item : ScriptableObject
         { "LogFir", LogFir },
         { "CarcassBear", CarcassBear },
         { "ClothingTest", ClothingTest },
-        { "FoodTest", FoodTest },
+        { "Meat", Meat },
         
         
 
