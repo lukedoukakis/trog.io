@@ -8,6 +8,7 @@ public class ParticleController : MonoBehaviour
     public static ParticleController instance;
 
     public GameObject TreeDebris;
+    public GameObject BloodSpatter;
 
 
 

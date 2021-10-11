@@ -201,10 +201,10 @@ public class EntityPhysics : EntityComponent
         plantPosHandLeft = targetHandLeft.position;
         if(quadripedal)
         {
-            updateTime_footRight = .15f;
+            updateTime_footRight = .25f;
             updateTime_footLeft = 0f;
             updateTime_handRight = .5f;
-            updateTime_handLeft = .65f;
+            updateTime_handLeft = .75f;
             updateTime_hips = 0f;
         }
         else

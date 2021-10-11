@@ -86,7 +86,7 @@ public class SpeciesInfo : ScriptableObject{
                     true,
                     false
                 ),
-                ParticleController.instance.TreeDebris
+                ParticleController.instance.BloodSpatter
             )
         },
 
@@ -108,7 +108,7 @@ public class SpeciesInfo : ScriptableObject{
                     false,
                     false
                 ),
-                ParticleController.instance.TreeDebris
+                ParticleController.instance.BloodSpatter
             )
 
         },
@@ -132,7 +132,7 @@ public class SpeciesInfo : ScriptableObject{
                     false,
                     false
                 ),
-                ParticleController.instance.TreeDebris
+                ParticleController.instance.BloodSpatter
             )
 
         },
