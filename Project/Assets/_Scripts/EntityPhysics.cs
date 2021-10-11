@@ -30,7 +30,7 @@ public class EntityPhysics : EntityComponent
     float groundCastDistance;
     float distanceFromGround;
 
-    public static float BASE_FORCE_JUMP = 180f;
+    public static float BASE_FORCE_JUMP = 360f;
     public static float BASE_FORCE_THROW = 400f;
     public static float BASE_ACCELERATION = 15f;
     public static float BASE_MAX_SPEED = 11f;
@@ -774,9 +774,16 @@ public class EntityPhysics : EntityComponent
     }
 
     public bool CanJump(){
+
+        if(!entityInfo.speciesInfo.behaviorProfile.canJump)
+        {
+            return false;
+        }
+
         if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_walkable) || (handGrab && rb.velocity.y < 0f)){
             return true;
         }
+        
         return false;
     }
 
@@ -893,6 +900,8 @@ public class EntityPhysics : EntityComponent
 
     void StartAttackAnimation(bool charging, Item weapon, bool ranged)
     {
+        if(weapon == null){ return; }
+
         if(weapon.holdStyle.Equals(Item.ItemHoldStyle.Spear))
         {
             if (charging)
@@ -1046,7 +1055,7 @@ public class EntityPhysics : EntityComponent
 
         IEnumerator _AttackSwipe(){
             BeginAttackHitTime();
-            Lunge(target.position - transform.position);
+            Lunge(Utility.GetHorizontalVector(target.position - transform.position));
             iKTargetAnimator.enabled = true;
             iKTargetAnimator.SetTrigger("AttackSwipe");
             yield return new WaitForSeconds(.25f);

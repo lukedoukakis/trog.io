@@ -12,6 +12,13 @@ public class Utility : MonoBehaviour
         instance = this;
     }
 
+    public static Vector3 GetHorizontalVector(Vector3 vector)
+    {
+        float yComponent = vector.y;
+        vector.y = 0f;
+        return vector;
+    }
+
     public static Transform FindDeepChild(Transform parentT, string name)
     {
         Queue<Transform> queue = new Queue<Transform>();

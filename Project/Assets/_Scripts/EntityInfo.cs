@@ -65,7 +65,8 @@ public class SpeciesInfo : ScriptableObject{
         return SpeciesInfoDict[spec];
     }
 
-    static Dictionary<Species, SpeciesInfo> SpeciesInfoDict = new Dictionary<Species, SpeciesInfo>(){
+    static Dictionary<Species, SpeciesInfo> SpeciesInfoDict = new Dictionary<Species, SpeciesInfo>()
+    {
         {
             Species.Human, SpeciesInfo.InstantiateSpeciesInfo
             (
@@ -82,6 +83,7 @@ public class SpeciesInfo : ScriptableObject{
                     new List<AttackType>(){AttackType.Weapon},
                     new List<ActionParameters>(){ ActionParameters.GenerateActionParameters(ActionType.Follow, null, -1, null, null, -1, EntityBehavior.distanceThreshold_combat, EntityOrientation.BodyRotationMode.Target, true)},
                     .5f,
+                    true,
                     false
                 ),
                 ParticleController.instance.TreeDebris
@@ -103,6 +105,7 @@ public class SpeciesInfo : ScriptableObject{
                     new List<AttackType>(){AttackType.Swipe},
                     new List<ActionParameters>(){ },
                     .75f,
+                    false,
                     false
                 ),
                 ParticleController.instance.TreeDebris
@@ -126,6 +129,7 @@ public class SpeciesInfo : ScriptableObject{
                     new List<AttackType>(){ AttackType.Swipe },
                     new List<ActionParameters>(){ },
                     .75f,
+                    false,
                     false
                 ),
                 ParticleController.instance.TreeDebris
@@ -200,17 +204,20 @@ public class BehaviorProfile : ScriptableObject
     public List<AttackType> attackTypes;
     public List<ActionParameters> attackRecoverySequence;
     public float lungePower;
+    public bool canJump;
+
     public bool domesticatable;
 
 
 
-    public static BehaviorProfile InstantiateBehaviorProfile(BehaviorType behaviorType, List<AttackType> attackTypes, List<ActionParameters> attackRecoverySequence, float lungePower, bool domesticatable)
+    public static BehaviorProfile InstantiateBehaviorProfile(BehaviorType behaviorType, List<AttackType> attackTypes, List<ActionParameters> attackRecoverySequence, float lungePower, bool canJump, bool domesticatable)
     {
         BehaviorProfile bp = ScriptableObject.CreateInstance<BehaviorProfile>();
         bp.behaviorType = behaviorType;
         bp.attackTypes = attackTypes;
         bp.attackRecoverySequence = attackRecoverySequence;
         bp.lungePower = lungePower;
+        bp.canJump = canJump;
         bp.domesticatable = domesticatable;
 
         return bp;

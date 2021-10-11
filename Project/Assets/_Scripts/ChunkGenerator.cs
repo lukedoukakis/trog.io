@@ -570,6 +570,9 @@ public class ChunkGenerator : MonoBehaviour
                 else { treeValue = false; }
 
 
+                heightValue = FlatLevel + .001f;
+
+
 
 
                 // -------------------------------------------------------
