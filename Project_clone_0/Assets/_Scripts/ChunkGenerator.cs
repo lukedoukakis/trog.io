@@ -653,7 +653,7 @@ public class ChunkGenerator : MonoBehaviour
         {
 
             // break if chunk not loaded
-            if(cd == null){ break; }
+            if(cd == null || (cd.featuresParent == null)){ break; }
 
             spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
             placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height);
@@ -669,7 +669,7 @@ public class ChunkGenerator : MonoBehaviour
                     randomPositionOffset = 0f * (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
                     spawnPosition = new Vector3(x + xOffset + skewHoriz, height * ElevationAmplitude, z + zOffset + skewHoriz) + randomPositionOffset;
                     spawnScale = Vector3.one * spawnParameters.scale;
-                    o = GameObject.Instantiate(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent.transform);
+                    o = GameObject.Instantiate(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent);
                     o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
 
                     bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);

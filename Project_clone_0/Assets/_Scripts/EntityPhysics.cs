@@ -32,8 +32,8 @@ public class EntityPhysics : EntityComponent
 
     public static float BASE_FORCE_JUMP = 360f;
     public static float BASE_FORCE_THROW = 400f;
-    public static float BASE_ACCELERATION = 15f;
-    public static float BASE_MAX_SPEED = 11f;
+    public static float BASE_ACCELERATION = 40f;
+    public static float BASE_MAX_SPEED = 20f;
     public static float BASE_COOLDOWN_JUMP = .15f;
     public static float WEAPON_CHARGETIME_MAX = 3f;
     public static float WEAPON_HITTIME_MAX = .25f;
@@ -189,8 +189,8 @@ public class EntityPhysics : EntityComponent
         ikScripts_upperBody = new FastIKFabric[]{ ikScript_handRight, ikScript_handLeft, ikScript_fingerRight, ikScript_fingerLeft };
         iKTargetAnimator = ikParent.GetComponent<Animator>();
 
-        acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * BASE_ACCELERATION;
-        maxSpeed_run = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * .5f * BASE_MAX_SPEED;
+        acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Agility) * BASE_ACCELERATION;
+        maxSpeed_run = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * BASE_MAX_SPEED;
         maxSpeed_sprint = maxSpeed_run * 1.5f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * .75f;
@@ -199,11 +199,22 @@ public class EntityPhysics : EntityComponent
         plantPosFootLeft = targetFootLeft.position;
         plantPosHandRight = targetHandRight.position;
         plantPosHandLeft = targetHandLeft.position;
-        updateTime_footRight = 0f;
-        updateTime_footLeft = .5f;
-        updateTime_handRight = .5f;
-        updateTime_handLeft = 0f;
-        updateTime_hips = 0f;
+        if(quadripedal)
+        {
+            updateTime_footRight = 0f;
+            updateTime_footLeft = .15f;
+            updateTime_handRight = .65f;
+            updateTime_handLeft = .5f;
+            updateTime_hips = 0f;
+        }
+        else
+        {
+            updateTime_footRight = 0f;
+            updateTime_footLeft = .5f;
+            updateTime_handRight = .5f;
+            updateTime_handLeft = 0f;
+            updateTime_hips = 0f;
+        }
         
         if(!quadripedal){
             poleHandRight = ikParent.Find("PoleHandRight");
@@ -330,34 +341,36 @@ public class EntityPhysics : EntityComponent
             // in the air
             else
             {
-                // if jumping, set foot plant point on jump point
-                if(jumpOffRight && groundIsClose)
+                if (!quadripedal)
                 {
-                    SetPlantPosition(targetFootRight, basePositionFootRight, jumpPoint - basePositionFootRight.position, ref plantPosFootRight);
+                    // if jumping, set foot plant point on jump point
+                    if (jumpOffRight && groundIsClose)
+                    {
+                        SetPlantPosition(targetFootRight, basePositionFootRight, jumpPoint - basePositionFootRight.position, ref plantPosFootRight);
+                    }
+                    else
+                    {
+                        SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityOrientation.body.forward * .5f + entityOrientation.body.right * .1f, ref plantPosFootRight);
+                    }
+                    if (jumpOffLeft && groundIsClose)
+                    {
+                        SetPlantPosition(targetFootLeft, basePositionFootLeft, jumpPoint - basePositionFootLeft.position, ref plantPosFootLeft);
+                    }
+                    else
+                    {
+                        SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + entityOrientation.body.right * 0f, ref plantPosFootLeft);
+                    }
+
+                    updateTime_footRight = .2f;
+                    updateTime_footLeft = .7f;
                 }
-                else
-                {
-                    SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityOrientation.body.forward * .5f + entityOrientation.body.right * .1f, ref plantPosFootRight);
-                }
-                if(jumpOffLeft && groundIsClose)
-                {
-                    SetPlantPosition(targetFootLeft, basePositionFootLeft, jumpPoint - basePositionFootLeft.position, ref plantPosFootLeft);
-                }
-                else
-                {
-                    SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.up * .1f + entityOrientation.body.right * 0f, ref plantPosFootLeft);
-                }
-    
                 
-                
-                updateTime_footRight = .2f;
-                updateTime_footLeft = .7f;
-                if(quadripedal){
-                    SetPlantPosition(targetHandLeft, basePositionHandLeft, Vector3.up * .1f + entityOrientation.body.right * 0f, ref plantPosHandLeft);
-                    SetPlantPosition(targetHandRight, basePositionHandRight, Vector3.up * .3f + entityOrientation.body.forward * .5f + entityOrientation.body.right * .1f, ref plantPosHandRight);
-                    updateTime_handRight = .2f;
-                    updateTime_handLeft = .7f;
-                }
+                // if(quadripedal){
+                //     SetPlantPosition(targetHandLeft, basePositionHandLeft, Vector3.up * .1f + entityOrientation.body.right * 0f, ref plantPosHandLeft);
+                //     SetPlantPosition(targetHandRight, basePositionHandRight, Vector3.up * .3f + entityOrientation.body.forward * .5f + entityOrientation.body.right * .1f, ref plantPosHandRight);
+                //     updateTime_handRight = .2f;
+                //     updateTime_handLeft = .7f;
+                // }
             }
 
             // update plant positions for accuracy
@@ -783,7 +796,7 @@ public class EntityPhysics : EntityComponent
         if(Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_walkable) || (handGrab && rb.velocity.y < 0f)){
             return true;
         }
-        
+
         return false;
     }
 

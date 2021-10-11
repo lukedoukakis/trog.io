@@ -21,9 +21,9 @@ public class EntityCommandServer : EntityComponent
     }
 
     public IEnumerator SpawnNpcWhenReady(GameObject owningPlayer){
-        Debug.Log("SpawnNpcWhenReady()");
+        //Debug.Log("SpawnNpcWhenReady()");
         while (!NetworkClient.ready) {
-            Debug.Log("CHECKING...");
+            //Debug.Log("CHECKING...");
             yield return new WaitForSecondsRealtime(.05f);
         }
         SpawnNpc(owningPlayer);
@@ -32,7 +32,7 @@ public class EntityCommandServer : EntityComponent
 
     [Command]
     public void SpawnNpc(GameObject owningPlayer){
-        Debug.Log("SPAWNING");
+        //Debug.Log("SPAWNING");
         GameObject npc = GameObject.Instantiate(npcPrefab, owningPlayer.transform.position, Quaternion.identity);
         EntityHandle playerHandle = owningPlayer.GetComponent<EntityHandle>();
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();

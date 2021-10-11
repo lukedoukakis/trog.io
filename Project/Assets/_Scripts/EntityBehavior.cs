@@ -18,7 +18,7 @@ public class EntityBehavior : EntityComponent
     public static float randomOffsetRange = 1f;
     public static float distanceThreshold_none = -1f;
     public static float distanceThreshold_point = .1f;
-    public static float distanceThreshold_spot = .5f;
+    public static float distanceThreshold_spot = 2f;
     public static float distanceThreshhold_lungeAttack = 10f;
     public static float distanceThreshold_combat = 15f;
     public static float distanceThreshhold_pursuit = 100f;
@@ -278,7 +278,7 @@ public class EntityBehavior : EntityComponent
 
         // repeats until action layer is canceled
         bool followCondition;
-        while (true)
+        while (targetT != null)
         {
 
             followCondition = (reverse ? (Vector3.Distance(transform.position, targetT.position) <= a.distanceThreshold) : Vector3.Distance(transform.position, targetT.position) > a.distanceThreshold) && (timer.ElapsedMilliseconds / 1000f) <= maxTime;
@@ -303,6 +303,7 @@ public class EntityBehavior : EntityComponent
             yield return null;
 
         }
+        NextAction();
     }
 
     public void Collect(ActionParameters a){
