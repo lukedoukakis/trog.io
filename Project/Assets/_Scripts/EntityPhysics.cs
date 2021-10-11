@@ -61,8 +61,8 @@ public class EntityPhysics : EntityComponent
     public float speedLimitModifier_launch;
 
 
-    public float ROTATION_Y_THIS;
-    public float ROTATION_Y_LAST;
+    public Vector3 velHoriz_this, velHoriz_last, velHoriz_delta;
+    public float changeInVelocityFactor;
     public bool GROUNDTOUCH, WALLTOUCH, IN_WATER;
 
 
@@ -201,10 +201,10 @@ public class EntityPhysics : EntityComponent
         plantPosHandLeft = targetHandLeft.position;
         if(quadripedal)
         {
-            updateTime_footRight = 0f;
-            updateTime_footLeft = .15f;
-            updateTime_handRight = .65f;
-            updateTime_handLeft = .5f;
+            updateTime_footRight = .15f;
+            updateTime_footLeft = 0f;
+            updateTime_handRight = .5f;
+            updateTime_handLeft = .65f;
             updateTime_hips = 0f;
         }
         else
@@ -247,6 +247,8 @@ public class EntityPhysics : EntityComponent
         {
             UpdateIKForCarryingItems();
         }
+
+        velHoriz_this = velHoriz_last = velHoriz_delta = Vector3.zero;
     }
 
     public void ToggleIK(bool value){
@@ -262,7 +264,9 @@ public class EntityPhysics : EntityComponent
 
 
     // check if foot is behind threshhold, if so set new plant point
-    public void IKUpdate(){
+    public void IKUpdate()
+    {
+
         if (ikEnabled)
         {
 
@@ -307,6 +311,10 @@ public class EntityPhysics : EntityComponent
                     if (updateTime_footRight >= 1f)
                     {
                         CycleFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight, IN_WATER);
+                        if (quadripedal)
+                        {
+                            rb.AddForce(Vector3.up * 500f);
+                        }
                     }
                     if (updateTime_footLeft >= 1f)
                     {
@@ -330,10 +338,10 @@ public class EntityPhysics : EntityComponent
                 {
                     // not moving
                     SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.zero, ref plantPosFootLeft);
-                    SetPlantPosition(targetFootRight, basePositionFootRight, GetHorizVelocity().normalized * -.2f, ref plantPosFootRight);
+                    SetPlantPosition(targetFootRight, basePositionFootRight, velHoriz_this.normalized * -.2f, ref plantPosFootRight);
                     if(quadripedal){
                         SetPlantPosition(targetHandLeft, basePositionHandLeft, Vector3.zero, ref plantPosHandLeft);
-                        SetPlantPosition(targetHandRight, basePositionHandRight, GetHorizVelocity().normalized * -.2f, ref plantPosHandRight);
+                        SetPlantPosition(targetHandRight, basePositionHandRight, velHoriz_this.normalized * -.2f, ref plantPosHandRight);
                     }
                 }
             }
@@ -399,16 +407,17 @@ public class EntityPhysics : EntityComponent
             UpdateWeaponPolePosition();
         }
 
-        
+
         float footPlantTimeUpdateSpeed = runCycle_strideFrequency * Time.deltaTime;
         float handPlantTimeUpdateSpeed = quadripedal ? footPlantTimeUpdateSpeed : footPlantTimeUpdateSpeed * .25f;
         float hipsUpdateSpeed = footPlantTimeUpdateSpeed / 6f;
+        float updateTimeModifier = 1f + changeInVelocityFactor;
         if(IsMoving())
         {
-            updateTime_footRight += footPlantTimeUpdateSpeed;
-            updateTime_footLeft += footPlantTimeUpdateSpeed;
-            updateTime_handRight += handPlantTimeUpdateSpeed;
-            updateTime_handLeft += handPlantTimeUpdateSpeed;
+            updateTime_footRight += footPlantTimeUpdateSpeed * updateTimeModifier;
+            updateTime_footLeft += footPlantTimeUpdateSpeed * updateTimeModifier;
+            updateTime_handRight += handPlantTimeUpdateSpeed * updateTimeModifier;
+            updateTime_handLeft += handPlantTimeUpdateSpeed * updateTimeModifier;
         }
         
         updateTime_hips += hipsUpdateSpeed;
@@ -489,8 +498,8 @@ public class EntityPhysics : EntityComponent
 
     public void CycleFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, ref float updateTime, bool water){
 
-        float forwardReachDistance = water ? 0f : runCycle_limbForwardReachDistance * (GetHorizVelocity().magnitude / maxSpeed_sprint) + (entityOrientation.bodyLean * .1f);
-        plantPositionPointer = baseTransform.position + GetHorizVelocity().normalized * 2.2f * forwardReachDistance;
+        float forwardReachDistance = water ? 0f : runCycle_limbForwardReachDistance * ((velHoriz_this.magnitude / maxSpeed_sprint) + (entityOrientation.bodyLean * .3f)) * Mathf.Max(.5f, (1f - changeInVelocityFactor));
+        plantPositionPointer = baseTransform.position + velHoriz_this.normalized * 2.2f * forwardReachDistance;
         updateTime = Mathf.Max(updateTime, 1f) - 1f;
     }
     public void UpdateFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, bool onGround){
@@ -731,7 +740,7 @@ public class EntityPhysics : EntityComponent
     }
     IEnumerator _Jump(float power){
         jumping = true;
-        Vector3 horVelDir = GetHorizVelocity().normalized;
+        Vector3 horVelDir = velHoriz_this.normalized;
         Vector3 rightFootForwardNess = Vector3.Project(footRight.position - transform.position, horVelDir);
         Vector3 leftFootForwardness = Vector3.Project(footRight.position - transform.position, horVelDir);
         if(rightFootForwardNess.magnitude > leftFootForwardness.magnitude)
@@ -829,7 +838,7 @@ public class EntityPhysics : EntityComponent
             projectileRb.angularDrag = 5f;
             float throwTime = .5f;
             float addforceTime = .2f;
-            float force = BASE_FORCE_THROW * Mathf.Lerp(1f, 1.5f, Mathf.InverseLerp(0f, BASE_MAX_SPEED, GetHorizVelocity().magnitude));
+            float force = BASE_FORCE_THROW * Mathf.Lerp(1f, 1.5f, Mathf.InverseLerp(0f, BASE_MAX_SPEED, velHoriz_this.magnitude));
             projectileRb.velocity = rb.velocity;
 
             for(int i = 0; i < throwTime * 100f; ++i)
@@ -1275,7 +1284,7 @@ public class EntityPhysics : EntityComponent
     }
 
     public bool IsMoving(){
-        return GetHorizVelocity().magnitude > .2f;
+        return velHoriz_this.magnitude > .2f;
     }
 
     bool GroundIsClose(){
@@ -1287,8 +1296,11 @@ public class EntityPhysics : EntityComponent
 
     void FixedUpdate()
     {
-       ROTATION_Y_LAST = transform.rotation.y;
 
+        velHoriz_this = GetHorizVelocity();
+        velHoriz_delta = velHoriz_this - velHoriz_last;
+        changeInVelocityFactor = Mathf.InverseLerp(0f, .35f, velHoriz_delta.magnitude);
+        
         CheckPhysicMaterial();
         Move(moveDir, acceleration);
         CheckGround();
@@ -1298,6 +1310,8 @@ public class EntityPhysics : EntityComponent
         CheckCrouch();
         LimitSpeed();
         SetGravity();
+
+        velHoriz_last = velHoriz_this;
     }
 
     void Update(){
