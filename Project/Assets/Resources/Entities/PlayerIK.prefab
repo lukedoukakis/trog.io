@@ -211,7 +211,7 @@ MonoBehaviour:
   entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   behaviorProfile: {fileID: 0}
-  home: {fileID: 0}
+  homeT: {fileID: 0}
   move: {x: 0, y: 0, z: 0}
   urgent: 0
   timeSince_creatureSense: 0

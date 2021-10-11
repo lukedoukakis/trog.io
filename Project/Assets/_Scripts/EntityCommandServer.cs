@@ -21,8 +21,10 @@ public class EntityCommandServer : EntityComponent
     }
 
     public IEnumerator SpawnNpcWhenReady(GameObject owningPlayer){
+        Debug.Log("SpawnNpcWhenReady()");
         while (!NetworkClient.ready) {
-            yield return new WaitForSeconds(.05f);
+            Debug.Log("CHECKING...");
+            yield return new WaitForSecondsRealtime(.05f);
         }
         SpawnNpc(owningPlayer);
     }
@@ -30,11 +32,19 @@ public class EntityCommandServer : EntityComponent
 
     [Command]
     public void SpawnNpc(GameObject owningPlayer){
-        //Debug.Log("SPAWNING");
+        Debug.Log("SPAWNING");
         GameObject npc = GameObject.Instantiate(npcPrefab, owningPlayer.transform.position, Quaternion.identity);
         EntityHandle playerHandle = owningPlayer.GetComponent<EntityHandle>();
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
-        playerHandle.entityInfo.faction.AddMember(npcHandle, true);
+        Faction owningPlayerFaction = playerHandle.entityInfo.faction;
+        npc.transform.position = owningPlayer.transform.position + Vector3.up;
+        
+        npcHandle.entityItems.EquipClothing(Item.ClothingTest);
+        foreach(EntityHandle factionMemberHandle in owningPlayerFaction.members)
+        {
+            Utility.IgnorePhysicsCollisions(npcHandle.gameObject, factionMemberHandle.gameObject.GetComponentsInChildren<Collider>());
+        }
+        owningPlayerFaction.AddMember(npcHandle, true);
         npcHandle.entityInfo.name = "new npc";
 
         NetworkServer.Spawn(npc, owningPlayer);

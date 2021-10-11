@@ -24,8 +24,8 @@ public class EntityPhysics : EntityComponent
     public Transform hips, head, handRight, handLeft, fingerRight, fingerLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float BASE_CASTDISTANCE_GROUND_PLAYER = .1f;
-    public static float BASE_CASTDISTANCE_GROUND_NPC = .1f;
+    public static float BASE_CASTDISTANCE_GROUND_PLAYER = .3f;
+    public static float BASE_CASTDISTANCE_GROUND_NPC = .3f;
     public static float BASE_CASTDISTANCE_WALL = 1f;
     float groundCastDistance;
     float distanceFromGround;
@@ -367,7 +367,7 @@ public class EntityPhysics : EntityComponent
                 UpdateFootPlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, groundIsClose);
                 UpdateFootPlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, groundIsClose);
             }
-            ApplyFootPositionRestraints();
+            ApplyFootPositionConstraints();
 
         }
         else{
@@ -495,7 +495,7 @@ public class EntityPhysics : EntityComponent
         targetIk.position = pos;
     }
 
-    public void ApplyFootPositionRestraints(){
+    public void ApplyFootPositionConstraints(){
         Vector3 pos;
 
         pos = targetFootRight.position;
@@ -527,26 +527,22 @@ public class EntityPhysics : EntityComponent
 
         //Debug.Log("Handling hand plant pos");
 
-        if(!handFree || onWalkableGround){ return false; }
+        if(!handFree){ return false; }
 
         Vector3 referencePosition = obstacleHeightSense.position;
-        float handSpeed = 15f * Time.deltaTime;
+        float handSpeed = 150000f * Time.deltaTime;
 
-
-        // if(body.transform.InverseTransformDirection(plantPositionPointer - referencePosition).z < 0f){
-        //     Debug.Log("Behind");
-        // }
 
         // if plant pos out of range, set hand plant position to the nearest nearby obstacle
         bool needsUpdate =
-            Vector3.Distance(plantPositionPointer, referencePosition) > 1.5f
+            Vector3.Distance(plantPositionPointer, referencePosition) > 1f
             || plantPositionPointer.y < referencePosition.y
             //|| body.transform.InverseTransformDirection(plantPositionPointer - referencePosition).z < 0f
             ;
 
         if (needsUpdate)
         {
-            Destroy(gameObject.GetComponent<SpringJoint>());
+
             //Debug.Log("needs update");
 
             RaycastHit[] hits = Physics.SphereCastAll(referencePosition + Vector3.up * .25f, .5f, directionToLook, .75f, layerMask_feature, QueryTriggerInteraction.Ignore).Where(hit => hit.point.y >= referencePosition.y).ToArray();
@@ -572,8 +568,15 @@ public class EntityPhysics : EntityComponent
                 //Debug.Log("DISTANCE: " + Vector3.Distance(referencePosition, targetHandPos));
                 plantPositionPointer = targetHandPos;
                 targetIk.position = Vector3.Lerp(targetIk.position, plantPositionPointer, handSpeed);
-                SpringJoint j = gameObject.AddComponent<SpringJoint>();
-                j.connectedAnchor = plantPositionPointer;
+
+                if(isLocalPlayer && entityUserInput.pressJump && CanJump())
+                {
+                    //rb.AddForce((targetHandPos - referencePosition) * 500f);
+                    rb.AddForce(Vector3.up * (targetHandPos - referencePosition).y * 500f);
+                }
+
+
+                
             }
             else
             {
@@ -761,7 +764,7 @@ public class EntityPhysics : EntityComponent
         }
         speedLimitModifier_launch = 1f;
         
-        yield return new WaitForSecondsRealtime(.2f);
+        //yield return new WaitForSecondsRealtime(.2f);
         jumpOffRight = jumpOffLeft = false;
         jumping = false;
         yield return null;
@@ -974,7 +977,7 @@ public class EntityPhysics : EntityComponent
             GameObject particlesPrefab = SpeciesInfo.GetSpeciesInfo(ehd.species).onHitParticlesPrefab;
             if(particlesPrefab != null)
             {
-                Debug.Log("Playing particles");
+                //Debug.Log("Playing particles");
                 GameObject particleObj = GameObject.Instantiate(particlesPrefab);
                 particleObj.transform.position = hitPoint;
                 particleObj.transform.rotation = transform.rotation;
@@ -1104,7 +1107,7 @@ public class EntityPhysics : EntityComponent
                 onWalkableGround = false;
             }
         }
-        rb.drag = onWalkableGround ? 5f : 0f;
+        //rb.drag = GroundIsClose() ? 10f : 0f;
     }
 
     void CheckWall(){
@@ -1188,6 +1191,7 @@ public class EntityPhysics : EntityComponent
             worldCollider.sharedMaterial = highFrictionMat;
         }
         else{
+            //worldCollider.sharedMaterial = noFrictionMat;
             worldCollider.sharedMaterial = highFrictionMat;
         }
     }
@@ -1235,7 +1239,7 @@ public class EntityPhysics : EntityComponent
 
     void SetGravity(){
         if((GROUNDTOUCH || WALLTOUCH) && !IN_WATER && moveDir.magnitude > 0f){
-            rb.useGravity = !onWalkableGround;
+            rb.useGravity = !GroundIsClose();
         }
         else{ rb.useGravity = true; }
     }

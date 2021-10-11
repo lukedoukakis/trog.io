@@ -28,10 +28,15 @@ public class Faction : MonoBehaviour
             if(Vector3.Distance(callPosition, calleeHandle.transform.position) <= radius)
             {
                 calleeBehavior = calleeHandle.entityBehavior;
-                calleeBehavior.InsertActionImmediate(ActionParameters.GenerateActionParameters(command, calleeBehavior.entityHandle), true);
+                calleeBehavior.InsertActionImmediate(ActionParameters.GenerateActionParameters(command, calleeHandle), true);
             }
         }
         //Debug.Log("Commands sent!");
+    }
+
+    public void SendIndividualCommand(EntityHandle calleeHandle, string command, Vector3 callPosition)
+    {
+        calleeHandle.entityBehavior.InsertActionImmediate(ActionParameters.GenerateActionParameters(command, calleeHandle), true);
     }
 
 

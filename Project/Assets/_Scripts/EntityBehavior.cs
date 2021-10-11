@@ -37,7 +37,7 @@ public class EntityBehavior : EntityComponent
     public static readonly float senseDistance_search = 150f;
     public static readonly float senseDistance_earshot = 500f;
     public static readonly float senseDistance_infinite = 5000f;
-    public static readonly float maxJumpFromDistance = 2f;
+    public static readonly float maxJumpFromDistance = 3f;
     public static readonly float rotationSpeed = 1f;
     public static readonly float baseTime_chase = 10f;
     public static readonly float baseTime_flee = 10f;
@@ -268,8 +268,6 @@ public class EntityBehavior : EntityComponent
             targetT = a.obj.transform;
         }
         else{
-            //Transform directionalTs = Utility.FindDeepChild(a.obj.transform, "DirectionalTs");
-            //targetT = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1));
             targetT = a.obj.transform;
         }
 
@@ -452,6 +450,8 @@ public class EntityBehavior : EntityComponent
 
     Vector3 GetNavigationDirection(Transform targetT, bool reverse){
 
+        bool jumped = false;
+
         // set direction to face
         Vector3 targetDirection = reverse ? (transform.position - targetT.position) : (targetT.position - transform.position);
         Transform gyro = entityPhysics.gyro;
@@ -481,10 +481,24 @@ public class EntityBehavior : EntityComponent
 				if(Mathf.Min(Mathf.Min(leftDistance, centerDistance), rightDistance) < maxJumpFromDistance){
 					if(entityPhysics.CanJump()){
 						entityPhysics.Jump();
+                        jumped = true;
 					}
 				}
 			}
 		}
+
+        if(!jumped)
+        {
+            if (entityPhysics.handGrab)
+            {
+                if (entityPhysics.CanJump())
+                {
+                    entityPhysics.Jump();
+                    jumped = true;
+                }
+
+            }
+        }
         
         Rigidbody targetRb = targetT.GetComponent<Rigidbody>();
         Vector3 tp = targetT.position;
@@ -527,10 +541,8 @@ public class EntityBehavior : EntityComponent
                     hits++;
                 }
             }
-            //return hits >= 2;
-
-
-            return false;
+            return hits >= 2;
+            //return false;
             
 
         }

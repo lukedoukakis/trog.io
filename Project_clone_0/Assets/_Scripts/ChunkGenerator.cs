@@ -548,10 +548,10 @@ public class ChunkGenerator : MonoBehaviour
                 //     heightValue = Mathf.Lerp(heightValue, postHeight, badland);
                 // }
 
-                // posterize all land
-                //float postNes = .75f;
-                //heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 350, .9f + postNes);
-                //heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 750, 0f + postNes);
+                //posterize all land
+                // float postNes = .75f;
+                // heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 350, .9f + postNes);
+                // heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 750, 0f + postNes);
 
 
                 // dip

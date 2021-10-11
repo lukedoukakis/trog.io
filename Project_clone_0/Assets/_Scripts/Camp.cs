@@ -447,7 +447,7 @@ public class Camp : MonoBehaviour
 
             Transform foodT = foodObject.transform;
             Vector3 castTargetPosition = bonfire.transform.position;
-            float castSpeed = 10f;
+            float castSpeed = 10000f;
             while(Vector3.Distance(foodT.position, castTargetPosition) > .1f)
             {
                 foodT.position = Vector3.Lerp(foodT.position, castTargetPosition, castSpeed * Time.deltaTime);
@@ -455,14 +455,16 @@ public class Camp : MonoBehaviour
             }
             // todo: play particles for food casted into fire
             GameObject.Destroy(foodObject);
-            OnFoodCast(foodItem);
+            OnFoodCast(casterHandle, foodItem);
         }
     
     }
 
-    void OnFoodCast(Item foodItem)
+    void OnFoodCast(EntityHandle casterHandle, Item foodItem)
     {
-        // todo: birth new tribe member
+        Debug.Log("OnFoodCast()");
+        StartCoroutine(casterHandle.entityCommandServer.SpawnNpcWhenReady(casterHandle.gameObject));
+
         // todo: play particles for new tribe member birth
     }
 

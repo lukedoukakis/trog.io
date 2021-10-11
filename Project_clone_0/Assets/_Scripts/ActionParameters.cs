@@ -76,8 +76,11 @@ public class ActionParameters : ScriptableObject
                 a.urgent = false;
                 break;
             case "Follow Player" :
+
+                Transform directionalTs = Utility.FindDeepChild(GameManager.current.localPlayer.gameObject.transform, "DirectionalTs");
+            
                 a.type = ActionType.Follow;
-                a.obj = GameManager.current.localPlayer.gameObject;
+                a.obj = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1)).gameObject;
                 a.distanceThreshold = EntityBehavior.distanceThreshold_spot;
                 break;
             case "Run From Player" :
