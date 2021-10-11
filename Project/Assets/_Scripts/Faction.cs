@@ -25,10 +25,13 @@ public class Faction : MonoBehaviour
         EntityBehavior calleeBehavior;
         foreach(EntityHandle calleeHandle in party.ToArray()){
             //Debug.Log("party member do shit");
-            if(Vector3.Distance(callPosition, calleeHandle.transform.position) <= radius)
+            if(calleeHandle != null)
             {
-                calleeBehavior = calleeHandle.entityBehavior;
-                calleeBehavior.InsertActionImmediate(ActionParameters.GenerateActionParameters(command, calleeHandle), true);
+                if (Vector3.Distance(callPosition, calleeHandle.transform.position) <= radius)
+                {
+                    calleeBehavior = calleeHandle.entityBehavior;
+                    calleeBehavior.InsertActionImmediate(ActionParameters.GenerateActionParameters(command, calleeHandle), true);
+                }
             }
         }
         //Debug.Log("Commands sent!");

@@ -996,24 +996,12 @@ public class EntityPhysics : EntityComponent
         {
             EntityHitDetection ehd = collider.gameObject.GetComponentInParent<EntityHitDetection>();
             //Log("HIT!!!! " + collider.gameObject.name);
-            ehd.OnHit(this.entityHandle, projectile);
+            ehd.OnHit(this.entityHandle, hitPoint, projectile);
 
             // apply fixed weapon position effect if applicable
             if (entityItems != null)
             {
                 StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
-            }
-
-            // play particles based on hit creature's speciesInfo particles
-            GameObject particlesPrefab = SpeciesInfo.GetSpeciesInfo(ehd.species).onHitParticlesPrefab;
-            if(particlesPrefab != null)
-            {
-                //Debug.Log("Playing particles");
-                GameObject particleObj = GameObject.Instantiate(particlesPrefab);
-                particleObj.transform.position = hitPoint;
-                particleObj.transform.rotation = transform.rotation;
-                particleObj.GetComponent<ParticleSystem>().Play();
-                Utility.DestroyInSeconds(particleObj, 1f);
             }
 
             StopAttackHitTime();
@@ -1023,7 +1011,7 @@ public class EntityPhysics : EntityComponent
             Log("HIT!!!! " + collider.gameObject.name);
             ItemHitDetection ihd = collider.gameObject.GetComponentInParent<ItemHitDetection>();
             if(ihd != null){
-                ihd.OnHit(this.entityHandle, projectile);
+                ihd.OnHit(this.entityHandle, hitPoint, projectile);
             }
         }
         
