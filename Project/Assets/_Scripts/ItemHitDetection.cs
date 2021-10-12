@@ -30,7 +30,7 @@ public class ItemHitDetection : MonoBehaviour
 
 
         // take damage from the hit
-        stats.TakeDamage(attackerHandle, projectile);
+        stats.TakeDamage(attackerHandle, projectile, false);
 
         // play particles
         GameObject particlesPrefab = item.hitParticlesPrefab;

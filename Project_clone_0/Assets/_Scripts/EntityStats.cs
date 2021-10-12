@@ -85,7 +85,7 @@ public class EntityStats : EntityComponent
     }
 
 
-    public void TakeDamage(EntityHandle attackerHandle, Projectile projectile){
+    public void TakeDamage(EntityHandle attackerHandle, Projectile projectile, bool instantKill){
 
         if(isLocalPlayer && Testing.instance.godMode){
             return;
@@ -107,31 +107,39 @@ public class EntityStats : EntityComponent
         }
         float attackerAttack = Stats.GetStatValue(attackerStats, Stats.StatType.Attack);
 
-        // get this entity's relevant stats
-        float armorBase = Stats.GetStatValue(this.statsCombined, Stats.StatType.ArmorBase);
-        Enum armorStatType;
-        switch (attackerWeapon.damageType)
-        {
-            case Item.ItemDamageType.Blunt:
-                armorStatType = Stats.StatType.ArmorBlunt;
-                break;
-            case Item.ItemDamageType.Slash:
-                armorStatType = Stats.StatType.ArmorSlash;
-                break;
-            case Item.ItemDamageType.Pierce:
-                armorStatType = Stats.StatType.ArmorPierce;
-                break;
-            default:
-                armorStatType = Stats.StatType.ArmorBase;
-                break;
-        }
-        float armorFromWeaponType = Stats.GetStatValue(this.statsCombined, armorStatType);
-
         // calculate damage
-        float hpLoss = hpLossFromHit_base;
-        hpLoss *= attackerAttack;
-        hpLoss *= 1f / Mathf.Max(armorBase, 1f);
-        hpLoss *= 1f / Mathf.Max(armorFromWeaponType, 1f);
+        float hpLoss;
+        if (!instantKill)
+        {
+            float armorBase = Stats.GetStatValue(this.statsCombined, Stats.StatType.ArmorBase);
+            Enum armorStatType;
+            switch (attackerWeapon.damageType)
+            {
+                case Item.ItemDamageType.Blunt:
+                    armorStatType = Stats.StatType.ArmorBlunt;
+                    break;
+                case Item.ItemDamageType.Slash:
+                    armorStatType = Stats.StatType.ArmorSlash;
+                    break;
+                case Item.ItemDamageType.Pierce:
+                    armorStatType = Stats.StatType.ArmorPierce;
+                    break;
+                default:
+                    armorStatType = Stats.StatType.ArmorBase;
+                    break;
+            }
+            float armorFromWeaponType = Stats.GetStatValue(this.statsCombined, armorStatType);
+
+            hpLoss = hpLossFromHit_base;
+            hpLoss *= attackerAttack;
+            hpLoss *= 1f / Mathf.Max(armorBase, 1f);
+            hpLoss *= 1f / Mathf.Max(armorFromWeaponType, 1f);
+        }
+        else
+        {
+            hpLoss = float.MaxValue;
+        }
+        
         
         // take away health
         hp -= (int)hpLoss;

@@ -72,7 +72,7 @@ public class ActionParameters : ScriptableObject
                 calleeHomeT.transform.position = newHomeT.position;
                 calleeHomeT.transform.SetParent(newHomeT);
                 a.obj = calleeHomeT.gameObject;
-                a.distanceThreshold = EntityBehavior.distanceThreshold_spot;
+                a.distanceThreshold = EntityBehavior.distanceThreshold_point;
                 a.urgent = false;
                 break;
             case "Follow Player" :

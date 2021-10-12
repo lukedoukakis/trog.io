@@ -42,7 +42,7 @@ public class EntityCommandServer : EntityComponent
         npcHandle.entityItems.EquipClothing(Item.ClothingTest);
         foreach(EntityHandle factionMemberHandle in owningPlayerFaction.members)
         {
-            Utility.IgnorePhysicsCollisions(npcHandle.gameObject, factionMemberHandle.gameObject.GetComponentsInChildren<Collider>());
+            Utility.IgnorePhysicsCollisions(npcHandle.transform, factionMemberHandle.transform);
         }
         owningPlayerFaction.AddMember(npcHandle, true);
         npcHandle.entityInfo.name = "new npc";

@@ -30,7 +30,7 @@ public class EntityPhysics : EntityComponent
     float groundCastDistance;
     float distanceFromGround;
 
-    public static float BASE_FORCE_JUMP = 360f;
+    public static float BASE_FORCE_JUMP = 280f;
     public static float BASE_FORCE_THROW = 400f;
     public static float BASE_ACCELERATION = 40f;
     public static float BASE_MAX_SPEED = 20f;
@@ -829,7 +829,7 @@ public class EntityPhysics : EntityComponent
             acd.SetOwner(entityHandle);
             acd.SetProjectile(projectile);
             Utility.ToggleObjectPhysics(projectile.worldObject, true, true, true, true);
-            Utility.IgnorePhysicsCollisions(projectile.worldObject, gameObject.GetComponentInChildren<Collider>());
+            Utility.IgnorePhysicsCollisions(projectile.worldObject.transform, gameObject.GetComponentInChildren<Collider>());
             entityItems.SetUpdateWeaponOrientation(false);
 
             Vector3 throwDir = entityOrientation.body.forward + (Vector3.up * .25f);
@@ -996,7 +996,7 @@ public class EntityPhysics : EntityComponent
         {
             EntityHitDetection ehd = collider.gameObject.GetComponentInParent<EntityHitDetection>();
             //Log("HIT!!!! " + collider.gameObject.name);
-            ehd.OnHit(this.entityHandle, hitPoint, projectile);
+            ehd.OnHit(this.entityHandle, hitPoint, projectile, false);
 
             // apply fixed weapon position effect if applicable
             if (entityItems != null)
@@ -1065,7 +1065,8 @@ public class EntityPhysics : EntityComponent
 
         IEnumerator _AttackSwipe(){
             BeginAttackHitTime();
-            Lunge(Utility.GetHorizontalVector(target.position - transform.position));
+            Vector3 lungeDirection = target != null ? target.position - transform.position : velHoriz_this;
+            Lunge(Utility.GetHorizontalVector(lungeDirection));
             iKTargetAnimator.enabled = true;
             iKTargetAnimator.SetTrigger("AttackSwipe");
             yield return new WaitForSeconds(.25f);
@@ -1277,7 +1278,7 @@ public class EntityPhysics : EntityComponent
 
     bool GroundIsClose(){
 
-        return Physics.OverlapSphere(groundSense.position, .75f, layerMask_walkable).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, .25f, layerMask_walkable).Length > 0;
 
     }
 

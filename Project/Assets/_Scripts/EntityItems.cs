@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EntityItems : EntityComponent
@@ -508,11 +509,12 @@ public class EntityItems : EntityComponent
     {
         entityPhysics.UpdateIKForCarryingItems();
         if(weaponEquipped_object != null){
-            Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.worldCollider, true);
+            //Utility.IgnorePhysicsCollisions(transform, weaponEquipped_object.transform);
+            Utility.IgnorePhysicsCollisions(transform, entityInfo.faction.members.Where(handle => handle != null).Select(handle => handle.transform).ToArray());
             weaponEquipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
         if(weaponUnequipped_object != null){
-            Physics.IgnoreCollision(weaponUnequipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.worldCollider, true);
+             Utility.IgnorePhysicsCollisions(transform, weaponUnequipped_object.transform);
             weaponUnequipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
         if(holding_object != null){
@@ -527,10 +529,10 @@ public class EntityItems : EntityComponent
 
     void UpdateCameraOffset(){
         if(weaponEquipped_item != null){
-            CameraController.current.SetTargetOffset(Vector3.right * 0f);
+            CameraController.current.SetTargetOffset(CameraController.current.defaultCameraOffset);
         }
         else{
-            CameraController.current.SetTargetOffset(Vector3.right * 0f);
+            CameraController.current.SetTargetOffset(CameraController.current.defaultCameraOffset);
         }
     }
 

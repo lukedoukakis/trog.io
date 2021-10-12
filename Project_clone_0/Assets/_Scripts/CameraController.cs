@@ -13,6 +13,8 @@ public class CameraController : MonoBehaviour
     
     public static CameraController current;
 
+    public Vector3 defaultCameraOffset;
+
     [SerializeField] float sensitivity_rotation;
     [SerializeField] float sensitivity_zoom;
     [SerializeField] float cullDistance_feature;
@@ -30,12 +32,11 @@ public class CameraController : MonoBehaviour
 
     void Awake(){
         current = this;
-        targetOffset = currentOffset = Vector3.right * 0f;
     }
     // Start is called before the first frame update
     void Start()
     {
-
+        SetTargetOffset(defaultCameraOffset);
     }
 
     public void Init(Transform t){

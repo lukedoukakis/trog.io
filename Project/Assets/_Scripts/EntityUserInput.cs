@@ -125,10 +125,21 @@ public class EntityUserInput : EntityComponent
 
     void HandleAttack(){
         if(Input.GetKeyDown(KeyCode.Mouse0)){
-            entityPhysics.Attack(AttackType.Weapon, null);
+            if(entityItems.weaponEquipped_item != null || true)
+            {
+                entityPhysics.Attack(AttackType.Weapon, null);
+            }
+            else
+            {
+                List<AttackType> nonWeaponAttacks = entityInfo.speciesInfo.behaviorProfile.attackTypes.Where(attackType => !attackType.Equals(AttackType.Weapon)).ToList();
+                entityPhysics.Attack(nonWeaponAttacks[UnityEngine.Random.Range(0, nonWeaponAttacks.Count)], null);
+            }
         }
         else if(Input.GetKeyUp(KeyCode.Mouse0)){
-            entityPhysics.Attack(AttackType.Weapon, null);
+            if(entityItems.weaponEquipped_item != null)
+            {
+                entityPhysics.Attack(AttackType.Weapon, null);
+            }
         }
     }
 
@@ -152,7 +163,7 @@ public class EntityUserInput : EntityComponent
         //Log("Hovered object: " + hoveredInteractableObject.name);
 
         // if hovering over something, interact with it
-        if(hoveredInteractableObject == null){
+        if(hoveredInteractableObject == null || Vector3.Distance(hoveredInteractableObject.transform.position, selectionOrigin.position) > 1.25f){
             entityItems.OnEmptyInteract();
         }
 
@@ -219,8 +230,8 @@ public class EntityUserInput : EntityComponent
         Transform cameraT = Camera.main.transform;
         RaycastHit hit;
 
-        //if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, Vector3.Distance(transform.position, cameraT.position) + 2f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
-        if(Physics.SphereCast(selectionOrigin.position, .3f, entityOrientation.body.forward, out hit, 1f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
+        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, 100f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
+        //if(Physics.SphereCast(selectionOrigin.position, .3f, entityOrientation.body.forward, out hit, 1f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
 
             // set hoveredInteractableObject to parent of collider hit
             GameObject hovered = hit.collider.transform.parent.gameObject;
@@ -242,7 +253,7 @@ public class EntityUserInput : EntityComponent
     }
 
     void HandleInteractionPopup(){
-        if(hoveredInteractableObject == null){
+        if(hoveredInteractableObject == null || Vector3.Distance(hoveredInteractableObject.transform.position, selectionOrigin.position) > 1.25f){
             InteractionPopupController.current.Hide();
         }
         else

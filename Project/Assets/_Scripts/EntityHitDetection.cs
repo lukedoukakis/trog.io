@@ -7,7 +7,7 @@ public class EntityHitDetection : EntityComponent
     
     [SerializeField] public Species species;
 
-    public void OnHit(EntityHandle attackerHandle, Vector3 hitPoint, Projectile projectile){
+    public void OnHit(EntityHandle attackerHandle, Vector3 hitPoint, Projectile projectile, bool instantKill){
 
         // add and set up info and stats if they don't exist
         if(entityInfo == null){
@@ -20,7 +20,7 @@ public class EntityHitDetection : EntityComponent
 
 
         // take damage from the hit
-        entityStats.TakeDamage(attackerHandle, projectile);
+        entityStats.TakeDamage(attackerHandle, projectile, instantKill);
 
         // play particles
         GameObject particlesPrefab = SpeciesInfo.GetSpeciesInfo(species).onHitParticlesPrefab;

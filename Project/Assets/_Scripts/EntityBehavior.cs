@@ -9,15 +9,17 @@ public enum AttackType{ Weapon, Bite, Swipe, HeadButt, Stomp }
 public class EntityBehavior : EntityComponent
 {
 
+    public bool isPlayer;
     public BehaviorProfile behaviorProfile;
     public Transform homeT;
+    public bool isAtHome;
     public Vector3 move;
     public bool urgent;
 
 
     public static float randomOffsetRange = 1f;
     public static float distanceThreshold_none = -1f;
-    public static float distanceThreshold_point = .1f;
+    public static float distanceThreshold_point = .3f;
     public static float distanceThreshold_spot = 2f;
     public static float distanceThreshhold_lungeAttack = 10f;
     public static float distanceThreshold_combat = 15f;
@@ -57,6 +59,7 @@ public class EntityBehavior : EntityComponent
 
         base.Awake();
 
+        isPlayer = tag == "Player";
         homeT = new GameObject().transform;
         randomOffset = new Vector3(UnityEngine.Random.Range(randomOffsetRange*-1f, randomOffsetRange), 0f, UnityEngine.Random.Range(randomOffsetRange*-1f, 0));
         actionLayers = new Dictionary<string, ActionParameters>{
@@ -381,7 +384,16 @@ public class EntityBehavior : EntityComponent
 
         IEnumerator _Attack()
         {
-            AttackType attackType = behaviorProfile.attackTypes[UnityEngine.Random.Range(0, behaviorProfile.attackTypes.Count)];
+            List<AttackType> attackTypes = behaviorProfile.attackTypes;
+            AttackType attackType;
+            if(attackTypes.Contains(AttackType.Weapon))
+            {
+                attackType = AttackType.Weapon;
+            }
+            else
+            {
+                attackType = attackTypes[UnityEngine.Random.Range(0, behaviorProfile.attackTypes.Count)];
+            }
             entityPhysics.Attack(attackType, a.obj.transform);
             ActionParameters attackRecover = ActionParameters.GenerateActionParameters(ActionType.AttackRecover, a.obj, -1, null, null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, true);
             yield return new WaitForSecondsRealtime(.2f);
@@ -724,6 +736,21 @@ public class EntityBehavior : EntityComponent
 
 
 
+    void HandleCreatureSense()
+    {
+        timeSince_creatureSense += Time.deltaTime;
+        if (timeSince_creatureSense >= baseTimeStep_creatureSense)
+        {
+            if (WithinActiveDistance() && NotBusy())
+            {
+                //Debug.Log("Boutta sense creatures");
+                CheckForCreaturesUpdate();
+            }
+            timeSince_creatureSense = timeSince_creatureSense - baseTimeStep_creatureSense;
+        }
+        timeSince_attack += Time.deltaTime;
+    }   
+
 
     // Update is called once per frame
     void Update()
@@ -731,23 +758,11 @@ public class EntityBehavior : EntityComponent
 
         entityPhysics.moveDir = move;
 
-        if (!isLocalPlayer)
+        if (!isPlayer)
         {
-
-            float dTime = Time.deltaTime;
-
-            timeSince_creatureSense += dTime;
-            if (timeSince_creatureSense >= baseTimeStep_creatureSense)
-            {
-                if(WithinActiveDistance() && NotBusy()){
-                    //Debug.Log("Boutta sense creatures");
-                    CheckForCreaturesUpdate();
-                }
-                timeSince_creatureSense = timeSince_creatureSense - baseTimeStep_creatureSense;
-            }
-
-            timeSince_attack += dTime;
+            HandleCreatureSense();
         }
+        
 
         
 

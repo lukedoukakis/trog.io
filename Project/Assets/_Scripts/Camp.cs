@@ -92,6 +92,8 @@ public class Camp : MonoBehaviour
             AddItemsToCamp(faction.ownedItems, originT);
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             UpdateTentCount();
+            yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
+            ClearFeaturesFromCampRadius();
         }
     }
 
@@ -157,6 +159,26 @@ public class Camp : MonoBehaviour
             orientation.rotation = Quaternion.Euler(toCenterEulers);
 
 
+        }
+    }
+
+    public void ClearFeaturesFromCampRadius()
+    {
+        Collider[] featureCollidersInsideCamp = Physics.OverlapSphere(origin, radius, LayerMask.GetMask("Feature"));
+        foreach(Collider collider in featureCollidersInsideCamp)
+        {
+            if(collider != null)
+            {
+                EntityHitDetection ehd = collider.gameObject.GetComponent<EntityHitDetection>();
+                if(ehd != null && false)
+                {
+                    ehd.OnHit(faction.members[0], collider.transform.position, null, true);
+                }
+                else
+                {
+                    Destroy(collider.gameObject);
+                }
+            }
         }
     }
 
@@ -462,7 +484,7 @@ public class Camp : MonoBehaviour
 
     void OnFoodCast(EntityHandle casterHandle, Item foodItem)
     {
-        Debug.Log("OnFoodCast()");
+        //Debug.Log("OnFoodCast()");
         StartCoroutine(casterHandle.entityCommandServer.SpawnNpcWhenReady(casterHandle.gameObject));
 
         // todo: play particles for new tribe member birth

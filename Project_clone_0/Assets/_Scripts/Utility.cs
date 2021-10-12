@@ -88,23 +88,33 @@ public class Utility : MonoBehaviour
         }   
     }
 
-    public static void IgnorePhysicsCollisions(GameObject o, Collider colliderToIgnore)
+    public static void IgnorePhysicsCollisions(Transform t, Collider colliderToIgnore)
     {
-        Collider[] cols = o.GetComponentsInChildren<Collider>();
+        Collider[] cols = t.GetComponentsInChildren<Collider>();
         if (cols.Length > 0)
         {
             foreach (Collider col in cols)
             {
+                Debug.Log("Ignoring collision with col: " + t.gameObject.name);
                 Physics.IgnoreCollision(col, colliderToIgnore, true);
             }
         }
     }
 
-    public static void IgnorePhysicsCollisions(GameObject o, Collider[] collidersToIgnore)
+    public static void IgnorePhysicsCollisions(Transform t0, Transform t1)
     {
+        Collider[] collidersToIgnore = t1.GetComponentsInChildren<Collider>();
         foreach(Collider colliderToIgnore in collidersToIgnore)
         {
-            IgnorePhysicsCollisions(o, colliderToIgnore);
+            IgnorePhysicsCollisions(t0, colliderToIgnore);
+        }
+    }
+
+    public static void IgnorePhysicsCollisions(Transform t0, Transform[] t1)
+    {
+        foreach(Transform _t in t1)
+        {
+            IgnorePhysicsCollisions(t0, _t);
         }
     }
 

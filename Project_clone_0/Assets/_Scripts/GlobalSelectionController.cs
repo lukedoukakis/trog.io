@@ -76,7 +76,7 @@ public class GlobalSelectionController : MonoBehaviour
         // handle tooltip
         if (!handle.tooltip)
         {
-            handle.ShowTooltip();
+            //handle.ShowTooltip();
         }
 
         // handle selecting

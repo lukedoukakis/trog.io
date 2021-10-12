@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 968516522}
+  m_SkyboxMaterial: {fileID: 915221767}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -1880,13 +1880,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 909122922}
   m_CullTransparentMesh: 0
---- !u!4 &953321349 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 595997955340704279, guid: 29db29f42e5ed1e4ca90a7eef5142d76,
-    type: 3}
-  m_PrefabInstance: {fileID: 606348414}
-  m_PrefabAsset: {fileID: 0}
---- !u!21 &968516522
+--- !u!21 &915221767
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
@@ -2205,6 +2199,12 @@ Material:
     - _Tint: {r: 1, g: 1, b: 1, a: 0}
     - _Vector1: {r: 0, g: 1, b: 1, a: 0}
     - _water: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+--- !u!4 &953321349 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 595997955340704279, guid: 29db29f42e5ed1e4ca90a7eef5142d76,
+    type: 3}
+  m_PrefabInstance: {fileID: 606348414}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1020565177
 GameObject:
   m_ObjectHideFlags: 0
@@ -2573,6 +2573,7 @@ MonoBehaviour:
   focusT: {fileID: 0}
   cameraDistance_baked: 0
   cameraDistance_input: 0
+  defaultCameraOffset: {x: 0.2, y: 0, z: 0}
   sensitivity_rotation: 3
   sensitivity_zoom: 0.1
   cullDistance_feature: 100
@@ -3195,7 +3196,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1369980472
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3342,6 +3343,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Tooltip
+      objectReference: {fileID: 0}
+    - target: {fileID: 1888494618668827873, guid: 6ef301b78ed43a74186c99ba71e06fff,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4785299802501059356, guid: 6ef301b78ed43a74186c99ba71e06fff,
         type: 3}
