@@ -48,6 +48,8 @@ public class EntityCommandServer : EntityComponent
         npcHandle.entityInfo.name = "new npc";
 
         NetworkServer.Spawn(npc, owningPlayer);
+    
+        Debug.Log("SpawnNpc() finished");
     }
 
 

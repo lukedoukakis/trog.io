@@ -161,6 +161,14 @@ public class EntityUserInput : EntityComponent
             if(t == "Item"){
                 entityItems.OnObjectInteract(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
             }
+            else if(t == "Npc")
+            {
+                EntityHandle hoveredEntityHandle = hoveredInteractableObject.GetComponentInParent<EntityHandle>();
+                if(hoveredEntityHandle.entityInfo.faction.Equals(entityInfo.faction))
+                {
+                    entityItems.ExchangeItemsWithEntity(hoveredEntityHandle.entityItems);
+                }
+            }
             else if(t == "Bonfire"){
                 entityInfo.faction.camp.CastFoodIntoBonfire(entityHandle);
             }
@@ -240,6 +248,8 @@ public class EntityUserInput : EntityComponent
         else
         {
 
+            //Debug.Log(hoveredInteractableObject.tag);
+
             Item item;
 
             // get the correct text based on the interactable object we are dealing with
@@ -248,69 +258,94 @@ public class EntityUserInput : EntityComponent
                 case "Item" : 
                     txt += "E: Pick up " + hoveredInteractableObject.name;
                     break;
+                case "Npc" :
+                    EntityHandle hoveredEntityHandle = hoveredInteractableObject.GetComponentInParent<EntityHandle>();
+                    if(hoveredEntityHandle.entityInfo.faction.Equals(entityInfo.faction))
+                    {
+                        bool hasWeaponEquipped_thisEntity = entityItems.weaponEquipped_item != null;
+                        bool hasWeaponUnequipped_thisEntity = entityItems.weaponUnequipped_item != null;
+                        bool hasWeaponEquipped_hoveredEntity =  hoveredEntityHandle.entityItems.weaponEquipped_item != null;
+                        bool hasWeaponUnequipped_hoveredEntity =  hoveredEntityHandle.entityItems.weaponUnequipped_item != null;
+
+                        if(hasWeaponEquipped_thisEntity)
+                        {
+                            if(hasWeaponEquipped_hoveredEntity)
+                            {
+                                txt += "E: Trade weapons with " + hoveredEntityHandle.entityInfo.nickname;
+                            }
+                            else
+                            {
+                                if(hasWeaponUnequipped_hoveredEntity)
+                                {
+                                    txt += "E: Trade weapons with " + hoveredEntityHandle.entityInfo.nickname;
+                                }
+                                else
+                                {
+                                    txt += "E: Give weapon to " + hoveredEntityHandle.entityInfo.nickname;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if(hasWeaponEquipped_hoveredEntity)
+                            {
+                                txt += "E: Take weapon from " + hoveredEntityHandle.entityInfo.nickname;
+                            }
+                            else
+                            {
+                                if (hasWeaponUnequipped_hoveredEntity)
+                                {
+                                    txt += "E: Take weapon from " + hoveredEntityHandle.entityInfo.nickname;
+                                }
+                            }
+                        }
+                    }
+
+
+                    break;
+
                 case "Bonfire" : 
                     item = entityItems.holding_item;
-                    if(item == null || !item.type.Equals(Item.ItemType.Food)){
-                        txt = "";
-                    }
-                    else
-                    {
+                    if(!(item == null || !item.type.Equals(Item.ItemType.Food))){
                         txt += "E: Cook " + item.nme;
                     }
                     break;
                 case "ObjectRack_Food" :
                     item = entityItems.holding_item;
-                    if(item == null || !item.type.Equals(Item.ItemType.Food)){
-                        txt = "";
-                    }
-                    else{
+                    if(!(item == null || !item.type.Equals(Item.ItemType.Food)))
+                    {
                         txt += "E: Place " + item.nme;
                     }
                     break;
                 case "ObjectRack_Clothing" :
                     item = entityItems.holding_item;
-                    if(item == null || !item.type.Equals(Item.ItemType.Clothing)){
-                        txt = "";
-                    }
-                    else{
+                    if(!(item == null || !item.type.Equals(Item.ItemType.Clothing))){
                         txt += "E: Place " + item.nme;
                     }
                     break;
 
                 case "ObjectRack_Weapons" :
                     item = entityItems.weaponEquipped_item;
-                    if(item == null){
-                        txt = "";
-                    }
-                    else{
+                    if(item != null){
                         txt += "E: Place " + item.nme;
                     }
                     break;
                 case "ObjectRack_Wood" :
                     item = entityItems.holding_item;
-                    if(item == null || !item.type.Equals(Item.ItemType.Wood)){
-                        txt = "";
-                    }
-                    else{
+                    if(!(item == null || !item.type.Equals(Item.ItemType.Wood))){
                         txt += "E: Place " + item.nme;
                     }
                     break;
                 case "ObjectRack_Bone" :
                     item = entityItems.holding_item;
-                    if(item == null || !item.type.Equals(Item.ItemType.Bone)){
-                        txt = "";
-                    }
-                    else{
+                    if(!(item == null || !item.type.Equals(Item.ItemType.Bone))){
                         txt += "E: Place " + item.nme;
                     }
                     break;
 
                 case "Workbench" :
                     item = entityItems.holding_item;
-                    if(item == null){
-                        txt = "";
-                    }
-                    else{
+                    if(item != null){
                         txt += "E: Place " + item.nme;
                     }
                     break;

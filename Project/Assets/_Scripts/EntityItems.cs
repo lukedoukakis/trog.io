@@ -139,16 +139,22 @@ public class EntityItems : EntityComponent
             o.transform.position = worldObject.transform.position;
             o.transform.rotation = worldObject.transform.rotation;
         }
-        // todo: if getting from another human
+        else if (attachedObject is EntityItems)
+        {
+            // picking up from another human
+            //EntityItems giverItems = (EntityItems)attachedObject;
+            o = worldObject; 
+        } 
         else if(attachedObject == null)
         {
-            Log("No attached obj");
+            //Log("No attached obj");
             o = worldObject;
         }
         else{
             o = worldObject;
         }
 
+        // handle what to do with currently equipped and unequipped weapons
         if(weaponEquipped_item != null){
             if(weaponUnequipped_item == null){
                 ToggleWeaponEquipped();
@@ -157,6 +163,8 @@ public class EntityItems : EntityComponent
                 DropEquippedWeapon(attachedObject);
             }
         }
+
+        // finally, equip the weapon
         SetEquippedWeapon(item, o);
 
     }
@@ -290,10 +298,17 @@ public class EntityItems : EntityComponent
         
         if (targetAttachedObject is ObjectRack)
         {
+            // if dropping onto an object rack
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)targetAttachedObject;
             Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1, rack, transform, 0f);
             GameObject.Destroy(weaponEquipped_object);
+        }
+        else if(targetAttachedObject is EntityItems)
+        {
+            // if dropping onto another entity
+            EntityItems takerItems = (EntityItems)targetAttachedObject;
+            takerItems.PickUpWeapon(weaponEquipped_item, weaponEquipped_object, this);
         }
         else if (targetAttachedObject == null)
         {
@@ -309,7 +324,6 @@ public class EntityItems : EntityComponent
                 Utility.ToggleObjectPhysics(weaponEquipped_object, true, true, true, true);
             }
         }
-        // todo: case human
 
         weaponEquipped_item = null;
         weaponEquipped_object = null;
@@ -454,6 +468,40 @@ public class EntityItems : EntityComponent
         }
     }
 
+
+    public void ExchangeItemsWithEntity(EntityItems otherEntityItems)
+    {
+        bool hasWeaponEquipped_thisEntity = entityItems.weaponEquipped_item != null;
+        bool hasWeaponUnequipped_thisEntity = entityItems.weaponUnequipped_item != null;
+        bool hasWeaponEquipped_hoveredEntity = otherEntityItems.weaponEquipped_item != null;
+        bool hasWeaponUnequipped_hoveredEntity = otherEntityItems.weaponUnequipped_item != null;
+
+        bool exchangeOccurred = false;
+        if (weaponEquipped_item != null)
+        {
+            DropEquippedWeapon(otherEntityItems);
+            exchangeOccurred = true;
+        }
+        else
+        {
+            if(holding_item != null)
+            {
+                DropHolding(otherEntityItems);
+                exchangeOccurred = true;
+            }
+            else
+            {
+                // if no weapon equipped and no holding item, do nothing
+            }
+        }
+
+        if(exchangeOccurred)
+        {
+            OnItemsChange();
+            otherEntityItems.OnItemsChange();
+        }
+        
+    }
 
 
     public void OnItemsChange()
