@@ -91,9 +91,9 @@ public class EntityPhysics : EntityComponent
 
 
     // other settings
-    float weaponChargeTime;
-    bool weaponCharging;
-    float weaponChargeAmount;
+    public float weaponChargeTime;
+    public bool weaponCharging;
+    public float weaponChargeAmount;
     float attackHitTime;
     public bool meleeAttackCanHit;
     public bool attackHit;
@@ -157,7 +157,7 @@ public class EntityPhysics : EntityComponent
             groundCastDistance = BASE_CASTDISTANCE_GROUND_NPC;
         }
 
-        ikEnabled = true;
+        ikEnabled = quadripedal;
         ikParent = Utility.FindDeepChild(transform, "IKTargets");
         basePositionHips = ikParent.Find("BasePositionHips");
         basePositionFootRight = ikParent.Find("BasePositionFootRight");
@@ -898,7 +898,7 @@ public class EntityPhysics : EntityComponent
             OnWeaponRelease(weapon, ranged);
         }
 
-        StartAttackAnimation(charging, weapon, ranged);
+        StartWeaponAttackAnimation(charging, weapon, ranged);
         
     }
     void OnWeaponChargeBegin(Item weapon, bool ranged){
@@ -920,7 +920,7 @@ public class EntityPhysics : EntityComponent
         }
     }
 
-    void StartAttackAnimation(bool charging, Item weapon, bool ranged)
+    void StartWeaponAttackAnimation(bool charging, Item weapon, bool ranged)
     {
         if(weapon == null){ return; }
 
@@ -1001,7 +1001,7 @@ public class EntityPhysics : EntityComponent
             // apply fixed weapon position effect if applicable
             if (entityItems != null)
             {
-                StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
+                //StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
             }
 
             StopAttackHitTime();
@@ -1273,7 +1273,7 @@ public class EntityPhysics : EntityComponent
     }
 
     public bool IsMoving(){
-        return velHoriz_this.magnitude > .2f;
+        return velHoriz_this.magnitude > .3f;
     }
 
     bool GroundIsClose(){

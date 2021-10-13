@@ -136,7 +136,7 @@ public class EntityUserInput : EntityComponent
             }
         }
         else if(Input.GetKeyUp(KeyCode.Mouse0)){
-            if(entityItems.weaponEquipped_item != null)
+            if(entityItems.weaponEquipped_item != null || true)
             {
                 entityPhysics.Attack(AttackType.Weapon, null);
             }

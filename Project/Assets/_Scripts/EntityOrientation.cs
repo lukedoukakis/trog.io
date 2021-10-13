@@ -10,6 +10,8 @@ public class EntityOrientation : EntityComponent
     public Transform body;
     public Transform head;
 
+    Animator animator;
+
 
     // rotation
     public Enum bodyRotationMode;
@@ -56,10 +58,14 @@ public class EntityOrientation : EntityComponent
             bodyRotationSpeed = bodyRotationSpeed_ai;
         }
         posture_squat = .1f;
+
+
+        animator = body.GetComponent<Animator>();
+
     }
 
     void Start(){
-        SetBodyRotationMode(BodyRotationMode.Target, null);
+        SetBodyRotationMode(BodyRotationMode.Normal, null);
     }
 
     
@@ -183,8 +189,51 @@ public class EntityOrientation : EntityComponent
     }
 
 
+    void HandleAnimation()
+    {
+        if(animator != null)
+        {
+
+
+            float skew = Mathf.InverseLerp(0f, 180f, Vector3.Angle(Utility.GetHorizontalVector(body.forward), entityPhysics.velHoriz_this));
+            animator.SetLayerWeight(1, 1f - skew);
+            animator.SetLayerWeight(2, skew);
+
+            if(entityPhysics.IsMoving())
+            {
+                if(entityPhysics.sprinting)
+                {
+                    animator.SetBool("Sprint", true);
+                    animator.SetBool("Run", false);
+                }
+                else
+                {
+                    animator.SetBool("Run", true);
+                    animator.SetBool("Sprint", false);
+                }
+                
+                animator.SetBool("Stand", false);
+            }
+            else
+            {
+                animator.SetBool("Stand", true);
+                animator.SetBool("Run", false);
+                animator.SetBool("Sprint", false);
+            }
+
+            if(isLocalPlayer)
+            {
+                Debug.Log(entityPhysics.weaponChargeTime);
+            }
+            animator.SetLayerWeight(8, (entityPhysics.weaponChargeTime / EntityPhysics.WEAPON_CHARGETIME_MAX) * .25f);
+           
+        }
+    }
+
+
     void FixedUpdate(){
         UpdateBodyRotation();
+        HandleAnimation();
         bodyRotationLast = body.rotation;
         angularVelocityY_last = angularVelocityY;
     }
