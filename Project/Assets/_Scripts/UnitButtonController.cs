@@ -36,6 +36,8 @@ public class UnitButtonController : MonoBehaviour
     public void SetFromObject(EntityHandle handle){
 
         // set entity handle and info
+        if(handle == null){ return; }
+        
         this.handle = handle;
         referencedObject = this.handle.gameObject;
         referencedObjectInfo = referencedObject.GetComponent<EntityInfo>();

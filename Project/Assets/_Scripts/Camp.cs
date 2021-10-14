@@ -485,7 +485,7 @@ public class Camp : MonoBehaviour
     void OnFoodCast(EntityHandle casterHandle, Item foodItem)
     {
         //Debug.Log("OnFoodCast()");
-        StartCoroutine(casterHandle.entityCommandServer.SpawnNpcWhenReady(casterHandle.gameObject));
+        StartCoroutine(casterHandle.entityCommandServer.SpawnNpcWhenReady(casterHandle));
 
         // todo: play particles for new tribe member birth
     }

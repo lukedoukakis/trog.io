@@ -160,7 +160,7 @@ public class ActionParameters : ScriptableObject
         a.item_target = null;
         a.maxTime = -1;
         a.distanceThreshold = -1;
-        a.bodyRotationMode = EntityOrientation.BodyRotationMode.Normal;
+        a.bodyRotationMode = BodyRotationMode.Normal;
         a.urgent = false;
         return a;
     }
