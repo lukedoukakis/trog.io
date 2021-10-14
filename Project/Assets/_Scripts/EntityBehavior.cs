@@ -9,22 +9,26 @@ public enum AttackType{ Weapon, Bite, Swipe, HeadButt, Stomp }
 public class EntityBehavior : EntityComponent
 {
 
-    public bool isPlayer;
     public BehaviorProfile behaviorProfile;
     public Transform homeT;
+    public bool isPlayer;
+    public bool hasLeader;
     public bool isAtHome;
     public Vector3 move;
     public bool urgent;
 
 
-    public static float randomOffsetRange = 1f;
-    public static float distanceThreshold_none = -1f;
-    public static float distanceThreshold_point = .3f;
-    public static float distanceThreshold_spot = 2f;
-    public static float distanceThreshhold_lungeAttack = 10f;
-    public static float distanceThreshold_combat = 15f;
-    public static float distanceThreshhold_pursuit = 100f;
-    public static float distanceThreshhold_active = 100f;
+    public static float RANDOM_OFFSET_RANGE = 1f;
+    public static float DISTANCE_THRESHOLD_NONE = -1f;
+    public static float DISTANCE_THRESHOLD_SAME_POINT = .3f;
+    public static float DISTANCE_THRESHOLD_SAME_SPOT = 2f;
+    public static float DISTANCE_THRESHOLD_LUNGEATTACK = 10f;
+    public static float DISTANCE_THRESHOLD_COMBAT = 15f;
+    public static float DISTANCE_THRESHOLD_CHASE = 100f;
+    public static readonly float DISTANCE_THRESHOLD_FLEE = 15f;
+    public static readonly float DISTANCE_THRESHOLD_STANDGROUND = 5f;
+    public static float DISTANCE_THRESHOLD_ACTIVE = 100f;
+    
 
     Vector3 randomOffset;
 
@@ -32,17 +36,17 @@ public class EntityBehavior : EntityComponent
     // sensing and movement parameters
     public float timeSince_creatureSense;
     public float timeSince_attack;
-    public static readonly float baseTimeStep_creatureSense = 1f;
-    public static readonly float baseTimeStep_attack = 1f;
-    public static readonly float senseDistance_obstacle = 3f;
-    public static readonly float senseDistance_immediate = 1f;
-    public static readonly float senseDistance_search = 150f;
-    public static readonly float senseDistance_earshot = 500f;
-    public static readonly float senseDistance_infinite = 5000f;
-    public static readonly float maxJumpFromDistance = 3f;
-    public static readonly float rotationSpeed = 1f;
-    public static readonly float baseTime_chase = 10f;
-    public static readonly float baseTime_flee = 10f;
+    public static readonly float BASE_TIMESTEP_CREATURESENSE = 1f;
+    public static readonly float BASE_TIMESTEP_ATTCK = 1f;
+    public static readonly float SENSE_DISTANCE_OBSTACLE = 3f;
+    public static readonly float SENSE_DISTANCE_IMMEDIATE = 1f;
+    public static readonly float SENSE_DISTANCE_SEARCH = 150f;
+    public static readonly float SENSE_DISTANCE_EARSHOT = 500f;
+    public static readonly float SENSE_DISTANCE_INFINITE = float.MaxValue;
+    public static readonly float MAX_JUMPFROM_DISTANCE = 3f;
+    public static readonly float DIRECT_ADJUST_ROTATION_SPEED = 1f;
+    public static readonly float BASE_TIME_CHASE = 10f;
+    public static readonly float BASE_TIME_FLEE = 10f;
 
 
 
@@ -54,14 +58,14 @@ public class EntityBehavior : EntityComponent
     public Dictionary<string, IEnumerator> coroutineLayers;
 
 
-
     protected override void Awake(){
 
         base.Awake();
 
         isPlayer = tag == "Player";
+        hasLeader = !isPlayer && entityInfo.faction.leader != null;
         homeT = new GameObject().transform;
-        randomOffset = new Vector3(UnityEngine.Random.Range(randomOffsetRange*-1f, randomOffsetRange), 0f, UnityEngine.Random.Range(randomOffsetRange*-1f, 0));
+        randomOffset = new Vector3(UnityEngine.Random.Range(RANDOM_OFFSET_RANGE*-1f, RANDOM_OFFSET_RANGE), 0f, UnityEngine.Random.Range(RANDOM_OFFSET_RANGE*-1f, 0));
         actionLayers = new Dictionary<string, ActionParameters>{
             {"Command", null},
             {"Movement", null},
@@ -116,7 +120,7 @@ public class EntityBehavior : EntityComponent
 
     // select and execute the next action in the queue... if list is empty, insert "go home" or "idle" action
     public ActionParameters NextAction(){
-        timeSince_creatureSense = baseTimeStep_creatureSense;
+        timeSince_creatureSense = BASE_TIMESTEP_CREATURESENSE;
         if(actions.Count == 0){
             //Debug.Log("Actions empty -> goto/idle sequence");
             ActionParameters goTo = ActionParameters.GenerateActionParameters("Go To Random Nearby Spot", entityHandle);
@@ -314,7 +318,7 @@ public class EntityBehavior : EntityComponent
         Item i_target = a.item_target;
         //Log("target name: " + i_target.nme);
 
-        List<GameObject> foundObjects = SenseSurroundingItems(i_target.type, i_target.nme, senseDistance_infinite);
+        List<GameObject> foundObjects = SenseSurroundingItems(i_target.type, i_target.nme, SENSE_DISTANCE_INFINITE);
         foundObjects = foundObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
         if(foundObjects.Count == 0){
             // TODO: search in new area if nothing found
@@ -324,8 +328,8 @@ public class EntityBehavior : EntityComponent
             //Log("Collect: picking up object");
             GameObject target = foundObjects[0];
             Faction.AddItemTargeted(entityInfo.faction, target);
-            ActionParameters goToObject = ActionParameters.GenerateActionParameters(ActionType.GoTo, target, -1, Item.GetItemByName(target.name), null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Normal, false);
-            ActionParameters pickupObject = ActionParameters.GenerateActionParameters(ActionType.Pickup, target, -1, Item.GetItemByName(target.name), null, -1, -1f, EntityOrientation.BodyRotationMode.Normal, false);
+            ActionParameters goToObject = ActionParameters.GenerateActionParameters(ActionType.GoTo, target, -1, Item.GetItemByName(target.name), null, -1, DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Normal, false);
+            ActionParameters pickupObject = ActionParameters.GenerateActionParameters(ActionType.Pickup, target, -1, Item.GetItemByName(target.name), null, -1, -1f, BodyRotationMode.Normal, false);
             ActionParameters followPlayer = ActionParameters.GenerateActionParameters("Follow Player", entityHandle);
             InsertAction(pickupObject);
             InsertAction(goToObject);
@@ -358,8 +362,8 @@ public class EntityBehavior : EntityComponent
 
     public void Chase(ActionParameters a){
         GameObject target = a.obj;
-        ActionParameters goToTarget = ActionParameters.GenerateActionParameters(ActionType.GoTo, target, -1, null, null, a.maxTime, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, true);
-        ActionParameters attackTarget = ActionParameters.GenerateActionParameters(ActionType.Attack, target, -1, null, null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, true);
+        ActionParameters goToTarget = ActionParameters.GenerateActionParameters(ActionType.GoTo, target, -1, null, null, a.maxTime, DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, true);
+        ActionParameters attackTarget = ActionParameters.GenerateActionParameters(ActionType.Attack, target, -1, null, null, -1, DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, true);
         InsertAction(attackTarget);
         InsertAction(goToTarget);
         NextAction();
@@ -370,7 +374,7 @@ public class EntityBehavior : EntityComponent
         // if attack rate allows and target isn't null, attack
         if (a.obj != null)
         {
-            if (timeSince_attack >= baseTimeStep_attack * entityStats.statsCombined.attackSpeed)
+            if (timeSince_attack >= BASE_TIMESTEP_ATTCK * entityStats.statsCombined.attackSpeed)
             {
                 timeSince_attack = 0f;
                 TerminateActionLayer("Hands");
@@ -395,7 +399,7 @@ public class EntityBehavior : EntityComponent
                 attackType = attackTypes[UnityEngine.Random.Range(0, behaviorProfile.attackTypes.Count)];
             }
             entityPhysics.Attack(attackType, a.obj.transform);
-            ActionParameters attackRecover = ActionParameters.GenerateActionParameters(ActionType.AttackRecover, a.obj, -1, null, null, -1, distanceThreshold_spot, EntityOrientation.BodyRotationMode.Target, true);
+            ActionParameters attackRecover = ActionParameters.GenerateActionParameters(ActionType.AttackRecover, a.obj, -1, null, null, -1, DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, true);
             yield return new WaitForSecondsRealtime(.2f);
             if(a.obj != null){
                 InsertAction(attackRecover);
@@ -417,7 +421,7 @@ public class EntityBehavior : EntityComponent
 
                 // if target is alive (hasn't been deleted), queue repeat attack
 
-                ActionParameters repeatAttack = ActionParameters.GenerateActionParameters(ActionType.Chase, a.obj, -1, null, null, GetChaseTime(), distanceThreshhold_lungeAttack, EntityOrientation.BodyRotationMode.Target, true);
+                ActionParameters repeatAttack = ActionParameters.GenerateActionParameters(ActionType.Chase, a.obj, -1, null, null, GetChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, true);
                 InsertAction(repeatAttack);
                 foreach(ActionParameters ap in behaviorProfile.attackRecoverySequence){
                     ap.obj = a.obj;
@@ -491,7 +495,7 @@ public class EntityBehavior : EntityComponent
 			else{	
 				
 				// if close enough to obstacle and on the ground, jump
-				if(Mathf.Min(Mathf.Min(leftDistance, centerDistance), rightDistance) < maxJumpFromDistance){
+				if(Mathf.Min(Mathf.Min(leftDistance, centerDistance), rightDistance) < MAX_JUMPFROM_DISTANCE){
 					if(entityPhysics.CanJump()){
 						entityPhysics.Jump();
                         jumped = true;
@@ -502,7 +506,7 @@ public class EntityBehavior : EntityComponent
 
         if(!jumped)
         {
-            if (entityPhysics.handGrab)
+            if (entityPhysics.isHandGrab)
             {
                 if (entityPhysics.CanJump())
                 {
@@ -527,9 +531,9 @@ public class EntityBehavior : EntityComponent
             Transform gs = entityPhysics.groundSense;
             Vector3 moveDir = entityPhysics.moveDir;
 
-            bool leftCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward + gyro.right*-2f, out leftHitInfo, senseDistance_obstacle);
-            bool centerCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward, out centerHitInfo, senseDistance_obstacle);
-            bool rightCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward + gyro.right*2f, out rightHitInfo, senseDistance_obstacle);
+            bool leftCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward + gyro.right*-2f, out leftHitInfo, SENSE_DISTANCE_OBSTACLE);
+            bool centerCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward, out centerHitInfo, SENSE_DISTANCE_OBSTACLE);
+            bool rightCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward + gyro.right*2f, out rightHitInfo, SENSE_DISTANCE_OBSTACLE);
 
 
             // Debug.DrawRay(transform.position + new Vector3(0, .1f, 0), (gyro.forward + gyro.right*-2f).normalized*senseDistance_obstacle, Color.green, Time.deltaTime);
@@ -638,12 +642,14 @@ public class EntityBehavior : EntityComponent
     }
 
     // check surroundings for creatures and act accordingly based on behavior type
-    public void CheckForCreaturesUpdate(){
-        BehaviorType behaviorType = behaviorProfile.behaviorType;
-        if(behaviorType.Equals(BehaviorType.Steadfast)){ return; }
+    public void ReactToNearbyCreatures(BehaviorType behaviorType, out bool reacting){
+
+        reacting = false;
         List<EntityHandle> sensedCreatureHandles = SenseSurroundingCreatures(Species.Any, 30f);
         //Debug.Log(sensedCreatureHandles.Count);
-        if(sensedCreatureHandles.Count == 0){ return; }
+        if(sensedCreatureHandles.Count == 0){
+            return;
+        }
         sensedCreatureHandles = sensedCreatureHandles.OrderBy(handle => Vector3.Distance(transform.position, handle.transform.position)).ToList();
 
         float distanceAway;
@@ -656,17 +662,37 @@ public class EntityBehavior : EntityComponent
                 if (behaviorTypeOther.Equals(BehaviorType.Aggressive))
                 {
                     distanceAway = Vector3.Distance(transform.position, handleOther.transform.position);
-                    if(distanceAway < 15f){
-                        InsertActionImmediate(ActionParameters.GenerateActionParameters(ActionType.RunFrom, handleOther.gameObject, -1, null, null, GetFleeTime(), distanceThreshhold_pursuit, EntityOrientation.BodyRotationMode.Normal, true), true);
+                    if(distanceAway < DISTANCE_THRESHOLD_FLEE){
+                        reacting = true;
+                        InsertActionImmediate(ActionParameters.GenerateActionParameters(ActionType.RunFrom, handleOther.gameObject, -1, null, null, GetFleeTime(), DISTANCE_THRESHOLD_CHASE, BodyRotationMode.Normal, true), true);
                     }
                     else{
-                        SetHeadLookAt(handleOther.transform.position, baseTimeStep_creatureSense);
+                        SetHeadLookAt(handleOther.transform.position, BASE_TIMESTEP_CREATURESENSE);
+                    }
+                }
+            }
+        }
+        if (behaviorProfile.behaviorType.Equals(BehaviorType.Steadfast))
+        {
+            foreach (EntityHandle handleOther in sensedCreatureHandles)
+            {
+                behaviorTypeOther = handleOther.entityInfo.speciesInfo.behaviorProfile.behaviorType;
+                if (behaviorTypeOther.Equals(BehaviorType.Aggressive))
+                {
+                    distanceAway = Vector3.Distance(transform.position, handleOther.transform.position);
+                    if(distanceAway < DISTANCE_THRESHOLD_STANDGROUND){
+                        reacting = true;
+                        InsertActionImmediate(ActionParameters.GenerateActionParameters(ActionType.Chase, sensedCreatureHandles[0].gameObject, -1, null, null, GetChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, true), true);
+                    }
+                    else{
+                        SetHeadLookAt(handleOther.transform.position, BASE_TIMESTEP_CREATURESENSE);
                     }
                 }
             }
         }
         else if (behaviorProfile.behaviorType.Equals(BehaviorType.Aggressive)){
-            InsertActionImmediate(ActionParameters.GenerateActionParameters(ActionType.Chase, sensedCreatureHandles[0].gameObject, -1, null, null, GetChaseTime(), distanceThreshhold_lungeAttack, EntityOrientation.BodyRotationMode.Target, true), true);
+            reacting = true;
+            InsertActionImmediate(ActionParameters.GenerateActionParameters(ActionType.Chase, sensedCreatureHandles[0].gameObject, -1, null, null, GetChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, true), true);
         }
 
     }
@@ -694,6 +720,8 @@ public class EntityBehavior : EntityComponent
 
     // turn head towards position for x time
     public void SetHeadLookAt(Vector3 lookAtPos, float time){
+
+        // todo: try using entity physics head look at method
 
         float lookAtForce = 2f;
 
@@ -723,33 +751,84 @@ public class EntityBehavior : EntityComponent
     }
 
     public float GetChaseTime(){
-        return baseTime_chase * entityStats.statsCombined.stamina;
+        return BASE_TIME_CHASE * entityStats.statsCombined.stamina;
     }
 
     public float GetFleeTime(){
-        return baseTime_flee * entityStats.statsCombined.stamina;
+        return BASE_TIME_FLEE * entityStats.statsCombined.stamina;
     }
 
     bool WithinActiveDistance(){
-        return Vector3.Distance(GameManager.current.localPlayer.transform.position, transform.position) <= distanceThreshhold_active;
+        return Vector3.Distance(GameManager.current.localPlayer.transform.position, transform.position) <= DISTANCE_THRESHOLD_ACTIVE;
     }
 
 
 
-    void HandleCreatureSense()
+    // --
+
+    void UpdateBehavior()
+    {
+        if(hasLeader)
+        {
+            // follow leader behavior
+            HandleFollowerBehavior();
+        }
+        else
+        {
+            // wild behavior
+            HandleIndependentBehavior();
+        }
+    }
+
+
+    void HandleIndependentBehavior()
+    {
+        bool reactingToSensedCreature;
+        HandleCreatureSense(out reactingToSensedCreature);
+    }
+
+    void HandleFollowerBehavior()
+    {
+        // By default, follow the leader. When the player hits something, attack that thing. Sense for creatures with steadfast behavior.
+
+        // order of priority:
+        //     1. react to nearby creatures with steadfast behavior
+        //     2. react to leader's activity
+        //     3. follow leader (Follow if outside camp, go home if inside camp)
+
+        bool reactingToSensedCreature;
+        HandleCreatureSense(out reactingToSensedCreature);
+
+        if(!reactingToSensedCreature)
+        {
+            HandleLeaderSense();
+        }
+    }
+
+    void HandleCreatureSense(out bool sensed)
     {
         timeSince_creatureSense += Time.deltaTime;
-        if (timeSince_creatureSense >= baseTimeStep_creatureSense)
+
+        sensed = false;
+        if (timeSince_creatureSense >= BASE_TIMESTEP_CREATURESENSE)
         {
             if (WithinActiveDistance() && NotBusy())
             {
                 //Debug.Log("Boutta sense creatures");
-                CheckForCreaturesUpdate();
+                sensed = true;
+                ReactToNearbyCreatures(behaviorProfile.behaviorType, out sensed);
             }
-            timeSince_creatureSense = timeSince_creatureSense - baseTimeStep_creatureSense;
+
+            timeSince_creatureSense = timeSince_creatureSense - BASE_TIMESTEP_CREATURESENSE;
         }
+
         timeSince_attack += Time.deltaTime;
-    }   
+    }
+
+    void HandleLeaderSense()
+    {
+        
+    }
 
 
     // Update is called once per frame
@@ -760,7 +839,7 @@ public class EntityBehavior : EntityComponent
 
         if (!isPlayer)
         {
-            HandleCreatureSense();
+            UpdateBehavior();
         }
         
 

@@ -34,11 +34,11 @@ public class EntityHandle : EntityComponent
 
         // init player specific entity settings
         transform.position = new Vector3(10f, 4720f, 0f);
-        StartCoroutine(entityCommandServer.SetNewFactionWhenReady(this.gameObject));
+        StartCoroutine(entityCommandServer.SetNewFactionWhenReady(this));
 
         // spawn initial tribe members
         for(int i = 0; i < GameManager.startingTribeMembers; i++){
-            StartCoroutine(entityCommandServer.SpawnNpcWhenReady(this.gameObject));
+            StartCoroutine(entityCommandServer.SpawnNpcWhenReady(this));
         }
 
         UIController.current.SetUIMode(false);

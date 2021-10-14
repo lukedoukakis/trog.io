@@ -3,12 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum BodyRotationMode { Normal, Target }
+
 public class EntityOrientation : EntityComponent
 {
 
     public Rigidbody rb;
     public Transform body;
     public Transform head;
+
+    Animator animator;
 
 
     // rotation
@@ -34,12 +38,6 @@ public class EntityOrientation : EntityComponent
 
 
 
-
-    public enum BodyRotationMode{
-        Normal, Target
-    }
-
-
     protected override void Awake(){
 
         base.Awake();
@@ -56,23 +54,26 @@ public class EntityOrientation : EntityComponent
             bodyRotationSpeed = bodyRotationSpeed_ai;
         }
         posture_squat = .1f;
+
+
+        animator = body.GetComponent<Animator>();
+
     }
 
     void Start(){
-        SetBodyRotationMode(BodyRotationMode.Target, null);
+        SetBodyRotationMode(BodyRotationMode.Normal, null);
     }
 
     
-    public void SetBodyRotationMode(Enum mode, Transform t){
-        if (true)
+    public void SetBodyRotationMode(Enum mode, Transform t)
+    {
+        //Log("Setting body rotation mode");
+        bodyRotationMode = mode;
+        if (t != null)
         {
-            //Log("Setting body rotation mode");
-            bodyRotationMode = mode;
-            if (t != null)
-            {
-                bodyRotationTarget = t;
-            }
+            bodyRotationTarget = t;
         }
+           
     }
 
 
@@ -90,8 +91,7 @@ public class EntityOrientation : EntityComponent
         if(bodyRotationMode.Equals(BodyRotationMode.Normal))
         {
             Vector3 dirForward = transform.forward;
-            bool moving = entityPhysics.IsMoving();
-            Vector3 dirMovement = moving ? entityPhysics.GetHorizVelocity() : dirForward;
+            Vector3 dirMovement = entityPhysics.isMoving ? entityPhysics.velHoriz_this : dirForward;
             dirMovement.y = 0f;
             dirMovement = dirMovement.normalized;
             Vector3 dirCombined = Vector3.Lerp(dirForward, dirMovement, 1f);
@@ -99,7 +99,7 @@ public class EntityOrientation : EntityComponent
             dirCombined += (Vector3.up * bodyLean * -1f * (1f - (Vector3.Distance(dirForward, dirMovement) / 2f)));
 
             Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
-            body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
+            body.rotation = Quaternion.Slerp(body.rotation, rot, .01f);
 
             body.position = transform.position;
         }
@@ -108,8 +108,7 @@ public class EntityOrientation : EntityComponent
 
 
             Vector3 dirForward = bodyRotationTarget == null ? transform.forward : (bodyRotationTarget.position - body.position).normalized;
-            bool moving = entityPhysics.IsMoving();
-            Vector3 dirMovement = moving ? entityPhysics.GetHorizVelocity().normalized : dirForward;
+            Vector3 dirMovement = entityPhysics.isMoving ? entityPhysics.velHoriz_this.normalized : dirForward;
             dirMovement.y = 0f;
             dirMovement = dirMovement.normalized;
             Vector3 dirCombined = Vector3.Lerp(dirForward, dirMovement, .35f);
@@ -181,6 +180,9 @@ public class EntityOrientation : EntityComponent
         }
         squat_activity = 0f;
     }
+
+
+    
 
 
     void FixedUpdate(){

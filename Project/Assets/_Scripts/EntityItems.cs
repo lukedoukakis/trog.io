@@ -41,7 +41,7 @@ public class EntityItems : EntityComponent
     public Animator itemOrientationAnimator;
 
     public static float lerpSpeed_holding = 30f;
-    public static float lerpSpeed_weapon = 30f;
+    public static float lerpSpeed_weapon = 50f;
 
 
 

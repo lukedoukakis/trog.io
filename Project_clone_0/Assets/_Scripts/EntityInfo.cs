@@ -70,18 +70,18 @@ public class SpeciesInfo : ScriptableObject{
         {
             Species.Human, SpeciesInfo.InstantiateSpeciesInfo
             (
-                Faction.InstantiateFaction(Species.Human.ToString(), false),
+                Faction.InstantiateFaction(Species.Human.ToString()),
                 new ItemCollection(
                     new Dictionary<Item, int>{
 
                     }
                 ),
                 Stats.InstantiateStats(1f,1f,1f,.7f,.275f,1f,.75f,1f,1f,1f,1f,1f),
-                IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", false, true, 3f, 8f, 2f, .7f),
+                IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", false, false, true, 3f, 8f, 2f, .6f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Aggressive,
                     new List<AttackType>(){AttackType.Weapon},
-                    new List<ActionParameters>(){ ActionParameters.GenerateActionParameters(ActionType.Follow, null, -1, null, null, -1, EntityBehavior.distanceThreshold_combat, EntityOrientation.BodyRotationMode.Target, true)},
+                    new List<ActionParameters>(){ ActionParameters.GenerateActionParameters(ActionType.Follow, null, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_COMBAT, BodyRotationMode.Target, true)},
                     .5f,
                     true,
                     false
@@ -92,14 +92,14 @@ public class SpeciesInfo : ScriptableObject{
 
         {
             Species.Bear, SpeciesInfo.InstantiateSpeciesInfo(
-                Faction.InstantiateFaction(Species.Bear.ToString(), false),
+                Faction.InstantiateFaction(Species.Bear.ToString()),
                 new ItemCollection(
                     new Dictionary<Item, int>{
                         {Item.CarcassBear, 1},
                     }
                 ),
                 Stats.InstantiateStats(2f, .5f, 6f, .5f, .4f, 1f, .25f, 1f, 1f, 1f, 1f, 10f),
-                IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end", "leg_lower_left_end", "", "", "arm_lower_right_end", "arm_lower_left_end", "", "", true, false, 3f, 10f, 3f, .7f),
+                IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end", "leg_lower_left_end", "", "", "arm_lower_right_end", "arm_lower_left_end", "", "", false, true, false, 3f, 10f, 3f, .7f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Aggressive,
                     new List<AttackType>(){AttackType.Swipe},
@@ -115,7 +115,7 @@ public class SpeciesInfo : ScriptableObject{
 
         {
             Species.Deer, SpeciesInfo.InstantiateSpeciesInfo(
-                Faction.InstantiateFaction(Species.Deer.ToString(), false),
+                Faction.InstantiateFaction(Species.Deer.ToString()),
                 new ItemCollection(
                     new Dictionary<Item, int>{
                         // todo: deer carcass
@@ -123,7 +123,7 @@ public class SpeciesInfo : ScriptableObject{
                     }
                 ),
                 Stats.InstantiateStats(1f, .75f, .1f, .5f, .4f, 1f, .75f, 1f, 1f, 1f, 1f, 10f),
-                IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end_end", "leg_lower_left_end_end", "", "", "arm_lower_right_end_end_end", "arm_lower_left_end_end_end", "", "", true, false, 3f, 10f, 8f, .7f),
+                IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end_end", "leg_lower_left_end_end", "", "", "arm_lower_right_end_end_end", "arm_lower_left_end_end_end", "", "", false, true, false, 3f, 10f, 8f, .7f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Timid,
                     new List<AttackType>(){ AttackType.Swipe },
@@ -164,7 +164,7 @@ public class IkProfile : ScriptableObject
 
     // string names of body parts in body transform
     public string name_head, name_hips, name_footRight, name_footLeft, name_toeRight, name_toeLeft, name_handRight, name_handLeft, name_fingerRight, name_fingerLeft;
-
+    public bool useAnimationMovement;
     public bool quadripedal;
     public bool hasFingersAndToes;
     public float runCycle_strideFrequency;
@@ -172,7 +172,7 @@ public class IkProfile : ScriptableObject
     public float runCycle_limbVerticalDisplacement;
     public float runCycle_limbForwardReachDistance;
 
-    public static IkProfile InstantiateIkProfile(string name_head, string name_hips, string name_footRight, string name_footLeft, string name_toeRight, string name_toeLeft, string name_handRight, string name_handLeft, string name_fingerRight, string name_fingerLeft, bool quadripedal, bool hasFingersAndToes, float runCycle_strideFrequency, float runCycle_lerpTightness, float runCycle_limbVerticalDisplacement, float runCycle_limbForwardReachDistance)
+    public static IkProfile InstantiateIkProfile(string name_head, string name_hips, string name_footRight, string name_footLeft, string name_toeRight, string name_toeLeft, string name_handRight, string name_handLeft, string name_fingerRight, string name_fingerLeft, bool useAnimationMovement, bool quadripedal, bool hasFingersAndToes, float runCycle_strideFrequency, float runCycle_lerpTightness, float runCycle_limbVerticalDisplacement, float runCycle_limbForwardReachDistance)
     {
         IkProfile ikProfile = ScriptableObject.CreateInstance<IkProfile>();
         ikProfile.name_head = name_head;
@@ -185,6 +185,7 @@ public class IkProfile : ScriptableObject
         ikProfile.name_handLeft = name_handLeft;
         ikProfile.name_fingerRight = name_fingerRight;
         ikProfile.name_fingerLeft = name_fingerLeft;
+        ikProfile.useAnimationMovement = useAnimationMovement;
         ikProfile.quadripedal = quadripedal;
         ikProfile.hasFingersAndToes = hasFingersAndToes;
         ikProfile.runCycle_strideFrequency = runCycle_strideFrequency;

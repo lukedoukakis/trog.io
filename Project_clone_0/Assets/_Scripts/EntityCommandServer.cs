@@ -20,24 +20,23 @@ public class EntityCommandServer : EntityComponent
         //Debug.Log("npcPrefab: " + npcPrefab.name);
     }
 
-    public IEnumerator SpawnNpcWhenReady(GameObject owningPlayer){
+    public IEnumerator SpawnNpcWhenReady(EntityHandle leaderHandle){
         //Debug.Log("SpawnNpcWhenReady()");
         while (!NetworkClient.ready) {
             //Debug.Log("CHECKING...");
             yield return new WaitForSecondsRealtime(.05f);
         }
-        SpawnNpc(owningPlayer);
+        SpawnNpc(leaderHandle);
     }
 
 
     [Command]
-    public void SpawnNpc(GameObject owningPlayer){
+    public void SpawnNpc(EntityHandle leaderHandle){
         //Debug.Log("SPAWNING");
-        GameObject npc = GameObject.Instantiate(npcPrefab, owningPlayer.transform.position, Quaternion.identity);
-        EntityHandle playerHandle = owningPlayer.GetComponent<EntityHandle>();
+        GameObject npc = GameObject.Instantiate(npcPrefab, leaderHandle.transform.position, Quaternion.identity);
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
-        Faction owningPlayerFaction = playerHandle.entityInfo.faction;
-        npc.transform.position = owningPlayer.transform.position + Vector3.up;
+        Faction owningPlayerFaction = leaderHandle.entityInfo.faction;
+        npc.transform.position = leaderHandle.transform.position + Vector3.up;
         
         npcHandle.entityItems.EquipClothing(Item.ClothingTest);
         foreach(EntityHandle factionMemberHandle in owningPlayerFaction.members)
@@ -47,25 +46,26 @@ public class EntityCommandServer : EntityComponent
         owningPlayerFaction.AddMember(npcHandle, true);
         npcHandle.entityInfo.name = "new npc";
 
-        NetworkServer.Spawn(npc, owningPlayer);
+        NetworkServer.Spawn(npc, leaderHandle.gameObject);
     
         Debug.Log("SpawnNpc() finished");
     }
 
 
 
-    public IEnumerator SetNewFactionWhenReady(GameObject entity){
+    public IEnumerator SetNewFactionWhenReady(EntityHandle leaderHandle){
         while (!NetworkClient.ready) {
             yield return new WaitForSeconds(.05f);
         }
-        SetNewFaction(entity);
+        SetNewFaction(leaderHandle);
     }
 
     [Command]
-    public void SetNewFaction(GameObject entity){
+    public void SetNewFaction(EntityHandle leaderHandle){
         //Debug.Log("SETTING FACTION");
-        EntityHandle handle = entity.GetComponent<EntityHandle>();
-        Faction faction = Faction.InstantiateFaction("Faction " + (Random.Range(0, int.MaxValue)).ToString(), true);
+        EntityHandle handle = leaderHandle.GetComponent<EntityHandle>();
+        Faction faction = Faction.InstantiateFaction("Faction " + (Random.Range(0, int.MaxValue)).ToString());
+        faction.leader = leaderHandle.GetComponent<EntityHandle>();
         faction.AddMember(handle, false);
         handle.entityInfo.faction = faction;
 

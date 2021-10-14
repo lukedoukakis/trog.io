@@ -7,9 +7,9 @@ public class Faction : MonoBehaviour
 {
 
 
-    public bool isPlayerFaction;
     public int id;
     public string factionName;
+    public EntityHandle leader;
     public List<EntityHandle> members;
     public List<EntityHandle> party;
     public ItemCollection ownedItems;
@@ -165,14 +165,14 @@ public class Faction : MonoBehaviour
 
 
 
-    public static Faction InstantiateFaction(string _factionName, bool _isPlayerFaction){
+    public static Faction InstantiateFaction(string _factionName){
         Faction f = GameManager.current.gameObject.AddComponent<Faction>();
         f.id = UnityEngine.Random.Range(0, int.MaxValue);
         f.factionName = _factionName;
+        f.leader = null;
         f.members = new List<EntityHandle>();
         f.party = new List<EntityHandle>();
         f.ownedItems = new ItemCollection();
-        f.isPlayerFaction = _isPlayerFaction;
         f.targetedObjects = new List<GameObject>();
         return f;
     }
