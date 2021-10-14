@@ -1558,7 +1558,6 @@ public class EntityPhysics : EntityComponent
             if (objectReference != null)
             {
                 if (System.Object.ReferenceEquals(objectReference.GetObjectReference(), entityInfo.faction.camp))
-                //if(objectReference.GetObjectReference() == entityInfo.faction.camp)
                 {
                     //Debug.Log("Border Enter");
                     entityItems.OnCampBorderEnter();
@@ -1584,7 +1583,6 @@ public class EntityPhysics : EntityComponent
             if (objectReference != null)
             {
                 if (System.Object.ReferenceEquals(objectReference.GetObjectReference(), entityInfo.faction.camp))
-                //if(objectReference.GetObjectReference() == entityInfo.faction.camp)
                 {
                     //Debug.Log("Border Exit");
                     entityItems.OnCampBorderExit();

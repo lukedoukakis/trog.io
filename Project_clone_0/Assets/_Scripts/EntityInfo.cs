@@ -81,7 +81,7 @@ public class SpeciesInfo : ScriptableObject{
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Aggressive,
                     new List<AttackType>(){AttackType.Weapon},
-                    new List<ActionParameters>(){ ActionParameters.GenerateActionParameters(ActionType.Follow, null, -1, null, null, -1, EntityBehavior.distanceThreshold_combat, BodyRotationMode.Target, true)},
+                    new List<ActionParameters>(){ ActionParameters.GenerateActionParameters(ActionType.Follow, null, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_COMBAT, BodyRotationMode.Target, true)},
                     .5f,
                     true,
                     false

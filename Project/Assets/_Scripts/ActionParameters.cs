@@ -72,7 +72,7 @@ public class ActionParameters : ScriptableObject
                 calleeHomeT.transform.position = newHomeT.position;
                 calleeHomeT.transform.SetParent(newHomeT);
                 a.obj = calleeHomeT.gameObject;
-                a.distanceThreshold = EntityBehavior.distanceThreshold_point;
+                a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
                 a.urgent = false;
                 break;
             case "Follow Player" :
@@ -81,12 +81,12 @@ public class ActionParameters : ScriptableObject
             
                 a.type = ActionType.Follow;
                 a.obj = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1)).gameObject;
-                a.distanceThreshold = EntityBehavior.distanceThreshold_spot;
+                a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
                 break;
             case "Run From Player" :
                 a.type = ActionType.RunFrom;
                 a.obj = GameManager.current.localPlayer.gameObject;
-                a.distanceThreshold = EntityBehavior.distanceThreshhold_pursuit;
+                a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_CHASE;
                 a.urgent = true;
                 break;
             case "Attack Player" :
@@ -105,7 +105,7 @@ public class ActionParameters : ScriptableObject
                 temp.transform.position = Utility.GetRandomVectorOffset(calleeHandle.transform.position, 10f, true);
                 a.obj = temp;
                 a.maxTime = 10f;
-                a.distanceThreshold = EntityBehavior.distanceThreshold_spot;
+                a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
                 break;
             case "Collect Item" :
                 a.type = ActionType.Collect;
