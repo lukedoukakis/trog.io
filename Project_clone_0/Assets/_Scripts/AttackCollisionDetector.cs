@@ -18,7 +18,11 @@ public class AttackCollisionDetector : MonoBehaviour
 
     public void SetOwner(EntityHandle handle){
         owner = handle;
-        thisCollider.enabled = true;
+
+        if(thisCollider != null)
+        {
+            thisCollider.enabled = true;
+        }
     }
     public void RemoveOwner(){
         SetOwner(null);

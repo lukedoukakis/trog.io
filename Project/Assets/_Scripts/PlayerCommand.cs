@@ -21,7 +21,7 @@ public class PlayerCommand : MonoBehaviour
 
         // NEW PARTY CODE
         //Debug.Log("PlayerCommand(): SendCommand()");
-        GameManager.current.localPlayerHandle.entityInfo.faction.SendPartyCommand(c, GameManager.current.localPlayer.transform.position, float.MaxValue);
+        GameManager.current.localPlayerHandle.entityInfo.faction.SendPartyCommand(c);
 
 
 

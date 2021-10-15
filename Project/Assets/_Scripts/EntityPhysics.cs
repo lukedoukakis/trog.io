@@ -35,7 +35,7 @@ public class EntityPhysics : EntityComponent
     public static float BASE_FORCE_JUMP = 280f;
     public static float BASE_FORCE_THROW = 400f;
     public static float BASE_ACCELERATION = 40f;
-    public static float BASE_MAX_SPEED = 20f;
+    public static float BASE_MAX_SPEED = 10f;
     public static float BASE_COOLDOWN_JUMP = .15f;
     public static float WEAPON_CHARGETIME_MAX = .25f;
     public static float WEAPON_HITTIME_MAX = .25f;
@@ -110,11 +110,6 @@ public class EntityPhysics : EntityComponent
     {
 
         base.Awake();
-
-    }
-
-    void Start()
-    {
 
         body = Utility.FindDeepChildWithTag(this.transform, "Body");
         model = Utility.FindDeepChildWithTag(this.transform, "Model");
@@ -204,7 +199,7 @@ public class EntityPhysics : EntityComponent
 
         acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Agility) * BASE_ACCELERATION;
         maxSpeed_run = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * BASE_MAX_SPEED;
-        maxSpeed_sprint = maxSpeed_run * 1.5f;
+        maxSpeed_sprint = maxSpeed_run * 3f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * .75f;
 
@@ -267,6 +262,13 @@ public class EntityPhysics : EntityComponent
         }
 
         velHoriz_this = velHoriz_last = velHoriz_delta = Vector3.zero;
+
+    }
+
+    void Start()
+    {
+
+        
     }
 
     public void ToggleIK(bool value)
@@ -628,7 +630,6 @@ public class EntityPhysics : EntityComponent
 
                 if (isLocalPlayer && entityUserInput.pressJump && CanJump())
                 {
-                    //rb.AddForce((targetHandPos - referencePosition) * 500f);
                     rb.AddForce(Vector3.up * (targetHandPos - referencePosition).y * 500f);
                 }
 
@@ -828,16 +829,13 @@ public class EntityPhysics : EntityComponent
     {
         if (!jumping)
         {
-
             StartCoroutine(_Jump(power));
         }
     }
     public void Jump()
     {
-        if (!jumping)
-        {
-            StartCoroutine(_Jump(BASE_FORCE_JUMP));
-        }
+
+        Jump(BASE_FORCE_JUMP);
     }
     IEnumerator _Jump(float power)
     {
@@ -867,7 +865,6 @@ public class EntityPhysics : EntityComponent
         vel.y = 0f;
         rb.velocity = vel;
         Vector3 direction = Vector3.up;
-        //rb.AddForce(direction * power, ForceMode.Force);
         jumpTime = 0;
         groundTime = 0;
         float tFinal = 20f;
@@ -1142,6 +1139,16 @@ public class EntityPhysics : EntityComponent
             }
         }
 
+        if(entityInfo.isFactionLeader)
+        {
+            ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Attack, collider.gameObject, -1, null, null, entityBehavior.CalculateChaseTime(), EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, hitObject.layer == LayerMask.NameToLayer("Creature"));
+            entityInfo.faction.SendPartyCommand(ap);
+            if(entityActionRecorder != null)
+            {
+                entityActionRecorder.RecordAction(ap);
+            }
+        }
+
 
 
 
@@ -1184,6 +1191,15 @@ public class EntityPhysics : EntityComponent
         timer.Start();
         while (timer.ElapsedMilliseconds / 1000f < time && maxDistance < .5f)
         {
+            if (handFree_left)
+            {
+                Transform handleT_leftHand = weapon.transform.Find("IKTargetT_Left");
+                maxDistance = Mathf.Min(Vector3.Distance(handRight.position, handleT_rightHand.position), Vector3.Distance(handLeft.position, handleT_leftHand.position));
+            }
+            else
+            {
+                maxDistance = Vector3.Distance(handRight.position, handleT_rightHand.position);
+            }
             yield return null;
         }
         timer.Stop();
@@ -1536,8 +1552,9 @@ public class EntityPhysics : EntityComponent
 
         if(isLocalPlayer)
         {
-            SetHeadTarget((Camera.main.transform.position + Camera.main.transform.right * 1000f) + (transform.forward * 500f));
+            //SetHeadTarget((Camera.main.transform.position + Camera.main.transform.right * 1000f) + (transform.forward * 500f));
         }
+
 
     }
 
@@ -1561,10 +1578,10 @@ public class EntityPhysics : EntityComponent
                 {
                     //Debug.Log("Border Enter");
                     entityItems.OnCampBorderEnter();
-                    if (isLocalPlayer)
-                    {
-                        PlayerCommand.current.SendCommand("Go Home");
-                    }
+                    // if (entityInfo.isFactionLeader)
+                    // {
+                    //     PlayerCommand.current.SendCommand("Go Home");
+                    // }
                 }
             }
         }
@@ -1586,10 +1603,10 @@ public class EntityPhysics : EntityComponent
                 {
                     //Debug.Log("Border Exit");
                     entityItems.OnCampBorderExit();
-                    if (isLocalPlayer)
-                    {
-                        PlayerCommand.current.SendCommand("Follow Player");
-                    }
+                    // if (entityInfo.isFactionLeader)
+                    // {
+                    //     entityInfo.faction.SendPartyCommand("Follow Faction Leader");
+                    // }
                 }
             }
         }

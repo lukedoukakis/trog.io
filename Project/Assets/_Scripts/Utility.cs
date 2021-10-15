@@ -95,7 +95,7 @@ public class Utility : MonoBehaviour
         {
             foreach (Collider col in cols)
             {
-                Debug.Log("Ignoring collision with col: " + t.gameObject.name);
+                //Debug.Log("Ignoring collision with col: " + t.gameObject.name);
                 Physics.IgnoreCollision(col, colliderToIgnore, true);
             }
         }

@@ -2329,9 +2329,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8950280485333816711}
   serializedVersion: 2
-  m_Mass: 50
+  m_Mass: 1
   m_Drag: 2
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
@@ -2596,7 +2596,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 4e6f75fd8af54c5449e896d11e9deb01, type: 2}
+      objectReference: {fileID: 2100000, guid: 5545c0209390692469e993865aad03de, type: 2}
     - target: {fileID: -6182523624037168214, guid: 60f5aa5dfae41804eb173d34aeb35e45,
         type: 3}
       propertyPath: m_Materials.Array.data[1]
@@ -2746,7 +2746,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 4e6f75fd8af54c5449e896d11e9deb01, type: 2}
+      objectReference: {fileID: 2100000, guid: 5545c0209390692469e993865aad03de, type: 2}
     - target: {fileID: -1750197354950549132, guid: 60f5aa5dfae41804eb173d34aeb35e45,
         type: 3}
       propertyPath: m_Materials.Array.data[1]
@@ -2876,7 +2876,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 4e6f75fd8af54c5449e896d11e9deb01, type: 2}
+      objectReference: {fileID: 2100000, guid: 5545c0209390692469e993865aad03de, type: 2}
     - target: {fileID: 8944505389801971347, guid: 60f5aa5dfae41804eb173d34aeb35e45,
         type: 3}
       propertyPath: m_Materials.Array.data[1]

@@ -9,6 +9,9 @@ public enum ActionType{ Idle, GoTo, Follow, RunFrom, Collect, Pickup, Chase, Att
 public class ActionParameters : ScriptableObject
 {
 
+    // doer of the action
+    public EntityHandle doerHandle;
+
     // type of action
     public Enum type;
 
@@ -37,8 +40,10 @@ public class ActionParameters : ScriptableObject
     // maximum time to be spent executing the action
     public float maxTime;
 
-    public static ActionParameters GenerateActionParameters(Enum _type, GameObject _obj, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent){
+    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, Enum _type, GameObject _obj, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent)
+    {
         ActionParameters a = ActionParameters.GenerateActionParameters();
+        a.doerHandle = _doerHandle;
         a.type = _type;
         a.obj = _obj;
         a.number = _number;
@@ -53,28 +58,33 @@ public class ActionParameters : ScriptableObject
     }
 
     // some predefined actions
-    public static ActionParameters GenerateActionParameters(string command, EntityHandle calleeHandle){
-
-
-        Transform calleeHomeT = calleeHandle.entityBehavior.homeT;
-        Destroy(calleeHomeT.gameObject);
-        calleeHandle.entityBehavior.homeT = new GameObject().transform;
-        calleeHomeT = calleeHandle.entityBehavior.homeT;
+    public static ActionParameters GenerateActionParameters(string command, EntityHandle doerHandle)
+    {
 
         ActionParameters a = ActionParameters.GenerateActionParameters();
-        switch(command){
+        a.doerHandle = doerHandle;
+        switch(command)
+        {
             case "Idle" :
                 a.type = ActionType.Idle;
                 break;
+
             case "Go Home" :
+
+                Transform campT = doerHandle.entityInfo.faction.camp.GetOpenTribeMemberStandPosition();
+                Transform newHomeT = new GameObject().transform;
+                newHomeT.position = campT.position;
+                newHomeT.transform.SetParent(campT);
+                Destroy(a.doerHandle.entityBehavior.homeT.gameObject);
+                a.doerHandle.entityBehavior.homeT = newHomeT;
+
+
                 a.type = ActionType.Follow;
-                Transform newHomeT = calleeHandle.entityInfo.faction.camp.GetOpenTribeMemberStandPosition();
-                calleeHomeT.transform.position = newHomeT.position;
-                calleeHomeT.transform.SetParent(newHomeT);
-                a.obj = calleeHomeT.gameObject;
+                a.obj = newHomeT.gameObject;
                 a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
                 a.urgent = false;
                 break;
+
             case "Follow Player" :
 
                 Transform directionalTs = Utility.FindDeepChild(GameManager.current.localPlayer.gameObject.transform, "DirectionalTs");
@@ -83,67 +93,78 @@ public class ActionParameters : ScriptableObject
                 a.obj = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1)).gameObject;
                 a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
                 break;
+
+            case "Follow Faction Leader" :
+
+                Transform _directionalTs = Utility.FindDeepChild(doerHandle.entityInfo.faction.leaderHandle.gameObject.transform, "DirectionalTs");
+            
+                a.type = ActionType.Follow;
+                a.obj = _directionalTs.GetChild(UnityEngine.Random.Range(0, _directionalTs.childCount - 1)).gameObject;
+                a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
+                a.maxTime = .5f;
+                break;
+
             case "Run From Player" :
+
                 a.type = ActionType.RunFrom;
                 a.obj = GameManager.current.localPlayer.gameObject;
                 a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_CHASE;
                 a.urgent = true;
                 break;
+
             case "Attack Player" :
+
                 a.type = ActionType.Chase;
                 a.obj = GameManager.current.localPlayer.gameObject;
-                a.maxTime = calleeHandle.entityBehavior.GetChaseTime();
+                a.maxTime = doerHandle.entityBehavior.CalculateChaseTime();
                 a.urgent = true;
                 break;
+
             case "Idle For 5 Seconds" :
+
                 a.type = ActionType.Idle;
                 a.maxTime = 5f;
                 break;
+
             case "Go To Random Nearby Spot" :
+
                 a.type = ActionType.GoTo;
                 GameObject temp = new GameObject();
-                temp.transform.position = Utility.GetRandomVectorOffset(calleeHandle.transform.position, 10f, true);
+                temp.transform.position = Utility.GetRandomVectorOffset(doerHandle.transform.position, 10f, true);
                 a.obj = temp;
                 a.maxTime = 10f;
                 a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
                 break;
-            case "Collect Item" :
-                a.type = ActionType.Collect;
-                // TODO: finish params
-                break;
-             case "Attack Entity" :
-                a.type = ActionType.Chase;
-                a.urgent = true;
-                // TODO: finish params
-                break;
 
             case "Collect Spear" :
+
                 a.type = ActionType.Collect;
                 a.item_target = Item.Spear;
                 //Log(a.item_target.nme);
                 break;
+
             case "Collect Stone" :
+
                 a.type = ActionType.Collect;
                 a.item_target = Item.Stone;
                 //Log(a.item_target.nme);
                 break;
+
             case "Attack TribeMember" :
+
                 a.type = ActionType.Chase;
                 a.urgent = true;
-                // a.obj = GameObject.FindGameObjectWithTag("Player");
-
-                EntityHandle[] members = calleeHandle.entityInfo.faction.members.ToArray();
+                EntityHandle[] members = doerHandle.entityInfo.faction.memberHandles.ToArray();
                 foreach(EntityHandle h in members){
-                    if(h != calleeHandle){
+                    if(h != doerHandle){
                         a.obj = h.gameObject;
                     }
                 }
-
-
                 //Log(a.item_target.nme);
-                break;         
+                break;    
+
             default :
-            Debug.Log("ObjectBehavior: no action for command specified: \"" + command + "\"");
+                Debug.Log("ObjectBehavior: no action for command specified: \"" + command + "\"");
                 break;
         }
         //Debug.Log("CreateAction() done");
@@ -151,8 +172,11 @@ public class ActionParameters : ScriptableObject
         
     }
 
-    public static ActionParameters GenerateActionParameters(){
+    public static ActionParameters GenerateActionParameters()
+    {
+
         ActionParameters a = ScriptableObject.CreateInstance<ActionParameters>();
+        a.doerHandle = null;
         a.type = null;
         a.obj = null;
         a.number = -1;
@@ -163,6 +187,24 @@ public class ActionParameters : ScriptableObject
         a.bodyRotationMode = BodyRotationMode.Normal;
         a.urgent = false;
         return a;
+    }
+
+    public static ActionParameters Clone(ActionParameters baseAp)
+    {
+        ActionParameters newAp = ScriptableObject.CreateInstance<ActionParameters>();
+
+        newAp.doerHandle = baseAp.doerHandle;
+        newAp.type = baseAp.type;
+        newAp.obj = baseAp.obj;
+        newAp.number = baseAp.number;
+        newAp.item_result = baseAp.item_result;
+        newAp.item_target = baseAp.item_target;
+        newAp.maxTime = baseAp.maxTime;
+        newAp.distanceThreshold = baseAp.distanceThreshold;
+        newAp.bodyRotationMode = baseAp.bodyRotationMode;
+        newAp.urgent = baseAp.urgent;
+
+        return newAp;
     }
 
 

@@ -343,8 +343,8 @@ public class EntityItems : EntityComponent
     }
     public void SetEquippedWeapon(Item item, GameObject worldObject){
 
-        Log("Setting equipped weapon");
-        Log("Weapon name: " + worldObject.name);
+        //Log("Setting equipped weapon");
+        //Log("Weapon name: " + worldObject.name);
 
         weaponEquipped_item = item;
         weaponEquipped_object = worldObject;
@@ -510,7 +510,7 @@ public class EntityItems : EntityComponent
         entityPhysics.UpdateIKForCarryingItems();
         if(weaponEquipped_object != null){
             //Utility.IgnorePhysicsCollisions(transform, weaponEquipped_object.transform);
-            Utility.IgnorePhysicsCollisions(transform, entityInfo.faction.members.Where(handle => handle != null).Select(handle => handle.transform).ToArray());
+            Utility.IgnorePhysicsCollisions(transform, entityInfo.faction.memberHandles.Where(handle => handle != null).Select(handle => handle.transform).ToArray());
             weaponEquipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
         if(weaponUnequipped_object != null){

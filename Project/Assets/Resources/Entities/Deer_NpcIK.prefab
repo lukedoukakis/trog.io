@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 5942197906885696531}
   - component: {fileID: 6257372575738916933}
   - component: {fileID: 7768159146827163568}
+  - component: {fileID: -5197492534037552854}
   m_Layer: 12
   m_Name: Deer_NpcIK
   m_TagString: Npc
@@ -78,12 +79,13 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   hovering: 0
   selecting: 0
@@ -108,17 +110,20 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   id: 0
   nickname: Deanna
   species: 4
   faction: {fileID: 0}
+  isFactionLeader: 0
+  isFactionFollower: 0
   speciesInfo: {fileID: 0}
 --- !u!114 &7223609859536449621
 MonoBehaviour:
@@ -138,12 +143,13 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   statsModifiers: []
   statsCombined: {fileID: 0}
@@ -168,18 +174,22 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   behaviorProfile: {fileID: 0}
-  home: {fileID: 0}
+  homeT: {fileID: 0}
+  isPlayer: 0
+  isAtHome: 0
   move: {x: 0, y: 0, z: 0}
   urgent: 0
-  timestep_creatureSense: 0
+  timeSince_creatureSense: 0
+  timeSince_attack: 0
   activeAction: {fileID: 0}
   actions: []
 --- !u!114 &7223609859536449627
@@ -200,12 +210,13 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   rb: {fileID: 0}
   body: {fileID: 0}
@@ -233,12 +244,13 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   worldCollider: {fileID: 0}
   highFrictionMat: {fileID: 0}
@@ -249,11 +261,16 @@ MonoBehaviour:
   layerMask_walkable:
     serializedVersion: 2
     m_Bits: 0
+  layerMask_feature:
+    serializedVersion: 2
+    m_Bits: 0
   rb: {fileID: 0}
-  animator: {fileID: 0}
+  mainAnimator: {fileID: 0}
+  helperAnimator: {fileID: 0}
   iKTargetAnimator: {fileID: 0}
   gyro: {fileID: 0}
   body: {fileID: 0}
+  model: {fileID: 0}
   bodyPartTs: []
   bodyPartTs_legs: []
   bodyPartTs_upperBody: []
@@ -275,7 +292,8 @@ MonoBehaviour:
   moveDir: {x: 0, y: 0, z: 0}
   onWalkableGround: 0
   jumping: 0
-  jumpOpposite: 0
+  jumpOffLeft: 0
+  jumpOffRight: 0
   sprinting: 0
   offWallTime: 0
   offWaterTime: 0
@@ -288,10 +306,19 @@ MonoBehaviour:
   maxSpeed_climb: 0
   maxSpeed_swim: 0
   landScrunch: 0
+  crouch: 0
   handFree_right: 0
   handFree_left: 0
-  ROTATION_Y_THIS: 0
-  ROTATION_Y_LAST: 0
+  isMoving: 0
+  isGrounded: 0
+  isInsideCamp: 0
+  isHandGrab: 0
+  speedLimitModifier_launch: 0
+  differenceInDegreesBetweenMovementAndFacing: 0
+  velHoriz_this: {x: 0, y: 0, z: 0}
+  velHoriz_last: {x: 0, y: 0, z: 0}
+  velHoriz_delta: {x: 0, y: 0, z: 0}
+  changeInVelocityFactor: 0
   GROUNDTOUCH: 0
   WALLTOUCH: 0
   IN_WATER: 0
@@ -327,6 +354,10 @@ MonoBehaviour:
   plantPosFootLeft: {x: 0, y: 0, z: 0}
   plantPosHandRight: {x: 0, y: 0, z: 0}
   plantPosHandLeft: {x: 0, y: 0, z: 0}
+  poleHandRight: {fileID: 0}
+  polePosition_handRight_underhandGrip: {fileID: 0}
+  polePosition_handRight_overhandGrip: {fileID: 0}
+  polePositionTarget_handRight: {fileID: 0}
   updateTime_footRight: 0
   updateTime_footLeft: 0
   updateTime_handRight: 0
@@ -339,8 +370,11 @@ MonoBehaviour:
   runCycle_lerpTightness: 0
   runCycle_limbVerticalDisplacement: 0
   runCycle_limbForwardReachDistance: 0
-  weaponCanHit: 0
-  weaponHit: 0
+  weaponChargeTime: 0
+  weaponCharging: 0
+  weaponChargeAmount: 0
+  meleeAttackCanHit: 0
+  attackHit: 0
 --- !u!114 &7223609859536449625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359,12 +393,13 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   hp: 0
   alive: 0
@@ -386,12 +421,13 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   species: 4
 --- !u!114 &4761202945426959485
@@ -476,6 +512,32 @@ MonoBehaviour:
   syncAngularVelocity: 1
   clearAngularVelocity: 0
   angularVelocitySensitivity: 0
+--- !u!114 &-5197492534037552854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7223609859536449630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40945baa8bcc66b49863f8cb729c410b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  entityHandle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityOrientation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
+  entityHitDetection: {fileID: 0}
+  entityUserInput: {fileID: 0}
+  entityCommandServer: {fileID: 0}
 --- !u!1001 &7487285005153684375
 PrefabInstance:
   m_ObjectHideFlags: 0

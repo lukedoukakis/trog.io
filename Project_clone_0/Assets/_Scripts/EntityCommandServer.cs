@@ -31,20 +31,27 @@ public class EntityCommandServer : EntityComponent
 
 
     [Command]
-    public void SpawnNpc(EntityHandle leaderHandle){
+    public void SpawnNpc(EntityHandle leaderHandle)
+    {
         //Debug.Log("SPAWNING");
         GameObject npc = GameObject.Instantiate(npcPrefab, leaderHandle.transform.position, Quaternion.identity);
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
         Faction owningPlayerFaction = leaderHandle.entityInfo.faction;
-        npc.transform.position = leaderHandle.transform.position + Vector3.up;
+
+        EntityInfo npcInfo = npcHandle.entityInfo;
+        npcInfo.name = "new npc";
+        npcInfo.isFactionLeader = false;
+        npcInfo.isFactionFollower = true;
+
+
         
         npcHandle.entityItems.EquipClothing(Item.ClothingTest);
-        foreach(EntityHandle factionMemberHandle in owningPlayerFaction.members)
+        foreach(EntityHandle factionMemberHandle in owningPlayerFaction.memberHandles)
         {
             Utility.IgnorePhysicsCollisions(npcHandle.transform, factionMemberHandle.transform);
         }
         owningPlayerFaction.AddMember(npcHandle, true);
-        npcHandle.entityInfo.name = "new npc";
+
 
         NetworkServer.Spawn(npc, leaderHandle.gameObject);
     
@@ -65,9 +72,11 @@ public class EntityCommandServer : EntityComponent
         //Debug.Log("SETTING FACTION");
         EntityHandle handle = leaderHandle.GetComponent<EntityHandle>();
         Faction faction = Faction.InstantiateFaction("Faction " + (Random.Range(0, int.MaxValue)).ToString());
-        faction.leader = leaderHandle.GetComponent<EntityHandle>();
+        faction.leaderHandle = leaderHandle.GetComponent<EntityHandle>();
         faction.AddMember(handle, false);
         handle.entityInfo.faction = faction;
+        handle.entityInfo.isFactionLeader = true;
+        handle.entityInfo.isFactionFollower = false;
 
         Testing.instance.OnFactionCreation();
     }

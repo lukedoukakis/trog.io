@@ -168,7 +168,7 @@ public class EntityStats : EntityComponent
     // drop drops
     void SpawnDrops(Vector3 dropSpot, EntityHandle receiverHandle){
 
-        Debug.Log("Adding drops to entity \'" + receiverHandle.entityInfo.nickname + "\' faction: " + drops.ToString());
+        //Debug.Log("Adding drops to entity \'" + receiverHandle.entityInfo.nickname + "\' faction: " + drops.ToString());
         // todo: add supplemental drops based on specific properties of this entity (?)
 
         Item item;

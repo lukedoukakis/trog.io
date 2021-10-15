@@ -70,7 +70,7 @@ public class Camp : MonoBehaviour
         camp.tents = new List<Tent>();
         Vector3 campPlacementPos = originT.position + originT.forward * 2f;
         camp.SetOrigin(campPlacementPos);
-        camp.UpdateRadius(faction.members.Count);
+        camp.UpdateRadius(faction.memberHandles.Count);
         camp.SetCampLayout(campPlacementPos, originT.rotation);
         camp.PlaceCampComponents(originT);
         camp.SetTribeMemberStandingPositions();
@@ -172,7 +172,7 @@ public class Camp : MonoBehaviour
                 EntityHitDetection ehd = collider.gameObject.GetComponent<EntityHitDetection>();
                 if(ehd != null && false)
                 {
-                    ehd.OnHit(faction.members[0], collider.transform.position, null, true);
+                    ehd.OnHit(faction.memberHandles[0], collider.transform.position, null, true);
                 }
                 else
                 {
@@ -333,7 +333,7 @@ public class Camp : MonoBehaviour
     }
 
     public void UpdateTentCount(){
-        int properTentCount = faction.members.Count / 2;
+        int properTentCount = faction.memberHandles.Count / 2;
         int currentTentCount = tents.Count;
         int tentDeficit = properTentCount - currentTentCount;
 

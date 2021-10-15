@@ -9,9 +9,9 @@ public class Faction : MonoBehaviour
 
     public int id;
     public string factionName;
-    public EntityHandle leader;
-    public List<EntityHandle> members;
-    public List<EntityHandle> party;
+    public EntityHandle leaderHandle;
+    public List<EntityHandle> memberHandles;
+    public List<EntityHandle> partyHandles;
     public ItemCollection ownedItems;
     public Camp camp;
     public List<GameObject> targetedObjects; // items being pursued by members of this faction
@@ -21,20 +21,28 @@ public class Faction : MonoBehaviour
 
 
     // send command to all party members within radius
-    public void SendPartyCommand(string command, Vector3 callPosition, float radius){
-        EntityBehavior calleeBehavior;
-        foreach(EntityHandle calleeHandle in party.ToArray()){
+    public void SendPartyCommand(string command)
+    {
+        foreach(EntityHandle commandeeHandle in partyHandles.ToArray()){
             //Debug.Log("party member do shit");
-            if(calleeHandle != null)
+            if(commandeeHandle != null)
             {
-                if (Vector3.Distance(callPosition, calleeHandle.transform.position) <= radius)
-                {
-                    calleeBehavior = calleeHandle.entityBehavior;
-                    calleeBehavior.InsertActionImmediate(ActionParameters.GenerateActionParameters(command, calleeHandle), true);
-                }
+                commandeeHandle.entityBehavior.InsertActionImmediate(ActionParameters.GenerateActionParameters(command, commandeeHandle), true);  
             }
         }
         //Debug.Log("Commands sent!");
+    }
+    public void SendPartyCommand(ActionParameters ap)
+    {
+        foreach(EntityHandle commandeeHandle in partyHandles.ToArray()){
+            //Debug.Log("party member do shit");
+            if(commandeeHandle != null)
+            {
+                ActionParameters newAp = ActionParameters.Clone(ap);
+                ap.doerHandle = commandeeHandle;
+                commandeeHandle.entityBehavior.InsertActionImmediate(newAp, true);  
+            }
+        }
     }
 
     public void SendIndividualCommand(EntityHandle calleeHandle, string command, Vector3 callPosition)
@@ -45,7 +53,7 @@ public class Faction : MonoBehaviour
 
     public void AddMember(EntityHandle handle, bool addToparty){
         handle.entityInfo.faction = this;
-        members.Add(handle);
+        memberHandles.Add(handle);
         if(addToparty)
         {
             AddToParty(handle);
@@ -53,13 +61,13 @@ public class Faction : MonoBehaviour
     }
 
     public void AddToParty(EntityHandle handle){
-        if(!party.Contains(handle)){
-            party.Add(handle);
+        if(!partyHandles.Contains(handle)){
+            partyHandles.Add(handle);
         }
     }
     public void RemoveFromParty(EntityHandle handle){
-        if(party.Contains(handle)){
-            party.Remove(handle);
+        if(partyHandles.Contains(handle)){
+            partyHandles.Remove(handle);
         }
     }
 
@@ -143,7 +151,7 @@ public class Faction : MonoBehaviour
 
     public override string ToString(){
         string str = factionName + ": ";
-        foreach(EntityHandle handle in members){
+        foreach(EntityHandle handle in memberHandles){
             str += handle.entityInfo.nickname + ", ";
         }
         return str;
@@ -169,9 +177,9 @@ public class Faction : MonoBehaviour
         Faction f = GameManager.current.gameObject.AddComponent<Faction>();
         f.id = UnityEngine.Random.Range(0, int.MaxValue);
         f.factionName = _factionName;
-        f.leader = null;
-        f.members = new List<EntityHandle>();
-        f.party = new List<EntityHandle>();
+        f.leaderHandle = null;
+        f.memberHandles = new List<EntityHandle>();
+        f.partyHandles = new List<EntityHandle>();
         f.ownedItems = new ItemCollection();
         f.targetedObjects = new List<GameObject>();
         return f;

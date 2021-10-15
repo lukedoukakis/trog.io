@@ -16,6 +16,8 @@ public class EntityInfo : EntityComponent
     public string nickname;
     public Species species;
     public Faction faction;
+    public bool isFactionLeader;
+    public bool isFactionFollower;
     public SpeciesInfo speciesInfo;
 
 
@@ -32,6 +34,8 @@ public class EntityInfo : EntityComponent
         if(species != Species.Any){
             speciesInfo = SpeciesInfo.GetSpeciesInfo(species);
             faction = speciesInfo.baseFaction;
+            isFactionLeader = false;
+            isFactionFollower = false;
         }
         FindAndSetEntityReferences();
     }
@@ -76,12 +80,13 @@ public class SpeciesInfo : ScriptableObject{
 
                     }
                 ),
-                Stats.InstantiateStats(1f,1f,1f,.7f,.275f,1f,.75f,1f,1f,1f,1f,1f),
-                IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", false, false, true, 3f, 8f, 2f, .6f),
+                Stats.InstantiateStats(1f,1f,1f,.7f,.2f,1f,1f,1f,1f,1f,1f,1f),
+                IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", false, false, true, 3f, 8f, 2f, .45f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Aggressive,
                     new List<AttackType>(){AttackType.Weapon},
-                    new List<ActionParameters>(){ ActionParameters.GenerateActionParameters(ActionType.Follow, null, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_COMBAT, BodyRotationMode.Target, true)},
+                    //new List<ActionParameters>(){ ActionParameters.GenerateActionParameters(null, ActionType.GoTo, null, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_COMBAT, BodyRotationMode.Target, true)},
+                    new List<ActionParameters>(){ },
                     .5f,
                     true,
                     false
@@ -99,9 +104,9 @@ public class SpeciesInfo : ScriptableObject{
                     }
                 ),
                 Stats.InstantiateStats(2f, .5f, 6f, .5f, .4f, 1f, .25f, 1f, 1f, 1f, 1f, 10f),
-                IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end", "leg_lower_left_end", "", "", "arm_lower_right_end", "arm_lower_left_end", "", "", false, true, false, 3f, 10f, 3f, .7f),
+                IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end", "leg_lower_left_end", "", "", "arm_lower_right_end", "arm_lower_left_end", "", "", false, true, false, 3f, 10f, 1f, .75f),
                 BehaviorProfile.InstantiateBehaviorProfile(
-                    BehaviorType.Aggressive,
+                    BehaviorType.Steadfast,
                     new List<AttackType>(){AttackType.Swipe},
                     new List<ActionParameters>(){ },
                     .75f,
