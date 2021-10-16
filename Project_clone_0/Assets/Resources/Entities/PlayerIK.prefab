@@ -226,7 +226,7 @@ MonoBehaviour:
   timeSince_creatureSense: 0
   timeSince_attack: 0
   activeAction: {fileID: 0}
-  actions: []
+  actionQueue: []
 --- !u!114 &8069827555116078489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,6 +346,7 @@ MonoBehaviour:
   handFree_left: 0
   isMoving: 0
   isGrounded: 0
+  isGroundedStrict: 0
   isInsideCamp: 0
   isHandGrab: 0
   speedLimitModifier_launch: 0

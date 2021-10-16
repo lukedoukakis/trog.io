@@ -107,7 +107,7 @@ public class EntityOrientation : EntityComponent
         {
 
 
-            Vector3 dirForward = bodyRotationTarget == null ? transform.forward : (bodyRotationTarget.position - body.position).normalized;
+            Vector3 dirForward = bodyRotationTarget == null ? transform.forward : Utility.GetHorizontalVector((bodyRotationTarget.position - body.position)).normalized;
             Vector3 dirMovement = entityPhysics.isMoving ? entityPhysics.velHoriz_this.normalized : dirForward;
             dirMovement.y = 0f;
             dirMovement = dirMovement.normalized;

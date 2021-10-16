@@ -1,0 +1,221 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: terrain 1
+  m_Shader: {fileID: -6465566751694194690, guid: 21d586b92db687f40831fc51479d9060,
+    type: 3}
+  m_ShaderKeywords: USE_S _RTEFFECT_ON
+  m_LightmapFlags: 2
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - Texture2DArray_D9F507DF:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_127D54B3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_69493FD0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_740D44AA:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_9E807880:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_B15FC389:
+        m_Texture: {fileID: 2800000, guid: d1554ad204dd4fc46ac7b4de46f513ac, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_B8BEC1D3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorGradient:
+        m_Texture: {fileID: 2800000, guid: 6a2b53bfa0c06394485830fc39664c26, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorNoise:
+        m_Texture: {fileID: 2800000, guid: 369f6fef0ebe1f14aa6ed86d8e55cc6e, type: 3}
+        m_Scale: {x: 100000, y: 100000}
+        m_Offset: {x: 0, y: 0}
+    - _Control:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Distortion:
+        m_Texture: {fileID: 2800000, guid: 7f25c6183047a8a4bb1552aab341ba92, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GrassTex:
+        m_Texture: {fileID: 2800000, guid: 5ddef0977dde72343992a79d27da33fe, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GroundTex:
+        m_Texture: {fileID: 2800000, guid: 6ce0f98802b142740b0e8916d3a3e127, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 4e1d764fa7e47f34eae88e37253c2542, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoGrassTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Noise:
+        m_Texture: {fileID: 2800000, guid: 529789b31389da34d9a7f98c613bf944, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Splat0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Splat1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Splat2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Splat3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TerrainHolesTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture2DAsset_91C3A819_Out_0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - Vector1_116F49B0: 0
+    - Vector1_124AF345: 0
+    - Vector1_61F46C5F: 200
+    - Vector1_6A3D0673: 0
+    - Vector1_81EA2B5B: 0.8
+    - Vector1_995DB535: 1
+    - Vector1_B1CE0AD9: 100
+    - Vector1_C1CE9129: 0.3
+    - Vector1_D5D2B22E: 100
+    - _ColorNoise: 0
+    - _ColorTiling: 0.005
+    - _EnableHeightBlend: 1
+    - _EnableInstancedPerPixelNormal: 1
+    - _FadeDistanceEnd: 101
+    - _FadeDistanceStart: 100
+    - _GrassCut: 0
+    - _GrassNormal: -1
+    - _GrassSaturation: 3
+    - _GrassShading: 0
+    - _GrassThinness: 0.01
+    - _GrassThinnessIntersection: 0.43
+    - _HeightTransition: 0.458
+    - _LightIntensity: 0
+    - _Metallic0: 0
+    - _Metallic1: 0
+    - _Metallic2: 0
+    - _Metallic3: 0
+    - _MinimumNumberStacks: 0
+    - _NoisePower: 2
+    - _NumLayersCount: 1
+    - _NumberOfStacks: 0
+    - _OffsetValue: 0
+    - _ProceduralDistance: 5.5
+    - _ProceduralStrength: 1.5
+    - _RimMax: 0.793
+    - _RimMin: 0.794
+    - _RimPower: 0.65
+    - _Smoothness0: 0.5
+    - _Smoothness1: 0.5
+    - _Smoothness2: 0.5
+    - _Smoothness3: 0.5
+    - _SnowCapHeight: 0
+    - _SnowDepth: 0.1
+    - _SnowHeight: 4645.04
+    - _SnowHeightCap: 4649.4
+    - _SnowHeightStart: 3947.4001
+    - _SnowMinimumSurfaceNormal: 0.8
+    - _SnowStartHeight: 0
+    - _TilingN1: 9.36
+    - _TilingN2: 0.05
+    - _TilingN3: 100
+    - _UsePR: 0
+    - _UseRT: 0
+    - _UseShadow: 1
+    - _UseShadowCast: 0
+    - _UseWC: 0
+    - _WaterHeight: 4590.4404
+    - _WindForce: 0
+    - _WindMovement: 0
+    - _WorldRotation: 0
+    - _WorldScale: 10
+    m_Colors:
+    - Color_1DD039A2: {r: 0.99056596, g: 0.9086226, b: 0.6588199, a: 0}
+    - Color_20D74E1E: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
+    - Color_54E7F5BD: {r: 1, g: 0.70598435, b: 0.6179246, a: 0}
+    - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
+    - Color_962802DE: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 0}
+    - Color_9C158BA5: {r: 0.3773585, g: 0.13349947, b: 0.13349947, a: 0}
+    - Color_B9FC0D65: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 0}
+    - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
+    - Color_EB41B935: {r: 0.8584906, g: 0.7767007, b: 0.7086597, a: 0}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OffsetVector: {r: 0, g: 0, b: 0, a: 0}
+    - _ProjectedShadowColor: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}
+    - _RimColor: {r: 0.42452827, g: 0.42452827, b: 0.42452827, a: 1}
+    - _SelfShadowColor: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}

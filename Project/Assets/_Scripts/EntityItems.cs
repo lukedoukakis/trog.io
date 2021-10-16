@@ -309,7 +309,11 @@ public class EntityItems : EntityComponent
         {
             // if dropping onto another entity
             EntityItems takerItems = (EntityItems)targetAttachedObject;
-            takerItems.PickUpWeapon(weaponEquipped_item, weaponEquipped_object, this);
+            Item i = weaponEquipped_item;
+            GameObject o = weaponEquipped_object;
+            weaponEquipped_item = null;
+            weaponEquipped_object = null;
+            takerItems.PickUpWeapon(i, o, this);
         }
         else if (targetAttachedObject == null)
         {
@@ -326,8 +330,7 @@ public class EntityItems : EntityComponent
             }
         }
 
-        weaponEquipped_item = null;
-        weaponEquipped_object = null;
+        
     }
 
     public void SetUnequippedWeapon(Item item, GameObject worldObject){
@@ -472,27 +475,52 @@ public class EntityItems : EntityComponent
 
     public void ExchangeItemsWithEntity(EntityItems otherEntityItems)
     {
+
+        Debug.Log("EXCHANGING ITEMS");
+
         bool hasWeaponEquipped_thisEntity = entityItems.weaponEquipped_item != null;
         bool hasWeaponUnequipped_thisEntity = entityItems.weaponUnequipped_item != null;
-        bool hasWeaponEquipped_hoveredEntity = otherEntityItems.weaponEquipped_item != null;
-        bool hasWeaponUnequipped_hoveredEntity = otherEntityItems.weaponUnequipped_item != null;
+        bool hasWeaponEquipped_otherEntity = otherEntityItems.weaponEquipped_item != null;
+        bool hasWeaponUnequipped_otherEntity = otherEntityItems.weaponUnequipped_item != null;
+        bool hasHolding_thisEntity = entityItems.holding_item != null;
+        bool hasHolding_otherEntity = otherEntityItems.holding_item != null;
 
         bool exchangeOccurred = false;
-        if (weaponEquipped_item != null)
+        if (hasWeaponEquipped_thisEntity)
         {
             DropEquippedWeapon(otherEntityItems);
             exchangeOccurred = true;
         }
         else
         {
-            if(holding_item != null)
+            if(hasHolding_thisEntity)
             {
                 DropHolding(otherEntityItems);
                 exchangeOccurred = true;
             }
             else
             {
-                // if no weapon equipped and no holding item, do nothing
+                if(hasWeaponEquipped_otherEntity)
+                {
+                    otherEntityItems.DropEquippedWeapon(this);
+                    exchangeOccurred = true;
+                }
+                else if(hasWeaponUnequipped_otherEntity)
+                {
+                    otherEntityItems.ToggleWeaponEquipped();
+                    otherEntityItems.DropEquippedWeapon(this);
+                    exchangeOccurred = true;
+                }
+                else if (hasHolding_otherEntity)
+                {
+                    otherEntityItems.DropHolding(this);
+                    exchangeOccurred = true;
+                }
+                else
+                {
+                    // if neither entity has anything, do nothing
+                }
+
             }
         }
 
@@ -510,11 +538,11 @@ public class EntityItems : EntityComponent
         entityPhysics.UpdateIKForCarryingItems();
         if(weaponEquipped_object != null){
             //Utility.IgnorePhysicsCollisions(transform, weaponEquipped_object.transform);
-            Utility.IgnorePhysicsCollisions(transform, entityInfo.faction.memberHandles.Where(handle => handle != null).Select(handle => handle.transform).ToArray());
+            Utility.IgnorePhysicsCollisions(weaponEquipped_object.transform, entityInfo.faction.memberHandles.Where(handle => handle != null).Select(handle => handle.transform).ToArray());
             weaponEquipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
         if(weaponUnequipped_object != null){
-             Utility.IgnorePhysicsCollisions(transform, weaponUnequipped_object.transform);
+             Utility.IgnorePhysicsCollisions(weaponUnequipped_object.transform, weaponUnequipped_object.transform);
             weaponUnequipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
         if(holding_object != null){
@@ -587,7 +615,7 @@ public class EntityItems : EntityComponent
                     Vector3 currentPos = weaponEquipped_object.transform.position;
                     Quaternion currentRot = weaponEquipped_object.transform.rotation;
                     weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, lerpSpeed_weapon * Time.deltaTime);
-                    weaponEquipped_object.transform.rotation = Quaternion.Slerp(currentRot, targetRot, float.MaxValue);
+                    weaponEquipped_object.transform.rotation = Quaternion.Slerp(currentRot, targetRot, 20f * Time.deltaTime);
                 }
             }
         }

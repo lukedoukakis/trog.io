@@ -26,8 +26,8 @@ public class EntityPhysics : EntityComponent
     public Transform hips, head, handRight, handLeft, fingerRight, fingerLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float BASE_CASTDISTANCE_GROUND_PLAYER = .3f;
-    public static float BASE_CASTDISTANCE_GROUND_NPC = .3f;
+    public static float BASE_CASTDISTANCE_GROUND_PLAYER = .5f;
+    public static float BASE_CASTDISTANCE_GROUND_NPC = .5f;
     public static float BASE_CASTDISTANCE_WALL = 1f;
     float groundCastDistance;
     float distanceFromGround;
@@ -60,6 +60,7 @@ public class EntityPhysics : EntityComponent
     public bool handFree_right, handFree_left;
     public bool isMoving;
     public bool isGrounded;
+    public bool isGroundedStrict;
     public bool isInsideCamp;
     public bool isHandGrab;
     public float speedLimitModifier_launch;
@@ -342,7 +343,7 @@ public class EntityPhysics : EntityComponent
                     if (updateTime_footRight >= 1f)
                     {
                         CycleFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight, IN_WATER);
-                        if (quadripedal)
+                        if (quadripedal && sprinting)
                         {
                             rb.AddForce(Vector3.up * 500f);
                         }
@@ -368,13 +369,16 @@ public class EntityPhysics : EntityComponent
                 }
                 else
                 {
+
+                    Vector3 footPositionOffsetToAccountForBodyLean = body.forward * (entityOrientation.bodyLean * .45f);
+
                     // not moving
-                    SetPlantPosition(targetFootLeft, basePositionFootLeft, Vector3.zero, ref plantPosFootLeft);
-                    SetPlantPosition(targetFootRight, basePositionFootRight, velHoriz_this.normalized * -.2f, ref plantPosFootRight);
+                    SetPlantPosition(targetFootLeft, basePositionFootLeft, footPositionOffsetToAccountForBodyLean, ref plantPosFootLeft);
+                    SetPlantPosition(targetFootRight, basePositionFootRight, footPositionOffsetToAccountForBodyLean, ref plantPosFootRight);
                     if (quadripedal)
                     {
                         SetPlantPosition(targetHandLeft, basePositionHandLeft, Vector3.zero, ref plantPosHandLeft);
-                        SetPlantPosition(targetHandRight, basePositionHandRight, velHoriz_this.normalized * -.2f, ref plantPosHandRight);
+                        SetPlantPosition(targetHandRight, basePositionHandRight, Vector3.zero, ref plantPosHandRight);
                     }
                 }
             }
@@ -585,7 +589,7 @@ public class EntityPhysics : EntityComponent
 
         //Debug.Log("Handling hand plant pos");
 
-        if (!handFree) { return false; }
+        if (!handFree || isGroundedStrict) { return false; }
 
         Vector3 referencePosition = obstacleHeightSense.position;
         float handSpeed = 40f * dTime;
@@ -992,6 +996,9 @@ public class EntityPhysics : EntityComponent
     void OnWeaponAttack(Transform target)
     {
         Item weapon = entityItems.weaponEquipped_item;
+
+        if(weapon == null){ return; }
+
         bool ranged = entityItems.rangedMode;
         bool charging = weaponChargeTime == 0f;
 
@@ -1189,7 +1196,7 @@ public class EntityPhysics : EntityComponent
 
         System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
         timer.Start();
-        while (timer.ElapsedMilliseconds / 1000f < time && maxDistance < .5f)
+        while (timer.ElapsedMilliseconds / 1000f < time && maxDistance < .5f && targetT != null)
         {
             if (handFree_left)
             {
@@ -1456,7 +1463,7 @@ public class EntityPhysics : EntityComponent
     {
         if ((GROUNDTOUCH || WALLTOUCH) && !IN_WATER && moveDir.magnitude > 0f)
         {
-            rb.useGravity = !GroundIsClose();
+            rb.useGravity = !isGroundedStrict;
         }
         else { rb.useGravity = true; }
     }
@@ -1475,11 +1482,14 @@ public class EntityPhysics : EntityComponent
         return velHoriz_this.magnitude > .3f;
     }
 
-    bool GroundIsClose()
+    bool IsGrounded()
     {
+        return Physics.OverlapSphere(groundSense.position, .75f, layerMask_walkable).Length > 0;
+    }
 
+    bool IsGroundedStrict()
+    {
         return Physics.OverlapSphere(groundSense.position, .25f, layerMask_walkable).Length > 0;
-
     }
 
 
@@ -1490,7 +1500,8 @@ public class EntityPhysics : EntityComponent
         velHoriz_delta = velHoriz_this - velHoriz_last;
         changeInVelocityFactor = Mathf.InverseLerp(0f, .35f, velHoriz_delta.magnitude);
         isMoving = IsMoving();
-        isGrounded = GroundIsClose();
+        isGrounded = IsGrounded();
+        isGroundedStrict = IsGroundedStrict();
         differenceInDegreesBetweenMovementAndFacing = Mathf.InverseLerp(0f, 180f, Vector3.Angle(Utility.GetHorizontalVector(body.forward), velHoriz_this));
 
         CheckPhysicMaterial();
@@ -1552,7 +1563,7 @@ public class EntityPhysics : EntityComponent
 
         if(isLocalPlayer)
         {
-            //SetHeadTarget((Camera.main.transform.position + Camera.main.transform.right * 1000f) + (transform.forward * 500f));
+            SetHeadTarget((Camera.main.transform.position + Camera.main.transform.right * 1000f) + (transform.forward * 500f));
         }
 
 

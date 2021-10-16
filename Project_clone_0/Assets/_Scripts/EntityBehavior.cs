@@ -137,7 +137,11 @@ public class EntityBehavior : EntityComponent
             if(entityInfo.isFactionFollower)
             {
                 EntityHandle factionLeader = entityInfo.faction.leaderHandle;
-                if(factionLeader.entityPhysics.isInsideCamp)
+                if(factionLeader == null)
+                {
+                    Debug.Log("faction leader null");
+                }
+                else if(factionLeader.entityPhysics.isInsideCamp)
                 {
                     //Debug.Log("Going home");
                     ActionParameters goHome = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
@@ -425,6 +429,7 @@ public class EntityBehavior : EntityComponent
         }
         else
         {
+            ClearActionQueue();
             NextAction();
         }
         
@@ -461,13 +466,14 @@ public class EntityBehavior : EntityComponent
         TerminateActionLayer("Command");
         BeginActionLayer("Command", a, _AttackRecover());
 
-        IEnumerator _AttackRecover(){
-
+        IEnumerator _AttackRecover()
+        {
             //Debug.Log("ATTACK RECOVER");
-            GameObject target = a.obj;
 
-            if(target != null)
+            if(a.obj != null)
             {
+                GameObject target = a.obj;
+
                 // if target is alive (hasn't been deleted), queue repeat attack
                 ActionParameters chase = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Chase, a.obj, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, true);
                 InsertAction(chase);
@@ -491,6 +497,7 @@ public class EntityBehavior : EntityComponent
             }
             else{
                 Debug.Log("target is null");
+                ClearActionQueue();
                 NextAction();
             }
         }
@@ -616,8 +623,8 @@ public class EntityBehavior : EntityComponent
                     hits++;
                 }
             }
-            //return hits >= 2;
-            return false;
+            return hits >= 2;
+            //return false;
             
 
         }

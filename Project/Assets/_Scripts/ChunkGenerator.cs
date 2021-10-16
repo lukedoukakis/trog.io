@@ -12,7 +12,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator current;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 4;
+    public static int ChunkRenderDistance = 7;
     public static float Scale = 120f;
     public static float ElevationAmplitude = 5400f;
     public static float MountainMapScale = 80f;
@@ -24,7 +24,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float SeaLevel = FlatLevel - (meter * .06f); //0.849985f;
     public static float BankLevel = SeaLevel + meter;
     public static float SnowLevel = .861f;
-    public static float GrassNormal = .8f;
+    public static float GrassNormal = .57f;
     public static float SnowNormal = .8f;
     public static bool LoadingChunks, DeloadingChunks;
     static GameObject Chunk;
@@ -80,7 +80,7 @@ public class ChunkGenerator : MonoBehaviour
     [Range(0, 1)] public float persistance;
     public float lacunarity;
     [Range(0, 1)] public float RockProtrusion;
-    [Range(0, 1)] public float mountainSize;
+    public float mountainSize;
 
 
 
@@ -339,8 +339,8 @@ public class ChunkGenerator : MonoBehaviour
                 float bm0 = Mathf.PerlinNoise((x + xOffset + 100000.01f) / 1600f, (z + zOffset + 100000.01f) / 1600f) * 2f - 1f;
                 float bm1 = Mathf.PerlinNoise((x + xOffset + 200000.01f) / 1600f, (z + zOffset + 200000.01f) / 1600f) * 2f - 1f;
                 float bigMound = Mathf.Min(bm0, bm1);
-                bigMound = Mathf.Pow(Mathf.Abs(bigMound) * -1f + 1f, 5f);
-                float bigMoundCap = .036f;
+                bigMound = Mathf.Pow(Mathf.Abs(bigMound) * -1f + 1f, 6f);
+                float bigMoundCap = .04f;
                 bigMound *= bigMoundCap * (1f - Mathf.InverseLerp(.25f, .75f, temperatureValue));
                 elevationValue += bigMound;
                 float maxE = Mathf.Pow(1f + .5f, .5f) - 1f;
@@ -570,7 +570,8 @@ public class ChunkGenerator : MonoBehaviour
                 else { treeValue = false; }
 
 
-                heightValue = FlatLevel + .001f;
+                // completely flatten terrain
+                //heightValue = FlatLevel + .001f;
 
 
 
@@ -768,7 +769,7 @@ public class ChunkGenerator : MonoBehaviour
                 rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 50f, (z + zOffset) / 50f), 1f);
                 rockiness *= Mathf.PerlinNoise(((height + (x + xOffset) + (z + zOffset)) / 20f), 0f);
                 rockiness += (Mathf.PerlinNoise((x + xOffset) / 2f, (z + zOffset) / 2f) * 2f - 1f) * .02f;
-                rockiness *= Mathf.InverseLerp(0f, .1f, MountainMap[x, z]);
+                rockiness *= Mathf.InverseLerp(0f, .5f, MountainMap[x, z]);
                 skewHoriz = (rockiness * 2f - 1f) * 36f * RockProtrusion;
                 skewHoriz *= Mathf.InverseLerp(SeaLevel, SeaLevel + (meter * 20f), HeightMap[x, z]); // smooth down rockiness at sea level
                 skewHorizMap[x, z] = skewHoriz;
