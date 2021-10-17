@@ -79,7 +79,7 @@ public class EntityOrientation : EntityComponent
 
     void UpdateBodyRotation(){
 
-        if (isLocalPlayer && !entityPhysics.IN_WATER)
+        if (isLocalPlayer && !entityPhysics.isInWater)
         {
             bodyLean = Mathf.InverseLerp(leanBoundMin, leanBoundMax, Mathf.Sin(Camera.main.transform.rotation.eulerAngles.x * Mathf.Deg2Rad)) * 2f - 1f + .2f;
         }
@@ -90,18 +90,23 @@ public class EntityOrientation : EntityComponent
 
         if(bodyRotationMode.Equals(BodyRotationMode.Normal))
         {
-            Vector3 dirForward = transform.forward;
-            Vector3 dirMovement = entityPhysics.isMoving ? entityPhysics.velHoriz_this : dirForward;
-            dirMovement.y = 0f;
-            dirMovement = dirMovement.normalized;
-            Vector3 dirCombined = Vector3.Lerp(dirForward, dirMovement, 1f);
 
-            dirCombined += (Vector3.up * bodyLean * -1f * (1f - (Vector3.Distance(dirForward, dirMovement) / 2f)));
+            if(!entityPhysics.isHandGrab || true)
+            {
+                Vector3 dirForward = transform.forward;
+                Vector3 dirMovement = entityPhysics.isMoving ? entityPhysics.velHoriz_this : dirForward;
+                dirMovement.y = 0f;
+                dirMovement = dirMovement.normalized;
+                Vector3 dirCombined = Vector3.Lerp(dirForward, dirMovement, 1f);
 
-            Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
-            body.rotation = Quaternion.Slerp(body.rotation, rot, .01f);
+                dirCombined += (Vector3.up * bodyLean * -1f * (1f - (Vector3.Distance(dirForward, dirMovement) / 2f)));
 
-            body.position = transform.position;
+                Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
+                body.rotation = Quaternion.Slerp(body.rotation, rot, .01f);
+
+                body.position = transform.position;
+            }
+            
         }
         else if(bodyRotationMode.Equals(BodyRotationMode.Target))
         {

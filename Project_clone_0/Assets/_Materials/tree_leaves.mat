@@ -14,7 +14,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -35,23 +35,23 @@ Material:
     m_Floats:
     - Vector1_116F49B0: 0
     - Vector1_124AF345: 0
-    - Vector1_44CFF1E7: 3.5
+    - Vector1_44CFF1E7: 1.5
     - Vector1_61F46C5F: 20
     - Vector1_656083AD: 1.1
-    - Vector1_90439BCB: 0
+    - Vector1_90439BCB: 0.5
     - Vector1_AE23F62D: 8
     - Vector1_B1CE0AD9: 10
     - Vector1_C1CE9129: 0
     - Vector1_D2FDA34A: 0.1
-    - Vector1_D87A4764: 3
+    - Vector1_D87A4764: 1
     - Vector1_E38A57BE: 9
     - _ColorNoise: 1
     - _SnowDepth: 0.1
-    - _SnowHeightCap: 4649.4
-    - _SnowHeightStart: 3947.4001
+    - _SnowHeightCap: Infinity
+    - _SnowHeightStart: Infinity
     - _SnowMinimumSurfaceNormal: 0.9
     m_Colors:
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}
-    - _TargetVector: {r: 24.118637, g: 4634.0684, b: -28.5505, a: 0}
+    - _TargetVector: {r: 61.63114, g: 4597.11, b: 112.19455, a: 0}

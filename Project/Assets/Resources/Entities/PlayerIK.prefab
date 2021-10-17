@@ -89,7 +89,7 @@ Rigidbody:
   m_GameObject: {fileID: 8069827555116078467}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 1
   m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -325,8 +325,7 @@ MonoBehaviour:
   obstacleHeightSense: {fileID: 0}
   kneeHeightT: {fileID: 0}
   moveDir: {x: 0, y: 0, z: 0}
-  onWalkableGround: 0
-  jumping: 0
+  isJumping: 0
   jumpOffLeft: 0
   jumpOffRight: 0
   sprinting: 0
@@ -357,7 +356,7 @@ MonoBehaviour:
   changeInVelocityFactor: 0
   GROUNDTOUCH: 0
   WALLTOUCH: 0
-  IN_WATER: 0
+  isInWater: 0
   ikEnabled: 0
   ikScript_hips: {fileID: 0}
   ikScript_footLeft: {fileID: 0}
@@ -400,12 +399,15 @@ MonoBehaviour:
   updateTime_handLeft: 0
   updateTime_hips: 0
   ikProfile: {fileID: 0}
-  quadripedal: 0
+  isQuadripedal: 0
   hasFingersAndToes: 0
   runCycle_strideFrequency: 0
   runCycle_lerpTightness: 0
   runCycle_limbVerticalDisplacement: 0
   runCycle_limbForwardReachDistance: 0
+  grabOriginTs: {fileID: 0}
+  grabOrigin_handRight: {fileID: 0}
+  grabOrigin_handLeft: {fileID: 0}
   weaponChargeTime: 0
   weaponCharging: 0
   weaponChargeAmount: 0

@@ -43,14 +43,15 @@ public class EntityCommandServer : EntityComponent
         npcInfo.isFactionLeader = false;
         npcInfo.isFactionFollower = true;
 
+        //npcHandle.entityItems.EquipClothing(Item.ClothingTest);
 
-        
-        npcHandle.entityItems.EquipClothing(Item.ClothingTest);
         foreach(EntityHandle factionMemberHandle in owningPlayerFaction.memberHandles)
         {
             Utility.IgnorePhysicsCollisions(npcHandle.transform, factionMemberHandle.transform);
         }
         owningPlayerFaction.AddMember(npcHandle, true);
+
+        owningPlayerFaction.SendPartyCommand("Follow Faction Leader");
 
 
         NetworkServer.Spawn(npc, leaderHandle.gameObject);

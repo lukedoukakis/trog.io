@@ -8,14 +8,14 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: humanSkin0
-  m_Shader: {fileID: -6465566751694194690, guid: 21d586b92db687f40831fc51479d9060,
-    type: 3}
-  m_ShaderKeywords: _SPECULAR_SETUP
+  m_Shader: {fileID: 4800000, guid: 0406db5a14f94604a8c57ccfbc9f3b46, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
-  stringTagMap: {}
+  m_CustomRenderQueue: 2050
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -80,16 +80,27 @@ Material:
     - Vector1_656083AD: 1.1
     - _AlphaClip: 0
     - _Blend: 0
+    - _BlendOp: 0
     - _Blur: 0.5
     - _BumpScale: 1
+    - _CameraFadingEnabled: 0
+    - _CameraFarFadeDistance: 2
+    - _CameraNearFadeDistance: 1
+    - _ColorMode: 0
     - _ColorNoise: 0
     - _Cull: 2
     - _CutOff: 0.5
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _Diffuse: 1
+    - _DistortionBlend: 0.5
+    - _DistortionEnabled: 0
+    - _DistortionStrength: 1
+    - _DistortionStrengthScaled: 0.1
     - _DstBlend: 0
     - _EnvironmentReflections: 1
+    - _FlipbookBlending: 0
+    - _FlipbookMode: 0
     - _FurLength: 0.5
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -106,6 +117,9 @@ Material:
     - _SnowHeightCap: 999999
     - _SnowHeightStart: 999999
     - _SnowMinimumSurfaceNormal: 0
+    - _SoftParticlesEnabled: 0
+    - _SoftParticlesFarFadeDistance: 1
+    - _SoftParticlesNearFadeDistance: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
@@ -120,9 +134,12 @@ Material:
     - Color_81DCE527: {r: 0.7264151, g: 0.58228475, b: 0.39404595, a: 0}
     - Color_962802DE: {r: 0.735849, g: 0.57518464, b: 0.37833747, a: 0}
     - Color_EB41B935: {r: 0.6415094, g: 0.55760705, b: 0.45692417, a: 0}
-    - _BaseColor: {r: 0.8679245, g: 0.8137069, b: 0.6673193, a: 1}
+    - _BaseColor: {r: 0.735849, g: 0.67918646, b: 0.57965463, a: 1}
+    - _BaseColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
+    - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
     - _Color: {r: 0.7924528, g: 0.548035, b: 0.33268064, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
 --- !u!114 &3256184390710493056
 MonoBehaviour:

@@ -23,7 +23,8 @@ public class ChunkGenerator : MonoBehaviour
     public static float FlatLevel = .85f;
     public static float SeaLevel = FlatLevel - (meter * .06f); //0.849985f;
     public static float BankLevel = SeaLevel + meter;
-    public static float SnowLevel = .861f;
+    //public static float SnowLevel = .861f;
+    public static float SnowLevel = float.MaxValue;
     public static float GrassNormal = .57f;
     public static float SnowNormal = .57f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -640,7 +641,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
-    public static IEnumerator GenerateSpawns(ChunkData cd, float temp, float humid, float wetness, float height, float x, float z, float xOffset, float zOffset, float skewHoriz){
+    public static IEnumerator GenerateSpawns(ChunkData cd, float temp, float humid, float mountain, float wetness, float height, float x, float z, float xOffset, float zOffset, float skewHoriz){
 
         SpawnParameters spawnParameters;
         float placementDensity;
@@ -671,7 +672,7 @@ public class ChunkGenerator : MonoBehaviour
                     spawnPosition = new Vector3(x + xOffset + skewHoriz, height * ElevationAmplitude, z + zOffset + skewHoriz) + randomPositionOffset;
                     spawnScale = Vector3.one * spawnParameters.scale;
                     o = GameObject.Instantiate(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent);
-                    o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                    o.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
 
                     bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
                     bundleName_last = bundleName;
@@ -766,11 +767,11 @@ public class ChunkGenerator : MonoBehaviour
             for (int x = 0; x < ChunkSize + 2; x++)
             {
                 height = HeightMap[x, z] * ElevationAmplitude;
-                rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 50f, (z + zOffset) / 50f), 1f);
-                rockiness *= Mathf.PerlinNoise(((height + (x + xOffset) + (z + zOffset)) / 20f), 0f);
-                rockiness += (Mathf.PerlinNoise((x + xOffset) / 2f, (z + zOffset) / 2f) * 2f - 1f) * .02f;
-                rockiness *= Mathf.InverseLerp(0f, .5f, MountainMap[x, z]);
-                skewHoriz = (rockiness * 2f - 1f) * 36f * RockProtrusion;
+                rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 50f, (z + zOffset) / 50f), .5f);
+                //rockiness *= Mathf.PerlinNoise(((height) / 50f), 0f);
+                rockiness += (Mathf.PerlinNoise((x + xOffset) / 2f, (z + zOffset) / 2f) * 2f - 1f) * .01f;
+                //rockiness *= Mathf.InverseLerp(0f, .5f, MountainMap[x, z]);
+                skewHoriz = ((rockiness + .5f) * 2f - 1f) * 18f * RockProtrusion;
                 skewHoriz *= Mathf.InverseLerp(SeaLevel, SeaLevel + (meter * 20f), HeightMap[x, z]); // smooth down rockiness at sea level
                 skewHorizMap[x, z] = skewHoriz;
                 TerrainVertices[i] = new Vector3(x + xOffset + skewHoriz, height, z + zOffset + skewHoriz);
@@ -822,7 +823,7 @@ public class ChunkGenerator : MonoBehaviour
                 if(z > 0 && x > 0 && TreeMap[x, z]){
                     normalIndex = (z * (ChunkSize + 2)) + x;
                     if(normals[normalIndex].y >= GrassNormal){
-                        StartCoroutine(GenerateSpawns(cd, TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], HeightMap[x, z], x, z, xOffset, zOffset, skewHorizMap[x, z]));
+                        StartCoroutine(GenerateSpawns(cd, TemperatureMap[x, z], HumidityMap[x, z], MountainMap[x, z], WetnessMap[x, z], HeightMap[x, z], x, z, xOffset, zOffset, skewHorizMap[x, z]));
                     }
                 }
                 

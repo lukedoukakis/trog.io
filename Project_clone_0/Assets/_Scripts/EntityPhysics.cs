@@ -67,13 +67,13 @@ public class EntityPhysics : EntityComponent
 
     public Vector3 velHoriz_this, velHoriz_last, velHoriz_delta;
     public float changeInVelocityFactor;
-    public bool GROUNDTOUCH, WALLTOUCH, IN_WATER;
+    public bool GROUNDTOUCH, WALLTOUCH, isInWater;
 
 
     // ik
     public bool ikEnabled;
     public FastIKFabric ikScript_hips, ikScript_footLeft, ikScript_footRight, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft, ikScript_fingerRight, ikScript_fingerLeft;
-    public FastIKFabric[] ikScripts, ikScripts_legs, ikScripts_upperBody;
+    public FastIKFabric[] ikScripts_all, ikScripts_legs, ikScripts_arms, ikScripts_torso;
     public Transform ikParent;
     public Transform basePositionHips, basePositionFootRight, basePositionFootLeft, basePositionHandRight, basePositionHandLeft;
     public Transform targetHips, targetFootRight, targetFootLeft, targetToeRight, targetToeLeft, targetHandRight, targetHandLeft, targetFingerRight, targetFingerLeft;
@@ -122,7 +122,7 @@ public class EntityPhysics : EntityComponent
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         layerMask_water = LayerMask.GetMask("Water");
-        layerMask_walkable = LayerMask.GetMask("Default", "Terrain", "Feature", "Item");
+        layerMask_walkable = LayerMask.GetMask("Terrain");
         layerMask_feature = LayerMask.GetMask("Feature");
         rb = GetComponent<Rigidbody>();
         mainAnimator = body.GetComponent<Animator>();
@@ -197,9 +197,10 @@ public class EntityPhysics : EntityComponent
             ikScript_fingerRight = fingerRight.GetComponent<FastIKFabric>(); ;
             ikScript_fingerLeft = fingerLeft.GetComponent<FastIKFabric>();
         }
-        ikScripts = new FastIKFabric[] { ikScript_hips, ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft, ikScript_fingerRight, ikScript_fingerLeft };
+        ikScripts_all = new FastIKFabric[] { ikScript_hips, ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft, ikScript_handRight, ikScript_handLeft, ikScript_fingerRight, ikScript_fingerLeft };
         ikScripts_legs = new FastIKFabric[] { ikScript_footRight, ikScript_footLeft, ikScript_toeRight, ikScript_toeLeft };
-        ikScripts_upperBody = new FastIKFabric[] { ikScript_handRight, ikScript_handLeft, ikScript_fingerRight, ikScript_fingerLeft };
+        ikScripts_arms = new FastIKFabric[] { ikScript_handRight, ikScript_handLeft, ikScript_fingerRight, ikScript_fingerLeft };
+        ikScripts_torso = new FastIKFabric[] { ikScript_hips };
         iKTargetAnimator = ikParent.GetComponent<Animator>();
 
         acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Agility) * BASE_ACCELERATION;
@@ -267,11 +268,17 @@ public class EntityPhysics : EntityComponent
             }
         }
 
-        ToggleIK(!ikProfile.useAnimationMovement);
+        ToggleIkAll(!ikProfile.useAnimationMovement);
 
         if (!isQuadripedal)
         {
             UpdateIKForCarryingItems();
+        }
+
+        if(!isQuadripedal)
+        {
+            targetHandRight.SetParent(null);
+            targetHandLeft.SetParent(null);
         }
 
         velHoriz_this = velHoriz_last = velHoriz_delta = Vector3.zero;
@@ -284,18 +291,25 @@ public class EntityPhysics : EntityComponent
         
     }
 
-    public void ToggleIK(bool value)
+    public void ToggleIkAll(bool value)
     {
+        ToggleIk(ikScripts_all, value);
         ikEnabled = value;
-        foreach (FastIKFabric script in ikScripts)
+        SetAnimatorEnabled(mainAnimator, !value);
+    }
+
+    public void ToggleIk(FastIKFabric[] scripts, bool value)
+    {
+        foreach (FastIKFabric scr in scripts)
         {
-            if(script != null)
+            if(scr != null)
             {
-                script.enabled = value;
+                if(scr.enabled != value)
+                {
+                    scr.enabled = value;
+                }
             }
         }
-        
-        SetAnimatorEnabled(mainAnimator, !value);
     }
 
     void SetAnimatorEnabled(Animator anim, bool value)
@@ -332,7 +346,8 @@ public class EntityPhysics : EntityComponent
         // }
 
 
-        UpdateLimbPositions(IN_WATER);
+        
+        UpdateLimbPositions(isInWater);
 
         if (!isQuadripedal)
         {
@@ -342,10 +357,10 @@ public class EntityPhysics : EntityComponent
             isHandGrab = false;
 
             // reach up right
-            isHandGrab = HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.up).normalized, ref updateTime_handRight, handFree_right, IN_WATER);
+            isHandGrab = HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.up).normalized, ref updateTime_handRight, handFree_right, isInWater);
 
             // reach up left
-            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.up).normalized, ref updateTime_handLeft, handFree_left, IN_WATER);
+            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.up).normalized, ref updateTime_handLeft, handFree_left, isInWater);
 
 
 
@@ -361,18 +376,33 @@ public class EntityPhysics : EntityComponent
 
         if (!ikProfile.useAnimationMovement)
         {
-            // if on the ground
-            if (isGrounded || IN_WATER)
+
+            if(isGrounded)
             {
-
-                if (isMoving || IN_WATER)
+                if(!ikScript_footRight.enabled)
                 {
-                    // moving
+                    targetFootRight.position = footRight.position;
+                    targetFootLeft.position = footLeft.position;
+                }
+            }
 
+
+            ToggleIk(ikScripts_legs, isGrounded);
+            //ToggleIk(ikScripts_torso, isGrounded);
+
+
+            // if on the ground or in water
+            if (isGrounded || isInWater)
+            {
+                
+                // if moving or in water
+                if (isMoving || isInWater)
+                {
+                    
                     // check if plant points need update
                     if (updateTime_footRight >= 1f)
                     {
-                        CycleFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight, IN_WATER);
+                        CycleFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight, isInWater);
                         if (isQuadripedal && sprinting)
                         {
                             rb.AddForce(Vector3.up * 500f);
@@ -380,7 +410,7 @@ public class EntityPhysics : EntityComponent
                     }
                     if (updateTime_footLeft >= 1f)
                     {
-                        CycleFootPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, ref updateTime_footLeft, IN_WATER);
+                        CycleFootPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, ref updateTime_footLeft, isInWater);
                     }
 
                     // if quadripedal, check for hand placement update as well
@@ -388,11 +418,11 @@ public class EntityPhysics : EntityComponent
                     {
                         if (updateTime_handRight >= 1f)
                         {
-                            CycleFootPlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, ref updateTime_handRight, IN_WATER);
+                            CycleFootPlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, ref updateTime_handRight, isInWater);
                         }
                         if (updateTime_handLeft >= 1f)
                         {
-                            CycleFootPlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ref updateTime_handLeft, IN_WATER);
+                            CycleFootPlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ref updateTime_handLeft, isInWater);
                         }
                     }
 
@@ -412,13 +442,15 @@ public class EntityPhysics : EntityComponent
                     }
                 }
             }
-            // in the air
+
+            // if in the air
             else
             {
                 if (!isQuadripedal)
                 {
-                    // if jumping, set foot plant point on jump point
-                    if (jumpOffRight && isGrounded)
+
+                    // if just jumped, set foot plant point on jump point
+                    if (jumpOffRight)
                     {
                         SetPlantPosition(targetFootRight, basePositionFootRight, jumpPoint - basePositionFootRight.position, ref plantPosFootRight);
                     }
@@ -426,7 +458,7 @@ public class EntityPhysics : EntityComponent
                     {
                         SetPlantPosition(targetFootRight, basePositionFootRight, Vector3.up * .3f + entityOrientation.body.forward * .5f + entityOrientation.body.right * .1f, ref plantPosFootRight);
                     }
-                    if (jumpOffLeft && isGrounded)
+                    if (jumpOffLeft)
                     {
                         SetPlantPosition(targetFootLeft, basePositionFootLeft, jumpPoint - basePositionFootLeft.position, ref plantPosFootLeft);
                     }
@@ -437,14 +469,7 @@ public class EntityPhysics : EntityComponent
 
                     updateTime_footRight = .2f;
                     updateTime_footLeft = .7f;
-                }
-
-                // if(quadripedal){
-                //     SetPlantPosition(targetHandLeft, basePositionHandLeft, Vector3.up * .1f + entityOrientation.body.right * 0f, ref plantPosHandLeft);
-                //     SetPlantPosition(targetHandRight, basePositionHandRight, Vector3.up * .3f + entityOrientation.body.forward * .5f + entityOrientation.body.right * .1f, ref plantPosHandRight);
-                //     updateTime_handRight = .2f;
-                //     updateTime_handLeft = .7f;
-                // }
+                } 
             }
 
             // update plant positions for accuracy
@@ -456,6 +481,10 @@ public class EntityPhysics : EntityComponent
                 UpdateFootPlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, isGrounded);
             }
             ApplyFootPositionConstraints();
+
+        }
+        else
+        {
 
         }
 
@@ -626,16 +655,18 @@ public class EntityPhysics : EntityComponent
         // if plant pos out of range, set hand plant position to the nearest nearby obstacle
         float dTime = Time.fixedDeltaTime;
         float handSpeed = 20f * dTime;
+        float armsReachDistance = 1f;
         bool needsUpdate =
-            Vector3.Distance(plantPositionPointer, lookOriginT.position) > 1f
+            Vector3.Distance(plantPositionPointer, lookOriginT.position) > armsReachDistance
             //isJumping
             //|| body.transform.InverseTransformDirection(plantPositionPointer - referencePosition).z < 0f
             ;
-
+   
+    
         if (needsUpdate)
         {
             
-            RaycastHit[] hits = Physics.SphereCastAll(lookOriginT.position, .5f, lookDirection, .75f, layerMask_walkable, QueryTriggerInteraction.Ignore).Where(hit => hit.point.y > 0f).ToArray();
+            RaycastHit[] hits = Physics.SphereCastAll(lookOriginT.position, .5f, lookDirection, armsReachDistance, LayerMask.GetMask("Feature", "Terrain"), QueryTriggerInteraction.Ignore).Where(hit => hit.point.y > 0f).ToArray();
             if (hits.Length > 0f)
             {
                 
@@ -672,9 +703,11 @@ public class EntityPhysics : EntityComponent
         else
         {
             targetIk.position = Vector3.Lerp(targetIk.position, plantPositionPointer, handSpeed);
-            Vector3 swingDirection = plantPositionPointer - lookOriginT.position;
+            Vector3 distanceVector = plantPositionPointer - lookOriginT.position;
+            Vector3 swingDirection = distanceVector;
             swingDirection.y = Mathf.Max(0f, swingDirection.y);
-            swingDirection.y *= 3f;
+            swingDirection.y *= 20f;
+            swingDirection.y *= Mathf.Pow(Mathf.InverseLerp(.2f, armsReachDistance, distanceVector.magnitude), 5f);
             rb.AddForce(swingDirection * 50f, ForceMode.Acceleration);
             
         }
@@ -935,7 +968,7 @@ public class EntityPhysics : EntityComponent
             return false;
         }
 
-        if (Physics.Raycast(groundSense.position, Vector3.down, groundDistanceToJump, layerMask_walkable) || (isHandGrab && rb.velocity.y < 0f) && !isJumping)
+        if (Physics.Raycast(groundSense.position, Vector3.down, groundDistanceToJump, layerMask_walkable) && !isJumping)
         {
             return true;
         }
@@ -1343,9 +1376,9 @@ public class EntityPhysics : EntityComponent
         bool w = y <= waterY - .5f;
         if (w)
         {
-            if (!IN_WATER)
+            if (!isInWater)
             {
-                IN_WATER = true;
+                isInWater = true;
                 //animator.SetTrigger("Water");
                 //entityOrientation.SetBodyRotationMode(EntityOrientation.BodyRotationMode.Target, null);
             }
@@ -1353,9 +1386,9 @@ public class EntityPhysics : EntityComponent
         }
         else if (y > waterY)
         {
-            if (IN_WATER)
+            if (isInWater)
             {
-                IN_WATER = false;
+                isInWater = false;
                 offWaterTime = 0f;
                 //animator.SetTrigger("Land");
                 //entityOrientation.SetBodyRotationMode(EntityOrientation.BodyRotationMode.Target, entityOrientation.bodyRotationTarget);
@@ -1410,7 +1443,7 @@ public class EntityPhysics : EntityComponent
 
         float max;
 
-        if (IN_WATER)
+        if (isInWater)
         {
             max = maxSpeed_swim;
         }
@@ -1478,7 +1511,7 @@ public class EntityPhysics : EntityComponent
 
     bool IsGrounded()
     {
-        return Physics.OverlapSphere(groundSense.position, 1f, layerMask_walkable).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, .25f, layerMask_walkable).Length > 0;
     }
 
     bool IsGroundedStrict()

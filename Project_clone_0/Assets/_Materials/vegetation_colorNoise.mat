@@ -32,8 +32,8 @@ Material:
     - Vector1_D2FDA34A: 1
     - _ColorNoise: 1
     - _SnowDepth: 0.1
-    - _SnowHeightCap: 4649.4
-    - _SnowHeightStart: 3947.4001
+    - _SnowHeightCap: Infinity
+    - _SnowHeightStart: Infinity
     - _SnowMinimumSurfaceNormal: 0.8
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
