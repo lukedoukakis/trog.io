@@ -85,13 +85,18 @@ public class EntityPhysics : EntityComponent
 
     // ikProfile settings
     public IkProfile ikProfile;
-    public bool quadripedal;
+    public bool isQuadripedal;
     public bool hasFingersAndToes;
     public float runCycle_strideFrequency;
     public float runCycle_lerpTightness;
     public float runCycle_limbVerticalDisplacement;
     public float runCycle_limbForwardReachDistance;
 
+
+    // grab
+    public Transform grabOriginTs;
+    public Transform grabOrigin_handRight;
+    public Transform grabOrigin_handLeft;
 
 
     // other settings
@@ -126,7 +131,7 @@ public class EntityPhysics : EntityComponent
         speedLimitModifier_launch = 1f;
 
         ikProfile = entityInfo.speciesInfo.ikProfile;
-        quadripedal = ikProfile.quadripedal;
+        isQuadripedal = ikProfile.quadripedal;
         hasFingersAndToes = ikProfile.hasFingersAndToes;
         runCycle_strideFrequency = ikProfile.runCycle_strideFrequency;
         runCycle_lerpTightness = ikProfile.runCycle_lerpTightness;
@@ -164,7 +169,7 @@ public class EntityPhysics : EntityComponent
             groundDistanceToJump = BASE_GROUND_DISTANCE_TO_JUMP_NPC;
         }
 
-        ikEnabled = quadripedal;
+        ikEnabled = isQuadripedal;
         ikParent = Utility.FindDeepChild(transform, "IKTargets");
         basePositionHips = ikParent.Find("BasePositionHips");
         basePositionFootRight = ikParent.Find("BasePositionFootRight");
@@ -207,7 +212,7 @@ public class EntityPhysics : EntityComponent
         plantPosFootLeft = targetFootLeft.position;
         plantPosHandRight = targetHandRight.position;
         plantPosHandLeft = targetHandLeft.position;
-        if (quadripedal)
+        if (isQuadripedal)
         {
             updateTime_footRight = .25f;
             updateTime_footLeft = 0f;
@@ -224,7 +229,7 @@ public class EntityPhysics : EntityComponent
             updateTime_hips = 0f;
         }
 
-        if (!quadripedal)
+        if (!isQuadripedal)
         {
             poleHandRight = ikParent.Find("PoleHandRight");
             polePosition_handRight_underhandGrip = ikParent.Find("PolePositionHandRightUnderhand");
@@ -236,6 +241,14 @@ public class EntityPhysics : EntityComponent
         else
         {
             handFree_right = handFree_left = false;
+        }
+
+        // set grab refs
+        if(!isQuadripedal)
+        {
+            grabOriginTs = Utility.FindDeepChild(transform, "GrabOriginPositions");
+            grabOrigin_handRight = grabOriginTs.Find("HandRight");
+            grabOrigin_handLeft = grabOriginTs.Find("HandLeft");
         }
 
         // find attackCollisionDetectors
@@ -256,7 +269,7 @@ public class EntityPhysics : EntityComponent
 
         ToggleIK(!ikProfile.useAnimationMovement);
 
-        if (!quadripedal)
+        if (!isQuadripedal)
         {
             UpdateIKForCarryingItems();
         }
@@ -321,7 +334,7 @@ public class EntityPhysics : EntityComponent
 
         UpdateLimbPositions(IN_WATER);
 
-        if (!quadripedal)
+        if (!isQuadripedal)
         {
 
             Transform t = body;
@@ -329,18 +342,18 @@ public class EntityPhysics : EntityComponent
             isHandGrab = false;
 
             // reach up right
-            isHandGrab = HandleHandGrab(handRight, targetHandRight, basePositionHandRight, ref plantPosHandRight, ikScript_handRight, Vector3.up * .25f, (t.right + t.forward + t.up).normalized, ref updateTime_handRight, handFree_right, IN_WATER);
+            isHandGrab = HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.up).normalized, ref updateTime_handRight, handFree_right, IN_WATER);
 
-             // reach up left
-            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ikScript_handLeft, Vector3.up * .25f, ((t.right * -1f) + t.forward + t.up).normalized, ref updateTime_handLeft, handFree_left, IN_WATER);
+            // reach up left
+            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.up).normalized, ref updateTime_handLeft, handFree_left, IN_WATER);
 
 
 
             // vault right
-            isHandGrab = isHandGrab || HandleHandGrab(handRight, targetHandRight, basePositionHandRight, ref plantPosHandRight, ikScript_handRight, Vector3.zero, (t.right + t.forward + t.up).normalized, ref updateTime_handRight, handFree_right, IN_WATER);
+            //isHandGrab = isHandGrab || HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.forward).normalized, ref updateTime_handRight, handFree_right, IN_WATER);
 
             // vault left
-            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ikScript_handLeft, Vector3.zero, ((t.right * -1f) + t.forward + t.up).normalized, ref updateTime_handLeft, handFree_left, IN_WATER);
+            //isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.forward).normalized, ref updateTime_handLeft, handFree_left, IN_WATER);
             
             
         }
@@ -360,7 +373,7 @@ public class EntityPhysics : EntityComponent
                     if (updateTime_footRight >= 1f)
                     {
                         CycleFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight, IN_WATER);
-                        if (quadripedal && sprinting)
+                        if (isQuadripedal && sprinting)
                         {
                             rb.AddForce(Vector3.up * 500f);
                         }
@@ -371,7 +384,7 @@ public class EntityPhysics : EntityComponent
                     }
 
                     // if quadripedal, check for hand placement update as well
-                    if (quadripedal)
+                    if (isQuadripedal)
                     {
                         if (updateTime_handRight >= 1f)
                         {
@@ -392,7 +405,7 @@ public class EntityPhysics : EntityComponent
                     // not moving
                     SetPlantPosition(targetFootLeft, basePositionFootLeft, footPositionOffsetToAccountForBodyLean, ref plantPosFootLeft);
                     SetPlantPosition(targetFootRight, basePositionFootRight, footPositionOffsetToAccountForBodyLean, ref plantPosFootRight);
-                    if (quadripedal)
+                    if (isQuadripedal)
                     {
                         SetPlantPosition(targetHandLeft, basePositionHandLeft, Vector3.zero, ref plantPosHandLeft);
                         SetPlantPosition(targetHandRight, basePositionHandRight, Vector3.zero, ref plantPosHandRight);
@@ -402,7 +415,7 @@ public class EntityPhysics : EntityComponent
             // in the air
             else
             {
-                if (!quadripedal)
+                if (!isQuadripedal)
                 {
                     // if jumping, set foot plant point on jump point
                     if (jumpOffRight && isGrounded)
@@ -437,7 +450,7 @@ public class EntityPhysics : EntityComponent
             // update plant positions for accuracy
             UpdateFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, isGrounded);
             UpdateFootPlantPosition(targetFootLeft, basePositionFootLeft, ref plantPosFootLeft, isGrounded);
-            if (quadripedal)
+            if (isQuadripedal)
             {
                 UpdateFootPlantPosition(targetHandRight, basePositionHandRight, ref plantPosHandRight, isGrounded);
                 UpdateFootPlantPosition(targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, isGrounded);
@@ -447,14 +460,14 @@ public class EntityPhysics : EntityComponent
         }
 
 
-        if (!quadripedal)
+        if (!isQuadripedal)
         {
             UpdateWeaponPolePosition();
         }
 
 
         float footPlantTimeUpdateSpeed = runCycle_strideFrequency * dTime;
-        float handPlantTimeUpdateSpeed = quadripedal ? footPlantTimeUpdateSpeed : footPlantTimeUpdateSpeed * .25f;
+        float handPlantTimeUpdateSpeed = isQuadripedal ? footPlantTimeUpdateSpeed : footPlantTimeUpdateSpeed * .25f;
         float hipsUpdateSpeed = footPlantTimeUpdateSpeed / 6f;
         float updateTimeModifier = 1f + changeInVelocityFactor;
         if (isMoving)
@@ -496,7 +509,7 @@ public class EntityPhysics : EntityComponent
             {
                 targetToeRight.position = targetFootRight.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) + .2f);
                 targetToeLeft.position = targetFootLeft.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) + .2f);
-                if (quadripedal)
+                if (isQuadripedal)
                 {
                     targetFingerRight.position = targetFingerRight.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footLeft, 0f) + .2f);
                     targetFingerLeft.position = targetFingerLeft.position + toeForward + Vector3.down * (GetRunCyclePhase(updateTime_footRight, 0f) + .2f);
@@ -513,7 +526,7 @@ public class EntityPhysics : EntityComponent
             {
                 targetToeRight.position = targetFootRight.position + entityOrientation.body.forward.normalized + Vector3.down;
                 targetToeLeft.position = targetFootLeft.position + entityOrientation.body.forward.normalized + Vector3.down;
-                if (quadripedal)
+                if (isQuadripedal)
                 {
                     targetFingerRight.position = targetHandRight.position + entityOrientation.body.forward.normalized + Vector3.down;
                     targetFingerLeft.position = targetHandLeft.position + entityOrientation.body.forward.normalized + Vector3.down;
@@ -524,7 +537,7 @@ public class EntityPhysics : EntityComponent
         }
         targetFootRight.position = Vector3.Lerp(targetFootRight.position, plantPosFootRight, changePositionSpeed) + vertFootRight;
         targetFootLeft.position = Vector3.Lerp(targetFootLeft.position, plantPosFootLeft, changePositionSpeed) + vertFootLeft;
-        if (quadripedal)
+        if (isQuadripedal)
         {
             targetHandRight.position = Vector3.Lerp(targetHandRight.position, plantPosHandRight, changePositionSpeed) + vertFootLeft;
             targetHandLeft.position = Vector3.Lerp(targetHandLeft.position, plantPosHandLeft, changePositionSpeed) + vertFootRight;
@@ -586,7 +599,7 @@ public class EntityPhysics : EntityComponent
 
 
 
-        if (quadripedal)
+        if (isQuadripedal)
         {
             pos = targetHandRight.position;
             pos.y = Mathf.Min(pos.y, kneeHeightT.position.y);
@@ -599,70 +612,53 @@ public class EntityPhysics : EntityComponent
     }
 
 
-    public bool HandleHandGrab(Transform hand, Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, FastIKFabric ikScript, Vector3 lookOriginOffset, Vector3 directionToLook, ref float updateTime, bool handFree, bool water)
+    public bool HandleHandGrab(Transform hand, Transform targetIk, ref Vector3 plantPositionPointer, FastIKFabric ikScript, Transform lookOriginT, Vector3 lookDirection, ref float updateTime, bool handFree, bool water)
     {
 
         
 
-        if (!handFree) { return false; }
+        if (!handFree)
+        {
+            return false;
+        }
 
 
         // if plant pos out of range, set hand plant position to the nearest nearby obstacle
         float dTime = Time.fixedDeltaTime;
-        Vector3 referencePosition = obstacleHeightSense.position;
         float handSpeed = 20f * dTime;
         bool needsUpdate =
-            Vector3.Distance(plantPositionPointer, referencePosition) > 1f
-            || plantPositionPointer.y < referencePosition.y
+            Vector3.Distance(plantPositionPointer, lookOriginT.position) > 1f
+            //isJumping
             //|| body.transform.InverseTransformDirection(plantPositionPointer - referencePosition).z < 0f
             ;
 
         if (needsUpdate)
         {
-
-            // if(isHandGrab)
-            // {
-            //     ikScript.enabled = false;
-            //     return false;
-            // }
-            if(isJumping)
-            {
-                ikScript.enabled = false;
-                return false;
-            }
             
-            //Debug.Log("needs update");
-
-            
-            RaycastHit[] hits = Physics.SphereCastAll(referencePosition + lookOriginOffset, .1f, directionToLook, .75f, layerMask_walkable, QueryTriggerInteraction.Ignore);
-            //Debug.Log("hits: " + hits.Length);
-
+            RaycastHit[] hits = Physics.SphereCastAll(lookOriginT.position, .5f, lookDirection, .75f, layerMask_walkable, QueryTriggerInteraction.Ignore).Where(hit => hit.point.y > 0f).ToArray();
             if (hits.Length > 0f)
             {
+                
                 ikScript.enabled = true;
-
+    
                 float min = float.MaxValue;
                 Vector3 targetHandPos = Vector3.zero;
+                Collider foundCollider = hits[0].collider;
                 foreach (RaycastHit hit in hits)
                 {
-                    //Debug.Log("..." + hit.collider.gameObject.name);
-                    float distance = Vector3.Distance(referencePosition, hit.point);
-                    if (distance < min && hit.point.y >= referencePosition.y)
+                    float distance = Vector3.Distance(lookOriginT.position, hit.point);
+                    if (distance < min)
                     {
                         min = distance;
                         targetHandPos = hit.point;
+                        foundCollider = hit.collider;
                     }
                 }
-
-                //Debug.Log("DISTANCE: " + Vector3.Distance(referencePosition, targetHandPos));
+                
                 plantPositionPointer = targetHandPos;
                 targetIk.position = hand.position;
                 targetIk.position = Vector3.Lerp(targetIk.position, plantPositionPointer, handSpeed);
 
-                if (isLocalPlayer && entityUserInput.pressJump && CanJump())
-                {
-                    //rb.AddForce(Vector3.up * (targetHandPos - referencePosition).y * 500f);
-                }
 
 
 
@@ -676,6 +672,11 @@ public class EntityPhysics : EntityComponent
         else
         {
             targetIk.position = Vector3.Lerp(targetIk.position, plantPositionPointer, handSpeed);
+            Vector3 swingDirection = plantPositionPointer - lookOriginT.position;
+            swingDirection.y = Mathf.Max(0f, swingDirection.y);
+            swingDirection.y *= 3f;
+            rb.AddForce(swingDirection * 50f, ForceMode.Acceleration);
+            
         }
 
         return true;
@@ -736,7 +737,7 @@ public class EntityPhysics : EntityComponent
     public void UpdateIKForCarryingItems()
     {
 
-        if (quadripedal)
+        if (isQuadripedal)
         {
             return;
         }
@@ -1455,8 +1456,7 @@ public class EntityPhysics : EntityComponent
     {
 
         bool gravityCondition =
-            !isGrounded
-            || true
+            true
             ;
 
         rb.useGravity = gravityCondition;
@@ -1498,6 +1498,7 @@ public class EntityPhysics : EntityComponent
         isGroundedStrict = IsGroundedStrict();
         differenceInDegreesBetweenMovementAndFacing = Mathf.InverseLerp(0f, 180f, Vector3.Angle(Utility.GetHorizontalVector(body.forward), velHoriz_this));
 
+
         SetPhysicMaterial();
         Move(moveDir, acceleration);
         CheckWater();
@@ -1506,6 +1507,13 @@ public class EntityPhysics : EntityComponent
         SetGravity();
         UpdateAnimation();
         UpdateIK();
+
+        // if(isHandGrab)
+        // {
+        //     Vector3 vel = rb.velocity;
+        //     vel.y = Mathf.Max(0f, vel.y);
+        //     rb.velocity = vel;
+        // }
 
 
         velHoriz_last = velHoriz_this;
