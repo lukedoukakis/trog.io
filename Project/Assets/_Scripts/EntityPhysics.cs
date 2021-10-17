@@ -26,10 +26,10 @@ public class EntityPhysics : EntityComponent
     public Transform hips, head, handRight, handLeft, fingerRight, fingerLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float BASE_CASTDISTANCE_GROUND_PLAYER = .5f;
-    public static float BASE_CASTDISTANCE_GROUND_NPC = .5f;
+    public static float BASE_GROUND_DISTANCE_TO_JUMP_PLAYER = .5f;
+    public static float BASE_GROUND_DISTANCE_TO_JUMP_NPC = .5f;
     public static float BASE_CASTDISTANCE_WALL = 1f;
-    float groundCastDistance;
+    float groundDistanceToJump;
     float distanceFromGround;
 
     public static float BASE_FORCE_JUMP = 280f;
@@ -42,8 +42,7 @@ public class EntityPhysics : EntityComponent
 
 
     public Vector3 moveDir;
-    public bool onWalkableGround;
-    public bool jumping, jumpOffLeft, jumpOffRight, sprinting;
+    public bool isJumping, jumpOffLeft, jumpOffRight, sprinting;
     Vector3 jumpPoint;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
     public float acceleration;
@@ -158,11 +157,11 @@ public class EntityPhysics : EntityComponent
         kneeHeightT = Utility.FindDeepChild(transform, "KneeHeight");
         if (tag == "Player")
         {
-            groundCastDistance = BASE_CASTDISTANCE_GROUND_PLAYER;
+            groundDistanceToJump = BASE_GROUND_DISTANCE_TO_JUMP_PLAYER;
         }
         else if (tag == "Npc")
         {
-            groundCastDistance = BASE_CASTDISTANCE_GROUND_NPC;
+            groundDistanceToJump = BASE_GROUND_DISTANCE_TO_JUMP_NPC;
         }
 
         ikEnabled = quadripedal;
@@ -324,8 +323,26 @@ public class EntityPhysics : EntityComponent
 
         if (!quadripedal)
         {
-            isHandGrab = HandleHandGrab(handRight, targetHandRight, basePositionHandRight, ref plantPosHandRight, ikScript_handRight, (body.right + body.forward).normalized, ref updateTime_handRight, handFree_right, IN_WATER);
-            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ikScript_handLeft, ((body.right * -1f) + body.forward).normalized, ref updateTime_handLeft, handFree_left, IN_WATER);
+
+            Transform t = body;
+
+            isHandGrab = false;
+
+            // reach up right
+            isHandGrab = HandleHandGrab(handRight, targetHandRight, basePositionHandRight, ref plantPosHandRight, ikScript_handRight, Vector3.up * .25f, (t.right + t.forward + t.up).normalized, ref updateTime_handRight, handFree_right, IN_WATER);
+
+             // reach up left
+            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ikScript_handLeft, Vector3.up * .25f, ((t.right * -1f) + t.forward + t.up).normalized, ref updateTime_handLeft, handFree_left, IN_WATER);
+
+
+
+            // vault right
+            isHandGrab = isHandGrab || HandleHandGrab(handRight, targetHandRight, basePositionHandRight, ref plantPosHandRight, ikScript_handRight, Vector3.zero, (t.right + t.forward + t.up).normalized, ref updateTime_handRight, handFree_right, IN_WATER);
+
+            // vault left
+            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, basePositionHandLeft, ref plantPosHandLeft, ikScript_handLeft, Vector3.zero, ((t.right * -1f) + t.forward + t.up).normalized, ref updateTime_handLeft, handFree_left, IN_WATER);
+            
+            
         }
 
 
@@ -582,20 +599,18 @@ public class EntityPhysics : EntityComponent
     }
 
 
-    public bool HandleHandGrab(Transform hand, Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, FastIKFabric ikScript, Vector3 directionToLook, ref float updateTime, bool handFree, bool water)
+    public bool HandleHandGrab(Transform hand, Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, FastIKFabric ikScript, Vector3 lookOriginOffset, Vector3 directionToLook, ref float updateTime, bool handFree, bool water)
     {
 
-        float dTime = Time.fixedDeltaTime;
+        
 
-        //Debug.Log("Handling hand plant pos");
-
-        if (!handFree || isGroundedStrict) { return false; }
-
-        Vector3 referencePosition = obstacleHeightSense.position;
-        float handSpeed = 40f * dTime;
+        if (!handFree) { return false; }
 
 
         // if plant pos out of range, set hand plant position to the nearest nearby obstacle
+        float dTime = Time.fixedDeltaTime;
+        Vector3 referencePosition = obstacleHeightSense.position;
+        float handSpeed = 20f * dTime;
         bool needsUpdate =
             Vector3.Distance(plantPositionPointer, referencePosition) > 1f
             || plantPositionPointer.y < referencePosition.y
@@ -605,9 +620,21 @@ public class EntityPhysics : EntityComponent
         if (needsUpdate)
         {
 
+            // if(isHandGrab)
+            // {
+            //     ikScript.enabled = false;
+            //     return false;
+            // }
+            if(isJumping)
+            {
+                ikScript.enabled = false;
+                return false;
+            }
+            
             //Debug.Log("needs update");
 
-            RaycastHit[] hits = Physics.SphereCastAll(referencePosition + Vector3.up * .25f, .5f, directionToLook, .75f, layerMask_walkable, QueryTriggerInteraction.Ignore).Where(hit => hit.point.y >= referencePosition.y).ToArray();
+            
+            RaycastHit[] hits = Physics.SphereCastAll(referencePosition + lookOriginOffset, .1f, directionToLook, .75f, layerMask_walkable, QueryTriggerInteraction.Ignore);
             //Debug.Log("hits: " + hits.Length);
 
             if (hits.Length > 0f)
@@ -634,7 +661,7 @@ public class EntityPhysics : EntityComponent
 
                 if (isLocalPlayer && entityUserInput.pressJump && CanJump())
                 {
-                    rb.AddForce(Vector3.up * (targetHandPos - referencePosition).y * 500f);
+                    //rb.AddForce(Vector3.up * (targetHandPos - referencePosition).y * 500f);
                 }
 
 
@@ -831,7 +858,7 @@ public class EntityPhysics : EntityComponent
 
     public void Jump(float power)
     {
-        if (!jumping)
+        if (!isJumping)
         {
             StartCoroutine(_Jump(power));
         }
@@ -843,7 +870,7 @@ public class EntityPhysics : EntityComponent
     }
     IEnumerator _Jump(float power)
     {
-        jumping = true;
+        isJumping = true;
         Vector3 horVelDir = velHoriz_this.normalized;
         Vector3 rightFootForwardNess = Vector3.Project(footRight.position - transform.position, horVelDir);
         Vector3 leftFootForwardness = Vector3.Project(footRight.position - transform.position, horVelDir);
@@ -891,7 +918,7 @@ public class EntityPhysics : EntityComponent
 
         //yield return new WaitForSecondsRealtime(.2f);
         jumpOffRight = jumpOffLeft = false;
-        jumping = false;
+        isJumping = false;
         yield return null;
     }
     public void Vault()
@@ -907,7 +934,7 @@ public class EntityPhysics : EntityComponent
             return false;
         }
 
-        if (Physics.Raycast(groundSense.position, Vector3.down, groundCastDistance + .3f, layerMask_walkable) || (isHandGrab && rb.velocity.y < 0f))
+        if (Physics.Raycast(groundSense.position, Vector3.down, groundDistanceToJump, layerMask_walkable) || (isHandGrab && rb.velocity.y < 0f) && !isJumping)
         {
             return true;
         }
@@ -1274,37 +1301,6 @@ public class EntityPhysics : EntityComponent
 
     // ----------------------------------------------------------
 
-    void CheckGround()
-    {
-        Vector3 vel = rb.velocity;
-        if (Physics.Raycast(groundSense.position, Vector3.down, out groundInfo, 100f, layerMask_walkable))
-        {
-            distanceFromGround = Vector3.Distance(groundInfo.point, transform.position);
-            if (distanceFromGround < groundCastDistance)
-            {
-                if (!GROUNDTOUCH)
-                {
-                    GROUNDTOUCH = true;
-                    vel.y = 0f;
-                    rb.velocity = vel;
-                }
-                groundTime += Time.fixedDeltaTime;
-                onWalkableGround = groundInfo.normal.y >= ChunkGenerator.GrassNormal - .2f;
-            }
-            else
-            {
-                if (GROUNDTOUCH)
-                {
-                    GROUNDTOUCH = false;
-                    groundTime = 0f;
-                    airTime = 0f;
-                }
-                airTime += Time.fixedDeltaTime;
-                onWalkableGround = false;
-            }
-        }
-        //rb.drag = GroundIsClose() ? 10f : 0f;
-    }
 
     void CheckWall()
     {
@@ -1402,19 +1398,6 @@ public class EntityPhysics : EntityComponent
 
 
 
-    void CheckPhysicMaterial()
-    {
-        if (moveDir.magnitude > 0f)
-        {
-            //worldCollider.sharedMaterial = noFrictionMat;
-            worldCollider.sharedMaterial = highFrictionMat;
-        }
-        else
-        {
-            //worldCollider.sharedMaterial = noFrictionMat;
-            worldCollider.sharedMaterial = highFrictionMat;
-        }
-    }
 
     void LimitSpeed()
     {
@@ -1435,7 +1418,7 @@ public class EntityPhysics : EntityComponent
             max = sprinting ? maxSpeed_sprint : maxSpeed_run;
         }
 
-        if (!jumping)
+        if (!isJumping)
         {
             max = Mathf.Lerp(max, max *= 1.5f - Mathf.InverseLerp(-3f, 3f, rb.velocity.y), 30f * Time.deltaTime);
         }
@@ -1448,10 +1431,6 @@ public class EntityPhysics : EntityComponent
             horvel.y = ySpeed;
             rb.velocity = horvel;
         }
-
-
-
-
     }
 
     void ApplyFlotationForce(float distanceFromSurface)
@@ -1459,13 +1438,28 @@ public class EntityPhysics : EntityComponent
         rb.AddForce(Physics.gravity * 2f * (Mathf.InverseLerp(0f, 20f, distanceFromSurface) + .5f) * -1f, ForceMode.Force);
     }
 
+    void SetPhysicMaterial()
+    {
+
+
+        bool lowFrictionCondition =
+            moveDir.magnitude > 0f
+            ;
+
+
+        worldCollider.sharedMaterial = lowFrictionCondition ? noFrictionMat : highFrictionMat;
+        
+    }
+
     void SetGravity()
     {
-        if ((GROUNDTOUCH || WALLTOUCH) && !IN_WATER && moveDir.magnitude > 0f)
-        {
-            rb.useGravity = !isGroundedStrict;
-        }
-        else { rb.useGravity = true; }
+
+        bool gravityCondition =
+            !isGrounded
+            || true
+            ;
+
+        rb.useGravity = gravityCondition;
     }
 
 
@@ -1484,12 +1478,12 @@ public class EntityPhysics : EntityComponent
 
     bool IsGrounded()
     {
-        return Physics.OverlapSphere(groundSense.position, .75f, layerMask_walkable).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, 1f, layerMask_walkable).Length > 0;
     }
 
     bool IsGroundedStrict()
     {
-        return Physics.OverlapSphere(groundSense.position, .25f, layerMask_walkable).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, .05f, layerMask_walkable).Length > 0;
     }
 
 
@@ -1504,15 +1498,15 @@ public class EntityPhysics : EntityComponent
         isGroundedStrict = IsGroundedStrict();
         differenceInDegreesBetweenMovementAndFacing = Mathf.InverseLerp(0f, 180f, Vector3.Angle(Utility.GetHorizontalVector(body.forward), velHoriz_this));
 
-        CheckPhysicMaterial();
+        SetPhysicMaterial();
         Move(moveDir, acceleration);
-        CheckGround();
         CheckWater();
         CheckCrouch();
         LimitSpeed();
         SetGravity();
         UpdateAnimation();
         UpdateIK();
+
 
         velHoriz_last = velHoriz_this;
     }

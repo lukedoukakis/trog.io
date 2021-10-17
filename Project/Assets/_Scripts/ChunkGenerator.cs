@@ -25,7 +25,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float BankLevel = SeaLevel + meter;
     public static float SnowLevel = .861f;
     public static float GrassNormal = .57f;
-    public static float SnowNormal = .8f;
+    public static float SnowNormal = .57f;
     public static bool LoadingChunks, DeloadingChunks;
     static GameObject Chunk;
     static GameObject Terrain;
