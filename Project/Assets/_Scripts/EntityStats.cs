@@ -189,7 +189,7 @@ public class EntityStats : EntityComponent
             {
                 worldObject = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
                 worldObject.transform.position = dropSpot + (Vector3.up * placementHeightOffset);
-                if(Item.IsRackable(item))
+                if(item.isRackable)
                 {
                     worldObject.transform.rotation = Utility.GetRandomRotation(360f);
                     Vector3 randomDirection = Utility.GetRandomVector(1f);
@@ -210,10 +210,9 @@ public class EntityStats : EntityComponent
         {
             item = totalDropsList[i].Item1;
             worldObject = totalDropsList[i].Item2;
-            bool rackable = Item.IsRackable(item);
             if(inCamp){
                 // if attacker is in their camp
-                if(rackable){
+                if(item.isRackable){
                     Debug.Log("adding drops straight to faction");
                     // if the item is rackable, add item straight to racks
                     float delay = .5f + (i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
@@ -231,7 +230,7 @@ public class EntityStats : EntityComponent
             }
             else
             {
-                if(rackable)
+                if(item.isRackable)
                 {
                     Debug.Log("adding drops to inventory");
                     // if not in camp, add to reciver's inventory and delay small timestep

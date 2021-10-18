@@ -14,6 +14,7 @@ public class CampResources : MonoBehaviour
     public static GameObject PREFAB_RACK_CLOTHING = Resources.Load<GameObject>("Camp/Clothing Rack");
     public static GameObject PREFAB_RACK_WOOD = Resources.Load<GameObject>("Camp/Wood Rack");
     public static GameObject PREFAB_RACK_BONE = Resources.Load<GameObject>("Camp/Bone Rack");
+    public static GameObject PREFAB_RACK_STONE = Resources.Load<GameObject>("Camp/Stone Rack");
     public static GameObject PREFAB_TENT = Resources.Load<GameObject>("Camp/Tent");
 
 

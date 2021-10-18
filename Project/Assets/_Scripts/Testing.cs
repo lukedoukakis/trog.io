@@ -34,6 +34,7 @@ public class Testing : MonoBehaviour
         Faction.AddItemOwned(faction, Item.Axe, 2, null, playerHandle.transform, 0f);
         Faction.AddItemOwned(faction, Item.WoodPiece, 7, null, playerHandle.transform, 0f);
         Faction.AddItemOwned(faction, Item.BonePiece2, 4, null, playerHandle.transform, 0f);
+        Faction.AddItemOwned(faction, Item.StoneSmall, 15, null, playerHandle.transform, 0f);
         // for(int i = 0; i < 120 / 3; ++i){
         //     Faction.AddItemOwned(faction, Item.BonePiece1, 1, null, playerHandle.transform, 0f);
         //     Faction.AddItemOwned(faction, Item.BonePiece2, 1, null, playerHandle.transform, 0f);

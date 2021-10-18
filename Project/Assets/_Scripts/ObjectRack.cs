@@ -15,6 +15,7 @@ public class ObjectRack : CampComponent
     public static int RackCapacity_Clothing = 6;
     public static int RackCapacity_Wood = 30;
     public static int RackCapacity_Bone = 28;
+    public static int RackCapacity_Stone = 28;
 
     // --
 
@@ -70,6 +71,14 @@ public class ObjectRack : CampComponent
             case Item.ItemType.Bone : 
                 this.capacity = RackCapacity_Bone;
                 worldObjectPrefab = CampResources.PREFAB_RACK_BONE;
+                onDemandPlacement = true;
+                allowObjectPhysics = true;
+                allowLateralTranslation = true;
+                allowRotation = true;
+                break;
+            case Item.ItemType.Stone : 
+                this.capacity = RackCapacity_Stone;
+                worldObjectPrefab = CampResources.PREFAB_RACK_STONE;
                 onDemandPlacement = true;
                 allowObjectPhysics = true;
                 allowLateralTranslation = true;

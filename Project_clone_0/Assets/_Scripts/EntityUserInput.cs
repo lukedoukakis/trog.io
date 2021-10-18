@@ -205,6 +205,10 @@ public class EntityUserInput : EntityComponent
                 {
                     entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
                 }
+                else if (t == "ObjectRack_Stone")
+                {
+                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
+                }
                 else{
 
                 }    
@@ -350,6 +354,12 @@ public class EntityUserInput : EntityComponent
                 case "ObjectRack_Bone" :
                     item = entityItems.holding_item;
                     if(!(item == null || !item.type.Equals(Item.ItemType.Bone))){
+                        txt += "E: Place " + item.nme;
+                    }
+                    break;
+                case "ObjectRack_Stone" :
+                    item = entityItems.holding_item;
+                    if(!(item == null || !item.type.Equals(Item.ItemType.Stone))){
                         txt += "E: Place " + item.nme;
                     }
                     break;

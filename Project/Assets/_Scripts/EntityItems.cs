@@ -229,7 +229,7 @@ public class EntityItems : EntityComponent
 
         else if (targetAttachedObject == null)
         {
-            if(Camp.EntityIsInsideCamp(entityHandle) && Item.IsRackable(holding_item)){
+            if(Camp.EntityIsInsideCamp(entityHandle) && holding_item.isRackable){
                 //Debug.Log("Adding to rack");
                 Faction.AddItemOwned(entityInfo.faction, holding_item, 1, null, transform, 0f);
                 GameObject.Destroy(holding_object);

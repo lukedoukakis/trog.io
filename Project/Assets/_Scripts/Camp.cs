@@ -19,7 +19,8 @@ public class Camp : MonoBehaviour
         Rack_Weapons, 
         Rack_Clothing,
         Rack_Wood,
-        Rack_Bone
+        Rack_Bone,
+        Rack_Stone
     }
 
 
@@ -40,6 +41,7 @@ public class Camp : MonoBehaviour
     public List<ObjectRack> racks_clothing;
     public List<ObjectRack> racks_wood;
     public List<ObjectRack> racks_bone;
+    public List<ObjectRack> racks_stone;
 
 
     public List<Transform> tribeMemberStandPositions;
@@ -67,6 +69,7 @@ public class Camp : MonoBehaviour
         camp.racks_clothing = new List<ObjectRack>();
         camp.racks_wood = new List<ObjectRack>();
         camp.racks_bone = new List<ObjectRack>();
+        camp.racks_stone = new List<ObjectRack>(); 
         camp.tents = new List<Tent>();
         Vector3 campPlacementPos = originT.position + originT.forward * 2f;
         camp.SetOrigin(campPlacementPos);
@@ -208,6 +211,9 @@ public class Camp : MonoBehaviour
             case ComponentType.Rack_Bone :
                 search = "OrientationBoneRack" + racks_bone.Count;
                 break;
+            case ComponentType.Rack_Stone :
+                search = "OrientationStoneRack" + racks_stone.Count;
+                break;
             case ComponentType.Tent :
                 search = "OrientationTent" + tents.Count;
                 break;
@@ -298,6 +304,9 @@ public class Camp : MonoBehaviour
                 break;
             case Item.ItemType.Bone:
                 componentType = ComponentType.Rack_Bone;
+                break;
+            case Item.ItemType.Stone:
+                componentType = ComponentType.Rack_Stone;
                 break;
             default:
                 componentType = ComponentType.Rack_Food;
@@ -437,6 +446,9 @@ public class Camp : MonoBehaviour
                 break;
             case Item.ItemType.Bone :
                 rackList = racks_bone;
+                break;
+            case Item.ItemType.Stone :
+                rackList = racks_stone;
                 break;
             default:
                 Debug.Log("Unrecognized item type");
