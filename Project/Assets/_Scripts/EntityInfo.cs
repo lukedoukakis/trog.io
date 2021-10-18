@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Linq;
 
 
-public enum Species{ Any, Human, Bear, Tree, Deer
+public enum Species{ Any, Human, Bear, Deer
 }
 public enum BehaviorType{ None, Aggressive, Timid, Steadfast }
 
@@ -138,22 +138,6 @@ public class SpeciesInfo : ScriptableObject{
                     false
                 ),
                 ParticleController.instance.BloodSpatter
-            )
-
-        },
-
-        {
-            Species.Tree, SpeciesInfo.InstantiateSpeciesInfo(
-                null,
-                new ItemCollection(
-                    new Dictionary<Item, int>{
-                        {Item.LogFir, 1},
-                    }
-                ),
-                Stats.InstantiateStats(3f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f),
-                null,
-                null,
-                ParticleController.instance.TreeDebris
             )
 
         },

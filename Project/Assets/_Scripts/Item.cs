@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public enum ItemType
 {
-    Any, Food, Weapon, Clothing, Wood, Bone, Stone, Misc
+    Any, Food, Weapon, Clothing, Wood, Bone, Stone, Feature, Misc
 }
 
 public class Item : ScriptableObject
@@ -41,13 +41,15 @@ public class Item : ScriptableObject
     public static Item BonePiece4 = InitiailizeItem("BonePiece4", ItemType.Bone, true, Stats.NONE, Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, null, Resources.Load<GameObject>("Items/Bones/BonePiece4/Gameobject/BonePiece4"), Resources.Load<Image>("Items/Bones/BonePiece4/Image"));
     public static Item StoneSmall = InitiailizeItem("StoneSmall", ItemType.Stone, true, Stats.NONE, Stats.NONE, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, null, Resources.Load<GameObject>("Items/StoneSmall/Gameobject/StoneSmall"), Resources.Load<Image>("Items/StoneSmall/Image"));
     public static Item Torch = InitiailizeItem("Torch", ItemType.Weapon, false, Stats.NONE, Stats.NONE, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, null, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
-    public static Item Stone = InitiailizeItem("Stone", ItemType.Misc, true, Stats.InstantiateStats(3f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{StoneSmall, 5}}), null, Resources.Load<GameObject>("Items/Stone/Gameobject/Stone"), Resources.Load<Image>("Items/Stone/Image"));
     public static Item Spear = InitiailizeItem("Spear", ItemType.Weapon, true, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_SPEAR, ItemHoldStyle.Spear, ItemDamageType.Pierce, ItemCollection.EmptyItemCollection, null, Resources.Load<GameObject>("Items/Weapons/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Weapons/Spear/Image"));
     public static Item Axe = InitiailizeItem("Axe", ItemType.Weapon, true, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_AXE, ItemHoldStyle.Axe, ItemDamageType.Slash, ItemCollection.EmptyItemCollection, null, Resources.Load<GameObject>("Items/Weapons/Axe/Gameobject/Axe"), Resources.Load<Image>("Items/Weapons/Axe/Image"));
     public static Item CarcassBear = InitiailizeItem("CarcassBear", ItemType.Misc, false, Stats.InstantiateStats(.1f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{BonePiece1, 2}, {BonePiece2, 1}, {BonePiece3, 1}, {Meat, 2}}), ParticleController.instance.BloodSpatter, Resources.Load<GameObject>("Items/Carcasses/CarcassBear/Gameobject/CarcassBear"), Resources.Load<Image>("Items/Carcasses/CarcassBear/Image"));
     public static Item ClothingTest = InitiailizeItem("ClothingTest", ItemType.Clothing, true, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_TESTCLOTHING, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, null, Resources.Load<GameObject>("Items/Clothing/ClothingTest/Gameobject/ClothingTest"), Resources.Load<Image>("Items/Clothing/ClothingTest/Image"));
     public static Item LogFir = InitiailizeItem("LogFir", ItemType.Misc, false, Stats.InstantiateStats(.1f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.Hug, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{WoodPiece, 4},}), ParticleController.instance.TreeDebris, Resources.Load<GameObject>("Items/LogFir/Gameobject/LogFir"), Resources.Load<Image>("Items/LogFir/Image"));
     
+    public static Item Stone = InitiailizeItem("Stone", ItemType.Feature, true, Stats.InstantiateStats(3f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{StoneSmall, 5}}), ParticleController.instance.StoneDebris, null, null);
+    public static Item Tree = InitiailizeItem("Tree", ItemType.Feature, true, Stats.InstantiateStats(3f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{LogFir, 1}}), ParticleController.instance.TreeDebris, null, null);
+
     public static Dictionary<string, Item> Items = new Dictionary<string, Item>
     {
 
@@ -57,7 +59,6 @@ public class Item : ScriptableObject
         { "BonePiece3", BonePiece3 },
         { "BonePiece4", BonePiece4 },
         { "Torch", Torch },
-        { "Stone", Stone },
         { "StoneSmall", StoneSmall },
         { "Spear", Spear },
         { "Axe", Axe },
@@ -65,6 +66,8 @@ public class Item : ScriptableObject
         { "CarcassBear", CarcassBear },
         { "ClothingTest", ClothingTest },
         { "Meat", Meat },
+        { "Stone", Stone },
+        { "Tree", Tree },
         
         
 

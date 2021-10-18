@@ -198,7 +198,7 @@ GameObject:
   m_Component:
   - component: {fileID: 595997955340704279}
   - component: {fileID: 1446751843025961566}
-  - component: {fileID: -3640582475240499240}
+  - component: {fileID: 4079982412955305263}
   - component: {fileID: 3422082851286279135}
   m_Layer: 10
   m_Name: TreeFir
@@ -238,7 +238,7 @@ CapsuleCollider:
   m_Height: 6.2706203
   m_Direction: 1
   m_Center: {x: -0.00036022067, y: 3.0428753, z: -0.000067293644}
---- !u!114 &-3640582475240499240
+--- !u!114 &4079982412955305263
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -247,24 +247,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 595997955340704276}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15fbd0e55bac06d48ac6e6c193042235, type: 3}
+  m_Script: {fileID: 11500000, guid: 2b6bf48bce3a9dc40893c47b91f42dc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  entityHandle: {fileID: 0}
-  entityInfo: {fileID: 0}
-  entityStats: {fileID: 0}
-  entityBehavior: {fileID: 0}
-  entityOrientation: {fileID: 0}
-  entityPhysics: {fileID: 0}
-  entityStatus: {fileID: 0}
-  entityItems: {fileID: 0}
-  entityActionRecorder: {fileID: 0}
-  entityHitDetection: {fileID: 0}
-  entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
-  species: 3
+  itemNme: Tree
 --- !u!114 &3422082851286279135
 MonoBehaviour:
   m_ObjectHideFlags: 0
