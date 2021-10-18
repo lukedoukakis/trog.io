@@ -44,13 +44,39 @@ public class ItemHitDetection : MonoBehaviour
             Utility.DestroyInSeconds(particleObj, 1f);
         }
 
+        // shake
+        Shake();
+
 
     }
 
-    void Init(){
-        
-        
+    void Shake()
+    {
 
+        StartCoroutine(_Shake());
 
+        IEnumerator _Shake()
+        {
+            Vector3 originalLocation = transform.position;
+            float displacement = .25f;
+            int steps = 10;
+            float shakeSpeed = 30f;
+
+            for(int i = 0; i < steps; ++i)
+            {
+                Vector3 targetPos = originalLocation + Utility.GetRandomVector(displacement);
+                while(Vector3.Distance(transform.position, targetPos) > .1f)
+                {
+                    transform.position = Vector3.Lerp(transform.position, targetPos, shakeSpeed * Time.deltaTime);
+                    yield return null;
+                }
+                displacement *= .85f;
+            }
+            while(Vector3.Distance(transform.position, originalLocation) > .02f)
+            {
+                transform.position = Vector3.Lerp(transform.position, originalLocation, shakeSpeed * Time.deltaTime);
+            }
+            transform.position = originalLocation;
+        }
     }
 }

@@ -1183,11 +1183,21 @@ public class EntityPhysics : EntityComponent
         GameObject hitObject = collider.gameObject;
         //Debug.Log(hitObject.layer);
 
-        if (hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature"))
+        if (hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature") || hitObject.layer == LayerMask.NameToLayer("Item"))
         {
             EntityHitDetection ehd = collider.gameObject.GetComponentInParent<EntityHitDetection>();
-            //Log("HIT!!!! " + collider.gameObject.name);
-            ehd.OnHit(this.entityHandle, hitPoint, projectile, false);
+            if(ehd != null)
+            {
+                ehd.OnHit(this.entityHandle, hitPoint, projectile, false);
+            }
+            else
+            {
+                ItemHitDetection ihd = collider.gameObject.GetComponentInParent<ItemHitDetection>();
+                if (ihd != null)
+                {
+                    ihd.OnHit(this.entityHandle, hitPoint, projectile);
+                }
+            }
 
             // apply fixed weapon position effect if applicable
             if (entityItems != null)
@@ -1197,15 +1207,7 @@ public class EntityPhysics : EntityComponent
 
             StopMeleeAttackHitTime();
         }
-        else if (hitObject.layer == LayerMask.NameToLayer("Item"))
-        {
-            Log("HIT!!!! " + collider.gameObject.name);
-            ItemHitDetection ihd = collider.gameObject.GetComponentInParent<ItemHitDetection>();
-            if (ihd != null)
-            {
-                ihd.OnHit(this.entityHandle, hitPoint, projectile);
-            }
-        }
+       
 
         if(entityInfo.isFactionLeader)
         {
