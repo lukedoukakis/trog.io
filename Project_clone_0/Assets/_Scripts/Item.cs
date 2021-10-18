@@ -5,12 +5,14 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum ItemType
+{
+    Any, Food, Weapon, Clothing, Wood, Bone, Stone, Misc
+}
+
 public class Item : ScriptableObject
 {
 
-    public enum ItemType{
-        Any, Food, Weapon, Clothing, Wood, Bone, Stone, Misc
-    }
 
     public enum ItemHoldStyle{
         Hug, UnderArm, Spear, Axe, OverShoulder, Torch

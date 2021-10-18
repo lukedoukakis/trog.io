@@ -122,7 +122,7 @@ public class EntityPhysics : EntityComponent
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
         layerMask_water = LayerMask.GetMask("Water");
-        layerMask_walkable = LayerMask.GetMask("Terrain");
+        layerMask_walkable = LayerMask.GetMask("Terrain", "Feature");
         layerMask_feature = LayerMask.GetMask("Feature");
         rb = GetComponent<Rigidbody>();
         mainAnimator = body.GetComponent<Animator>();
@@ -357,10 +357,10 @@ public class EntityPhysics : EntityComponent
             isHandGrab = false;
 
             // reach up right
-            isHandGrab = HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.up).normalized, ref updateTime_handRight, handFree_right, isInWater);
+            //isHandGrab = HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.up).normalized, ref updateTime_handRight, handFree_right, isInWater);
 
             // reach up left
-            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.up).normalized, ref updateTime_handLeft, handFree_left, isInWater);
+            //isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.up).normalized, ref updateTime_handLeft, handFree_left, isInWater);
 
 
 

@@ -405,7 +405,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				}
 				_Color *= 2;
 				if(i.worldPos.y <= _WaterHeight - .02){
-					_Color *= .75;
+					//_Color *= .75;
 				}
 
 				col.xyz = (pow(abs(col), _GrassSaturation) * _GrassSaturation)*float3(_Color.x, _Color.y, _Color.z);

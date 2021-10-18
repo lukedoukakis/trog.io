@@ -122,7 +122,9 @@ public class Utility : MonoBehaviour
     public static bool IsBetween(float testValue, float bound1, float bound2)
     {
         if (bound1 > bound2)
+        {
             return testValue >= bound2 && testValue <= bound1;
+        }
         return testValue >= bound1 && testValue <= bound2;
     }
 

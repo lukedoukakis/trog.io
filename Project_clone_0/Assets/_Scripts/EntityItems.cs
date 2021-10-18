@@ -87,13 +87,13 @@ public class EntityItems : EntityComponent
     public void OnObjectInteract(GameObject worldObject, object attachedObject){
         Item i = Item.GetItemByName(worldObject.name);
         switch (i.type) {
-            case Item.ItemType.Food :
+            case ItemType.Food :
                 PickUpHolding(i, worldObject, attachedObject);
                 break;
-            case Item.ItemType.Weapon :
+            case ItemType.Weapon :
                 PickUpWeapon(i, worldObject, attachedObject);
                 break;
-            case Item.ItemType.Clothing :
+            case ItemType.Clothing :
                 PickUpHolding(i, worldObject, attachedObject);
                 EquipClothing(holding_item);
                 ConsumeHolding(holding_item);
@@ -213,7 +213,7 @@ public class EntityItems : EntityComponent
         {
             ObjectRack rack = (ObjectRack)targetAttachedObject;
             Enum rackItemType = rack.itemType;
-            if(rackItemType.Equals(holding_item.type) || rackItemType.Equals(Item.ItemType.Any))
+            if(rackItemType.Equals(holding_item.type) || rackItemType.Equals(ItemType.Any))
             {
                 // get rack reference from attached object and add the item to faction items with specified rack
                 //Debug.Log("adding to object rack");

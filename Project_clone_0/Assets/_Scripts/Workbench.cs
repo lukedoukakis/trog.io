@@ -16,7 +16,7 @@ public class Workbench : ObjectRack
 
 
     public void SetWorkbench(Camp camp){
-        base.SetObjectRack(camp, Item.ItemType.Any);
+        base.SetObjectRack(camp, ItemType.Any);
         itemsOnTable = new List<Item>();
         potentialCraftedItems = new List<Item>();
         currentCraftableItem = null;

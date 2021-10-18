@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+public enum DensityCalculationType { Binary, DenserAtAverage, DenserAtMinimum, DenserAtMaximum }
 
 
 public class SpawnParameters
@@ -13,10 +13,13 @@ public class SpawnParameters
     public float heightMin, heightMax;
     public float temperatureMin, temperatureMax;
     public float humidityMin, humidityMax;
+    public float yNormalMin, yNormalMax;
     public float densityMin, densityMax;
+
+    Enum densityCalculationType_height, densityCalculationType_temperature, densityCalculationType_humidity, densityCalculationType_yNormal;
     public bool bundle;
 
-    public SpawnParameters(float scale, Vector2 heightRange, Vector2 temperatureRange, Vector2 humidityRange, Vector2 densityRange, bool bundle)
+    public SpawnParameters(float scale, Vector2 heightRange, Vector2 temperatureRange, Vector2 humidityRange, Vector2 yNormalRange, Vector2 densityRange, Enum densityCalculationType_height, Enum densityCalculationType_temperature, Enum densityCalculationType_humidity, Enum densityCalculationType_yNormal, bool bundle)
     {
         this.scale = scale;
         this.heightMin = heightRange.x;
@@ -25,8 +28,14 @@ public class SpawnParameters
         this.temperatureMax = temperatureRange.y;
         this.humidityMin = humidityRange.x;
         this.humidityMax = humidityRange.y;
+        this.yNormalMin = yNormalRange.x;
+        this.yNormalMax = yNormalRange.y;
         this.densityMin = densityRange.x;
         this.densityMax = densityRange.y;
+        this.densityCalculationType_height = densityCalculationType_height;
+        this.densityCalculationType_temperature = densityCalculationType_temperature;
+        this.densityCalculationType_humidity = densityCalculationType_humidity;
+        this.densityCalculationType_yNormal = densityCalculationType_yNormal;
         this.bundle = bundle;
     }
 
@@ -44,6 +53,7 @@ public class SpawnParameters
     }
 
 
+    static Vector3 none = new Vector2(-1f, -1f);
     static Vector2 all = new Vector2(0f, 1f);
     static Vector2 q1 = new Vector2(0f, .25f);
     static Vector2 q2 = new Vector2(.25f, .5f);
@@ -53,60 +63,121 @@ public class SpawnParameters
     static Vector2 h2 = new Vector2(.5f, 1f);
     static Vector2 hgtWater = new Vector2(ChunkGenerator.SeaLevel - ChunkGenerator.meter * .05f, ChunkGenerator.SeaLevel);
     static Vector2 hgtBank = new Vector2(ChunkGenerator.SeaLevel, ChunkGenerator.BankLevel);
+    static Vector2 hgtWaterAndBank = new Vector2(ChunkGenerator.SeaLevel - ChunkGenerator.meter * .05f, ChunkGenerator.BankLevel);
     static Vector2 hgtDry = new Vector2(ChunkGenerator.BankLevel, 1f);
+    static Vector2 normGrass = new Vector2(ChunkGenerator.GrassNormal, 1f);
+    static Vector2 normCliff = new Vector2(ChunkGenerator.CaveNormal, ChunkGenerator.GrassNormal);
+    static Vector2 normCave = new Vector2(0f, ChunkGenerator.CaveNormal);
     public static Dictionary<string, SpawnParameters> SpawnParametersDict = new Dictionary<string, SpawnParameters>(){
 
-        // terrain features
-        {"TreeAcacia", new SpawnParameters(.5f, hgtDry, q3, q3, new Vector2(.1f, .1f), false)},
-        {"TreeJungle", new SpawnParameters(.5f, hgtDry, q4, q4, new Vector2(.7f, .7f), false)},
-        {"TreeFir", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(.1f, .5f), false)},
-        {"TreePalm", new SpawnParameters(.625f, hgtDry, q4, h2, new Vector2(.1f, .1f), false)},
+        // trees
+        {"TreeAcacia", new SpawnParameters(.5f, hgtDry, q3, q3, normGrass, new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, false)},
+        {"TreeJungle", new SpawnParameters(.5f, hgtDry, q4, q4, normGrass, new Vector2(.7f, .7f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, false)},
+        {"TreeFir", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.1f, .5f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtMaximum, false)},
+        {"TreePalm", new SpawnParameters(.625f, hgtDry, q4, h2, normGrass, new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, false)},
         //{"TreeOak", new FeatureAttributes(2f, hgtDry, h1, q1, new Vector2(.1f, .4f), false)},
-        {"Grass", new SpawnParameters(.5f, hgtWater, q3, q3, new Vector2(.1f, .1f), true)},
-        {"Plant", new SpawnParameters(.25f, hgtDry, h2, h2, new Vector2(.1f, .8f), true)},
-        {"Reed", new SpawnParameters(.25f, hgtWater, all, all, new Vector2(.42f, .42f), true)},
-        {"Mushroom", new SpawnParameters(.75f, hgtDry, h2, q3, new Vector2(.1f, .1f), true)},
-        {"Bush", new SpawnParameters(.375f, hgtDry, h1, all, new Vector2(.1f, .5f), true)},
-        {"DeadBush", new SpawnParameters(.75f, hgtDry, h1, h1, new Vector2(.15f, .15f), true)},
-        {"Cactus", new SpawnParameters(.625f, hgtDry, q1, q1, new Vector2(.1f, .1f), false)},
+
+        // stones
+        {"Stone", new SpawnParameters(1f, all, all, all, normGrass, new Vector2(.025f, .12f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtMinimum, true)},
+
+        // smaller plants
+        {"Grass", new SpawnParameters(1.5f, hgtWaterAndBank, q3, q3, normGrass, new Vector2(.1f, .8f), DensityCalculationType.DenserAtMinimum, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, true)},
+        {"Plant", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(.99f, 1f), new Vector2(.1f, 1f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, true)},
+        {"Reed", new SpawnParameters(1f, hgtWaterAndBank, all, all, normGrass, new Vector2(.1f, .42f), DensityCalculationType.DenserAtMinimum, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtMinimum, true)},
+        {"Mushroom", new SpawnParameters(.75f, hgtDry, h2, q3, normGrass, new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, true)},
+        {"Bush", new SpawnParameters(.375f, hgtDry, h1, all, normGrass, new Vector2(.1f, .5f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, true)},
+        {"DeadBush", new SpawnParameters(.75f, hgtDry, h1, h1, normGrass, new Vector2(.15f, .15f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, true)},
+        {"Cactus", new SpawnParameters(.625f, hgtDry, q1, q1, normGrass, new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, false)},
 
         // creatures
-        {"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(.007f, .007f), true)},
-        {"WildDeer", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(.007f, .007f), true)},
+        {"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, true)},
+        {"WildDeer", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, true)},
         
     };
 
 
-    public static float GetPlacementDensity(SpawnParameters sp, float temp, float humid, float height){
+    public static float GetPlacementDensity(SpawnParameters sp, float temp, float humid, float height, float yNorm)
+    {
 
-        float dHeight, dTemp, dHumid;
-        if(Utility.IsBetween(height, sp.heightMin, sp.heightMax)){
-            dHeight = 1f;
-            //Debug.Log("dHeight: " + dHeight);
-        }
-        else{
-            return -1f;
-        }
-        if(Utility.IsBetween(temp, sp.temperatureMin, sp.temperatureMax)){
-            dTemp = Mathf.Min(sp.temperatureMax - temp, temp - sp.temperatureMin) / (sp.temperatureMax - sp.temperatureMin) * 2f;
-            //Debug.Log("dTemp: " + dTemp);
-        }
-        else
-        {
-            return -1;
-        }
-        if(Utility.IsBetween(humid, sp.humidityMin, sp.humidityMax)){
-            dHumid = Mathf.Min(sp.humidityMax - humid, humid - sp.humidityMin) / (sp.humidityMax - sp.humidityMin) * 2f;
-            //Debug.Log("dHumid: " + dHumid);
-        }
-        else
-        {
-            return -1;
-        }
-        
-        float dCombined = Mathf.Min(dHeight, dTemp, dHumid);
+        //Debug.Log("Y NORM: " + yNorm);
+
+        float dHeight, dTemp, dHumid, dYNorm;
+
+        // height
+        dHeight = CalculateDensity(sp.heightMin, sp.heightMax, height, sp.densityCalculationType_height);
+        //Debug.Log("dHeight: " + dHeight);
+        if(dHeight <= 0f){ return -1f; }
+
+        // temperature
+        dTemp = CalculateDensity(sp.temperatureMin, sp.temperatureMax, temp, sp.densityCalculationType_temperature);
+        //Debug.Log("dTemp: " + dTemp);
+        if(dTemp <= 0f){ return -1f; }
+
+        // humidity
+        dHumid = CalculateDensity(sp.humidityMin, sp.humidityMax, humid, sp.densityCalculationType_humidity);
+        //Debug.Log("dHumid: " + dHumid);
+        if(dHumid <= 0f){ return -1f; }
+
+        // y normal
+        dYNorm = CalculateDensity(sp.yNormalMin, sp.yNormalMax, yNorm, sp.densityCalculationType_yNormal);
+        //Debug.Log("dYNorm: " + dYNorm);
+        if(dYNorm <= 0f){ return -1f; }
+
+
+
+        // combined
+        float dCombined = Mathf.Min(dHeight, dTemp, dHumid, dYNorm);
+
         return Mathf.Lerp(sp.densityMin, sp.densityMax, dCombined);
 
+    }
+
+    public static float CalculateDensity(float min, float max, float value, Enum densityCalculationType)
+    {
+
+        if(!Utility.IsBetween(value, min, max)){
+            return -1f;
+        }
+
+        float density;
+
+        switch (densityCalculationType)
+        {
+            case DensityCalculationType.Binary :
+                density = 1f;
+                break;
+            case DensityCalculationType.DenserAtAverage :
+                density = ProximityToAverage(min, max, value);
+                break;
+            case DensityCalculationType.DenserAtMinimum :
+                density = ProximityToMinimum(min, max, value);
+                break;
+            case DensityCalculationType.DenserAtMaximum :
+                //Debug.Log("claculating proximity to MAXIMUM");
+                density = ProximityToMaximum(min, max, value);
+                break;
+            default :
+                density = -1f;
+                break;
+        }
+
+        return density;
+    }
+
+    // returns a value between 0 and 1 according to how close the value is to the average of min and max
+    static float ProximityToAverage(float min, float max, float value)
+    {
+        return Mathf.Min(max - value, value - min) / (max - min) * 2f;
+    }
+
+    static float ProximityToMinimum(float min, float max, float value)
+    {
+        return 1f - Mathf.InverseLerp(min, max, value);
+    }
+
+    static float ProximityToMaximum(float min, float max, float value)
+    {
+        return Mathf.InverseLerp(min, max, value);
     }
 
 

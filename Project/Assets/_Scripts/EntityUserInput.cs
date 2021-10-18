@@ -321,20 +321,20 @@ public class EntityUserInput : EntityComponent
 
                 case "Bonfire" : 
                     item = entityItems.holding_item;
-                    if(!(item == null || !item.type.Equals(Item.ItemType.Food))){
+                    if(!(item == null || !item.type.Equals(ItemType.Food))){
                         txt += "E: Cook " + item.nme;
                     }
                     break;
                 case "ObjectRack_Food" :
                     item = entityItems.holding_item;
-                    if(!(item == null || !item.type.Equals(Item.ItemType.Food)))
+                    if(!(item == null || !item.type.Equals(ItemType.Food)))
                     {
                         txt += "E: Place " + item.nme;
                     }
                     break;
                 case "ObjectRack_Clothing" :
                     item = entityItems.holding_item;
-                    if(!(item == null || !item.type.Equals(Item.ItemType.Clothing))){
+                    if(!(item == null || !item.type.Equals(ItemType.Clothing))){
                         txt += "E: Place " + item.nme;
                     }
                     break;
@@ -347,19 +347,19 @@ public class EntityUserInput : EntityComponent
                     break;
                 case "ObjectRack_Wood" :
                     item = entityItems.holding_item;
-                    if(!(item == null || !item.type.Equals(Item.ItemType.Wood))){
+                    if(!(item == null || !item.type.Equals(ItemType.Wood))){
                         txt += "E: Place " + item.nme;
                     }
                     break;
                 case "ObjectRack_Bone" :
                     item = entityItems.holding_item;
-                    if(!(item == null || !item.type.Equals(Item.ItemType.Bone))){
+                    if(!(item == null || !item.type.Equals(ItemType.Bone))){
                         txt += "E: Place " + item.nme;
                     }
                     break;
                 case "ObjectRack_Stone" :
                     item = entityItems.holding_item;
-                    if(!(item == null || !item.type.Equals(Item.ItemType.Stone))){
+                    if(!(item == null || !item.type.Equals(ItemType.Stone))){
                         txt += "E: Place " + item.nme;
                     }
                     break;

@@ -36,7 +36,7 @@ public class ObjectRack : CampComponent
         this.itemType = itemType;
         GameObject worldObjectPrefab;
         switch(itemType){
-            case Item.ItemType.Food :
+            case ItemType.Food :
                 this.capacity = RackCapacity_Food;
                 worldObjectPrefab = CampResources.PREFAB_RACK_FOOD;
                 onDemandPlacement = true;
@@ -44,7 +44,7 @@ public class ObjectRack : CampComponent
                 allowLateralTranslation = false;
                 allowRotation = false;
                 break;
-            case Item.ItemType.Weapon :
+            case ItemType.Weapon :
                 this.capacity = RackCapacity_Weapons;
                 worldObjectPrefab = CampResources.PREFAB_RACK_WEAPONS;
                 onDemandPlacement = true;
@@ -52,7 +52,7 @@ public class ObjectRack : CampComponent
                 allowLateralTranslation = false;
                 allowRotation = false;
                 break;
-            case Item.ItemType.Clothing : 
+            case ItemType.Clothing : 
                 this.capacity = RackCapacity_Clothing;
                 worldObjectPrefab = CampResources.PREFAB_RACK_CLOTHING;
                 onDemandPlacement = true;
@@ -60,7 +60,7 @@ public class ObjectRack : CampComponent
                 allowLateralTranslation = false;
                 allowRotation = false;
                 break;
-            case Item.ItemType.Wood : 
+            case ItemType.Wood : 
                 this.capacity = RackCapacity_Wood;
                 worldObjectPrefab = CampResources.PREFAB_RACK_WOOD;
                 onDemandPlacement = true;
@@ -68,7 +68,7 @@ public class ObjectRack : CampComponent
                 allowLateralTranslation = false;
                 allowRotation = false;
                 break;
-            case Item.ItemType.Bone : 
+            case ItemType.Bone : 
                 this.capacity = RackCapacity_Bone;
                 worldObjectPrefab = CampResources.PREFAB_RACK_BONE;
                 onDemandPlacement = true;
@@ -76,7 +76,7 @@ public class ObjectRack : CampComponent
                 allowLateralTranslation = true;
                 allowRotation = true;
                 break;
-            case Item.ItemType.Stone : 
+            case ItemType.Stone : 
                 this.capacity = RackCapacity_Stone;
                 worldObjectPrefab = CampResources.PREFAB_RACK_STONE;
                 onDemandPlacement = true;
@@ -84,7 +84,7 @@ public class ObjectRack : CampComponent
                 allowLateralTranslation = true;
                 allowRotation = true;
                 break;
-            case Item.ItemType.Any : 
+            case ItemType.Any : 
                 this.capacity = 3;
                 worldObjectPrefab = CampResources.PREFAB_WORKBENCH;
                 onDemandPlacement = false;

@@ -290,22 +290,22 @@ public class Camp : MonoBehaviour
         Enum componentType;
         switch (itemType)
         {
-            case Item.ItemType.Food:
+            case ItemType.Food:
                 componentType = ComponentType.Rack_Food;
                 break;
-            case Item.ItemType.Weapon:
+            case ItemType.Weapon:
                 componentType = ComponentType.Rack_Weapons;
                 break;
-            case Item.ItemType.Clothing:
+            case ItemType.Clothing:
                 componentType = ComponentType.Rack_Clothing;
                 break;
-            case Item.ItemType.Wood:
+            case ItemType.Wood:
                 componentType = ComponentType.Rack_Wood;
                 break;
-            case Item.ItemType.Bone:
+            case ItemType.Bone:
                 componentType = ComponentType.Rack_Bone;
                 break;
-            case Item.ItemType.Stone:
+            case ItemType.Stone:
                 componentType = ComponentType.Rack_Stone;
                 break;
             default:
@@ -432,22 +432,22 @@ public class Camp : MonoBehaviour
         List<ObjectRack> rackList;
         rackList = racks_food;
         switch(itemType){
-            case Item.ItemType.Food :
+            case ItemType.Food :
                 rackList = racks_food;
                 break;
-            case Item.ItemType.Weapon :
+            case ItemType.Weapon :
                 rackList = racks_weapons;
                 break;
-            case Item.ItemType.Clothing :
+            case ItemType.Clothing :
                 rackList = racks_clothing;
                 break;
-            case Item.ItemType.Wood :
+            case ItemType.Wood :
                 rackList = racks_wood;
                 break;
-            case Item.ItemType.Bone :
+            case ItemType.Bone :
                 rackList = racks_bone;
                 break;
-            case Item.ItemType.Stone :
+            case ItemType.Stone :
                 rackList = racks_stone;
                 break;
             default:

@@ -14,7 +14,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 2001
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -24,13 +24,13 @@ Material:
     - Vector1_1F8742C5: 0.1
     - Vector1_2A6BBFA: 100
     - Vector1_7AC129F: 10
-    - Vector1_8EF4EB24: 0
+    - Vector1_8EF4EB24: 0.7
     - Vector1_C50B20A7: 0.5
-    - Vector1_CCC10C7A: 0
-    - Vector1_CD9E60A1: 1
+    - Vector1_CCC10C7A: 0.006
+    - Vector1_CD9E60A1: 0.5
     - Vector1_F3FCB1E6: 5
     m_Colors:
-    - Color_2127F07A: {r: 0.9009434, g: 0.99675226, b: 1, a: 1}
+    - Color_2127F07A: {r: 0.8254717, g: 0.99301887, b: 1, a: 1}
     - Color_2459B9F0: {r: 1, g: 1, b: 1, a: 1}
-    - Color_39A062A3: {r: 0.9019608, g: 1, b: 1, a: 1}
+    - Color_39A062A3: {r: 0.8235294, g: 0.99215686, b: 1, a: 1}
     - Color_A14ACFAE: {r: 0, g: 0, b: 0, a: 0}

@@ -8,13 +8,13 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: terrain
-  m_Shader: {fileID: -6465566751694194690, guid: 8f40545b69be12641a46cc1ce935b7f4,
+  m_Shader: {fileID: -6465566751694194690, guid: 21d586b92db687f40831fc51479d9060,
     type: 3}
   m_ShaderKeywords: _RECEIVE_SHADOWS_OFF
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 1998
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -73,3 +73,4 @@ Material:
     - Color_9C158BA5: {r: 0.3773585, g: 0.13349947, b: 0.13349947, a: 0}
     - Color_B9FC0D65: {r: 0.754717, g: 0.6647377, b: 0.6301175, a: 0}
     - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
+    - Color_EB41B935: {r: 0.85882354, g: 0.7764706, b: 0.70980394, a: 0}
