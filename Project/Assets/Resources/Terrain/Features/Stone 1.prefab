@@ -10,6 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2333787873755612768}
   - component: {fileID: 852874642947276209}
+  - component: {fileID: 7351057975560390284}
+  - component: {fileID: 3192369684200180041}
+  - component: {fileID: 7313886462613178117}
   - component: {fileID: 3632307178189894107}
   m_Layer: 10
   m_Name: Stone 1
@@ -44,8 +47,47 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3.3476307, y: 2.922078, z: 3.3867397}
-  m_Center: {x: 0.46869433, y: -0.1178056, z: 0.16803622}
+  m_Size: {x: 4.7788825, y: 0.676275, z: 3.4428673}
+  m_Center: {x: 0.0898335, y: -1.3951064, z: 0.06981301}
+--- !u!65 &7351057975560390284
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2333787873755612775}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3.5721402, y: 0.67627454, z: 2.9657836}
+  m_Center: {x: 0.28627992, y: -0.7915462, z: 0.15400457}
+--- !u!65 &3192369684200180041
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2333787873755612775}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.4355583, y: 0.6482022, z: 2.5448284}
+  m_Center: {x: 0.5318375, y: -0.18798625, z: 0.0698123}
+--- !u!65 &7313886462613178117
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2333787873755612775}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.9304104, y: 0.77452874, z: 1.8712982}
+  m_Center: {x: 0.30732715, y: 0.3804828, z: 0.4065774}
 --- !u!114 &3632307178189894107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,8 +127,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6858444299094640341}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.64, z: 0}
-  m_LocalScale: {x: 6.616961, y: 6.616961, z: 6.616961}
+  m_LocalPosition: {x: 0, y: -2.09, z: 0}
+  m_LocalScale: {x: 1.3233922, y: 1.3233922, z: 1.3233922}
   m_Children: []
   m_Father: {fileID: 2333787873755612768}
   m_RootOrder: 0
@@ -118,6 +160,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: e3277ecae05bd1f4b868f84915ef186d, type: 2}
+  - {fileID: 2100000, guid: 627729b85b3541643bf70293b110aa00, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

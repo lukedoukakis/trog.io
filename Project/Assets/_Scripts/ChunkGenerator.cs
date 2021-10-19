@@ -391,13 +391,14 @@ public class ChunkGenerator : MonoBehaviour
                     freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
 
                     // give rivers character
+                    float character = .15f;
                     rough = Mathf.PerlinNoise((x + xOffset + .01f) / 40f, (z + zOffset + .01f) / 40f) * 2f - 1f;
-                    freshWaterValue += Mathf.Max(0f, rough) * .1f;
+                    freshWaterValue += Mathf.Max(0f, rough) * character;
 
                     // give rivers roughness
-                    if(freshWaterValue < .99f){
+                    if(freshWaterValue > .99f){
                         rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
-                        //freshWaterValue += rough * .1f;
+                        freshWaterValue += rough * .1f;
                     }
                     
 
@@ -642,13 +643,18 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
-    public static IEnumerator GenerateSpawns(ChunkData cd, float temp, float humid, float mountain, float wetness, float height, float yNormal, float x, float z, float xOffset, float zOffset, float skewHoriz){
+    public static IEnumerator GenerateSpawns(ChunkData cd, float yNormal, int x, int z, int xOffset, int zOffset, float skewHoriz){
+
+        float height = cd.HeightMap[x, z];
+        float temp = cd.TemperatureMap[x, z];
+        float humid = cd.HumidityMap[x, z];
 
         SpawnParameters spawnParameters;
         float placementDensity;
         float randomDivisorOffset;
         string bundleName;
         string bundleName_last = "";
+        float bundleIteration = 0f;
         Vector3 randomPositionOffset, spawnPosition, spawnScale;
         GameObject o;
 
@@ -660,7 +666,6 @@ public class ChunkGenerator : MonoBehaviour
 
             spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
             placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
-            //placementDensity = .1f;
             if (placementDensity > 0f)
             {
                 randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + xOffset + .01f) / 2f, (z + zOffset + .01f) / 2f) * 2f - 1f);
@@ -669,16 +674,25 @@ public class ChunkGenerator : MonoBehaviour
                 if ((x + xOffset) % divisor == 0 && (z + zOffset) % divisor == 0)
                 {
                     bundleName = SpawnParameters.GetBundleName(feature.name);
-                    randomPositionOffset = Mathf.Max(1f, (1f - (skewHoriz / 5f))) * (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
+                    randomPositionOffset = 2f * yNormal * (Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f));
+                    //randomPositionOffset = Vector3.zero;
                     spawnPosition = new Vector3(x + xOffset + skewHoriz, height * ElevationAmplitude, z + zOffset + skewHoriz) + randomPositionOffset;
                     spawnScale = Vector3.one * spawnParameters.scale;
                     o = GameObject.Instantiate(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent);
                     o.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
 
-                    bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
+                    bool noBundle = (bundleName == bundleName_last && !spawnParameters.bundle);
                     bundleName_last = bundleName;
         
-                    if (breaker) { break; }
+                    if (noBundle)
+                    {
+                        bundleIteration = 0f;
+                        //break;
+                    }
+                    else
+                    {
+                        ++bundleIteration;
+                    }
                 }
             }
             yield return null;
@@ -773,7 +787,7 @@ public class ChunkGenerator : MonoBehaviour
                 rockiness += (Mathf.PerlinNoise((x + xOffset) / 2f, (z + zOffset) / 2f) * 2f - 1f) * .02f;
                 //rockiness *= Mathf.InverseLerp(0f, .5f, MountainMap[x, z]);
                 skewHoriz = ((rockiness + .5f) * 2f - 1f) * 18f * RockProtrusion;
-                skewHoriz *= Mathf.InverseLerp(SeaLevel, SeaLevel + (meter * 20f), HeightMap[x, z]); // smooth down rockiness at sea level
+                //skewHoriz *= Mathf.InverseLerp(SeaLevel, SeaLevel + (meter * 20f), HeightMap[x, z]); // smooth down rockiness at sea level
                 skewHorizMap[x, z] = skewHoriz;
                 TerrainVertices[i] = new Vector3(x + xOffset + skewHoriz, height, z + zOffset + skewHoriz);
                 //TerrainVertices[i] = new Vector3(x + xOffset, height, z + zOffset);
@@ -825,7 +839,7 @@ public class ChunkGenerator : MonoBehaviour
                 if(z > 0 && x > 0){
                     normalIndex = (z * (ChunkSize + 2)) + x;
                     yNormal = normals[normalIndex].y;
-                    StartCoroutine(GenerateSpawns(cd, TemperatureMap[x, z], HumidityMap[x, z], MountainMap[x, z], WetnessMap[x, z], HeightMap[x, z], yNormal, x, z, xOffset, zOffset, skewHorizMap[x, z]));
+                    StartCoroutine(GenerateSpawns(cd, yNormal, x, z, xOffset, zOffset, skewHorizMap[x, z]));
                 }
                 
                 

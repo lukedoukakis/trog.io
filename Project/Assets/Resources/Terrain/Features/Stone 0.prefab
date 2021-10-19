@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2333787873755612768}
   - component: {fileID: 852874642947276209}
+  - component: {fileID: 1561506022451442800}
   - component: {fileID: 3632307178189894107}
   m_Layer: 10
   m_Name: Stone 0
@@ -44,8 +45,21 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2.0401192, y: 1.6143179, z: 2.7176867}
-  m_Center: {x: -0.13557172, y: 0.41893435, z: 0.029576302}
+  m_Size: {x: 1.8594042, y: 1.391612, z: 1.7456065}
+  m_Center: {x: -0.17032462, y: 0.15450096, z: 0.33489734}
+--- !u!65 &1561506022451442800
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2333787873755612775}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.99466574, y: 0.7270322, z: 1.1023257}
+  m_Center: {x: -0.60269386, y: -0.17778897, z: -1.0307566}
 --- !u!114 &3632307178189894107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,8 +99,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6858444299094640341}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.34739, z: 0}
-  m_LocalScale: {x: 3.0409067, y: 1.8241487, z: 3.0409067}
+  m_LocalPosition: {x: 0, y: -0.57, z: 0}
+  m_LocalScale: {x: 0.6081814, y: 0.3648298, z: 0.6081814}
   m_Children: []
   m_Father: {fileID: 2333787873755612768}
   m_RootOrder: 0
@@ -118,6 +132,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: e3277ecae05bd1f4b868f84915ef186d, type: 2}
+  - {fileID: 2100000, guid: 627729b85b3541643bf70293b110aa00, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

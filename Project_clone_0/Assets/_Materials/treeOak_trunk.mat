@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: treeOak_trunk
-  m_Shader: {fileID: -6465566751694194690, guid: b62a38319167f37409790434ffbb1835,
+  m_Shader: {fileID: -6465566751694194690, guid: 21d586b92db687f40831fc51479d9060,
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -42,3 +42,4 @@ Material:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_7353929C: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.9339623, g: 0.78672767, b: 0.72690463, a: 0}
+    - Color_EB41B935: {r: 0.48235294, g: 0.3647059, b: 0.27058825, a: 0}
