@@ -22,7 +22,7 @@ public class ObjectRack : CampComponent
     public Camp camp;
     public Enum itemType;
     public int capacity;
-    public List<GameObject> objects;
+    public List<GameObject> objectsOnRack;
     public Transform worldObject_orientationParent;
     List<Transform> orientations;
     public bool onDemandPlacement;  // whether new racks can be created when this one is filled up; if false, objects cannot be placed when attempting to place on this rack
@@ -112,7 +112,7 @@ public class ObjectRack : CampComponent
         }
         ObjectReference reference = this.worldObject.AddComponent<ObjectReference>();
         reference.SetObjectReference(this);
-        objects = new List<GameObject>();
+        objectsOnRack = new List<GameObject>();
     }
 
 
@@ -124,8 +124,12 @@ public class ObjectRack : CampComponent
             if(!IsFull()){
 
                 // if room in the rack, add the item to it
+                if(item.worldObjectPrefab == null)
+                {
+                     Debug.Log("Instantiating item, but worldObject null: " + item.nme);
+                }
                 GameObject o = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
-                objects.Add(o);
+                objectsOnRack.Add(o);
                 SetObjectOrientation(o, originT, (OBJECT_PLACEMENT_DELAY_TIMESTEP * countAdded) + (Camp.CAMP_COMPONENT_PLACING_TIME_GAP * newRacksCount));
                 o.GetComponent<ObjectReference>().SetObjectReference(this);
                 --countToAdd;
@@ -145,13 +149,13 @@ public class ObjectRack : CampComponent
 
     }
 
-    public virtual void RemoveObjects(Item item, ref int countToRemove){
+    public virtual void RemoveObjects(Item item, ref int countToRemove, bool moveToAnotherRack, ObjectRack destinationRack){
 
 
         //Debug.Log("Removing " + countToRemove + " " + item.nme);
 
         // count the number of occurences of the item, and remove that many from the objects
-        GameObject[] matches = objects.Where(o => o.name == item.nme).ToArray();
+        GameObject[] matches = objectsOnRack.Where(o => o.name == item.nme).ToArray();
         int occurences = matches.Length;
         if (occurences > 0)
         {
@@ -159,7 +163,18 @@ public class ObjectRack : CampComponent
             for (int i = 0; i < Math.Min(occurences, c); ++i)
             {
                 GameObject o = matches[occurences - 1];
-                objects.Remove(o);
+
+                // if a destination rack is desired, add the item to that rack ("moving" the item)
+                if (moveToAnotherRack)
+                {
+                    Transform tempT = new GameObject().transform;
+                    tempT.SetPositionAndRotation(o.transform.position, o.transform.rotation);
+                    float delay = i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP;
+                    camp.faction.AddItemOwned(item, 1, destinationRack, tempT, delay);
+                    Utility.DestroyInSeconds(tempT.gameObject, delay * 5f);
+                }
+        
+                objectsOnRack.Remove(o);
                 GameObject.Destroy(o);
                 --countToRemove;
             }
@@ -167,18 +182,20 @@ public class ObjectRack : CampComponent
     
         if(countToRemove > 0){
             // call to remove remaining count
-            camp.RemoveObjectsAnyRack(item, ref countToRemove);
+            camp.RemoveObjectsAnyRack(item, ref countToRemove, moveToAnotherRack, destinationRack);
         }
-    }   
+    }
+
 
     // set a given object's orientation to fit properly in the rack
-    public void SetObjectOrientation(GameObject o, Transform originT, float delay){
-
+    public void SetObjectOrientation(GameObject o, Transform originT, float delay)
+    {
 
         StartCoroutine(_SetObjectOrientation(o));
 
         IEnumerator _SetObjectOrientation(GameObject _o)
         {
+
             for (int i = capacity - 1; i >= 0; --i)
             {
 
@@ -240,18 +257,17 @@ public class ObjectRack : CampComponent
                     break;
 
                 }
-
             }
         }
     }
 
 
     public bool IsFull(){
-        return objects.Count >= capacity;
+        return objectsOnRack.Count >= capacity;
     }
 
     public bool IsEmpty(){
-        return objects.Count == 0;
+        return objectsOnRack.Count == 0;
     }
 
 }

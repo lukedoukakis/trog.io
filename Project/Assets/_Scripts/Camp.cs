@@ -9,6 +9,7 @@ public class Camp : MonoBehaviour
 
     public static float BASE_CAMP_RADIUS = 8f;
     public static float CAMP_COMPONENT_PLACING_TIME_GAP = .1f;
+    public static LayerMask LAYERMASK_CLEAR_ON_CAMP_PLACEMENT = LayerMask.GetMask("Feature, SmallFeature");
 
 
     public enum ComponentType{
@@ -86,7 +87,9 @@ public class Camp : MonoBehaviour
 
         StartCoroutine(_PlaceCampComponents());
 
-        IEnumerator _PlaceCampComponents(){
+        IEnumerator _PlaceCampComponents()
+        {
+
             PlaceBorderSphere();
             PlaceBonfire();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
@@ -97,6 +100,7 @@ public class Camp : MonoBehaviour
             UpdateTentCount();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             ClearFeaturesFromCampRadius();
+
         }
     }
 
@@ -167,20 +171,22 @@ public class Camp : MonoBehaviour
 
     public void ClearFeaturesFromCampRadius()
     {
-        Collider[] featureCollidersInsideCamp = Physics.OverlapSphere(origin, radius, LayerMask.GetMask("Feature"));
+        Collider[] featureCollidersInsideCamp = Physics.OverlapSphere(origin, radius, LayerMask.GetMask("Feature", "SmallFeature"), QueryTriggerInteraction.Collide);
         foreach(Collider collider in featureCollidersInsideCamp)
         {
             if(collider != null)
             {
-                EntityHitDetection ehd = collider.gameObject.GetComponent<EntityHitDetection>();
-                if(ehd != null && false)
-                {
-                    ehd.OnHit(faction.memberHandles[0], collider.transform.position, null, true);
-                }
-                else
-                {
-                    Destroy(collider.gameObject);
-                }
+                // ItemHitDetection ihd = collider.gameObject.GetComponent<ItemHitDetection>();
+                // if(ihd != null)
+                // {
+                //     ihd.OnHit(faction.memberHandles[0], collider.transform.position, null);
+                // }
+                // else
+                // {
+                //     Destroy(collider.gameObject);
+                // }
+
+                Destroy(collider.gameObject);
             }
         }
     }
@@ -322,7 +328,6 @@ public class Camp : MonoBehaviour
 
         IEnumerator _SetObjectRackOrientationAfterDelay()
         {
-            
             // delay for time
             System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
             timer.Start();
@@ -374,25 +379,29 @@ public class Camp : MonoBehaviour
 
     public void AddItemsToCamp(ItemCollection itemsToAdd, Transform originT){
         Item item;
-        int councountToAdd;
+        int countToAdd;
         int zeroRacksRef = 0;
         foreach (KeyValuePair<Item, int> kvp in itemsToAdd.items)
         {
             item = kvp.Key;
-            councountToAdd = kvp.Value;
-            AddObjectsAnyRack(item, ref councountToAdd, originT, ref zeroRacksRef);
+            countToAdd = kvp.Value;
+            AddObjectsAnyRack(item, ref countToAdd, originT, ref zeroRacksRef);
         }
 
     }
         
 
-    public void RemoveItemsFromCamp(ItemCollection itemsToRemove){
+    public void RemoveItemsFromCamp(ItemCollection itemsToRemove, bool moveToAnotherRack, ObjectRack destinationRack)
+    {
+
+        Debug.Log("RemoveItemsFromCamp()");
+
         Item item;
         int countToRemove;
         foreach(KeyValuePair<Item, int> kvp in itemsToRemove.items){
             item = kvp.Key;
             countToRemove = kvp.Value;
-            RemoveObjectsAnyRack(item, ref countToRemove);
+            RemoveObjectsAnyRack(item, ref countToRemove, moveToAnotherRack, destinationRack);
         }
     }
 
@@ -415,11 +424,12 @@ public class Camp : MonoBehaviour
     }   
 
 
-    public void RemoveObjectsAnyRack(Item item, ref int count){
+    public void RemoveObjectsAnyRack(Item item, ref int count, bool moveToAnotherRack, ObjectRack destinationRack)
+    {
         List<ObjectRack> rackList = GetRackListForItemType(item.type);
         for(int i = rackList.Count - 1; i >= 0; --i){
             if(count > 0){
-                rackList[i].RemoveObjects(item, ref count);
+                rackList[i].RemoveObjects(item, ref count, moveToAnotherRack, destinationRack);
             }
             else{
                 break;
@@ -475,6 +485,7 @@ public class Camp : MonoBehaviour
 
         IEnumerator _CastFoodIntoBonfire()
         {
+
             casterItems.holding_item = null;
             casterItems.holding_object = null;
             casterItems.OnItemsChange();
@@ -490,6 +501,7 @@ public class Camp : MonoBehaviour
             // todo: play particles for food casted into fire
             GameObject.Destroy(foodObject);
             OnFoodCast(casterHandle, foodItem);
+
         }
     
     }

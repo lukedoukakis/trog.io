@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 6244020371842750611}
   - component: {fileID: 6244020371839360707}
   - component: {fileID: 6244020371840715433}
+  - component: {fileID: 8007381976534417776}
   m_Layer: 10
-  m_Name: 'Dead Bush2 '
+  m_Name: DeadBush 2
   m_TagString: Feature
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,3 +80,16 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &8007381976534417776
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6244020371842642623}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.0269132, y: 0.99528027, z: 0.7867733}
+  m_Center: {x: -0.13130248, y: 0.4016226, z: 0.19569701}

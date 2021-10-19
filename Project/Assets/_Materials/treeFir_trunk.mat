@@ -81,9 +81,9 @@ Material:
     - _ReceiveShadows: 1
     - _Smoothness: 0.5
     - _SnowDepth: 0.5
-    - _SnowHeightCap: Infinity
-    - _SnowHeightStart: Infinity
-    - _SnowMinimumSurfaceNormal: 0.8
+    - _SnowHeightCap: 4649.4
+    - _SnowHeightStart: 3947.4001
+    - _SnowMinimumSurfaceNormal: 0.57
     - _SoftParticlesEnabled: 0
     - _SoftParticlesFarFadeDistance: 1
     - _SoftParticlesNearFadeDistance: 0

@@ -36,7 +36,8 @@ public class ItemCollection
         if(items.ContainsKey(i)){
             items[i] -= count;
         }
-        else{
+        else
+        {
             Debug.Log("Removing item that isn't present in this item collection");
         }
     }

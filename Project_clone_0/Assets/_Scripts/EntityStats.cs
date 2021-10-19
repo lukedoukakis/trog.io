@@ -218,7 +218,7 @@ public class EntityStats : EntityComponent
                     float delay = .5f + (i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
                     GameObject temp = new GameObject();
                     temp.transform.position = worldObject.transform.position;
-                    Faction.AddItemOwned(receiverHandle.entityInfo.faction, item, 1, null, temp.transform, delay);
+                    receiverHandle.entityInfo.faction.AddItemOwned(item, 1, null, temp.transform, delay);
                     Utility.DestroyInSeconds(worldObject, delay);
                     Utility.DestroyInSeconds(temp, 5f);
                 }

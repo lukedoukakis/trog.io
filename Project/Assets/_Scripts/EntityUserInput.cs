@@ -8,6 +8,7 @@ public class EntityUserInput : EntityComponent
 
     //public enum InteractionType{ TakeItem, PlaceItem, }
 
+    public static float DISTANCE_INTERACTABLE = 1.5f;
 
     public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressCrouch;
     public bool pressToggleAttackRanged;
@@ -163,7 +164,7 @@ public class EntityUserInput : EntityComponent
         //Log("Hovered object: " + hoveredInteractableObject.name);
 
         // if hovering over something, interact with it
-        if(hoveredInteractableObject == null || Vector3.Distance(hoveredInteractableObject.transform.position, selectionOrigin.position) > 1.25f){
+        if(hoveredInteractableObject == null || Vector3.Distance(hoveredInteractableObject.transform.position, selectionOrigin.position) > DISTANCE_INTERACTABLE){
             entityItems.OnEmptyInteract();
         }
 
@@ -257,7 +258,7 @@ public class EntityUserInput : EntityComponent
     }
 
     void HandleInteractionPopup(){
-        if(hoveredInteractableObject == null || Vector3.Distance(hoveredInteractableObject.transform.position, selectionOrigin.position) > 1.25f){
+        if(hoveredInteractableObject == null || Vector3.Distance(hoveredInteractableObject.transform.position, selectionOrigin.position) > DISTANCE_INTERACTABLE){
             InteractionPopupController.current.Hide();
         }
         else

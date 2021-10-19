@@ -16,6 +16,8 @@ public class Faction : MonoBehaviour
     public Camp camp;
     public List<GameObject> targetedObjects; // items being pursued by members of this faction
 
+    public bool itemLogisticsHappening;
+
 
 
 
@@ -71,43 +73,40 @@ public class Faction : MonoBehaviour
         }
     }
 
-    public static void AddItemTargeted(Faction fac, GameObject o){
-        fac.targetedObjects.Add(o);
+    public void AddItemTargeted(GameObject o){
+        targetedObjects.Add(o);
     }
 
-    public static void AddItemsOwned(Faction fac, ItemCollection itemCollection, ObjectRack rack, Transform originT, float delay)
+    public void AddItemsOwned(ItemCollection itemCollection, ObjectRack rack, Transform originT, float delay)
     {
         foreach (KeyValuePair<Item, int> kvp in itemCollection.items)
         {
-            AddItemOwned(fac, kvp.Key, kvp.Value, rack, originT, delay);
+            AddItemOwned(kvp.Key, kvp.Value, rack, originT, delay);
         }
 
     }
-    public static void AddItemOwned(Faction fac, Item item, int count, ObjectRack rack, Transform originT, float delay)
+    public void AddItemOwned(Item item, int count, ObjectRack rack, Transform originT, float delay)
     {
-        fac.StartCoroutine(fac._AddItemOwned(fac, item, count, rack, originT, delay));
+        StartCoroutine(_AddItemOwned(item, count, rack, originT, delay));
     }
-    IEnumerator _AddItemOwned(Faction fac, Item item, int count, ObjectRack rack, Transform originT, float delay)
+    IEnumerator _AddItemOwned(Item item, int count, ObjectRack rack, Transform originT, float delay)
     {
+        
+        itemLogisticsHappening = true;
 
         // wait for delay
-        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-        timer.Start();
-        while (timer.ElapsedMilliseconds / 1000f < delay)
-        {
-            yield return null;
-        }
+        yield return new WaitForSecondsRealtime(delay);
 
         //Debug.Log("Adding item: " + item.nme);
-        fac.ownedItems.AddItem(item, count);
+        ownedItems.AddItem(item, count);
 
-        if (fac.camp != null)
+        if (camp != null)
         {
             if (rack == null)
             {
                 ItemCollection newItems = new ItemCollection();
                 newItems.AddItem(item, count);
-                fac.camp.AddItemsToCamp(newItems, originT);
+                camp.AddItemsToCamp(newItems, originT);
             }
             else
             {
@@ -115,37 +114,40 @@ public class Faction : MonoBehaviour
                 rack.AddObjects(item, ref count, originT, ref zeroRacksRef);
             }
         }
+        yield return null;
+
+        itemLogisticsHappening = false;
     }
     
 
-    public static void RemoveItemOwned(Faction fac, Item item, int count, ObjectRack rack)
+    public void RemoveItemOwned(Item item, int count, ObjectRack rackToRemoveFrom, bool moveToAnotherRack, ObjectRack destinationRack)
     {
 
-        fac.ownedItems.RemoveItem(item, count);
+        ownedItems.RemoveItem(item, count);
 
-        if (fac.camp != null)
+        if (camp != null)
         {
-            if (rack == null)
+            if (rackToRemoveFrom == null)
             {
                 ItemCollection itemsToRemove = new ItemCollection();
                 itemsToRemove.AddItem(item, count);
-                fac.camp.RemoveItemsFromCamp(itemsToRemove);
+                camp.RemoveItemsFromCamp(itemsToRemove, moveToAnotherRack, destinationRack);
             }
             else
             {
-                rack.RemoveObjects(item, ref count);
+                rackToRemoveFrom.RemoveObjects(item, ref count, moveToAnotherRack, destinationRack);
             }
         }
     }
 
 
-    public static int GetItemCount(Faction fac, Item item){
-        return fac.ownedItems.GetItemCount(item);
+    public int GetItemCount(Item item){
+        return ownedItems.GetItemCount(item);
 
     }
 
-    public static void RemoveItemTargeted(GameObject o, Faction fac){
-        fac.targetedObjects.Remove(o);
+    public void RemoveItemTargeted(GameObject o){
+        targetedObjects.Remove(o);
     }
 
 
@@ -163,12 +165,12 @@ public class Faction : MonoBehaviour
         
     }
 
-    public static bool ItemIsTargetedByFaction(GameObject o, Faction fac){
-        return fac.targetedObjects.Contains(o);
+    public bool ItemIsTargetedByThisFaction(GameObject o){
+        return targetedObjects.Contains(o);
     }
 
-    public static void OnPopulationChange(Faction fac){
-        fac.camp.UpdateTentCount();
+    public void OnPopulationChange(){
+        camp.UpdateTentCount();
     }
 
 

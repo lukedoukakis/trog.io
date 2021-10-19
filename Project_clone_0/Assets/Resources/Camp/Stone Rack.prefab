@@ -1613,7 +1613,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3484437019518606282}
   m_Layer: 0
-  m_Name: Bone Rack
+  m_Name: Stone Rack
   m_TagString: ObjectRack_Bone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2482,6 +2482,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4867055894904472869, guid: 3e42510a837d40647b69864f82bbc44e,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4867055894904472869, guid: 3e42510a837d40647b69864f82bbc44e,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5688008419416345916, guid: 3e42510a837d40647b69864f82bbc44e,
         type: 3}

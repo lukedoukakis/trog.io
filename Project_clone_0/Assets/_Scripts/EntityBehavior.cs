@@ -372,7 +372,7 @@ public class EntityBehavior : EntityComponent
         else{
             //Log("Collect: picking up object");
             GameObject target = foundObjects[0];
-            Faction.AddItemTargeted(entityInfo.faction, target);
+            entityInfo.faction.AddItemTargeted(target);
             ActionParameters goToObject = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, target, -1, Item.GetItemByName(target.name), null, -1, DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Normal, false);
             ActionParameters pickupObject = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Pickup, target, -1, Item.GetItemByName(target.name), null, -1, -1f, BodyRotationMode.Normal, false);
             ActionParameters followPlayer = ActionParameters.GenerateActionParameters("Follow Player", entityHandle);
@@ -398,7 +398,7 @@ public class EntityBehavior : EntityComponent
             else{
                 Faction.OnItemPickup(i, o, entityInfo.faction);
             }
-            Faction.RemoveItemTargeted(o, entityInfo.faction);
+            entityInfo.faction.RemoveItemTargeted(o);
             
             NextAction();
         }
@@ -663,7 +663,7 @@ public class EntityBehavior : EntityComponent
             i = Item.GetItemByName(o.name);
             if(type == null || i.type == type){
                 if(name == null || o.name == name){
-                    if(!Faction.ItemIsTargetedByFaction(o, entityInfo.faction)){  
+                    if(!entityInfo.faction.ItemIsTargetedByThisFaction(o)){  
                         foundObjects.Add(o);
                         //sur += o.name + ", ";
                     }

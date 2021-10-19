@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4212693982699130234}
   - component: {fileID: 4212693982699130237}
   - component: {fileID: 4212693982699130236}
+  - component: {fileID: 6713209873986673421}
   m_Layer: 11
   m_Name: Reed 1
   m_TagString: Feature
@@ -58,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1bec88393444f3a42a38c1379f7fbdd8, type: 2}
+  - {fileID: 2100000, guid: aa8eebba4391a7745be06c461b4512e4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -79,3 +80,16 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &6713209873986673421
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4212693982699130239}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.2590596, y: 1.0976037, z: 0.32099277}
+  m_Center: {x: 0.0019528121, y: 0.51967067, z: -0.029046074}

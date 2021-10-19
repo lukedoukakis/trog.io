@@ -35,6 +35,7 @@ public class Utility : MonoBehaviour
     }
 
     public static GameObject InstantiatePrefabSameName(GameObject prefab){
+        //Debug.Log("Prefab name: " + prefab.name);
         GameObject instance = Instantiate(prefab);
         instance.name = prefab.name;
         return instance;

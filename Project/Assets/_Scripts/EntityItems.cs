@@ -123,9 +123,10 @@ public class EntityItems : EntityComponent
     }
 
 
-    public void PickUpWeapon(Item item, GameObject worldObject, object attachedObject){
+    public void PickUpWeapon(Item item, GameObject worldObject, object attachedObject)
+    {
 
-        Debug.Log("Picking up weapon: " + item.nme);
+        //Debug.Log("Picking up weapon: " + item.nme);
 
         GameObject o;
 
@@ -134,8 +135,7 @@ public class EntityItems : EntityComponent
             Log("From rack");
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)attachedObject;
-            Faction rackFac = rack.camp.faction;
-            Faction.RemoveItemOwned(rackFac, item, 1, rack);
+            rack.camp.faction.RemoveItemOwned(item, 1, rack, false, null);
             o = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
             o.transform.position = worldObject.transform.position;
             o.transform.rotation = worldObject.transform.rotation;
@@ -181,8 +181,7 @@ public class EntityItems : EntityComponent
         {
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)attachedObject;
-            Faction rackFac = rack.camp.faction;
-            Faction.RemoveItemOwned(rackFac, item, 1, rack);
+            rack.camp.faction.RemoveItemOwned(item, 1, rack, false, null);
             o = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
             o.transform.position = worldObject.transform.position;
             o.transform.rotation = worldObject.transform.rotation;
@@ -217,7 +216,7 @@ public class EntityItems : EntityComponent
             {
                 // get rack reference from attached object and add the item to faction items with specified rack
                 //Debug.Log("adding to object rack");
-                Faction.AddItemOwned(entityInfo.faction, holding_item, 1, rack, transform, 0f);
+                entityInfo.faction.AddItemOwned(holding_item, 1, rack, transform, 0f);
                 GameObject.Destroy(holding_object);
             }
             else
@@ -231,7 +230,7 @@ public class EntityItems : EntityComponent
         {
             if(Camp.EntityIsInsideCamp(entityHandle) && holding_item.isRackable){
                 //Debug.Log("Adding to rack");
-                Faction.AddItemOwned(entityInfo.faction, holding_item, 1, null, transform, 0f);
+                entityInfo.faction.AddItemOwned(holding_item, 1, null, transform, 0f);
                 GameObject.Destroy(holding_object);
             }
             else
@@ -302,7 +301,7 @@ public class EntityItems : EntityComponent
             // if dropping onto an object rack
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)targetAttachedObject;
-            Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1, rack, transform, 0f);
+            entityInfo.faction.AddItemOwned(weaponEquipped_item, 1, rack, transform, 0f);
             GameObject.Destroy(weaponEquipped_object);
         }
         else if(targetAttachedObject is EntityItems)
@@ -318,7 +317,7 @@ public class EntityItems : EntityComponent
         else if (targetAttachedObject == null)
         {
             if(Camp.EntityIsInsideCamp(entityHandle)){
-                Faction.AddItemOwned(entityInfo.faction, weaponEquipped_item, 1,null, transform, 0f);
+                entityInfo.faction.AddItemOwned(weaponEquipped_item, 1,null, transform, 0f);
                 GameObject.Destroy(weaponEquipped_object);
             }
             else
@@ -435,7 +434,7 @@ public class EntityItems : EntityComponent
         if (clothing != null)
         {
 
-            Faction.AddItemOwned(entityInfo.faction, clothing, 1, null, transform, 0f);
+            entityInfo.faction.AddItemOwned(clothing, 1, null, transform, 0f);
 
             // unequip clothing on model
             meshParentT.Find(clothing.nme).gameObject.SetActive(false);
@@ -630,14 +629,14 @@ public class EntityItems : EntityComponent
 
     public void OnCampBorderEnter(){
         //Debug.Log("OnCampBorderCross()");
-        Faction.AddItemsOwned(entityInfo.faction, inventory, null, transform, 0f);
+        entityInfo.faction.AddItemsOwned(inventory, null, transform, 0f);
         inventory = new ItemCollection();
         // todo: command tribe memebrs to line up to orientations
     }
 
     public void OnCampBorderExit(){
         //Debug.Log("OnCampBorderCross()");
-        Faction.AddItemsOwned(entityInfo.faction, inventory, null, transform, 0f);
+        entityInfo.faction.AddItemsOwned(inventory, null, transform, 0f);
         inventory = new ItemCollection();
         // todo: command tribe memebrs to follow
     }

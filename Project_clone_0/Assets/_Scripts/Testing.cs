@@ -28,18 +28,13 @@ public class Testing : MonoBehaviour
 
     void AddItemsToFaction(){
         faction = GameManager.current.localPlayer.GetComponent<EntityInfo>().faction;
-        Faction.AddItemOwned(faction, Item.ClothingTest, 2, null, playerHandle.transform, 0f);
-        Faction.AddItemOwned(faction, Item.Meat, 2, null, playerHandle.transform, 0f);
-        Faction.AddItemOwned(faction, Item.Spear, 2, null, playerHandle.transform, 0f);
-        Faction.AddItemOwned(faction, Item.Axe, 2, null, playerHandle.transform, 0f);
-        Faction.AddItemOwned(faction, Item.WoodPiece, 7, null, playerHandle.transform, 0f);
-        Faction.AddItemOwned(faction, Item.BonePiece2, 4, null, playerHandle.transform, 0f);
-        Faction.AddItemOwned(faction, Item.StoneSmall, 8, null, playerHandle.transform, 0f);
-        // for(int i = 0; i < 120 / 3; ++i){
-        //     Faction.AddItemOwned(faction, Item.BonePiece1, 1, null, playerHandle.transform, 0f);
-        //     Faction.AddItemOwned(faction, Item.BonePiece2, 1, null, playerHandle.transform, 0f);
-        //     Faction.AddItemOwned(faction, Item.BonePiece3, 1, null, playerHandle.transform, 0f);
-        // }
+        faction.AddItemOwned(Item.ClothingTest, 2, null, playerHandle.transform, 0f);
+        faction.AddItemOwned(Item.Meat, 2, null, playerHandle.transform, 0f);
+        faction.AddItemOwned(Item.Spear, 2, null, playerHandle.transform, 0f);
+        faction.AddItemOwned(Item.Axe, 2, null, playerHandle.transform, 0f);
+        faction.AddItemOwned(Item.WoodPiece, 7, null, playerHandle.transform, 0f);
+        faction.AddItemOwned(Item.BonePiece, 4, null, playerHandle.transform, 0f);
+        faction.AddItemOwned(Item.StoneSmall, 8, null, playerHandle.transform, 0f);
     }
 
 

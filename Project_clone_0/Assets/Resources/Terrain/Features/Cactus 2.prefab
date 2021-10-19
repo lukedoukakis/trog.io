@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8352849079351664070}
   - component: {fileID: 8352849079350504200}
   - component: {fileID: 291247846263061280}
+  - component: {fileID: 5171554378242450266}
   m_Layer: 10
   m_Name: Cactus 2
   m_TagString: Cactus
@@ -52,12 +53,13 @@ MonoBehaviour:
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
   entityBehavior: {fileID: 0}
-  entityAnimation: {fileID: 0}
+  entityOrientation: {fileID: 0}
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
-  entityUserInputMovement: {fileID: 0}
+  entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   species: 0
 --- !u!33 &8352849079351664070
@@ -124,3 +126,16 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 
   hasSpawned: 0
+--- !u!65 &5171554378242450266
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8352849079348496566}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.0054585, y: 2.2228756, z: 0.44529033}
+  m_Center: {x: -0.07827471, y: 0.91115403, z: -0.024475984}
