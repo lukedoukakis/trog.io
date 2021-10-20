@@ -12,7 +12,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator current;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 7;
+    public static int ChunkRenderDistance = 5;
     public static float Scale = 120f;
     public static float ElevationAmplitude = 5400f;
     public static float MountainMapScale = 80f;

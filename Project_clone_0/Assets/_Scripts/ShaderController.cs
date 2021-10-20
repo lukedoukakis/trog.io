@@ -23,9 +23,11 @@ public class ShaderController : MonoBehaviour
 
     void InitShaderSettings()
     {
-        TerrainMaterial.SetFloat("_WaterHeight", ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude + .5f);
+        TerrainMaterial.SetFloat("_WaterHeight", ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude + .05f);
         GrassMaterial.SetFloat("_WaterHeight", ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude + .5f);
         GrassMaterial.SetFloat("_GrassNormal", ChunkGenerator.GrassNormal);
+        GrassMaterial.SetFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel - .13f) * ChunkGenerator.ElevationAmplitude);
+        GrassMaterial.SetFloat("_SnowHeightCap", ChunkGenerator.SnowLevel * ChunkGenerator.ElevationAmplitude);
         foreach(Material mat in SnowMaterials){
             mat.SetFloat("_SnowMinimumSurfaceNormal", ChunkGenerator.SnowNormal);
             mat.SetFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel - .13f) * ChunkGenerator.ElevationAmplitude);

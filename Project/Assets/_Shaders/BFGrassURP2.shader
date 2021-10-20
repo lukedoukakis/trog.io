@@ -76,8 +76,10 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 		_ColorTiling("Color Tiling", Float) = .1
 		_WaterHeight("Water Height", Float) = 0
 		_GrassNormal("Grass Normal", Float) = .95
+		_SnowHeightStart("Snow Height Start", Float) = 0
+		_SnowHeightStart("Snow Height Cap", Float) = 0
 		_CampOrigin("Camp Origin", Vector) = (0,0,0,0)
-		_CampRadius("Camp Radius", float) = 0
+		_CampRadius("Camp Radius", Float) = 0
 	}
 		SubShader
 		{
@@ -191,6 +193,8 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 			half _WaterHeight;
 			half _ColorTiling;
 			half _GrassNormal;
+			half _SnowHeightStart;
+			half _SnowHeightCap;
 			float4 _CampOrigin;
 			half _CampRadius;
 
@@ -244,6 +248,10 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				return o;
 			}
 
+			float invLerp(float from, float to, float value) {
+  				return (value - from) / (to - from);
+			}
+
 			#define UnityObjectToWorld(o) mul(unity_ObjectToWorld, float4(o.xyz,1.0))
 			[maxvertexcount(51)]
 			void geom(triangle v2g input[3], inout TriangleStream<g2f> tristream)
@@ -295,11 +303,12 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 							float4 NewNormal = float4(input[ii].normal,0); // problem is here
 
 							// change height
-							objSpace = float4(input[ii].objPos + NewNormal * _OffsetValue*i + offsetNormal);
-							if(UnityObjectToWorld(input[ii].objPos).y <= _WaterHeight){
-								objSpace = input[ii].objPos;
-							}
+							float awayFromWaterModifier = clamp(0, 1, invLerp(_WaterHeight, _WaterHeight + 1, UnityObjectToWorld(input[ii].objPos).y));
+							float awayFromCampModifier = clamp(0, 1, invLerp(_CampRadius, _CampRadius + 1, distance(UnityObjectToWorld(input[ii].objPos), _CampOrigin)));
+							float heightMod = min(awayFromWaterModifier, awayFromCampModifier);
+							heightMod = 1;
 
+							objSpace = float4(input[ii].objPos + NewNormal * _OffsetValue*i*heightMod + (offsetNormal*heightMod));
 							o.color = (i / (_NumberOfStacks - _GrassCut));
 							o.uv = input[ii].uv;
 							o.pos = GetVertexPositionInputs(objSpace).positionCS;
@@ -309,9 +318,13 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 							o.fogCoord = ComputeFogFactor(input[ii].pos.z);
 #ifdef LIGHTMAP_ON
 							o.lmap = input[ii].lmap.xy;
+
+							
 #endif						
 							// only show vert if the normal is greater than _GrassNormal and outside radius from _CampOrigin
-							if(input[ii].normal.y >= _GrassNormal && distance(o.worldPos, _CampOrigin) > _CampRadius){
+							//if(input[ii].normal.y >= _GrassNormal && distance(o.worldPos, _CampOrigin) > _CampRadius && UnityObjectToWorld(input[ii].objPos).y > _WaterHeight){
+							if(input[ii].normal.y >= _GrassNormal){
+
 								tristream.Append(o);
 							}
 							
@@ -409,9 +422,12 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 					if (alpha*(ripples3 + 1) - (i.color.r) < -0.02)discard;
 				}
 				_Color *= 2;
-				if(i.worldPos.y <= _WaterHeight - .02){
-					//_Color *= .75;
+
+				// darken color closer to water or in camp
+				if(i.worldPos.y <= _WaterHeight || distance(i.worldPos, _CampOrigin) < _CampRadius){
+					_Color *= .8;
 				}
+				
 
 				col.xyz = (pow(abs(col), _GrassSaturation) * _GrassSaturation)*float3(_Color.x, _Color.y, _Color.z);
 				col.xyz *= saturate(lerp(_SelfShadowColor, 1, pow(abs(i.color.x), 1.1)) + (_GrassShading  * (ripples * 1 + 1) - noise.x*dis.x * 2) + (1 - NoGrass.r) - noise.x*dis.x * 2);

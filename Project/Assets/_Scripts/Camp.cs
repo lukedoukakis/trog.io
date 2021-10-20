@@ -7,7 +7,7 @@ using System.Linq;
 public class Camp : MonoBehaviour
 {
 
-    public static float BASE_CAMP_RADIUS = 3f;
+    public static float BASE_CAMP_RADIUS = 4f;
     public static float CAMP_COMPONENT_PLACING_TIME_GAP = .1f;
     public static LayerMask LAYERMASK_CLEAR_ON_CAMP_PLACEMENT = LayerMask.GetMask("Feature, SmallFeature");
 
@@ -152,7 +152,7 @@ public class Camp : MonoBehaviour
             pos.y = ChunkGenerator.ElevationAmplitude;
             RaycastHit hit;
             if(Physics.Raycast(pos, Vector3.down, out hit, ChunkGenerator.ElevationAmplitude, CampResources.LayerMask_Terrain)){
-                orientation.position = hit.point + Vector3.up * .15f;
+                orientation.position = hit.point + Vector3.up * 0f;
             }
             else{
                 orientation.position = Vector3.one * float.MaxValue;
