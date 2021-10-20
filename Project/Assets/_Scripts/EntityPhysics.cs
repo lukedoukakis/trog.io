@@ -1169,15 +1169,13 @@ public class EntityPhysics : EntityComponent
         }
         else
         {
-            entityOrientation.SetBodyRotationMode(entityBehavior.activeAction.bodyRotationMode, entityBehavior.activeAction.obj.transform);
+            entityOrientation.SetBodyRotationMode(entityBehavior.activeAction.bodyRotationMode, entityBehavior.activeAction.targetedWorldObject.transform);
         }
     }
     public void OnAttackHit(Collider collider, Vector3 hitPoint, Projectile projectile)
     {
         GameObject hitObject = collider.gameObject;
         //Debug.Log(hitObject.layer);
-
-
 
         if (hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature") || hitObject.layer == LayerMask.NameToLayer("Item"))
         {

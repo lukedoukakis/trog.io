@@ -133,7 +133,6 @@ public class EntityItems : EntityComponent
 
         if (attachedObject is ObjectRack)
         {
-            Log("From rack");
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)attachedObject;
             rack.camp.faction.RemoveItemOwned(item, 1, rack, false, null);
@@ -509,7 +508,7 @@ public class EntityItems : EntityComponent
     public void ExchangeItemsWithEntity(EntityItems otherEntityItems)
     {
 
-        Debug.Log("EXCHANGING ITEMS");
+        //Debug.Log("EXCHANGING ITEMS");
 
         bool hasWeaponEquipped_thisEntity = entityItems.weaponEquipped_item != null;
         bool hasWeaponUnequipped_thisEntity = entityItems.weaponUnequipped_item != null;

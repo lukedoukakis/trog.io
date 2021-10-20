@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 
-public enum ActionType{ Idle, GoTo, Follow, RunFrom, Collect, Pickup, Chase, Attack, AttackRecover, Build, Hunt }
+public enum ActionType{ Idle, GoTo, Follow, RunFrom, Collect, Pickup, Chase, Attack, AttackRecover, Build, Hunt, StepBack, StepSide }
 
 public class ActionParameters : ScriptableObject
 {
@@ -16,7 +16,7 @@ public class ActionParameters : ScriptableObject
     public Enum type;
 
     // gameobject to interact with
-    public GameObject obj;
+    public GameObject targetedWorldObject;
 
     // ambiguous number of things
     public int number;
@@ -45,7 +45,7 @@ public class ActionParameters : ScriptableObject
         ActionParameters a = ActionParameters.GenerateActionParameters();
         a.doerHandle = _doerHandle;
         a.type = _type;
-        a.obj = _obj;
+        a.targetedWorldObject = _obj;
         a.number = _number;
         a.item_target = _item_target;
         a.item_result = _item_result;
@@ -80,7 +80,7 @@ public class ActionParameters : ScriptableObject
 
 
                 a.type = ActionType.Follow;
-                a.obj = newHomeT.gameObject;
+                a.targetedWorldObject = newHomeT.gameObject;
                 a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
                 a.urgent = false;
                 break;
@@ -90,7 +90,7 @@ public class ActionParameters : ScriptableObject
                 Transform directionalTs = Utility.FindDeepChild(GameManager.current.localPlayer.gameObject.transform, "DirectionalTs");
             
                 a.type = ActionType.Follow;
-                a.obj = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1)).gameObject;
+                a.targetedWorldObject = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1)).gameObject;
                 a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
                 break;
 
@@ -99,7 +99,7 @@ public class ActionParameters : ScriptableObject
                 Transform _directionalTs = Utility.FindDeepChild(doerHandle.entityInfo.faction.leaderHandle.gameObject.transform, "DirectionalTs");
             
                 a.type = ActionType.Follow;
-                a.obj = _directionalTs.GetChild(UnityEngine.Random.Range(0, _directionalTs.childCount - 1)).gameObject;
+                a.targetedWorldObject = _directionalTs.GetChild(UnityEngine.Random.Range(0, _directionalTs.childCount - 1)).gameObject;
                 a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
                 a.maxTime = .5f;
                 break;
@@ -107,7 +107,7 @@ public class ActionParameters : ScriptableObject
             case "Run From Player" :
 
                 a.type = ActionType.RunFrom;
-                a.obj = GameManager.current.localPlayer.gameObject;
+                a.targetedWorldObject = GameManager.current.localPlayer.gameObject;
                 a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_CHASE;
                 a.urgent = true;
                 break;
@@ -115,7 +115,7 @@ public class ActionParameters : ScriptableObject
             case "Attack Player" :
 
                 a.type = ActionType.Chase;
-                a.obj = GameManager.current.localPlayer.gameObject;
+                a.targetedWorldObject = GameManager.current.localPlayer.gameObject;
                 a.maxTime = doerHandle.entityBehavior.CalculateChaseTime();
                 a.urgent = true;
                 break;
@@ -131,7 +131,7 @@ public class ActionParameters : ScriptableObject
                 a.type = ActionType.GoTo;
                 GameObject temp = new GameObject();
                 temp.transform.position = Utility.GetRandomVectorOffset(doerHandle.transform.position, 10f, true);
-                a.obj = temp;
+                a.targetedWorldObject = temp;
                 a.maxTime = 10f;
                 a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
                 break;
@@ -157,7 +157,7 @@ public class ActionParameters : ScriptableObject
                 EntityHandle[] members = doerHandle.entityInfo.faction.memberHandles.ToArray();
                 foreach(EntityHandle h in members){
                     if(h != doerHandle){
-                        a.obj = h.gameObject;
+                        a.targetedWorldObject = h.gameObject;
                     }
                 }
                 //Log(a.item_target.nme);
@@ -178,7 +178,7 @@ public class ActionParameters : ScriptableObject
         ActionParameters a = ScriptableObject.CreateInstance<ActionParameters>();
         a.doerHandle = null;
         a.type = null;
-        a.obj = null;
+        a.targetedWorldObject = null;
         a.number = -1;
         a.item_result = null;
         a.item_target = null;
@@ -195,7 +195,7 @@ public class ActionParameters : ScriptableObject
 
         newAp.doerHandle = baseAp.doerHandle;
         newAp.type = baseAp.type;
-        newAp.obj = baseAp.obj;
+        newAp.targetedWorldObject = baseAp.targetedWorldObject;
         newAp.number = baseAp.number;
         newAp.item_result = baseAp.item_result;
         newAp.item_target = baseAp.item_target;

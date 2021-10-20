@@ -5,7 +5,7 @@ using UnityEngine;
 public class AttackCollisionDetector : MonoBehaviour
 {
 
-    EntityHandle owner;
+    EntityHandle ownerHandle;
     Collider thisCollider;
     LayerMask mask;
     Projectile projectile;
@@ -20,7 +20,7 @@ public class AttackCollisionDetector : MonoBehaviour
     
 
     public void SetOwner(EntityHandle handle){
-        owner = handle;
+        ownerHandle = handle;
 
         if(thisCollider != null)
         {
@@ -32,11 +32,11 @@ public class AttackCollisionDetector : MonoBehaviour
         thisCollider.enabled = false;
     }
 
-    bool CanCollide()
+    bool CanHit()
     {
-        if(owner != null)
+        if(ownerHandle != null)
         {
-            return projectile != null || owner.entityPhysics.meleeAttackCanHit;
+            return projectile != null || ownerHandle.entityPhysics.meleeAttackCanHit;
         }
         else{
             return false;
@@ -75,16 +75,28 @@ public class AttackCollisionDetector : MonoBehaviour
     void OnTriggerEnter(Collider otherCollider)
     {
         //Debug.Log("TRIGGER ENTER");
-        if ((mask.value & (1 << otherCollider.gameObject.layer)) > 0)
+
+        GameObject otherObject = otherCollider.gameObject;
+        if (mask == (mask | (1 << otherObject.layer)))
         {
-            if (CanCollide())
+            //Debug.Log("Layer Approved");
+            if (CanHit())
             {
-                owner.entityPhysics.OnAttackHit(otherCollider, thisCollider.bounds.center, projectile);
-                if (projectile != null)
+                //Debug.Log("Can Hit");
+
+                // if entity is targeting this object
+                if(ownerHandle.entityBehavior.IsTargetedObject(otherObject))
                 {
-                    AddFixedJoint(otherCollider.gameObject);
-                    SetProjectile(null);
+                    //Debug.Log("Call OnAttackHit()");
+
+                    ownerHandle.entityPhysics.OnAttackHit(otherCollider, thisCollider.bounds.center, projectile);
+                    if (projectile != null)
+                    {
+                        AddFixedJoint(otherCollider.gameObject);
+                        SetProjectile(null);
+                    }
                 }
+                
             }
         }
 

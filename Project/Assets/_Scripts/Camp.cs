@@ -396,7 +396,7 @@ public class Camp : MonoBehaviour
     public void RemoveItemsFromCamp(ItemCollection itemsToRemove, bool moveToAnotherRack, object destination)
     {
 
-        Debug.Log("RemoveItemsFromCamp()");
+        //Debug.Log("RemoveItemsFromCamp()");
 
         Item item;
         int countToRemove;
