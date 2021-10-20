@@ -14,7 +14,7 @@ public class Bonfire : CampComponent
     public void SetBonfire(Camp camp, bool lit, float intensity, float scale){
         this.camp = camp;
         this.lit = lit;
-        SetWorldObject(lit ? Utility.InstantiatePrefabSameName(CampResources.PREFAB_BONFIRE_LIT) : Utility.InstantiatePrefabSameName(CampResources.PREFAB_BONFIRE_UNLIT));
+        SetWorldObject(lit ? Utility.InstantiateSameName(CampResources.PREFAB_BONFIRE_LIT) : Utility.InstantiateSameName(CampResources.PREFAB_BONFIRE_UNLIT));
         this.intensity = intensity;
         this.scale = scale;
     }

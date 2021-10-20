@@ -34,10 +34,17 @@ public class Utility : MonoBehaviour
         return null;
     }
 
-    public static GameObject InstantiatePrefabSameName(GameObject prefab){
+    public static GameObject InstantiateSameName(GameObject prefab){
         //Debug.Log("Prefab name: " + prefab.name);
         GameObject instance = Instantiate(prefab);
         instance.name = prefab.name;
+        return instance;
+    }
+    public static GameObject InstantiateSameName(GameObject prefab, Vector3 position, Quaternion rotation)
+    {
+        GameObject instance = InstantiateSameName(prefab);
+        instance.transform.position = position;
+        instance.transform.rotation = rotation;
         return instance;
     }
 

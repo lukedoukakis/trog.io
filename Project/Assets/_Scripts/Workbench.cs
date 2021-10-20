@@ -6,6 +6,9 @@ using System.Linq;
 public class Workbench : ObjectRack
 {
 
+    public static float NEW_OBJECT_CRAFT_SPIN_TIME = .5f;
+    public static float NEW_OBJECT_CRAFT_SPIN_FORCE = 5000f;
+    public static float NEW_OBJECT_CRAFT_UPWARD_TRANSLATION = 1f;
 
     public List<Item> itemsOnTable;            // the current items on the table
     public List<Item> potentialCraftedItems;   // possible items that use at least the current items on the table
@@ -32,11 +35,13 @@ public class Workbench : ObjectRack
         // do the regular thing
         base.AddObjects(item, ref countToAdd, originT, ref newRacksCount);
 
-        // todo: workbench magic: look at recipes and highlight other items that can be added
-        itemsOnTable.Add(item);
-        //Debug.Log("added item to table");
 
+        itemsOnTable.Add(item);
         UpdateRecipes();
+
+        // give the player another instance of the same item from their camp, if available
+        //EntityHandle leaderHandle = camp.faction.leaderHandle;
+        //leaderHandle.entityItems.OnObjectTake()
 
 
     }
@@ -78,11 +83,33 @@ public class Workbench : ObjectRack
 
         IEnumerator _OnCraft()
         {
+            // create object
             Item craftedItem = currentCraftableItem;
             Transform orientation = this.worldObject_orientationParent.Find("ItemOrientationCraftedItem");
-            GameObject craftedObject = Utility.InstantiatePrefabSameName(craftedItem.worldObjectPrefab);
-            craftedObject.transform.position = orientation.position;
-            craftedObject.transform.rotation = orientation.rotation;
+            GameObject craftedObject = Utility.InstantiateSameName(craftedItem.worldObjectPrefab, orientation.position, Quaternion.identity);
+            Utility.ToggleObjectPhysics(craftedObject, false, false, false, false);
+
+            // do cool fx
+            Vector3 targetPos = craftedObject.transform.position + Vector3.up * NEW_OBJECT_CRAFT_UPWARD_TRANSLATION;
+            float spinForce = NEW_OBJECT_CRAFT_SPIN_FORCE;
+            for(int i = 0; i * .01f < NEW_OBJECT_CRAFT_SPIN_TIME; ++i)
+            {
+                craftedObject.transform.Rotate((Vector3.up + Vector3.right) * spinForce);
+                //craftedObjectRb.AddTorque((Vector3.up + Vector3.right) * NEW_OBJECT_CRAFT_SPIN_FORCE);
+                craftedObject.transform.position = Vector3.Lerp(craftedObject.transform.position, targetPos, 10f * Time.deltaTime);
+                spinForce *= .8f;
+                yield return new WaitForSecondsRealtime(.01f);
+            }
+            Quaternion targetRot = Quaternion.identity;
+            yield return new WaitForSecondsRealtime(.1f);
+            Destroy(craftedObject);
+
+            // add to faction
+            Transform tempT = new GameObject().transform;
+            tempT.SetPositionAndRotation(craftedObject.transform.position, craftedObject.transform.rotation);
+            camp.faction.AddItemOwned(craftedItem, 1, null, tempT, 0f);
+            Utility.DestroyInSeconds(tempT.gameObject, 5f);
+            
 
             ConsumeRecipeObjects();
 

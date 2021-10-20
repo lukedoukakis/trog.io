@@ -647,7 +647,7 @@ public class EntityBehavior : EntityComponent
 
     public void TakeObject(GameObject o){
         //Log("TakeObject()");
-        entityItems.OnObjectInteract(o, o.GetComponent<ObjectReference>().GetObjectReference());
+        entityItems.OnObjectTake(o, o.GetComponent<ObjectReference>().GetObjectReference());
     }
 
 

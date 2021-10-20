@@ -427,7 +427,6 @@ public class Camp : MonoBehaviour
         }
     }   
 
-
     public void RemoveObjectsAnyRack(Item item, ref int count, bool moveToAnotherRack, ObjectRack destinationRack)
     {
         List<ObjectRack> rackList = GetRackListForItemType(item.type);
@@ -440,6 +439,28 @@ public class Camp : MonoBehaviour
             }
         }
     }
+
+    // public GameObject[] DismantleObjectsAnyRack(Item item, ref int count)
+    // {
+
+    //     GameObject[] clones;
+
+    //     List<ObjectRack> rackList = GetRackListForItemType(item.type);
+    //     GameObject[] matches;
+    //     for(int i = rackList.Count - 1; i >= 0; --i){
+    //         matches = rackList[i].objectsOnRack.Where(o => o.name == item.nme).ToArray();
+    //         if(matches.Length > 0)
+    //         {
+    //             GameObject lastObject = matches[matches.Length];
+    //             GameObject clone = Utility.InstantiateSameName(lastObject, lastObject.transform.position, lastObject.transform.rotation);
+    //             int oneRef = 1;
+    //             rackList[i].RemoveObjects(item, ref oneRef, false, null);
+    //             return clone;
+    //         }
+    //     }
+    //     return null;
+    // }
+
 
     
     public List<ObjectRack> GetRackListForItemType(Enum itemType){

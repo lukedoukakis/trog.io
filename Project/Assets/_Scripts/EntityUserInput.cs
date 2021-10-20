@@ -171,7 +171,7 @@ public class EntityUserInput : EntityComponent
         else{
             string t = hoveredInteractableObject.tag;
             if(t == "Item"){
-                entityItems.OnObjectInteract(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
+                entityItems.OnObjectTake(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
             }
             else if(t == "Npc")
             {

@@ -11,7 +11,7 @@ public class Tent : CampComponent
 
     public void SetTent(Camp camp){
         this.camp = camp;
-        SetWorldObject(Utility.InstantiatePrefabSameName(CampResources.PREFAB_TENT));
+        SetWorldObject(Utility.InstantiateSameName(CampResources.PREFAB_TENT));
     }
 
     public void DeleteSelf(){

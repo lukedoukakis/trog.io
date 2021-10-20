@@ -102,7 +102,7 @@ public class ObjectRack : CampComponent
                 Debug.Log("unsupported itemType for ItemRack");
                 break;
         }
-        SetWorldObject(Utility.InstantiatePrefabSameName(worldObjectPrefab));
+        SetWorldObject(Utility.InstantiateSameName(worldObjectPrefab));
         this.worldObject_orientationParent = Utility.FindDeepChild(this.worldObject.transform, "ItemOrientations");
         this.orientations = worldObject_orientationParent.GetComponentsInChildren<Transform>().Where(ortn => ortn.tag == "Orientation").ToList();
         if(allowRotation){
@@ -128,7 +128,7 @@ public class ObjectRack : CampComponent
                 {
                      Debug.Log("Instantiating item, but worldObject null: " + item.nme);
                 }
-                GameObject o = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
+                GameObject o = Utility.InstantiateSameName(item.worldObjectPrefab);
                 objectsOnRack.Add(o);
                 SetObjectOrientation(o, originT, (OBJECT_PLACEMENT_DELAY_TIMESTEP * countAdded) + (Camp.CAMP_COMPONENT_PLACING_TIME_GAP * newRacksCount));
                 o.GetComponent<ObjectReference>().SetObjectReference(this);

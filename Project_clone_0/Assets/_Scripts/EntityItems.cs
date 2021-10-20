@@ -84,22 +84,22 @@ public class EntityItems : EntityComponent
     }
 
     // client method when an object is interacted with
-    public void OnObjectInteract(GameObject worldObject, object attachedObject){
-        Item i = Item.GetItemByName(worldObject.name);
-        switch (i.type) {
+    public void OnObjectTake(GameObject worldObject, object attachedObject){
+        Item item = Item.GetItemByName(worldObject.name);
+        switch (item.type) {
             case ItemType.Food :
-                PickUpHolding(i, worldObject, attachedObject);
+                PickUpHolding(item, worldObject, attachedObject);
                 break;
             case ItemType.Weapon :
-                PickUpWeapon(i, worldObject, attachedObject);
+                PickUpWeapon(item, worldObject, attachedObject);
                 break;
             case ItemType.Clothing :
-                PickUpHolding(i, worldObject, attachedObject);
+                PickUpHolding(item, worldObject, attachedObject);
                 EquipClothing(holding_item);
                 ConsumeHolding(holding_item);
                 break;
             default:
-                PickUpHolding(i, worldObject, attachedObject);
+                PickUpHolding(item, worldObject, attachedObject);
                 break;
             
         }
@@ -136,9 +136,7 @@ public class EntityItems : EntityComponent
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)attachedObject;
             rack.camp.faction.RemoveItemOwned(item, 1, rack, false, null);
-            o = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
-            o.transform.position = worldObject.transform.position;
-            o.transform.rotation = worldObject.transform.rotation;
+            o = Utility.InstantiateSameName(item.worldObjectPrefab, worldObject.transform.position, worldObject.transform.rotation);
         }
         else if (attachedObject is EntityItems)
         {
@@ -182,9 +180,7 @@ public class EntityItems : EntityComponent
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)attachedObject;
             rack.camp.faction.RemoveItemOwned(item, 1, rack, false, null);
-            o = Utility.InstantiatePrefabSameName(item.worldObjectPrefab);
-            o.transform.position = worldObject.transform.position;
-            o.transform.rotation = worldObject.transform.rotation;
+            o = Utility.InstantiateSameName(item.worldObjectPrefab, worldObject.transform.position, worldObject.transform.rotation);
         }
         else if(attachedObject == null)
         {
@@ -201,6 +197,9 @@ public class EntityItems : EntityComponent
         holding_item = item;
         holding_object = o;
         Utility.ToggleObjectPhysics(holding_object, false, false, true, false);
+
+        // update object's ObjectReference
+        holding_object.GetComponent<ObjectReference>().SetObjectReference(this);
     }
 
     public void DropHolding(object targetAttachedObject){
@@ -212,6 +211,8 @@ public class EntityItems : EntityComponent
         {
             ObjectRack rack = (ObjectRack)targetAttachedObject;
             Enum rackItemType = rack.itemType;
+
+            // if rack is the corresponding type of the item, add it there
             if(rackItemType.Equals(holding_item.type) || rackItemType.Equals(ItemType.Any))
             {
                 // get rack reference from attached object and add the item to faction items with specified rack
@@ -219,11 +220,9 @@ public class EntityItems : EntityComponent
                 entityInfo.faction.AddItemOwned(holding_item, 1, rack, transform, 0f);
                 GameObject.Destroy(holding_object);
             }
-            else
-            {
-                //DropHolding(null);
-                return;
-            }
+
+            holding_item = null;
+            holding_object = null;
         }
 
         else if (targetAttachedObject == null)
@@ -232,14 +231,21 @@ public class EntityItems : EntityComponent
                 //Debug.Log("Adding to rack");
                 entityInfo.faction.AddItemOwned(holding_item, 1, null, transform, 0f);
                 GameObject.Destroy(holding_object);
+                holding_item = null;
+                holding_object = null;
             }
             else
             {
                 //Debug.Log("Dropping on ground");
-                holding_object.GetComponent<ObjectReference>().SetObjectReference(null);
                 Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, false);
                 holding_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = true;
                 Utility.ToggleObjectPhysics(holding_object, true, true, true, true);
+
+                // update object's ObjectReference
+                holding_object.GetComponent<ObjectReference>().SetObjectReference(this);
+
+                holding_item = null;
+                holding_object = null;
             }
         }
         else
@@ -247,8 +253,6 @@ public class EntityItems : EntityComponent
             // todo: case human
         }
 
-        holding_item = null;
-        holding_object = null;
     }
 
     public void ConsumeHolding(Item item)
@@ -303,6 +307,8 @@ public class EntityItems : EntityComponent
             ObjectRack rack = (ObjectRack)targetAttachedObject;
             entityInfo.faction.AddItemOwned(weaponEquipped_item, 1, rack, transform, 0f);
             GameObject.Destroy(weaponEquipped_object);
+            weaponEquipped_item = null;
+            weaponEquipped_object = null;
         }
         else if(targetAttachedObject is EntityItems)
         {
@@ -319,13 +325,21 @@ public class EntityItems : EntityComponent
             if(Camp.EntityIsInsideCamp(entityHandle)){
                 entityInfo.faction.AddItemOwned(weaponEquipped_item, 1,null, transform, 0f);
                 GameObject.Destroy(weaponEquipped_object);
+                weaponEquipped_item = null;
+                weaponEquipped_object = null;
             }
             else
             {
-                weaponEquipped_object.GetComponent<ObjectReference>().SetObjectReference(null);
+                // Debug.Log("Dropping equipped weapon on ground");
                 Physics.IgnoreCollision(weaponEquipped_object.transform.Find("HitZone").GetComponent<Collider>(), entityPhysics.worldCollider, false);
                 weaponEquipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = true;
                 Utility.ToggleObjectPhysics(weaponEquipped_object, true, true, true, true);
+
+                // update object's ObjectReference
+                weaponEquipped_object.GetComponent<ObjectReference>().SetObjectReference(this);
+
+                weaponEquipped_item = null;
+                weaponEquipped_object = null;
             }
         }
 
@@ -343,7 +357,8 @@ public class EntityItems : EntityComponent
         // remove hit detection owner
         weaponUnequipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().RemoveOwner();
     }
-    public void SetEquippedWeapon(Item item, GameObject worldObject){
+    public void SetEquippedWeapon(Item item, GameObject worldObject)
+    {
 
         //Log("Setting equipped weapon");
         //Log("Weapon name: " + worldObject.name);
@@ -356,6 +371,9 @@ public class EntityItems : EntityComponent
 
         // turn off physics
         Utility.ToggleObjectPhysics(weaponEquipped_object, false, false, false, false);
+
+        // update object's ObjectReference
+        weaponEquipped_object.GetComponent<ObjectReference>().SetObjectReference(this);
 
         // set weapon hit detection owner
         AttackCollisionDetector acd = weaponEquipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>();
