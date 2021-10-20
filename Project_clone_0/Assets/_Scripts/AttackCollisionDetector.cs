@@ -7,11 +7,14 @@ public class AttackCollisionDetector : MonoBehaviour
 
     EntityHandle owner;
     Collider thisCollider;
+    LayerMask mask;
     Projectile projectile;
     FixedJoint joint;
 
-    void Awake(){
+    void Awake()
+    {
         thisCollider = GetComponent<Collider>();
+        mask = LayerMaskController.HITTABLE;
         projectile = null;
     }
     
@@ -69,17 +72,22 @@ public class AttackCollisionDetector : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider otherCollider){
+    void OnTriggerEnter(Collider otherCollider)
+    {
         //Debug.Log("TRIGGER ENTER");
-        if(CanCollide())
+        if ((mask.value & (1 << otherCollider.gameObject.layer)) > 0)
         {
-            owner.entityPhysics.OnAttackHit(otherCollider, thisCollider.bounds.center, projectile);
-            if(projectile != null)
+            if (CanCollide())
             {
-                AddFixedJoint(otherCollider.gameObject);
-                SetProjectile(null);
+                owner.entityPhysics.OnAttackHit(otherCollider, thisCollider.bounds.center, projectile);
+                if (projectile != null)
+                {
+                    AddFixedJoint(otherCollider.gameObject);
+                    SetProjectile(null);
+                }
             }
         }
+
     }
 
 

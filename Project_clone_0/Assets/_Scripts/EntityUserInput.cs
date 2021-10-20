@@ -18,9 +18,6 @@ public class EntityUserInput : EntityComponent
     Quaternion targetRot;
     public GameObject hoveredInteractableObject;
     public List<GameObject> interactableObjects;
-
-    // todo: use all interactable layers
-    public LayerMask LAYERMASK_INTERACTABLE;
     bool newInteract;
 
 
@@ -33,7 +30,6 @@ public class EntityUserInput : EntityComponent
         base.Awake();
 
         selectionOrigin = Utility.FindDeepChild(transform, "SelectionOrigin");
-        LAYERMASK_INTERACTABLE = LayerMask.GetMask("HoverTrigger");
     }
 
 
@@ -238,7 +234,7 @@ public class EntityUserInput : EntityComponent
         Transform cameraT = Camera.main.transform;
         RaycastHit hit;
 
-        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, 100f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
+        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, 100f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide)){
         //if(Physics.SphereCast(selectionOrigin.position, .3f, entityOrientation.body.forward, out hit, 1f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
 
             // set hoveredInteractableObject to parent of collider hit

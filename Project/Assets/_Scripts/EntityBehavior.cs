@@ -652,7 +652,7 @@ public class EntityBehavior : EntityComponent
 
 
     public List<GameObject> SenseSurroundingItems(Enum type, string name, float distance){
-        Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Item"));
+        Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMaskController.ITEM);
        
         //string sur = "";
         List<GameObject> foundObjects = new List<GameObject>();
@@ -687,7 +687,7 @@ public class EntityBehavior : EntityComponent
 
     public List<EntityHandle> SenseSurroundingCreatures(Species targetSpecies, float distance){
 
-        Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMask.GetMask("Creature"));
+        Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMaskController.CREATURE);
         //Debug.Log("sense distance: " + distance + "... creatures found: " + colliders.Length);
 
         List<EntityHandle> foundHandles = new List<EntityHandle>();

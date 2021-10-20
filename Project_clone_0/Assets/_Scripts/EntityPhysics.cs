@@ -11,9 +11,6 @@ public class EntityPhysics : EntityComponent
     public Collider worldCollider;
     public PhysicMaterial highFrictionMat;
     public PhysicMaterial noFrictionMat;
-    public LayerMask layerMask_water;
-    public LayerMask layerMask_walkable;
-    public LayerMask layerMask_feature;
 
     public Rigidbody rb;
     public Animator mainAnimator;
@@ -121,9 +118,6 @@ public class EntityPhysics : EntityComponent
         worldCollider = body.GetComponent<CapsuleCollider>();
         highFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/HighFriction");
         noFrictionMat = (PhysicMaterial)Resources.Load("PhysicMaterials/NoFriction");
-        layerMask_water = LayerMask.GetMask("Water");
-        layerMask_walkable = LayerMask.GetMask("Terrain", "Feature");
-        layerMask_feature = LayerMask.GetMask("Feature");
         rb = GetComponent<Rigidbody>();
         mainAnimator = body.GetComponent<Animator>();
         helperAnimator = model.GetComponent<Animator>();
@@ -603,7 +597,7 @@ public class EntityPhysics : EntityComponent
         if (onGround)
         {
             RaycastHit hit;
-            if (Physics.Raycast(plantPositionPointer, Vector3.down, out hit, 100f, layerMask_walkable))
+            if (Physics.Raycast(plantPositionPointer, Vector3.down, out hit, 100f, LayerMaskController.WALKABLE))
             {
                 plantPositionPointer.y = hit.point.y + distanceFromGround;
             }
@@ -724,7 +718,7 @@ public class EntityPhysics : EntityComponent
     {
         Vector3 pos = targetTransform.position + offset;
         RaycastHit hit;
-        if (Physics.Raycast(pos, Vector3.up, out hit, 1f, layerMask_walkable))
+        if (Physics.Raycast(pos, Vector3.up, out hit, 1f, LayerMaskController.WALKABLE))
         {
             positionPointer = hit.point;
         }
@@ -968,7 +962,7 @@ public class EntityPhysics : EntityComponent
             return false;
         }
 
-        if (Physics.Raycast(groundSense.position, Vector3.down, groundDistanceToJump, layerMask_walkable) && !isJumping)
+        if (Physics.Raycast(groundSense.position, Vector3.down, groundDistanceToJump, LayerMaskController.WALKABLE) && !isJumping)
         {
             return true;
         }
@@ -1182,6 +1176,8 @@ public class EntityPhysics : EntityComponent
     {
         GameObject hitObject = collider.gameObject;
         //Debug.Log(hitObject.layer);
+
+
 
         if (hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature") || hitObject.layer == LayerMask.NameToLayer("Item"))
         {
@@ -1513,12 +1509,12 @@ public class EntityPhysics : EntityComponent
 
     bool IsGrounded()
     {
-        return Physics.OverlapSphere(groundSense.position, .25f, layerMask_walkable).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, .25f, LayerMaskController.WALKABLE).Length > 0;
     }
 
     bool IsGroundedStrict()
     {
-        return Physics.OverlapSphere(groundSense.position, .05f, layerMask_walkable).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, .05f, LayerMaskController.WALKABLE).Length > 0;
     }
 
 
@@ -1533,7 +1529,6 @@ public class EntityPhysics : EntityComponent
         isGroundedStrict = IsGroundedStrict();
         differenceInDegreesBetweenMovementAndFacing = Mathf.InverseLerp(0f, 180f, Vector3.Angle(Utility.GetHorizontalVector(body.forward), velHoriz_this));
 
-
         SetPhysicMaterial();
         Move(moveDir, acceleration);
         CheckWater();
@@ -1542,14 +1537,6 @@ public class EntityPhysics : EntityComponent
         SetGravity();
         UpdateAnimation();
         UpdateIK();
-
-        // if(isHandGrab)
-        // {
-        //     Vector3 vel = rb.velocity;
-        //     vel.y = Mathf.Max(0f, vel.y);
-        //     rb.velocity = vel;
-        // }
-
 
         velHoriz_last = velHoriz_this;
     }
