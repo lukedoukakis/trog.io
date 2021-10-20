@@ -7,7 +7,7 @@ using System.Linq;
 public class Camp : MonoBehaviour
 {
 
-    public static float BASE_CAMP_RADIUS = 8f;
+    public static float BASE_CAMP_RADIUS = 3f;
     public static float CAMP_COMPONENT_PLACING_TIME_GAP = .1f;
     public static LayerMask LAYERMASK_CLEAR_ON_CAMP_PLACEMENT = LayerMask.GetMask("Feature, SmallFeature");
 
@@ -78,6 +78,10 @@ public class Camp : MonoBehaviour
         camp.SetCampLayout(campPlacementPos, originT.rotation);
         camp.PlaceCampComponents(originT);
         camp.SetTribeMemberStandingPositions();
+
+        // call the shader controller to update according to new origin position and radius
+        ShaderController.instance.UpdateGrassShaderSettings(camp);
+
         return camp;
 
 

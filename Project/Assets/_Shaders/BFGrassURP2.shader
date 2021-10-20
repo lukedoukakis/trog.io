@@ -76,6 +76,8 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 		_ColorTiling("Color Tiling", Float) = .1
 		_WaterHeight("Water Height", Float) = 0
 		_GrassNormal("Grass Normal", Float) = .95
+		_CampOrigin("Camp Origin", Vector) = (0,0,0,0)
+		_CampRadius("Camp Radius", float) = 0
 	}
 		SubShader
 		{
@@ -189,6 +191,8 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 			half _WaterHeight;
 			half _ColorTiling;
 			half _GrassNormal;
+			float4 _CampOrigin;
+			half _CampRadius;
 
 			float2 hash2D2D(float2 s)
 			{
@@ -262,6 +266,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 #ifdef LIGHTMAP_ON
 					o.lmap = input[i].lmap.xy;
 #endif
+					// only show vert if the normal is greater than _GrassNormal
 					if(input[i].normal.y >= _GrassNormal){
 						tristream.Append(o);
 					}
@@ -305,8 +310,8 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 #ifdef LIGHTMAP_ON
 							o.lmap = input[ii].lmap.xy;
 #endif						
-
-							if(input[ii].normal.y >= _GrassNormal){
+							// only show vert if the normal is greater than _GrassNormal and outside radius from _CampOrigin
+							if(input[ii].normal.y >= _GrassNormal && distance(o.worldPos, _CampOrigin) > _CampRadius){
 								tristream.Append(o);
 							}
 							

@@ -43,14 +43,9 @@ public class ChunkGenerator : MonoBehaviour
     [SerializeField] MeshFilter WaterMeshFilter;
     Mesh TerrainMesh;
     Mesh WaterMesh;
-    [SerializeField] Material terrainMaterial;
-    [SerializeField] Material grassMaterial;
-    [SerializeField] Material[] SnowMaterials;
-    [SerializeField] Material[] FadeMaterials;
 
 
     [SerializeField] PhysicMaterial physicMaterial;
-    public LayerMask layerMask_terrain;
 
     public GameObject chunkPrefab;
     public GameObject waterPrefab;
@@ -125,13 +120,7 @@ public class ChunkGenerator : MonoBehaviour
 
             UpdateWaterPosition();
 
-            foreach(Material mat in FadeMaterials)
-            {
-                mat.SetVector("_TargetVector", GameManager.current.localPlayerHandle.entityPhysics.obstacleHeightSense.position);
-            }
-
         }
-
     }
 
     void Init()
@@ -150,18 +139,6 @@ public class ChunkGenerator : MonoBehaviour
 
         Water = Instantiate(waterPrefab);
 
-        layerMask_terrain = LayerMask.GetMask("Terrain");
-
-
-        // set grass material parameters
-        terrainMaterial.SetFloat("_WaterHeight", SeaLevel * ElevationAmplitude + .5f);
-        grassMaterial.SetFloat("_WaterHeight", SeaLevel * ElevationAmplitude + .5f);
-        grassMaterial.SetFloat("_GrassNormal", GrassNormal);
-        foreach(Material mat in SnowMaterials){
-            mat.SetFloat("_SnowMinimumSurfaceNormal", SnowNormal);
-            mat.SetFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel - .13f) * ChunkGenerator.ElevationAmplitude);
-            mat.SetFloat("_SnowHeightCap", ChunkGenerator.SnowLevel * ChunkGenerator.ElevationAmplitude);
-        }
 
         Features = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Features"));
         Creatures = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Creatures"));
