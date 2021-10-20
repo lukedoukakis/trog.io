@@ -35,27 +35,28 @@ public class Workbench : ObjectRack
         // do the regular thing
         base.AddObjects(item, ref countToAdd, originT, ref newRacksCount);
 
-
         itemsOnTable.Add(item);
-        UpdateRecipes();
 
         // give the player another instance of the same item from their camp, if available
-        //EntityHandle leaderHandle = camp.faction.leaderHandle;
-        //leaderHandle.entityItems.OnObjectTake()
+        EntityItems leaderItems = camp.faction.leaderHandle.entityItems;
+        camp.faction.RemoveItemOwned(item, 1, null, true, leaderItems);
+
+        UpdateRecipes();
 
 
     }
 
-    public override void RemoveObjects(Item item, ref int countToRemove, bool moveToAnotherRack, ObjectRack destinationRack){
 
-        base.RemoveObjects(item, ref countToRemove, moveToAnotherRack, destinationRack);
+    public override void RemoveObjects(Item item, ref int countToRemove, bool moveToAnotherPlace, object destination)
+    {
+
+        base.RemoveObjects(item, ref countToRemove, moveToAnotherPlace, destination);
 
         if (itemsOnTable.Contains(item))
         {
             itemsOnTable.Remove(item);
         }
     
-
         UpdateRecipes();
 
     }
@@ -83,11 +84,12 @@ public class Workbench : ObjectRack
 
         IEnumerator _OnCraft()
         {
-            // create object
+            // create object and consume ingredients
             Item craftedItem = currentCraftableItem;
             Transform orientation = this.worldObject_orientationParent.Find("ItemOrientationCraftedItem");
             GameObject craftedObject = Utility.InstantiateSameName(craftedItem.worldObjectPrefab, orientation.position, Quaternion.identity);
             Utility.ToggleObjectPhysics(craftedObject, false, false, false, false);
+            ConsumeRecipeObjects();
 
             // do cool fx
             Vector3 targetPos = craftedObject.transform.position + Vector3.up * NEW_OBJECT_CRAFT_UPWARD_TRANSLATION;
@@ -110,8 +112,6 @@ public class Workbench : ObjectRack
             camp.faction.AddItemOwned(craftedItem, 1, null, tempT, 0f);
             Utility.DestroyInSeconds(tempT.gameObject, 5f);
             
-
-            ConsumeRecipeObjects();
 
             yield return new WaitUntil( () => !camp.faction.itemLogisticsHappening);
             StockWithItemsFromRecipe(craftedItem);
@@ -150,9 +150,6 @@ public class Workbench : ObjectRack
 
         // clear the table and restock with the necessary items by moving objects from any available racks in camp
         ClearTable();
-
-        //yield return new WaitUntil( () => !camp.faction.itemLogisticsHappening);
-
         foreach(Item recipeItem in recipe.requiredItems)
         {
             if (recipeItem != null)
@@ -164,9 +161,6 @@ public class Workbench : ObjectRack
             }
         }
 
-        // Debug.Log("StockWithItemsFromRecipe() DONE");
-        // Debug.Log("itemsOnTable count: " + itemsOnTable.Count);
-        // Debug.Log("objectsOnRack count: " + objectsOnRack.Count);
 
     }
 

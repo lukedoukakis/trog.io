@@ -120,7 +120,7 @@ public class Faction : MonoBehaviour
     }
     
 
-    public void RemoveItemOwned(Item item, int count, ObjectRack rackToRemoveFrom, bool moveToAnotherRack, ObjectRack destinationRack)
+    public void RemoveItemOwned(Item item, int count, ObjectRack rackToRemoveFrom, bool moveToAnotherPlace, object destination)
     {
 
         ownedItems.RemoveItem(item, count);
@@ -131,11 +131,11 @@ public class Faction : MonoBehaviour
             {
                 ItemCollection itemsToRemove = new ItemCollection();
                 itemsToRemove.AddItem(item, count);
-                camp.RemoveItemsFromCamp(itemsToRemove, moveToAnotherRack, destinationRack);
+                camp.RemoveItemsFromCamp(itemsToRemove, moveToAnotherPlace, destination);
             }
             else
             {
-                rackToRemoveFrom.RemoveObjects(item, ref count, moveToAnotherRack, destinationRack);
+                rackToRemoveFrom.RemoveObjects(item, ref count, moveToAnotherPlace, destination);
             }
         }
     }

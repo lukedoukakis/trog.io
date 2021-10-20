@@ -40,8 +40,9 @@ public class EntityItems : EntityComponent
     bool updateWeaponEquippedOrientation;
     public Animator itemOrientationAnimator;
 
-    public static float lerpSpeed_holding = 30f;
-    public static float lerpSpeed_weapon = 50f;
+    public static float FOLLOW_SPEED_HOLDING_TRANSLATION = 30f;
+    public static float FOLLOW_SPEED_WEAPON_TRANSLATION = 50f;
+    public static float FOLLOW_SPEED_WEAPON_ROTATION = 20f;
 
 
 
@@ -220,6 +221,12 @@ public class EntityItems : EntityComponent
                 entityInfo.faction.AddItemOwned(holding_item, 1, rack, transform, 0f);
                 GameObject.Destroy(holding_object);
             }
+            // if item not not correspond to the rack type
+            else
+            {
+                entityInfo.faction.AddItemOwned(holding_item, 1, null, transform, 0f);
+                GameObject.Destroy(holding_object);
+            }
 
             holding_item = null;
             holding_object = null;
@@ -300,9 +307,9 @@ public class EntityItems : EntityComponent
 
     public void DropEquippedWeapon(object targetAttachedObject){
         
+        // if dropping onto an object rack
         if (targetAttachedObject is ObjectRack)
         {
-            // if dropping onto an object rack
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)targetAttachedObject;
             entityInfo.faction.AddItemOwned(weaponEquipped_item, 1, rack, transform, 0f);
@@ -310,15 +317,24 @@ public class EntityItems : EntityComponent
             weaponEquipped_item = null;
             weaponEquipped_object = null;
         }
+
+        // if dropping onto another entity
         else if(targetAttachedObject is EntityItems)
         {
-            // if dropping onto another entity
             EntityItems takerItems = (EntityItems)targetAttachedObject;
-            Item i = weaponEquipped_item;
-            GameObject o = weaponEquipped_object;
+            Item itemToDrop = weaponEquipped_item;
+            GameObject worldObjectToDrop = weaponEquipped_object;
             weaponEquipped_item = null;
             weaponEquipped_object = null;
-            takerItems.PickUpWeapon(i, o, this);
+            takerItems.PickUpWeapon(itemToDrop, worldObjectToDrop, this);
+            // if is player and if no equipped weapon (weapon from other entity may have been exchanged), give one from camp
+            if(isLocalPlayer)
+            {
+                if(weaponEquipped_item == null)
+                {
+                    entityInfo.faction.RemoveItemOwned(itemToDrop, 1, null, true, this);
+                }
+            }
         }
         else if (targetAttachedObject == null)
         {
@@ -597,8 +613,8 @@ public class EntityItems : EntityComponent
             orientation_holding.rotation = basePosition_holding.rotation;
             Vector3 currentPos = holding_object.transform.position;
             Quaternion currentRot = holding_object.transform.rotation;
-            holding_object.transform.position = Vector3.Lerp(currentPos, orientation_holding.position, lerpSpeed_holding * Time.deltaTime);
-            holding_object.transform.rotation = Quaternion.Slerp(currentRot, orientation_holding.rotation, lerpSpeed_holding * Time.deltaTime);
+            holding_object.transform.position = Vector3.Lerp(currentPos, orientation_holding.position, FOLLOW_SPEED_HOLDING_TRANSLATION * Time.deltaTime);
+            holding_object.transform.rotation = Quaternion.Slerp(currentRot, orientation_holding.rotation, FOLLOW_SPEED_HOLDING_TRANSLATION * Time.deltaTime);
         }
 
         // handle equipped weapon orientation
@@ -631,8 +647,8 @@ public class EntityItems : EntityComponent
                     Quaternion targetRot = orientation_weaponEquipped.rotation;
                     Vector3 currentPos = weaponEquipped_object.transform.position;
                     Quaternion currentRot = weaponEquipped_object.transform.rotation;
-                    weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, lerpSpeed_weapon * Time.deltaTime);
-                    weaponEquipped_object.transform.rotation = Quaternion.Slerp(currentRot, targetRot, 20f * Time.deltaTime);
+                    weaponEquipped_object.transform.position = Vector3.Lerp(currentPos, targetPos, (FOLLOW_SPEED_WEAPON_TRANSLATION * Mathf.InverseLerp(0f, .8f, Vector3.Distance(currentPos, targetPos)) * Time.deltaTime));
+                    weaponEquipped_object.transform.rotation = Quaternion.Slerp(currentRot, targetRot, FOLLOW_SPEED_WEAPON_ROTATION * Time.deltaTime);
                 }
             }
         }

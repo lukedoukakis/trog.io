@@ -395,7 +395,7 @@ public class Camp : MonoBehaviour
     }
         
 
-    public void RemoveItemsFromCamp(ItemCollection itemsToRemove, bool moveToAnotherRack, ObjectRack destinationRack)
+    public void RemoveItemsFromCamp(ItemCollection itemsToRemove, bool moveToAnotherRack, object destination)
     {
 
         Debug.Log("RemoveItemsFromCamp()");
@@ -405,7 +405,7 @@ public class Camp : MonoBehaviour
         foreach(KeyValuePair<Item, int> kvp in itemsToRemove.items){
             item = kvp.Key;
             countToRemove = kvp.Value;
-            RemoveObjectsAnyRack(item, ref countToRemove, moveToAnotherRack, destinationRack);
+            RemoveObjectsAnyRack(item, ref countToRemove, moveToAnotherRack, destination);
         }
     }
 
@@ -427,12 +427,12 @@ public class Camp : MonoBehaviour
         }
     }   
 
-    public void RemoveObjectsAnyRack(Item item, ref int count, bool moveToAnotherRack, ObjectRack destinationRack)
+    public void RemoveObjectsAnyRack(Item item, ref int count, bool moveToAnotherRack, object destination)
     {
         List<ObjectRack> rackList = GetRackListForItemType(item.type);
         for(int i = rackList.Count - 1; i >= 0; --i){
             if(count > 0){
-                rackList[i].RemoveObjects(item, ref count, moveToAnotherRack, destinationRack);
+                rackList[i].RemoveObjects(item, ref count, moveToAnotherRack, destination);
             }
             else{
                 break;
@@ -440,29 +440,6 @@ public class Camp : MonoBehaviour
         }
     }
 
-    // public GameObject[] DismantleObjectsAnyRack(Item item, ref int count)
-    // {
-
-    //     GameObject[] clones;
-
-    //     List<ObjectRack> rackList = GetRackListForItemType(item.type);
-    //     GameObject[] matches;
-    //     for(int i = rackList.Count - 1; i >= 0; --i){
-    //         matches = rackList[i].objectsOnRack.Where(o => o.name == item.nme).ToArray();
-    //         if(matches.Length > 0)
-    //         {
-    //             GameObject lastObject = matches[matches.Length];
-    //             GameObject clone = Utility.InstantiateSameName(lastObject, lastObject.transform.position, lastObject.transform.rotation);
-    //             int oneRef = 1;
-    //             rackList[i].RemoveObjects(item, ref oneRef, false, null);
-    //             return clone;
-    //         }
-    //     }
-    //     return null;
-    // }
-
-
-    
     public List<ObjectRack> GetRackListForItemType(Enum itemType){
         List<ObjectRack> rackList;
         rackList = racks_food;
@@ -535,8 +512,8 @@ public class Camp : MonoBehaviour
     {
         //Debug.Log("OnFoodCast()");
         StartCoroutine(casterHandle.entityCommandServer.SpawnNpcWhenReady(casterHandle));
+        casterHandle.entityInfo.faction.RemoveItemOwned(foodItem, 1, null, true, casterHandle.entityItems);
 
-        // todo: play particles for new tribe member birth
     }
 
     public static bool EntityIsInsideCamp(EntityHandle handle){

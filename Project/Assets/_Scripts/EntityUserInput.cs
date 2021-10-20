@@ -111,7 +111,10 @@ public class EntityUserInput : EntityComponent
             entityPhysics.OnCrouchInput();
         }
         if(pressToggleAttackRanged){
-            entityItems.ToggleWeaponRanged();
+            if(!entityPhysics.weaponCharging)
+            {
+                entityItems.ToggleWeaponRanged();
+            }
         }
 
 

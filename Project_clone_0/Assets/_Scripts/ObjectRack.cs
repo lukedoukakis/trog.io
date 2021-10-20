@@ -149,7 +149,7 @@ public class ObjectRack : CampComponent
 
     }
 
-    public virtual void RemoveObjects(Item item, ref int countToRemove, bool moveToAnotherRack, ObjectRack destinationRack){
+    public virtual void RemoveObjects(Item item, ref int countToRemove, bool moveToAnotherPlace, object destination){
 
 
         //Debug.Log("Removing " + countToRemove + " " + item.nme);
@@ -162,27 +162,51 @@ public class ObjectRack : CampComponent
             int c = countToRemove;
             for (int i = 0; i < Math.Min(occurences, c); ++i)
             {
-                GameObject o = matches[occurences - 1];
+                GameObject foundObject = matches[occurences - 1];
 
                 // if a destination rack is desired, add the item to that rack ("moving" the item)
-                if (moveToAnotherRack)
+                if (moveToAnotherPlace)
                 {
-                    Transform tempT = new GameObject().transform;
-                    tempT.SetPositionAndRotation(o.transform.position, o.transform.rotation);
-                    float delay = i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP;
-                    camp.faction.AddItemOwned(item, 1, destinationRack, tempT, delay);
-                    Utility.DestroyInSeconds(tempT.gameObject, delay * 5f);
+    
+                    // if moving to another ObjectRack, destroy the object add a new one to faction with specified rack
+                    if(destination is ObjectRack)
+                    {
+                        Transform tempT = new GameObject().transform;
+                        tempT.SetPositionAndRotation(foundObject.transform.position, foundObject.transform.rotation);
+                        float delay = i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP;
+                        Utility.DestroyInSeconds(tempT.gameObject, delay + 5f);
+                        camp.faction.AddItemOwned(item, 1, (ObjectRack)destination, tempT, delay);
+                        objectsOnRack.Remove(foundObject);
+                        GameObject.Destroy(foundObject);
+
+                    }
+
+                    // if moving to an EntityItems, call the EntityItems to take the object
+                    else if(destination is EntityItems)
+                    {
+                        EntityItems ei = (EntityItems)destination;
+                        ei.OnObjectTake(foundObject, this);
+                    }
+                    
                 }
-        
-                objectsOnRack.Remove(o);
-                GameObject.Destroy(o);
+
+                // if not moving to another location remove and destroy the object
+                else
+                {
+                    objectsOnRack.Remove(foundObject);
+                    GameObject.Destroy(foundObject);
+                }
+    
                 --countToRemove;
             }
         }
     
         if(countToRemove > 0){
-            // call to remove remaining count
-            camp.RemoveObjectsAnyRack(item, ref countToRemove, moveToAnotherRack, destinationRack);
+            if(camp.faction.GetItemCount(item) > 1)
+            {
+                // call to remove remaining count
+                camp.RemoveObjectsAnyRack(item, ref countToRemove, moveToAnotherPlace, destination);
+            }
         }
     }
 
