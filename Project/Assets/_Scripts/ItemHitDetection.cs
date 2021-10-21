@@ -7,8 +7,8 @@ public class ItemHitDetection : MonoBehaviour
 
 
     [SerializeField] string itemNme;
-    Item item;
-    EntityStats stats;
+    public Item item;
+    public EntityStats stats;
 
 
 

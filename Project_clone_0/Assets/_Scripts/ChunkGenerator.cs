@@ -12,7 +12,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator current;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 5;
+    public static int ChunkRenderDistance = 4;
     public static float Scale = 120f;
     public static float ElevationAmplitude = 5400f;
     public static float MountainMapScale = 80f;
@@ -368,7 +368,7 @@ public class ChunkGenerator : MonoBehaviour
                     freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
 
                     // give rivers character
-                    float character = .15f;
+                    float character = .1f;
                     rough = Mathf.PerlinNoise((x + xOffset + .01f) / 40f, (z + zOffset + .01f) / 40f) * 2f - 1f;
                     freshWaterValue += Mathf.Max(0f, rough) * character;
 
@@ -551,7 +551,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // completely flatten terrain
-                heightValue = FlatLevel + .001f;
+                //heightValue = FlatLevel + .001f;
 
 
 
@@ -675,46 +675,46 @@ public class ChunkGenerator : MonoBehaviour
             yield return null;
         }
 
-        // foreach(GameObject creature in Creatures)
-        // {
+        foreach(GameObject creature in Creatures)
+        {
 
-        //     // break if chunk not loaded
-        //     if(cd == null){ break; }
+            // break if chunk not loaded
+            if(cd == null){ break; }
 
-        //     spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
-        //     placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+            spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
+            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
             
 
-        //     int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
-        //     int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
-        //     //Debug.Log(placementOffsetX);
-        //     //Debug.Log(placementOffsetZ);
-        //     //placementDensity = .1f;
-        //     if (placementDensity > 0f)
-        //     {
-        //         randomDivisorOffset = 0;
-        //         int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
-        //         if (divisor < 1) { divisor = 1; }
-        //         if ((x + xOffset + placementOffsetX) % divisor == 0 && (z + zOffset + placementOffsetZ) % divisor == 0)
-        //         {
-        //             bundleName = SpawnParameters.GetBundleName(creature.name);
-        //             spawnPosition = new Vector3(x + xOffset, height * ElevationAmplitude + 10f, z + zOffset);
-        //             spawnScale = Vector3.one * spawnParameters.scale;
-        //             o = GameObject.Instantiate(creature, spawnPosition, Quaternion.identity, null);
-        //             o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-        //             activeCreatures.Add(o);
+            int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
+            int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
+            //Debug.Log(placementOffsetX);
+            //Debug.Log(placementOffsetZ);
+            //placementDensity = .1f;
+            if (placementDensity > 0f)
+            {
+                randomDivisorOffset = 0;
+                int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
+                if (divisor < 1) { divisor = 1; }
+                if ((x + xOffset + placementOffsetX) % divisor == 0 && (z + zOffset + placementOffsetZ) % divisor == 0)
+                {
+                    bundleName = SpawnParameters.GetBundleName(creature.name);
+                    spawnPosition = new Vector3(x + xOffset, height * ElevationAmplitude + 10f, z + zOffset);
+                    spawnScale = Vector3.one * spawnParameters.scale;
+                    o = GameObject.Instantiate(creature, spawnPosition, Quaternion.identity, null);
+                    o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                    activeCreatures.Add(o);
 
-        //             // // test
-        //             // o.transform.position = current.playerPos;
+                    // // test
+                    // o.transform.position = current.playerPos;
 
-        //             bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
-        //             bundleName_last = bundleName;
+                    bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
+                    bundleName_last = bundleName;
         
-        //             if (breaker) { break; }
-        //         }
-        //     }
-        //     yield return null;
-        // }
+                    if (breaker) { break; }
+                }
+            }
+            yield return null;
+        }
         
     }
 

@@ -18,6 +18,9 @@ public class ActionParameters : ScriptableObject
     // gameobject to interact with
     public GameObject targetedWorldObject;
 
+    // offset vector
+    public Vector3 offset;
+
     // ambiguous number of things
     public int number;
 
@@ -40,12 +43,13 @@ public class ActionParameters : ScriptableObject
     // maximum time to be spent executing the action
     public float maxTime;
 
-    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, Enum _type, GameObject _obj, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent)
+    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, Enum _type, GameObject _targetWorldObject, Vector3 _offset, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent)
     {
         ActionParameters a = ActionParameters.GenerateActionParameters();
         a.doerHandle = _doerHandle;
         a.type = _type;
-        a.targetedWorldObject = _obj;
+        a.targetedWorldObject = _targetWorldObject;
+        a.offset = _offset;
         a.number = _number;
         a.item_target = _item_target;
         a.item_result = _item_result;
@@ -61,103 +65,105 @@ public class ActionParameters : ScriptableObject
     public static ActionParameters GenerateActionParameters(string command, EntityHandle doerHandle)
     {
 
-        ActionParameters a = ActionParameters.GenerateActionParameters();
-        a.doerHandle = doerHandle;
+        ActionParameters ap = ActionParameters.GenerateActionParameters();
+        ap.doerHandle = doerHandle;
         switch(command)
         {
             case "Idle" :
-                a.type = ActionType.Idle;
+                ap.type = ActionType.Idle;
                 break;
 
             case "Go Home" :
 
+                // set home transform
                 Transform campT = doerHandle.entityInfo.faction.camp.GetOpenTribeMemberStandPosition();
                 Transform newHomeT = new GameObject().transform;
                 newHomeT.position = campT.position;
                 newHomeT.transform.SetParent(campT);
-                Destroy(a.doerHandle.entityBehavior.homeT.gameObject);
-                a.doerHandle.entityBehavior.homeT = newHomeT;
+                Destroy(ap.doerHandle.entityBehavior.homeT.gameObject);
+                ap.doerHandle.entityBehavior.homeT = newHomeT;
 
-
-                a.type = ActionType.Follow;
-                a.targetedWorldObject = newHomeT.gameObject;
-                a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
-                a.urgent = false;
+                // set action parameters
+                ap.type = ActionType.Follow;
+                ap.targetedWorldObject = newHomeT.gameObject;
+                ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
+                ap.urgent = true;
                 break;
 
             case "Follow Player" :
 
                 Transform directionalTs = Utility.FindDeepChild(GameManager.current.localPlayer.gameObject.transform, "DirectionalTs");
             
-                a.type = ActionType.Follow;
-                a.targetedWorldObject = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1)).gameObject;
-                a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
+                ap.type = ActionType.Follow;
+                ap.targetedWorldObject = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1)).gameObject;
+                ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
                 break;
 
             case "Follow Faction Leader" :
 
                 Transform _directionalTs = Utility.FindDeepChild(doerHandle.entityInfo.faction.leaderHandle.gameObject.transform, "DirectionalTs");
             
-                a.type = ActionType.Follow;
-                a.targetedWorldObject = _directionalTs.GetChild(UnityEngine.Random.Range(0, _directionalTs.childCount - 1)).gameObject;
-                a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
-                a.maxTime = .5f;
+                ap.type = ActionType.Follow;
+                ap.targetedWorldObject = _directionalTs.GetChild(UnityEngine.Random.Range(0, _directionalTs.childCount - 1)).gameObject;
+                ap.distanceThreshold = 5;
+                ap.maxTime = -1f;
+                ap.urgent = true;
                 break;
 
             case "Run From Player" :
 
-                a.type = ActionType.RunFrom;
-                a.targetedWorldObject = GameManager.current.localPlayer.gameObject;
-                a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_CHASE;
-                a.urgent = true;
+                ap.type = ActionType.RunFrom;
+                ap.targetedWorldObject = GameManager.current.localPlayer.gameObject;
+                ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_CHASE;
+                ap.urgent = true;
                 break;
 
             case "Attack Player" :
 
-                a.type = ActionType.Chase;
-                a.targetedWorldObject = GameManager.current.localPlayer.gameObject;
-                a.maxTime = doerHandle.entityBehavior.CalculateChaseTime();
-                a.urgent = true;
+                ap.type = ActionType.Chase;
+                ap.targetedWorldObject = GameManager.current.localPlayer.gameObject;
+                ap.maxTime = doerHandle.entityBehavior.CalculateChaseTime();
+                ap.urgent = true;
                 break;
 
             case "Idle For 5 Seconds" :
 
-                a.type = ActionType.Idle;
-                a.maxTime = 5f;
+                ap.type = ActionType.Idle;
+                ap.maxTime = 5f;
                 break;
 
             case "Go To Random Nearby Spot" :
 
-                a.type = ActionType.GoTo;
+                ap.type = ActionType.GoTo;
                 GameObject temp = new GameObject();
                 temp.transform.position = Utility.GetRandomVectorOffset(doerHandle.transform.position, 10f, true);
-                a.targetedWorldObject = temp;
-                a.maxTime = 10f;
-                a.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
+                ap.targetedWorldObject = temp;
+                ap.maxTime = 10f;
+                ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
                 break;
 
             case "Collect Spear" :
 
-                a.type = ActionType.Collect;
-                a.item_target = Item.Spear;
+                ap.type = ActionType.Collect;
+                ap.item_target = Item.Spear;
                 //Log(a.item_target.nme);
                 break;
 
             case "Collect Stone" :
 
-                a.type = ActionType.Collect;
-                a.item_target = Item.Stone;
+                ap.type = ActionType.Collect;
+                ap.item_target = Item.Stone;
                 //Log(a.item_target.nme);
                 break;
 
             case "Attack TribeMember" :
 
-                a.type = ActionType.Chase;
-                a.urgent = true;
+                ap.type = ActionType.Chase;
+                ap.urgent = true;
                 EntityHandle[] members = doerHandle.entityInfo.faction.memberHandles.ToArray();
                 foreach(EntityHandle h in members){
                     if(h != doerHandle){
-                        a.targetedWorldObject = h.gameObject;
+                        ap.targetedWorldObject = h.gameObject;
                     }
                 }
                 //Log(a.item_target.nme);
@@ -168,7 +174,7 @@ public class ActionParameters : ScriptableObject
                 break;
         }
         //Debug.Log("CreateAction() done");
-        return a;
+        return ap;
         
     }
 
@@ -179,6 +185,7 @@ public class ActionParameters : ScriptableObject
         a.doerHandle = null;
         a.type = null;
         a.targetedWorldObject = null;
+        a.offset = Vector3.zero;
         a.number = -1;
         a.item_result = null;
         a.item_target = null;
@@ -196,8 +203,8 @@ public class ActionParameters : ScriptableObject
         newAp.doerHandle = baseAp.doerHandle;
         newAp.type = baseAp.type;
         newAp.targetedWorldObject = baseAp.targetedWorldObject;
+        newAp.offset = baseAp.offset;
         newAp.number = baseAp.number;
-        newAp.item_result = baseAp.item_result;
         newAp.item_target = baseAp.item_target;
         newAp.maxTime = baseAp.maxTime;
         newAp.distanceThreshold = baseAp.distanceThreshold;

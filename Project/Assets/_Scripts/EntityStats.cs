@@ -213,7 +213,7 @@ public class EntityStats : EntityComponent
             if(inCamp){
                 // if attacker is in their camp
                 if(item.isRackable){
-                    Debug.Log("adding drops straight to faction");
+                    //Debug.Log("adding drops straight to faction");
                     // if the item is rackable, add item straight to racks
                     float delay = .5f + (i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
                     GameObject temp = new GameObject();
@@ -224,7 +224,7 @@ public class EntityStats : EntityComponent
                 }
                 else
                 {
-                    Debug.Log("drops staying on ground");
+                    //Debug.Log("drops staying on ground");
                     // do nothing
                 }
             }
@@ -232,7 +232,7 @@ public class EntityStats : EntityComponent
             {
                 if(item.isRackable)
                 {
-                    Debug.Log("adding drops to inventory");
+                    //Debug.Log("adding drops to inventory");
                     // if not in camp, add to reciver's inventory and delay small timestep
                     receiverHandle.entityItems.AddToInventory(item, worldObject, .5f + i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
                 }

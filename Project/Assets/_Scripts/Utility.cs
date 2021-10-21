@@ -8,8 +8,11 @@ public class Utility : MonoBehaviour
 
     public static Utility instance;
 
+    System.Random rand = new System.Random();
+
     void Awake(){
         instance = this;
+        rand = new System.Random();
     }
 
     public static Vector3 GetHorizontalVector(Vector3 vector)
@@ -167,6 +170,11 @@ public class Utility : MonoBehaviour
 
     public static Quaternion GetRandomRotation(float maxDegrees){
         return Quaternion.Euler(UnityEngine.Random.Range(0f, maxDegrees), UnityEngine.Random.Range(0f, maxDegrees), UnityEngine.Random.Range(0f, maxDegrees));
+    }
+
+    public static bool GetRandomBoolean()
+    {
+        return instance.rand.NextDouble() >= 0.5;
     }
 
 

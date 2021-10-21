@@ -1169,20 +1169,31 @@ public class EntityPhysics : EntityComponent
         }
         else
         {
-            entityOrientation.SetBodyRotationMode(entityBehavior.activeAction.bodyRotationMode, entityBehavior.activeAction.targetedWorldObject.transform);
+            GameObject targetedWorldObject = entityBehavior.activeAction.targetedWorldObject;
+            if(targetedWorldObject != null)
+            {
+                entityOrientation.SetBodyRotationMode(entityBehavior.activeAction.bodyRotationMode, entityBehavior.activeAction.targetedWorldObject.transform);
+            }
+            else
+            {
+                entityOrientation.SetBodyRotationMode(BodyRotationMode.Normal, null);
+            }
         }
     }
     public void OnAttackHit(Collider collider, Vector3 hitPoint, Projectile projectile)
     {
         GameObject hitObject = collider.gameObject;
+        EntityStats hitObjectStats = null;
         //Debug.Log(hitObject.layer);
-
-        if (hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature") || hitObject.layer == LayerMask.NameToLayer("Item"))
+        
+        //if (hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature") || hitObject.layer == LayerMask.NameToLayer("Item"))
+        if (LayerMaskController.HITTABLE == (LayerMaskController.HITTABLE | (1 << hitObject.layer)))
         {
             EntityHitDetection ehd = collider.gameObject.GetComponentInParent<EntityHitDetection>();
             if(ehd != null)
             {
                 ehd.OnHit(this.entityHandle, hitPoint, projectile, false);
+                hitObjectStats = ehd.entityStats;
             }
             else
             {
@@ -1190,6 +1201,7 @@ public class EntityPhysics : EntityComponent
                 if (ihd != null)
                 {
                     ihd.OnHit(this.entityHandle, hitPoint, projectile);
+                    hitObjectStats = ihd.stats;
                 }
             }
 
@@ -1202,14 +1214,21 @@ public class EntityPhysics : EntityComponent
             StopMeleeAttackHitTime();
         }
        
-
+        // if faction leader and hit object is still not destroyed, call members to attack the same object
         if(entityInfo.isFactionLeader)
         {
-            ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Attack, collider.gameObject, -1, null, null, entityBehavior.CalculateChaseTime(), EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, hitObject.layer == LayerMask.NameToLayer("Creature"));
-            entityInfo.faction.SendPartyCommand(ap);
+            if(hitObjectStats != null)
+            {
+                if(hitObjectStats.hp > 0)
+                {
+                    ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Chase, hitObject, Vector3.zero, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, true);
+                    entityInfo.faction.SendPartyCommand(ap);
+                }
+            }
+            
             if(entityActionRecorder != null)
             {
-                entityActionRecorder.RecordAction(ap);
+                //entityActionRecorder.RecordAction(ap);
             }
         }
 
