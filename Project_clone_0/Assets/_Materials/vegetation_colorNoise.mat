@@ -14,7 +14,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -24,21 +24,28 @@ Material:
         m_Texture: {fileID: 2800000, guid: 8b68c9d86ea05c848bcc3482964c5944, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - Texture2D_B95F101C:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Boolean_891C2B1B: 0
+    - Boolean_891C2B1B: 1
+    - Vector1_24802EB: 0.2
     - Vector1_444F1B02: 0.5
-    - Vector1_4A3933E: 1.5
+    - Vector1_4A3933E: 0.5
     - Vector1_5BA5719C: 3
     - Vector1_656083AD: 1
+    - Vector1_D19216B2: 0
     - Vector1_D29BA90B: 10
     - Vector1_D2FDA34A: 1
-    - Vector1_F552BBDC: 1
+    - Vector1_F552BBDC: 0.2
     - _ColorNoise: 1
     - _SnowDepth: 0.1
     - _SnowHeightCap: 4649.4
     - _SnowHeightStart: 3947.4001
-    - _SnowMinimumSurfaceNormal: 0.57
+    - _SnowMinimumSurfaceNormal: 0.99
     m_Colors:
+    - Color_5241E242: {r: 0, g: 0.5849056, b: 0.21709806, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.7075472, g: 0.7075472, b: 0.7075472, a: 1}
-    - _TargetVector: {r: 0, g: 0, b: 0, a: 0}
+    - _TargetVector: {r: -593.688, g: 4590.682, b: 303.79996, a: 0}

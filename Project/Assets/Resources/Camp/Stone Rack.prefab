@@ -121,8 +121,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.0970166, y: 0.25444674, z: 1.0623679}
-  m_Center: {x: 0, y: 1.0070497, z: 0.017324448}
+  m_Size: {x: 0.7654428, y: 0.6821356, z: 0.8267761}
+  m_Center: {x: -0.000000029802322, y: 0.34805918, z: -0.0044896305}
 --- !u!1 &710523134294722858
 GameObject:
   m_ObjectHideFlags: 0
@@ -1614,7 +1614,7 @@ GameObject:
   - component: {fileID: 3484437019518606282}
   m_Layer: 0
   m_Name: Stone Rack
-  m_TagString: ObjectRack_Bone
+  m_TagString: ObjectRack_Stone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

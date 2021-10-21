@@ -47,7 +47,7 @@ public class ShaderController : MonoBehaviour
     {
         foreach (Material mat in FadeMaterials)
         {
-            mat.SetVector("_TargetVector", GameManager.current.localPlayerHandle.entityPhysics.obstacleHeightSense.position);
+            mat.SetVector("_TargetVector", GameManager.current.localPlayerHandle.entityPhysics.hips.position);
         }
     }
 

@@ -306,7 +306,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 							float awayFromWaterModifier = clamp(0, 1, invLerp(_WaterHeight, _WaterHeight + 1, UnityObjectToWorld(input[ii].objPos).y));
 							float awayFromCampModifier = clamp(0, 1, invLerp(_CampRadius, _CampRadius + 1, distance(UnityObjectToWorld(input[ii].objPos), _CampOrigin)));
 							float heightMod = min(awayFromWaterModifier, awayFromCampModifier);
-							heightMod = 1;
+							//heightMod = 1;
 
 							objSpace = float4(input[ii].objPos + NewNormal * _OffsetValue*i*heightMod + (offsetNormal*heightMod));
 							o.color = (i / (_NumberOfStacks - _GrassCut));

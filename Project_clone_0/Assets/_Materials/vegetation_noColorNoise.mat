@@ -25,14 +25,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Boolean_891C2B1B: 0
+    - Boolean_891C2B1B: 1
+    - Vector1_24802EB: 0.2
     - Vector1_444F1B02: 0.5
-    - Vector1_4A3933E: 1.5
+    - Vector1_4A3933E: 0.5
     - Vector1_5BA5719C: 3
     - Vector1_656083AD: 1
     - Vector1_D29BA90B: 10
     - Vector1_D2FDA34A: 1
-    - Vector1_F552BBDC: 1
+    - Vector1_F552BBDC: 0.2
     - _ColorNoise: 0
     - _SnowDepth: 0.1
     - _SnowHeightCap: 4649.4
@@ -41,4 +42,4 @@ Material:
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    - _TargetVector: {r: 0, g: 0, b: 0, a: 0}
+    - _TargetVector: {r: -593.688, g: 4590.682, b: 303.79996, a: 0}

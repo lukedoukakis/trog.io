@@ -63,7 +63,7 @@ public class EntityCommandServer : EntityComponent
 
     public IEnumerator SetNewFactionWhenReady(EntityHandle leaderHandle){
         while (!NetworkClient.ready) {
-            yield return new WaitForSeconds(.05f);
+            yield return new WaitForSecondsRealtime(.05f);
         }
         SetNewFaction(leaderHandle);
     }

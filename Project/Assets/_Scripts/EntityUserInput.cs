@@ -8,7 +8,7 @@ public class EntityUserInput : EntityComponent
 
     //public enum InteractionType{ TakeItem, PlaceItem, }
 
-    public static float DISTANCE_INTERACTABLE = 1.5f;
+    public static float DISTANCE_INTERACTABLE = 2f;
 
     public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressCrouch;
     public bool pressToggleAttackRanged;
@@ -158,7 +158,8 @@ public class EntityUserInput : EntityComponent
         }
     }
    
-    void OnInteractInput(){
+    void OnInteractInput()
+    {
 
         //Log("Hovered object: " + hoveredInteractableObject.name);
 
@@ -187,27 +188,30 @@ public class EntityUserInput : EntityComponent
             {
                 if (t == "ObjectRack_Food")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
+                    //entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
                 }
                 else if (t == "ObjectRack_Clothing")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
+                    //entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
                 }
                 else if (t == "ObjectRack_Weapons")
                 {
-                    entityItems.DropEquippedWeapon((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
+                    //entityItems.DropEquippedWeapon((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
                 }
                 else if (t == "ObjectRack_Wood")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
+                    entityInfo.faction.RemoveItemOwned(Item.WoodPiece, 1, (ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference(), true, entityItems);
+                    //entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
                 }
                 else if (t == "ObjectRack_Bone")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
+                    entityInfo.faction.RemoveItemOwned(Item.BonePiece, 1, (ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference(), true, entityItems);
+                    //entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
                 }
                 else if (t == "ObjectRack_Stone")
                 {
-                    entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
+                    entityInfo.faction.RemoveItemOwned(Item.StoneSmall, 1, (ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference(), true, entityItems);
+                    //entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
                 }
                 else{
 
@@ -265,13 +269,11 @@ public class EntityUserInput : EntityComponent
 
             //Debug.Log(hoveredInteractableObject.tag);
 
-            Item item;
-
             // get the correct text based on the interactable object we are dealing with
             string txt = "";
             switch (hoveredInteractableObject.tag){
                 case "Item" : 
-                    txt += "E: Pick up " + hoveredInteractableObject.name;
+                    txt += hoveredInteractableObject.name;
                     break;
                 case "Npc" :
                     EntityHandle hoveredEntityHandle = hoveredInteractableObject.GetComponentInParent<EntityHandle>();
@@ -286,17 +288,17 @@ public class EntityUserInput : EntityComponent
                         {
                             if(hasWeaponEquipped_hoveredEntity)
                             {
-                                txt += "E: Trade weapons with " + hoveredEntityHandle.entityInfo.nickname;
+                                txt += "Trade weapons";
                             }
                             else
                             {
                                 if(hasWeaponUnequipped_hoveredEntity)
                                 {
-                                    txt += "E: Trade weapons with " + hoveredEntityHandle.entityInfo.nickname;
+                                    txt += "Trade weapons";
                                 }
                                 else
                                 {
-                                    txt += "E: Give weapon to " + hoveredEntityHandle.entityInfo.nickname;
+                                    txt += "Give weapon";
                                 }
                             }
                         }
@@ -304,76 +306,40 @@ public class EntityUserInput : EntityComponent
                         {
                             if(hasWeaponEquipped_hoveredEntity)
                             {
-                                txt += "E: Take weapon from " + hoveredEntityHandle.entityInfo.nickname;
-                            }
-                            else
-                            {
-                                if (hasWeaponUnequipped_hoveredEntity)
-                                {
-                                    txt += "E: Take weapon from " + hoveredEntityHandle.entityInfo.nickname;
-                                }
+                                txt += "Take Weapon";
                             }
                         }
                     }
-
-
                     break;
 
                 case "Bonfire" : 
-                    item = entityItems.holding_item;
-                    if(!(item == null || !item.type.Equals(ItemType.Food))){
-                        txt += "E: Cook " + item.nme;
-                    }
+                    txt += "Fire"; 
                     break;
                 case "ObjectRack_Food" :
-                    item = entityItems.holding_item;
-                    if(!(item == null || !item.type.Equals(ItemType.Food)))
-                    {
-                        txt += "E: Place " + item.nme;
-                    }
+                    txt += "";
                     break;
                 case "ObjectRack_Clothing" :
-                    item = entityItems.holding_item;
-                    if(!(item == null || !item.type.Equals(ItemType.Clothing))){
-                        txt += "E: Place " + item.nme;
-                    }
+                    txt += "";
                     break;
-
                 case "ObjectRack_Weapons" :
-                    item = entityItems.weaponEquipped_item;
-                    if(item != null){
-                        txt += "E: Place " + item.nme;
-                    }
+                    txt += "";
                     break;
                 case "ObjectRack_Wood" :
-                    item = entityItems.holding_item;
-                    if(!(item == null || !item.type.Equals(ItemType.Wood))){
-                        txt += "E: Place " + item.nme;
-                    }
+                    txt += "Wood";
                     break;
                 case "ObjectRack_Bone" :
-                    item = entityItems.holding_item;
-                    if(!(item == null || !item.type.Equals(ItemType.Bone))){
-                        txt += "E: Place " + item.nme;
-                    }
+                    txt += "Animal bones";
                     break;
                 case "ObjectRack_Stone" :
-                    item = entityItems.holding_item;
-                    if(!(item == null || !item.type.Equals(ItemType.Stone))){
-                        txt += "E: Place " + item.nme;
-                    }
+                    txt += "Stones";
                     break;
 
                 case "Workbench" :
-                    item = entityItems.holding_item;
-                    if(item != null){
-                        txt += "E: Place " + item.nme;
-                    }
+                    txt += "Worktable";
                     break;
                 case "WorkbenchHammer" :
-
                     Workbench wb = (Workbench)(Utility.FindScriptableObjectReference(hoveredInteractableObject.transform).GetObjectReference());
-                    txt += !wb.IsEmpty() && wb.currentCraftableItem != null ? "E: Craft " + wb.currentCraftableItem.nme : "Drop resources onto the table to craft cool new things!";
+                    txt += !wb.IsEmpty() && wb.currentCraftableItem != null ? "Craft: " + wb.currentCraftableItem.nme : "";
                     break;
                 // todo: handle other types of objects
                 default:

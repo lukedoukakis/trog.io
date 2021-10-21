@@ -39,7 +39,7 @@ public class TooltipController : MonoBehaviour
 		StartCoroutine(ShowAfterDelay(delay));
 	}
 	IEnumerator ShowAfterDelay(float delay){
-		yield return new WaitForSeconds(delay);
+		yield return new WaitForSecondsRealtime(delay);
 		if(isEnabled){
 			text.enabled = true;
 			backgroundImage.enabled = true;
