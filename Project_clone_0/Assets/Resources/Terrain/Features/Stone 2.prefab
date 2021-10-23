@@ -60,6 +60,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemNme: Stone
+  item: {fileID: 0}
+  stats: {fileID: 0}
 --- !u!65 &2673929840650833920
 BoxCollider:
   m_ObjectHideFlags: 0

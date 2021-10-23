@@ -23,7 +23,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float FlatLevel = .85f;
     public static float SeaLevel = FlatLevel - (meter * .06f); //0.849985f;
     public static float BankLevel = SeaLevel + meter;
-    public static float SnowLevel = .861f;
+    public static float SnowLevel = .871f;
     //public static float SnowLevel = float.MaxValue;
     public static float GrassNormal = .57f;
     public static float SnowNormal = .57f;
@@ -300,7 +300,7 @@ public class ChunkGenerator : MonoBehaviour
                 temperatureValue = Mathf.InverseLerp(.25f, .75f, temperatureValue);
                 //temperatureValue = Mathf.Clamp01(temperatureValue);
 
-                temperatureValue = .25f;
+                temperatureValue = .75f;
 
 
 

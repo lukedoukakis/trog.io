@@ -14,7 +14,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 2000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -36,10 +36,10 @@ Material:
     - Vector1_F552BBDC: 0.2
     - _ColorNoise: 0
     - _SnowDepth: 0.1
-    - _SnowHeightCap: 4649.4
-    - _SnowHeightStart: 3947.4001
+    - _SnowHeightCap: 4703.4
+    - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 0.57
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    - _TargetVector: {r: -593.688, g: 4590.682, b: 303.79996, a: 0}
+    - _TargetVector: {r: -73.25552, g: 4594.992, b: 136.46426, a: 0}
