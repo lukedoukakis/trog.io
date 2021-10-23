@@ -300,7 +300,8 @@ public class ChunkGenerator : MonoBehaviour
                 temperatureValue = Mathf.InverseLerp(.25f, .75f, temperatureValue);
                 //temperatureValue = Mathf.Clamp01(temperatureValue);
 
-                //temperatureValue = .75f;
+                // lock temperature
+                temperatureValue = .99f;
 
 
 
@@ -352,7 +353,9 @@ public class ChunkGenerator : MonoBehaviour
                 //humidityValue += (mountainValue / mtnCap) * .5f;
                 //humidityValue = Mathf.Clamp01(humidityValue);
                 //humidityValue = Mathf.InverseLerp(.2f, .8f, humidityValue);
-                humidityValue = .75f;
+
+                // lock humidity
+                humidityValue = 0.01f;
                 // -------------------------------------------------------
 
 
@@ -521,12 +524,18 @@ public class ChunkGenerator : MonoBehaviour
                 // }
 
 
-                // // badland effect in deserts
-                // if(heightValue > SeaLevel + .0001f){
-                //     float postHeight = Posterize(SeaLevel + .0001f, 1f, heightValue, 100, .5f);
-                //     float badland = Mathf.InverseLerp(.6f, .9f, temperatureValue);
-                //     heightValue = Mathf.Lerp(heightValue, postHeight, badland);
-                // }
+                // badland effect in deserts
+                float desertness = Mathf.InverseLerp(.75f, 1f, Mathf.Min(temperatureValue, 1f - humidityValue));
+                //Debug.Log(desertness);
+                if(desertness > 0f)
+                {   
+                    if(heightValue > FlatLevel + meter){
+                        float postHeight = Posterize(FlatLevel + meter, 1f, heightValue, 100, .5f);
+                        float badland = desertness;
+                        heightValue = Mathf.Lerp(heightValue, postHeight, badland);
+                    }
+                }
+                
 
                 //posterize all land
                 // float postNes = .75f;
@@ -611,7 +620,7 @@ public class ChunkGenerator : MonoBehaviour
 
     
         // desertness (c.r)
-        c.r = Mathf.Max(255f * temperature);
+        //c.r = Mathf.Max(255f * temperature);
 
         return c;
 
