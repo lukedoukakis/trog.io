@@ -9,6 +9,7 @@ public class ShaderController : MonoBehaviour
 
     [SerializeField] Material TerrainMaterial;
     [SerializeField] Material GrassMaterial;
+    [SerializeField] Material[] RockMaterials;
     [SerializeField] Material[] SnowMaterials;
     [SerializeField] Material[] FadeMaterials;
 
@@ -35,20 +36,49 @@ public class ShaderController : MonoBehaviour
         }
     }
 
+    void UpdateShaderSettings()
+    {
+        UpdateFadeMaterials();
+        UpdateRockMaterials();
+    }
+
+    void UpdateFadeMaterials()
+    {
+        foreach (Material mat in FadeMaterials)
+        {
+            mat.SetVector("_TargetVector", GameManager.current.localPlayerHandle.entityPhysics.hips.position);
+        }
+    }
+
+    void UpdateRockMaterials()
+    {
+        Vector3 refPosition = Camera.main.transform.position;
+        ChunkData cd = ChunkGenerator.current.GetChunk(refPosition);
+        if(cd == null){ return; }
+
+        Vector2 coordinatesOnChunk = ChunkGenerator.current.GetChunkCoordinates(refPosition);
+        float temperatureAtCoordinates = 0;
+        try{
+            temperatureAtCoordinates = cd.TemperatureMap[(int)coordinatesOnChunk.x, (int)coordinatesOnChunk.y];
+        }
+        catch
+        {
+            Debug.Log(coordinatesOnChunk);
+        }
+        
+
+        foreach (Material mat in RockMaterials)
+        {
+            mat.SetFloat("_Temperature", temperatureAtCoordinates);
+        }
+    }
+
     public void UpdateGrassShaderSettings(Camp camp)
     {
         Vector3 campOrigin = camp.origin;
         float radius = camp.radius;
         GrassMaterial.SetVector("_CampOrigin", campOrigin);
         GrassMaterial.SetFloat("_CampRadius", radius);
-    }
-
-    void UpdateShaderSettings()
-    {
-        foreach (Material mat in FadeMaterials)
-        {
-            mat.SetVector("_TargetVector", GameManager.current.localPlayerHandle.entityPhysics.hips.position);
-        }
     }
 
     void Update()

@@ -300,7 +300,7 @@ public class ChunkGenerator : MonoBehaviour
                 temperatureValue = Mathf.InverseLerp(.25f, .75f, temperatureValue);
                 //temperatureValue = Mathf.Clamp01(temperatureValue);
 
-                temperatureValue = .75f;
+                //temperatureValue = .75f;
 
 
 
@@ -857,7 +857,7 @@ public class ChunkGenerator : MonoBehaviour
                 return cd;
             }
         }
-        Debug.Log("ChunkGenerator: chunk from given position is not loaded!");
+        //Debug.Log("ChunkGenerator: chunk from given position is not loaded!");
         return null;
     }
 
@@ -867,6 +867,14 @@ public class ChunkGenerator : MonoBehaviour
         Vector2 position_chunkSpace = ToChunkSpace(position);
         Vector2 chunkCoord = new Vector2((int)position_chunkSpace.x, (int)(position_chunkSpace.y));
         return GetChunk(chunkCoord);
+    }
+
+    // retrieve the x and z points of the given position on the chunk it's in
+    public Vector2 GetChunkCoordinates(Vector3 position)
+    {
+        int x = (int)(Mathf.Abs(position.x % ChunkSize));
+        int z = (int)(Mathf.Abs(position.z % ChunkSize));
+        return new Vector2(x, z);
     }
 
 
