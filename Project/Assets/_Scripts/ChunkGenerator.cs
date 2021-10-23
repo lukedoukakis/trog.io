@@ -525,12 +525,12 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // badland effect in deserts
-                float desertness = Mathf.InverseLerp(.75f, 1f, Mathf.Min(temperatureValue, 1f - humidityValue));
+                float desertness = CalculateDesertness(temperatureValue, humidityValue);
                 //Debug.Log(desertness);
                 if(desertness > 0f)
                 {   
                     if(heightValue > FlatLevel + meter){
-                        float postHeight = Posterize(FlatLevel + meter, 1f, heightValue, 100, .5f);
+                        float postHeight = Posterize(FlatLevel + meter, 1f, heightValue, 100, .8f);
                         float badland = desertness;
                         heightValue = Mathf.Lerp(heightValue, postHeight, badland);
                     }
@@ -583,6 +583,11 @@ public class ChunkGenerator : MonoBehaviour
         }
 
         
+    }
+
+    float CalculateDesertness(float temp, float humid)
+    {
+        return Mathf.InverseLerp(.75f, 1f, Mathf.Min(temp, 1f - humid));
     }
 
     float Posterize(float min, float max, float val, int steps, float softness)
@@ -760,6 +765,8 @@ public class ChunkGenerator : MonoBehaviour
         // set terrain vertices according to HeightMap, and set colors
         // NOTE: vertex index = (z * (ChunkSize + 2) + x
         float height;
+        float temperature;
+        float humidity;
         float rockiness;
         float skewHoriz;
         float[,] skewHorizMap = new float[ChunkSize + 2, ChunkSize + 2];
@@ -768,16 +775,19 @@ public class ChunkGenerator : MonoBehaviour
             for (int x = 0; x < ChunkSize + 2; x++)
             {
                 height = HeightMap[x, z] * ElevationAmplitude;
+                temperature = TemperatureMap[x, z];
+                humidity = HumidityMap[x, z];
                 rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 50f, (z + zOffset) / 50f), .5f);
                 //rockiness *= Mathf.PerlinNoise(((height) / 50f), 0f);
                 rockiness += (Mathf.PerlinNoise((x + xOffset) / 2f, (z + zOffset) / 2f) * 2f - 1f) * .02f;
                 //rockiness *= Mathf.InverseLerp(0f, .5f, MountainMap[x, z]);
+                rockiness *= 1f - (CalculateDesertness(temperature, humidity));
                 skewHoriz = ((rockiness + .5f) * 2f - 1f) * 18f * RockProtrusion;
                 //skewHoriz *= Mathf.InverseLerp(SeaLevel, SeaLevel + (meter * 20f), HeightMap[x, z]); // smooth down rockiness at sea level
                 skewHorizMap[x, z] = skewHoriz;
                 TerrainVertices[i] = new Vector3(x + xOffset + skewHoriz, height, z + zOffset + skewHoriz);
                 //TerrainVertices[i] = new Vector3(x + xOffset, height, z + zOffset);
-                TerrainColors[i] = SetVertexColor(x + xOffset, z + zOffset, HeightMap[x, z], MountainMap[x, z], TemperatureMap[x, z], HumidityMap[x, z], WetnessMap[x, z], FreshWaterMap[x, z], rockiness);
+                TerrainColors[i] = SetVertexColor(x + xOffset, z + zOffset, HeightMap[x, z], MountainMap[x, z], temperature, humidity, WetnessMap[x, z], FreshWaterMap[x, z], rockiness);
                 i++;
             }
         }

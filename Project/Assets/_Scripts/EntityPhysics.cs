@@ -1244,6 +1244,7 @@ public class EntityPhysics : EntityComponent
         if (rbTarget == null)
         {
             rbTarget = targetT.gameObject.AddComponent<Rigidbody>();
+            rbTarget.isKinematic = true;
             rbTarget.constraints = RigidbodyConstraints.FreezeAll;
         }
         if (rbWeapon == null)

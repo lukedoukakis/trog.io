@@ -9,9 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2333787873755612768}
-  - component: {fileID: 852874642947276209}
   - component: {fileID: 3632307178189894107}
-  - component: {fileID: 2673929840650833920}
   m_Layer: 10
   m_Name: Stone 2
   m_TagString: Feature
@@ -34,19 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &852874642947276209
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2333787873755612775}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.6933534, y: 0.4828421, z: 0.45946896}
-  m_Center: {x: -0.053565443, y: -0.06657758, z: 0.009966984}
 --- !u!114 &3632307178189894107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,19 +47,6 @@ MonoBehaviour:
   itemNme: Stone
   item: {fileID: 0}
   stats: {fileID: 0}
---- !u!65 &2673929840650833920
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2333787873755612775}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6858444299094640341
 GameObject:
   m_ObjectHideFlags: 0
@@ -86,6 +58,7 @@ GameObject:
   - component: {fileID: 1572752275292176030}
   - component: {fileID: 4561480423791962901}
   - component: {fileID: 2274420480303636162}
+  - component: {fileID: 7531710439173204661}
   m_Layer: 10
   m_Name: Stone
   m_TagString: Feature
@@ -155,3 +128,17 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!64 &7531710439173204661
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6858444299094640341}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2491264685937847845, guid: fd42e08db4c0d5d42bc34b3c39b84805, type: 3}
