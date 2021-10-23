@@ -53,10 +53,10 @@ public class ShaderController : MonoBehaviour
     void UpdateRockMaterials()
     {
         Vector3 refPosition = Camera.main.transform.position;
-        ChunkData cd = ChunkGenerator.current.GetChunk(refPosition);
+        ChunkData cd = ChunkGenerator.GetChunk(refPosition);
         if(cd == null){ return; }
 
-        Vector2 coordinatesOnChunk = ChunkGenerator.current.GetChunkCoordinates(refPosition);
+        Vector2 coordinatesOnChunk = ChunkGenerator.GetChunkCoordinates(refPosition);
         float temperatureAtCoordinates = 0;
         try{
             temperatureAtCoordinates = cd.TemperatureMap[(int)coordinatesOnChunk.x, (int)coordinatesOnChunk.y];

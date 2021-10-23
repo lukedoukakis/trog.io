@@ -175,7 +175,7 @@ public class ChunkGenerator : MonoBehaviour
         // remove chunks out of rendering range from ChunksToLoad
         foreach (ChunkData cd in ChunkDataToLoad.ToArray())
         {
-            if (Vector2.Distance(playerPos_chunkSpace, cd.coord + halfVec) >= ChunkRenderDistance)
+            if (Vector2.Distance(playerPos_chunkSpace, cd.coordinate + halfVec) >= ChunkRenderDistance)
             {
                 ChunkDataToLoad.Remove(cd);
             }
@@ -187,7 +187,7 @@ public class ChunkGenerator : MonoBehaviour
             if (Vector2.Distance(playerPos_chunkSpace, chunkCoord + halfVec) < ChunkRenderDistance)
             {
 
-                int index = ChunkDataToLoad.FindIndex(cd => cd.coord == chunkCoord);
+                int index = ChunkDataToLoad.FindIndex(cd => cd.coordinate == chunkCoord);
                 if (index < 0)
                 {
                     ChunkDataToLoad.Add(new ChunkData(chunkCoord));
@@ -201,7 +201,7 @@ public class ChunkGenerator : MonoBehaviour
     {
 
         IEnumerator load;
-        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(ToChunkSpace(playerT.position), c.coord)).ToArray())
+        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(ToChunkSpace(playerT.position), c.coordinate)).ToArray())
         {
             if (!cd.loaded)
             {
@@ -227,8 +227,8 @@ public class ChunkGenerator : MonoBehaviour
         Terrain = cd.terrain;
         TerrainMesh = cd.terrainMesh;
         FeaturesParent = cd.featuresParent;
-        xIndex = (int)(cd.coord.x);
-        zIndex = (int)(cd.coord.y);
+        xIndex = (int)(cd.coordinate.x);
+        zIndex = (int)(cd.coordinate.y);
         xOffset = xIndex * ChunkSize;
         zOffset = zIndex * ChunkSize;
 
@@ -254,7 +254,7 @@ public class ChunkGenerator : MonoBehaviour
 
         foreach (ChunkData loadedCd in ChunkDataLoaded.ToArray())
         {
-            int index = ChunkDataToLoad.FindIndex(cd => cd.coord == loadedCd.coord);
+            int index = ChunkDataToLoad.FindIndex(cd => cd.coordinate == loadedCd.coordinate);
             if (index < 0)
             {
                 loadedCd.Deload();
@@ -438,7 +438,7 @@ public class ChunkGenerator : MonoBehaviour
                     float sampleZ = (z + zOffset) / Scale * frequency + Seed;
                     float perlinValue = Mathf.PerlinNoise(sampleX, sampleZ) * 2 - 1;
                     heightValue += perlinValue * amplitude;
-                    amplitude *= persistance * Mathf.Lerp(.25f, 1f, freshWaterValue);
+                    amplitude *= persistance * Mathf.Lerp(.25f, 1f, freshWaterValue) * (1f - CalculateDesertness(temperatureValue, humidityValue));
                     frequency *= lacunarity;
                 }
 
@@ -530,7 +530,7 @@ public class ChunkGenerator : MonoBehaviour
                 if(desertness > 0f)
                 {   
                     if(heightValue > FlatLevel + meter){
-                        float postHeight = Posterize(FlatLevel + meter, 1f, heightValue, 100, .8f);
+                        float postHeight = Posterize(FlatLevel + meter, 1f, heightValue, 100, .95f);
                         float badland = desertness;
                         heightValue = Mathf.Lerp(heightValue, postHeight, badland);
                     }
@@ -648,6 +648,8 @@ public class ChunkGenerator : MonoBehaviour
         float bundleIteration = 0f;
         Vector3 randomPositionOffset, spawnPosition, spawnScale;
         GameObject o;
+
+        //yield return new WaitUntil(() => !IsEdgeChunk(cd));
 
         foreach(GameObject feature in Features)
         {
@@ -860,18 +862,18 @@ public class ChunkGenerator : MonoBehaviour
 
 
     // returns given position translated to chunk coordinates, based on chunkSize
-    public Vector2 ToChunkSpace(Vector3 position)
+    public static Vector2 ToChunkSpace(Vector3 position)
     {
         return new Vector2(position.x / (ChunkSize), position.z / (ChunkSize));
     }
 
     // retrieve ChunkData in ChunkDataLoaded associated with the chunk coordinate
-    public ChunkData GetChunk(Vector2 chunkCoord)
+    public static ChunkData GetChunk(Vector2 chunkCoord)
     {
         //Debug.Log(chunkCoord);
         foreach (ChunkData cd in ChunkDataLoaded.ToArray())
         {
-            if (cd.coord == chunkCoord)
+            if (cd.coordinate == chunkCoord)
             {
                 return cd;
             }
@@ -881,7 +883,7 @@ public class ChunkGenerator : MonoBehaviour
     }
 
     // retrieve ChunkData in ChunkDataLoaded associated with the raw position given
-    public ChunkData GetChunk(Vector3 position)
+    public static ChunkData GetChunk(Vector3 position)
     {
         Vector2 position_chunkSpace = ToChunkSpace(position);
         Vector2 chunkCoord = new Vector2((int)position_chunkSpace.x, (int)(position_chunkSpace.y));
@@ -889,11 +891,45 @@ public class ChunkGenerator : MonoBehaviour
     }
 
     // retrieve the x and z points of the given position on the chunk it's in
-    public Vector2 GetChunkCoordinates(Vector3 position)
+    public static Vector2 GetChunkCoordinates(Vector3 position)
     {
         int x = (int)(Mathf.Abs(position.x % ChunkSize));
         int z = (int)(Mathf.Abs(position.z % ChunkSize));
         return new Vector2(x, z);
+    }
+
+    public static bool IsEdgeChunk(ChunkData cd)
+    {
+        List<ChunkData> neighbors = GetNeighborChunks(cd);
+        foreach(ChunkData neighborCd in neighbors)
+        {
+            if(neighborCd == null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static List<ChunkData> GetNeighborChunks(ChunkData cd)
+    {
+        
+        Vector3 baseCoordinate = cd.coordinate;
+        int baseX = (int)baseCoordinate.x;
+        int baseZ = (int)baseCoordinate.z;
+
+        List<ChunkData> neighborChunkCoords = new List<ChunkData>()
+        {
+            GetChunk(new Vector2(baseX - 1, baseZ)),
+            GetChunk(new Vector2(baseX + 1, baseZ)),
+            GetChunk(new Vector2(baseX, baseZ - 1)),
+            GetChunk(new Vector2(baseX, baseZ + 1)),
+            GetChunk(new Vector2(baseX + 1, baseZ + 1)),
+            GetChunk(new Vector2(baseX - 1, baseZ - 1))
+        };
+
+        return neighborChunkCoords;
+        
     }
 
 

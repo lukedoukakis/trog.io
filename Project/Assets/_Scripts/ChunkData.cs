@@ -6,7 +6,7 @@ using UnityEngine;
 public class ChunkData
 {
  
-    public Vector2 coord;
+    public Vector2 coordinate;
     public bool loaded;
     public int randomState;
 
@@ -29,13 +29,13 @@ public class ChunkData
 
     public ChunkData(Vector2 _coord)
     {
-        coord = _coord;
+        coordinate = _coord;
         loaded = false;
     }
 
     public void Init(GameObject chunkPrefab)
     {
-        randomState = (int)(coord.x + coord.y * 10f);
+        randomState = (int)(coordinate.x + coordinate.y * 10f);
 
         chunk = GameObject.Instantiate(chunkPrefab);
         chunk.transform.SetParent(GameObject.Find("Chunk Generator").transform);
