@@ -81,6 +81,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 		_SnowHeightStart("Snow Height Cap", Float) = 0
 		_CampOrigin("Camp Origin", Vector) = (0,0,0,0)
 		_CampRadius("Camp Radius", Float) = 0
+		_Desertness("Desertness", Float) = 0
 	}
 		SubShader
 		{
@@ -213,6 +214,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 			half _SnowHeightCap;
 			float4 _CampOrigin;
 			half _CampRadius;
+			half _Desertness;
 
 			float2 hash2D2D(float2 s)
 			{
@@ -323,7 +325,8 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 							// change geometry height based on proximity to water and player's campsite
 							float awayFromWaterModifier = clamp(0, 1, invLerp(_WaterHeight, _WaterHeight + 1, UnityObjectToWorld(input[ii].objPos).y));
 							float awayFromCampModifier = clamp(0, 1, invLerp(_CampRadius, _CampRadius + 1, distance(UnityObjectToWorld(input[ii].objPos), _CampOrigin)));
-							float heightMod = min(awayFromWaterModifier, awayFromCampModifier);
+							float awayFromDesertnessModifier = clamp(0, 1, 1 - invLerp(.7, .75, _Desertness));
+							float heightMod = min(min(awayFromWaterModifier, awayFromCampModifier), awayFromDesertnessModifier);
 
 							objSpace = float4(input[ii].objPos + NewNormal * _OffsetValue*i*heightMod + (offsetNormal*heightMod));
 							o.color = (i / (_NumberOfStacks - _GrassCut));

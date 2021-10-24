@@ -78,7 +78,7 @@ public class Camp : MonoBehaviour
         camp.SetTribeMemberStandingPositions();
 
         // call the shader controller to update according to new origin position and radius
-        ShaderController.instance.UpdateGrassShaderSettings(camp);
+        ShaderController.instance.UpdateGrassSettings(camp);
 
         return camp;
 

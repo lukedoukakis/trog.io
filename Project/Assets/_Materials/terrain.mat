@@ -64,6 +64,7 @@ Material:
     - Vector1_C1CE9129: 0.32
     - Vector1_D5D2B22E: 100
     - _ColorNoise: 0
+    - _Desertness: 0
     - _SnowCapHeight: 0
     - _SnowDepth: 0.1
     - _SnowHeight: 4645.04
@@ -71,7 +72,7 @@ Material:
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 0.57
     - _SnowStartHeight: 0
-    - _Temperature: 0.99
+    - _Temperature: 0
     - _WaterHeight: 4589.99
     m_Colors:
     - Color_1DD039A2: {r: 0.99056596, g: 0.9086226, b: 0.6588199, a: 0}

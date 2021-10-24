@@ -58,6 +58,7 @@ Material:
     m_Floats:
     - _CampRadius: 4
     - _ColorTiling: 0.005
+    - _Desertness: 0
     - _FadeDistanceEnd: 101
     - _FadeDistanceStart: 100
     - _GrassCut: 0
@@ -86,13 +87,13 @@ Material:
     - _UseShadow: 1
     - _UseShadowCast: 0
     - _UseWC: 0
-    - _WaterHeight: 4590.4404
+    - _WaterHeight: 4589.99
     - _WindForce: 0.25
     - _WindMovement: 100
     - _WorldRotation: 0
     - _WorldScale: 10
     m_Colors:
-    - _CampOrigin: {r: 244.15427, g: 4591.148, b: 283.96494, a: 0}
+    - _CampOrigin: {r: 16.512682, g: 4590.7285, b: 376.51263, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
     - _OffsetVector: {r: 0, g: 1.5, b: 0, a: 0}

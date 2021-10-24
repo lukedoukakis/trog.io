@@ -7,10 +7,12 @@ public class ShaderController : MonoBehaviour
     
     public static ShaderController instance;
 
-    [SerializeField] Material TerrainMaterial;
     [SerializeField] Material GrassMaterial;
-    [SerializeField] Material[] RockMaterials;
-    [SerializeField] Material[] SnowMaterials;
+
+    [SerializeField] Material[] GrassNormalSensitiveMaterials;
+    [SerializeField] Material[] WaterSensitiveMaterials;
+    [SerializeField] Material[] DesertSensitiveMaterials;
+    [SerializeField] Material[] SnowSensitiveMaterials;
     [SerializeField] Material[] FadeMaterials;
 
 
@@ -24,23 +26,13 @@ public class ShaderController : MonoBehaviour
 
     void InitShaderSettings()
     {
-        TerrainMaterial.SetFloat("_WaterHeight", ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude + .05f);
-        GrassMaterial.SetFloat("_WaterHeight", ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude + .5f);
+
         GrassMaterial.SetFloat("_GrassNormal", ChunkGenerator.GrassNormal);
-        GrassMaterial.SetFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel - .13f) * ChunkGenerator.ElevationAmplitude);
-        GrassMaterial.SetFloat("_SnowHeightCap", ChunkGenerator.SnowLevel * ChunkGenerator.ElevationAmplitude);
-        foreach(Material mat in SnowMaterials){
-            //mat.SetFloat("_SnowMinimumSurfaceNormal", ChunkGenerator.SnowNormal);
-            mat.SetFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel - .13f) * ChunkGenerator.ElevationAmplitude);
-            mat.SetFloat("_SnowHeightCap", ChunkGenerator.SnowLevel * ChunkGenerator.ElevationAmplitude);
-        }
+
+        UpdateWaterSensitiveMaterials();
+        UpdateSnowSensitiveMaterials();
     }
 
-    void UpdateShaderSettings()
-    {
-        UpdateFadeMaterials();
-        UpdateRockMaterials();
-    }
 
     void UpdateFadeMaterials()
     {
@@ -50,30 +42,47 @@ public class ShaderController : MonoBehaviour
         }
     }
 
-    void UpdateRockMaterials()
+    void UpdateWaterSensitiveMaterials()
+    {
+        foreach(Material mat in WaterSensitiveMaterials){
+            mat.SetFloat("_WaterHeight", ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude + .05f);
+        }
+    }
+
+    void UpdateGrassNormalSensitiveMaterials()
+    {
+        foreach(Material mat in GrassNormalSensitiveMaterials){
+            mat.SetFloat("_GrassNormal", ChunkGenerator.GrassNormal);
+        }
+    }
+
+    void UpdateSnowSensitiveMaterials()
+    {
+        foreach(Material mat in SnowSensitiveMaterials){
+            //mat.SetFloat("_SnowMinimumSurfaceNormal", ChunkGenerator.SnowNormal);
+            mat.SetFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel - .13f) * ChunkGenerator.ElevationAmplitude);
+            mat.SetFloat("_SnowHeightCap", ChunkGenerator.SnowLevel * ChunkGenerator.ElevationAmplitude);
+        }
+    }
+
+    void UpdateDesertSensitiveMaterials()
     {
         Vector3 refPosition = Camera.main.transform.position;
         ChunkData cd = ChunkGenerator.GetChunk(refPosition);
         if(cd == null){ return; }
 
         Vector2 coordinatesOnChunk = ChunkGenerator.GetChunkCoordinates(refPosition);
-        float temperatureAtCoordinates = 0;
-        try{
-            temperatureAtCoordinates = cd.TemperatureMap[(int)coordinatesOnChunk.x, (int)coordinatesOnChunk.y];
-        }
-        catch
-        {
-            Debug.Log(coordinatesOnChunk);
-        }
+        float desertnessAtCoordinates = 0;
+        desertnessAtCoordinates = ChunkGenerator.CalculateDesertness(cd.TemperatureMap[(int)coordinatesOnChunk.x, (int)coordinatesOnChunk.y], cd.HumidityMap[(int)coordinatesOnChunk.x, (int)coordinatesOnChunk.y]);
         
-
-        foreach (Material mat in RockMaterials)
+        
+        foreach (Material mat in DesertSensitiveMaterials)
         {
-            mat.SetFloat("_Temperature", temperatureAtCoordinates);
+            mat.SetFloat("_Desertness", desertnessAtCoordinates);
         }
     }
 
-    public void UpdateGrassShaderSettings(Camp camp)
+    public void UpdateGrassSettings(Camp camp)
     {
         Vector3 campOrigin = camp.origin;
         float radius = camp.radius;
@@ -83,6 +92,7 @@ public class ShaderController : MonoBehaviour
 
     void Update()
     {
-        UpdateShaderSettings();
+        UpdateFadeMaterials();
+        UpdateDesertSensitiveMaterials();
     }
 }

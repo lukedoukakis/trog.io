@@ -157,6 +157,7 @@ Material:
     - Vector1_F552BBDC: 1
     - _ColorNoise: 0
     - _ColorTiling: 0.005
+    - _Desertness: 0
     - _EnableHeightBlend: 1
     - _EnableInstancedPerPixelNormal: 1
     - _FadeDistanceEnd: 101
@@ -194,7 +195,7 @@ Material:
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 0.57
     - _SnowStartHeight: 0
-    - _Temperature: 0.99
+    - _Temperature: 0
     - _TilingN1: 9.36
     - _TilingN2: 0.05
     - _TilingN3: 100
