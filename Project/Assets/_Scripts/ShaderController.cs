@@ -71,9 +71,9 @@ public class ShaderController : MonoBehaviour
         ChunkData cd = ChunkGenerator.GetChunk(refPosition);
         if(cd == null){ return; }
 
-        Vector2 coordinatesOnChunk = ChunkGenerator.GetChunkCoordinates(refPosition);
+        Vector2 coordinatesInChunk = ChunkGenerator.GetCoordinatesInChunk(refPosition);
         float desertnessAtCoordinates = 0;
-        desertnessAtCoordinates = ChunkGenerator.CalculateDesertness(cd.TemperatureMap[(int)coordinatesOnChunk.x, (int)coordinatesOnChunk.y], cd.HumidityMap[(int)coordinatesOnChunk.x, (int)coordinatesOnChunk.y]);
+        desertnessAtCoordinates = ChunkGenerator.CalculateDesertness(cd.TemperatureMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y], cd.HumidityMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y]);
         
         
         foreach (Material mat in DesertSensitiveMaterials)

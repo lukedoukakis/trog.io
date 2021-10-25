@@ -135,6 +135,11 @@ public class ChunkData
         return neighbors.ContainsValue(null);
     }
 
+    public bool IsNeighbor(ChunkData cd)
+    {
+        return neighbors.ContainsValue(cd);
+    }
+
 
     public void Deload()
     {
