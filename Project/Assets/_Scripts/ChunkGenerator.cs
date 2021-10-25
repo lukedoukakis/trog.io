@@ -9,7 +9,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator current;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 2;
+    public static int ChunkRenderDistance = 7;
     public static float Scale = 120f;
     public static float ElevationAmplitude = 5400f;
     public static float MountainMapScale = 80f;
@@ -31,9 +31,8 @@ public class ChunkGenerator : MonoBehaviour
     static GameObject Water;
 
     public Transform playerT;
-    public Vector3 playerPos;
-    public Vector2 playerPos_chunkSpace;
-    public Vector2 currentChunkCoord;
+    public Vector3 playerRawPosition;
+    public Vector2 playerChunkCoordinate;
 
 
     [SerializeField] MeshFilter TerrainMeshFilter;
@@ -133,7 +132,6 @@ public class ChunkGenerator : MonoBehaviour
 
         TerrainMesh = new Mesh();
         TerrainMeshFilter.mesh = TerrainMesh;
-        currentChunkCoord = Vector2.positiveInfinity;
 
         Water = Instantiate(waterPrefab);
 
@@ -166,21 +164,21 @@ public class ChunkGenerator : MonoBehaviour
     {
 
 
-        playerPos = playerT.position;
-        playerPos_chunkSpace = ToChunkSpace(playerPos);
-        currentChunkCoord = new Vector2(playerPos_chunkSpace.x, playerPos_chunkSpace.y);
+        playerRawPosition = playerT.position;
+        playerChunkCoordinate = GetChunkCoordinate(playerRawPosition);
+        Vector2 currentChunkCoord = new Vector2((int)playerChunkCoordinate.x, (int)playerChunkCoordinate.y);
 
 
         // get neighbor chunk coordinates
         Vector2 halfVec = Vector3.one / 2f;
-        Vector2[] neighborChunkCoords = new Vector2[(int)Mathf.Pow(ChunkRenderDistance * 2, 2)];
+        List<Vector2> neighborChunkCoords = new List<Vector2>();
         int i = 0;
-        for (int z = (int)(currentChunkCoord.y - ChunkRenderDistance); z < (int)(currentChunkCoord.y + ChunkRenderDistance); z++)
+        for (int z = (int)(currentChunkCoord.y - ChunkRenderDistance); z < (int)(currentChunkCoord.y + ChunkRenderDistance); ++z)
         {
-            for (int x = (int)(currentChunkCoord.x - ChunkRenderDistance); x < (int)(currentChunkCoord.x + ChunkRenderDistance); x++)
+            for (int x = (int)(currentChunkCoord.x - ChunkRenderDistance); x < (int)(currentChunkCoord.x + ChunkRenderDistance); ++x)
             {
-                neighborChunkCoords[i] = new Vector2(x, z);
-                i++;
+                neighborChunkCoords.Add(new Vector2(x, z));
+                ++i;
             }
         }
 
@@ -188,7 +186,7 @@ public class ChunkGenerator : MonoBehaviour
         // remove chunks out of rendering range from ChunksToLoad
         foreach (ChunkData cd in ChunkDataToLoad.ToArray())
         {
-            if (Vector2.Distance(playerPos_chunkSpace, cd.coordinate + halfVec) >= ChunkRenderDistance)
+            if (Vector2.Distance(playerChunkCoordinate, cd.coordinate + halfVec) >= ChunkRenderDistance)
             {
                 ChunkDataToLoad.Remove(cd);
             }
@@ -197,10 +195,9 @@ public class ChunkGenerator : MonoBehaviour
         // add chunks in rendering range to ChunksToLoad
         foreach (Vector2 chunkCoord in neighborChunkCoords)
         {
-            if (Vector2.Distance(playerPos_chunkSpace, chunkCoord + halfVec) < ChunkRenderDistance)
+            if (Vector2.Distance(playerChunkCoordinate, chunkCoord + halfVec) < ChunkRenderDistance)
             {
-
-                int index = ChunkDataToLoad.FindIndex(cd => cd.coordinate == chunkCoord);
+                int index = ChunkDataToLoad.FindIndex(cd => cd.coordinate.Equals(chunkCoord));
                 if (index < 0)
                 {
                     ChunkDataToLoad.Add(new ChunkData(chunkCoord));
@@ -214,7 +211,7 @@ public class ChunkGenerator : MonoBehaviour
     {
 
         IEnumerator load;
-        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(ToChunkSpace(playerT.position), c.coordinate)).ToArray())
+        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(GetChunkCoordinate(playerT.position), c.coordinate)).ToArray())
         {
             if (!cd.loaded)
             {
@@ -222,7 +219,7 @@ public class ChunkGenerator : MonoBehaviour
                 yield return StartCoroutine(load);
                 ChunkDataLoaded.Add(cd);
             }
-            if(ToChunkSpace(playerT.position) != playerPos_chunkSpace){
+            if(GetChunkCoordinate(playerT.position) != playerChunkCoordinate){
                 break;
             }
         }
@@ -656,66 +653,55 @@ public class ChunkGenerator : MonoBehaviour
         {
             for (int x = 0; x < ChunkSize; x++)
             {
-                if (true)
+
+                float yNormal = cd.YNormalsMap[x, z];
+                float skewHoriz = cd.SkewHorizMap[x, z];
+                float height = cd.HeightMap[x, z];
+                float temp = cd.TemperatureMap[x, z];
+                float humid = cd.HumidityMap[x, z];
+
+                SpawnParameters spawnParameters;
+                float placementDensity;
+                float randomDivisorOffset;
+                string bundleName;
+                string bundleName_last = "";
+                float bundleIteration = 0f;
+                Vector3 randomPositionOffset, spawnPosition, spawnScale;
+                GameObject o;
+
+                //yield return new WaitUntil(() => !cd.IsEdgeChunk());
+                //yield return new WaitForSecondsRealtime(2f);
+
+                foreach (GameObject feature in Features)
                 {
-                    float yNormal = cd.YNormalsMap[x, z];
-                    float skewHoriz = cd.SkewHorizMap[x, z];
-                    float height = cd.HeightMap[x, z];
-                    float temp = cd.TemperatureMap[x, z];
-                    float humid = cd.HumidityMap[x, z];
 
-                    SpawnParameters spawnParameters;
-                    float placementDensity;
-                    float randomDivisorOffset;
-                    string bundleName;
-                    string bundleName_last = "";
-                    float bundleIteration = 0f;
-                    Vector3 randomPositionOffset, spawnPosition, spawnScale;
-                    GameObject o;
+                    // break if chunk not loaded
+                    if (cd == null || (cd.featuresParent == null)) { break; }
 
-                    //yield return new WaitUntil(() => !cd.IsEdgeChunk());
-                    //yield return new WaitForSecondsRealtime(2f);
-
-                    foreach (GameObject feature in Features)
+                    spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
+                    placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                    if (placementDensity > 0)
                     {
-
-                        // break if chunk not loaded
-                        if (cd == null || (cd.featuresParent == null)) { break; }
-
-                        spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
-                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
-                        if (placementDensity > 0f)
+                        randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + _xOffset + .01f) / 2f, (z + _zOffset + .01f) / 2f) * 2f - 1f);
+                        int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - placementDensity) + randomDivisorOffset);
+                        if (divisor < 1) { divisor = 1; }
+                        if ((x + _xOffset) % divisor == 0 && (z + _zOffset) % divisor == 0)
                         {
-                            randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + _xOffset + .01f) / 2f, (z + _zOffset + .01f) / 2f) * 2f - 1f);
-                            int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - placementDensity) + randomDivisorOffset);
-                            if (divisor < 1) { divisor = 1; }
-                            if ((x + _xOffset) % divisor == 0 && (z + _zOffset) % divisor == 0)
-                            {
-                                bundleName = SpawnParameters.GetBundleName(feature.name);
-                                randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
-                                randomPositionOffset = Vector3.zero;
-                                //randomPositionOffset = Vector3.right * 15f;
+                            bundleName = SpawnParameters.GetBundleName(feature.name);
+                            randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
+                            Vector3 rawHorizontalPosition = new Vector3(Mathf.RoundToInt(x + _xOffset + skewHoriz + randomPositionOffset.x), 0f, Mathf.RoundToInt(z + _zOffset + skewHoriz + randomPositionOffset.z));
+                            ChunkData chunkAtPosition = GetChunkFromRawPosition(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.z));
+                            Vector2 coordinatesInChunk = GetCoordinatesInChunk(rawHorizontalPosition);
+                            int posChunkX = (int)coordinatesInChunk.x;
+                            int posChunkZ = (int)coordinatesInChunk.y;
+                            float posChunkHeight = chunkAtPosition.HeightMap[posChunkX, posChunkZ];
+                            float posChunkSkewHoriz = chunkAtPosition.SkewHorizMap[posChunkX, posChunkZ];
+                            float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ];
 
-                        
-                                // Vector2 rawHorizontalPosition = new Vector2(Mathf.RoundToInt(x + _xOffset + skewHoriz + randomPositionOffset.x), Mathf.RoundToInt(z + _zOffset + skewHoriz + randomPositionOffset.z)); 
-                                Vector3 rawHorizontalPosition = new Vector3(x + _xOffset, 0, z + _zOffset);
-                                ChunkData neighborChunk = GetChunk(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.y));
-                                if(neighborChunk != null)
-                                {
-                                    Debug.Log("current chunk: " + cd.coordinate);
-                                    Debug.Log("neighbor chunk: " + neighborChunk.coordinate);
-                                    // if(!cd.coordinate.Equals(neighborChunk.coordinate))
-                                    // {
-                                    //     Debug.Log("DESYNC");
-                                    // }
-                                    // Debug.Log("");
-                                    Vector2 coordinatesInChunk = GetCoordinatesInChunk(rawHorizontalPosition);
-                                    height = neighborChunk.HeightMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y];
-                                }
-                                
-                                
-                                
-                                spawnPosition = new Vector3(x + _xOffset + skewHoriz, height * ElevationAmplitude, z + _zOffset + skewHoriz) + randomPositionOffset;
+                            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, posChunkHeight, posChunkYNormal);
+                            if (placementDensity > 0)
+                            {
+                                spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.ElevationAmplitude) + Vector3.right * posChunkSkewHoriz + Vector3.forward * posChunkSkewHoriz;
                                 spawnScale = Vector3.one * spawnParameters.scale;
                                 o = GameObject.Instantiate(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent);
                                 o.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
@@ -733,46 +719,49 @@ public class ChunkGenerator : MonoBehaviour
                                     ++bundleIteration;
                                 }
                             }
-                        }
-                    }
 
-                    foreach (GameObject creature in Creatures)
-                    {
-
-                        // break if chunk not loaded
-                        if (cd == null) { break; }
-
-                        spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
-                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
-
-
-                        int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
-                        int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
-                        //Debug.Log(placementOffsetX);
-                        //Debug.Log(placementOffsetZ);
-                        //placementDensity = .1f;
-                        if (placementDensity > 0f)
-                        {
-                            randomDivisorOffset = 0;
-                            int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
-                            if (divisor < 1) { divisor = 1; }
-                            if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
-                            {
-                                bundleName = SpawnParameters.GetBundleName(creature.name);
-                                spawnPosition = new Vector3(x + _xOffset, height * ElevationAmplitude + 10f, z + _zOffset);
-                                spawnScale = Vector3.one * spawnParameters.scale;
-                                o = GameObject.Instantiate(creature, spawnPosition, Quaternion.identity, null);
-                                o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-                                activeCreatures.Add(o);
-
-                                bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
-                                bundleName_last = bundleName;
-
-                                if (breaker) { break; }
-                            }
+                            
                         }
                     }
                 }
+
+                foreach (GameObject creature in Creatures)
+                {
+
+                    // break if chunk not loaded
+                    if (cd == null) { break; }
+
+                    spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
+                    placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+
+
+                    int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
+                    int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
+                    //Debug.Log(placementOffsetX);
+                    //Debug.Log(placementOffsetZ);
+                    //placementDensity = .1f;
+                    if (placementDensity > 0f)
+                    {
+                        randomDivisorOffset = 0;
+                        int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
+                        if (divisor < 1) { divisor = 1; }
+                        if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
+                        {
+                            bundleName = SpawnParameters.GetBundleName(creature.name);
+                            spawnPosition = new Vector3(x + _xOffset, height * ElevationAmplitude + 10f, z + _zOffset);
+                            spawnScale = Vector3.one * spawnParameters.scale;
+                            o = GameObject.Instantiate(creature, spawnPosition, Quaternion.identity, null);
+                            o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                            activeCreatures.Add(o);
+
+                            bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
+                            bundleName_last = bundleName;
+
+                            if (breaker) { break; }
+                        }
+                    }
+                }
+
             }
             yield return null;
         }
@@ -787,7 +776,7 @@ public class ChunkGenerator : MonoBehaviour
         for(int i = 0; i < activeCreatures.Count; ++i){
             creature = activeCreatures[i];
             if(creature != null){
-                if(Vector3.Distance(playerPos, activeCreatures[i].transform.position) > despawnDistance){
+                if(Vector3.Distance(playerRawPosition, activeCreatures[i].transform.position) > despawnDistance){
                     activeCreatures.RemoveAt(i);
                     GameObject.Destroy(creature);
                 }
@@ -913,18 +902,18 @@ public class ChunkGenerator : MonoBehaviour
 
 
     // returns given position translated to chunk coordinates, based on chunkSize
-    public static Vector2 ToChunkSpace(Vector3 position)
+    public static Vector2 GetChunkCoordinate(Vector3 position)
     {
-        return new Vector2(position.x / (ChunkSize), position.z / (ChunkSize));
+        return new Vector2(Mathf.Floor(position.x / ChunkSize), Mathf.Floor(position.z / ChunkSize));
     }
 
     // retrieve ChunkData in ChunkDataLoaded associated with the chunk coordinate
-    public static ChunkData GetChunk(Vector2 chunkCoord)
+    public static ChunkData GetChunkFromCoordinate(Vector2 chunkCoord)
     {
         //Debug.Log(chunkCoord);
         foreach (ChunkData cd in ChunkDataLoaded.ToArray())
         {
-            if (cd.coordinate == chunkCoord)
+            if (cd.coordinate.Equals(chunkCoord))
             {
                 return cd;
             }
@@ -935,19 +924,31 @@ public class ChunkGenerator : MonoBehaviour
     }
 
     // retrieve ChunkData in ChunkDataLoaded associated with the raw position given
-    public static ChunkData GetChunk(Vector3 position)
+    public static ChunkData GetChunkFromRawPosition(Vector3 rawPosition)
     {
-        Vector2 position_chunkSpace = ToChunkSpace(position);
-        Vector2 chunkCoord = new Vector2((int)position_chunkSpace.x, (int)(position_chunkSpace.y));
-        return GetChunk(chunkCoord);
+        Vector2 chunkCoord = GetChunkCoordinate(rawPosition);
+        return GetChunkFromCoordinate(chunkCoord);
     }
 
     // retrieve the x and z points of the given position on the chunk it's in
     public static Vector2 GetCoordinatesInChunk(Vector3 rawPosition)
     {
-        int x = (int)(Mathf.Abs(rawPosition.x % ChunkSize));
-        int z = (int)(Mathf.Abs(rawPosition.z % ChunkSize));
-        return new Vector2(x, z);
+        int x = (int)(rawPosition.x % ChunkSize);
+        int z = (int)(rawPosition.z % ChunkSize);
+
+        if(x < 0)
+        {
+            x = (int)(ChunkSize - x * -1f);
+        }
+        if(z < 0)
+        {
+            z = (int)(ChunkSize - z * -1f);
+        }
+
+        Vector2 coordinatesInChunk = new Vector2(x, z);
+        //Debug.Log(coordinatesInChunk);
+
+        return coordinatesInChunk;
     }
 
 

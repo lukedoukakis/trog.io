@@ -68,7 +68,7 @@ public class ShaderController : MonoBehaviour
     void UpdateDesertSensitiveMaterials()
     {
         Vector3 refPosition = Camera.main.transform.position;
-        ChunkData cd = ChunkGenerator.GetChunk(refPosition);
+        ChunkData cd = ChunkGenerator.GetChunkFromRawPosition(refPosition);
         if(cd == null){ return; }
 
         Vector2 coordinatesInChunk = ChunkGenerator.GetCoordinatesInChunk(refPosition);

@@ -90,7 +90,7 @@ public class ChunkData
         List<ChunkData> values = new List<ChunkData>(neighbors.Values);
         for(int i = 0; i < keys.Count; ++i)
         {
-            ChunkData targetCd = ChunkGenerator.GetChunk(this.coordinate + keys[i]);
+            ChunkData targetCd = ChunkGenerator.GetChunkFromCoordinate(this.coordinate + keys[i]);
             AddNeighbor(keys[i], targetCd);
 
             if(targetCd != null)
