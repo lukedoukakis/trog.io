@@ -396,6 +396,7 @@ public class ChunkGenerator : MonoBehaviour
                     freshWaterValue += 1f;
 
                     freshWaterValue = Mathf.Clamp01(freshWaterValue);
+                    //Debug.Log(freshWaterValue);
                     freshWaterValue = Mathf.Pow(freshWaterValue, 3f);
 
                     // reduce fresh water value proportionally to mound height
@@ -684,41 +685,47 @@ public class ChunkGenerator : MonoBehaviour
                     {
                         randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + _xOffset + .01f) / 2f, (z + _zOffset + .01f) / 2f) * 2f - 1f);
                         int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - placementDensity) + randomDivisorOffset);
-                        if (divisor < 1) { divisor = 1; }
+                        if (divisor < 1)
+                        {
+                            divisor = 1;
+                        }
                         if ((x + _xOffset) % divisor == 0 && (z + _zOffset) % divisor == 0)
                         {
                             bundleName = SpawnParameters.GetBundleName(feature.name);
                             randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
-                            Vector3 rawHorizontalPosition = new Vector3(Mathf.RoundToInt(x + _xOffset + skewHoriz + randomPositionOffset.x), 0f, Mathf.RoundToInt(z + _zOffset + skewHoriz + randomPositionOffset.z));
+                            Vector3 rawHorizontalPosition = new Vector3(x + _xOffset + skewHoriz + randomPositionOffset.x, 0f, z + _zOffset + skewHoriz + randomPositionOffset.z);
                             ChunkData chunkAtPosition = GetChunkFromRawPosition(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.z));
-                            Vector2 coordinatesInChunk = GetCoordinatesInChunk(rawHorizontalPosition);
-                            int posChunkX = (int)coordinatesInChunk.x;
-                            int posChunkZ = (int)coordinatesInChunk.y;
-                            float posChunkHeight = chunkAtPosition.HeightMap[posChunkX, posChunkZ];
-                            float posChunkSkewHoriz = chunkAtPosition.SkewHorizMap[posChunkX, posChunkZ];
-                            float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ];
-
-                            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, posChunkHeight, posChunkYNormal);
-                            if (placementDensity > 0)
+                            if (chunkAtPosition != null)
                             {
-                                spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.ElevationAmplitude) + Vector3.right * posChunkSkewHoriz + Vector3.forward * posChunkSkewHoriz;
-                                spawnScale = Vector3.one * spawnParameters.scale;
-                                o = GameObject.Instantiate(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent);
-                                o.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
-
-                                bool noBundle = (bundleName == bundleName_last && !spawnParameters.bundle);
-                                bundleName_last = bundleName;
-
-                                if (noBundle)
+                                Vector2 coordinatesInChunk = GetCoordinatesInChunk(rawHorizontalPosition);
+                                int posChunkX = (int)coordinatesInChunk.x;
+                                int posChunkZ = (int)coordinatesInChunk.y;
+                                float posChunkHeight = chunkAtPosition.HeightMap[posChunkX, posChunkZ];
+                                float posChunkSkewHoriz = chunkAtPosition.SkewHorizMap[posChunkX, posChunkZ];
+                                float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ];
+                                placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, posChunkHeight, posChunkYNormal);
+                                if (placementDensity > 0)
                                 {
-                                    bundleIteration = 0f;
-                                    //break;
-                                }
-                                else
-                                {
-                                    ++bundleIteration;
+                                    spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.ElevationAmplitude) + Vector3.right * posChunkSkewHoriz + Vector3.forward * posChunkSkewHoriz;
+                                    spawnScale = Vector3.one * spawnParameters.scale;
+                                    o = GameObject.Instantiate(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent);
+                                    o.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
+
+                                    bool noBundle = (bundleName == bundleName_last && !spawnParameters.bundle);
+                                    bundleName_last = bundleName;
+
+                                    if (noBundle)
+                                    {
+                                        bundleIteration = 0f;
+                                        //break;
+                                    }
+                                    else
+                                    {
+                                        ++bundleIteration;
+                                    }
                                 }
                             }
+                            
 
                             
                         }
@@ -820,7 +827,6 @@ public class ChunkGenerator : MonoBehaviour
                 //rockiness *= Mathf.InverseLerp(0f, .5f, MountainMap[x, z]);
                 rockiness *= 1f - (CalculateDesertness(temperature, humidity));
                 skewHoriz = ((rockiness + .5f) * 2f - 1f) * 18f * RockProtrusion;
-                //skewHoriz *= Mathf.InverseLerp(SeaLevel, SeaLevel + (meter * 20f), HeightMap[x, z]); // smooth down rockiness at sea level
                 skewHorizMap[x, z] = skewHoriz;
                 TerrainVertices[i] = new Vector3(x + xOffset + skewHoriz, height, z + zOffset + skewHoriz);
                 //TerrainVertices[i] = new Vector3(x + xOffset, height, z + zOffset);
