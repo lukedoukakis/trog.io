@@ -27,7 +27,7 @@ public class ShaderController : MonoBehaviour
     void InitShaderSettings()
     {
 
-        GrassMaterial.SetFloat("_GrassNormal", ChunkGenerator.GrassNormal);
+        GrassMaterial.SetFloat("_GrassNormal", ChunkGenerator.GrassNormalMin);
 
         UpdateWaterSensitiveMaterials();
         UpdateSnowSensitiveMaterials();
@@ -51,8 +51,18 @@ public class ShaderController : MonoBehaviour
 
     void UpdateGrassNormalSensitiveMaterials()
     {
+
+        Vector3 refPosition = Camera.main.transform.position;
+        ChunkData cd = ChunkGenerator.GetChunkFromRawPosition(refPosition);
+        if(cd == null){ return; }
+
+        Vector2 coordinatesInChunk = ChunkGenerator.GetCoordinatesInChunk(refPosition);
+        float humidity = cd.HumidityMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y];
+        float targetGrassNormal = Mathf.Lerp(ChunkGenerator.GrassNormalMin, ChunkGenerator.GrassNormalMax, 1f - humidity);
+
+
         foreach(Material mat in GrassNormalSensitiveMaterials){
-            mat.SetFloat("_GrassNormal", ChunkGenerator.GrassNormal);
+            mat.SetFloat("_GrassNormal", targetGrassNormal);
         }
     }
 
@@ -94,5 +104,6 @@ public class ShaderController : MonoBehaviour
     {
         UpdateFadeMaterials();
         UpdateDesertSensitiveMaterials();
+        UpdateGrassNormalSensitiveMaterials();
     }
 }

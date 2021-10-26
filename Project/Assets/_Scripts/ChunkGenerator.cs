@@ -22,7 +22,8 @@ public class ChunkGenerator : MonoBehaviour
     public static float BankLevel = SeaLevel + meter;
     public static float SnowLevel = .871f;
     //public static float SnowLevel = float.MaxValue;
-    public static float GrassNormal = .57f;
+    public static float GrassNormalMin = .57f;
+    public static float GrassNormalMax = .98f;
     public static float SnowNormal = .57f;
     public static float CaveNormal = .4f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -309,7 +310,7 @@ public class ChunkGenerator : MonoBehaviour
                 //temperatureValue = Mathf.Clamp01(temperatureValue);
 
                 // lock temperature
-                temperatureValue = .25f;
+                temperatureValue = .99f;
 
 
 
@@ -363,7 +364,7 @@ public class ChunkGenerator : MonoBehaviour
                 //humidityValue = Mathf.InverseLerp(.2f, .8f, humidityValue);
 
                 // lock humidity
-                humidityValue = 0.99f;
+                humidityValue = 0f;
                 // -------------------------------------------------------
 
 
