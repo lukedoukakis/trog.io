@@ -71,7 +71,7 @@ Material:
     - _MinimumNormal: 0.8
     - _MinimumNumberStacks: 2
     - _NoisePower: 2
-    - _NumberOfStacks: 0
+    - _NumberOfStacks: 9.73
     - _OffsetValue: 0
     - _ProceduralDistance: 5.5
     - _ProceduralStrength: 1.5
@@ -93,7 +93,7 @@ Material:
     - _WorldRotation: 0
     - _WorldScale: 10
     m_Colors:
-    - _CampOrigin: {r: 73.052216, g: 4592.029, b: 193.87715, a: 0}
+    - _CampOrigin: {r: 37.439713, g: 4592.3623, b: 180.08209, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
     - _OffsetVector: {r: 0, g: 1.5, b: 0, a: 0}
