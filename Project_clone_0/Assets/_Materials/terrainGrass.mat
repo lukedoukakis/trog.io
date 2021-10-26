@@ -59,19 +59,19 @@ Material:
     - _CampRadius: 4
     - _ColorTiling: 0.005
     - _Desertness: 0
-    - _FadeDistanceEnd: 101
-    - _FadeDistanceStart: 100
+    - _FadeDistanceEnd: 201
+    - _FadeDistanceStart: 200
     - _GrassCut: 0
     - _GrassNormal: 0.57
-    - _GrassSaturation: 0.75
+    - _GrassSaturation: 0.5
     - _GrassShading: 1
     - _GrassThinness: 1
     - _GrassThinnessIntersection: 0.43
     - _LightIntensity: 0.02
     - _MinimumNormal: 0.8
-    - _MinimumNumberStacks: 2
+    - _MinimumNumberStacks: 17
     - _NoisePower: 2
-    - _NumberOfStacks: 9.73
+    - _NumberOfStacks: 17
     - _OffsetValue: 0
     - _ProceduralDistance: 5.5
     - _ProceduralStrength: 1.5
@@ -81,7 +81,7 @@ Material:
     - _SnowHeightStart: 4001.4
     - _TilingN1: 9.36
     - _TilingN2: 0.05
-    - _TilingN3: 100
+    - _TilingN3: 10000000
     - _UsePR: 0
     - _UseRT: 0
     - _UseShadow: 1
@@ -93,10 +93,10 @@ Material:
     - _WorldRotation: 0
     - _WorldScale: 10
     m_Colors:
-    - _CampOrigin: {r: 37.439713, g: 4592.3623, b: 180.08209, a: 0}
+    - _CampOrigin: {r: 236.24701, g: 4636.702, b: 59.31668, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
-    - _OffsetVector: {r: 0, g: 1.5, b: 0, a: 0}
+    - _OffsetVector: {r: 0, g: 3, b: 0, a: 0}
     - _ProjectedShadowColor: {r: 0.8679245, g: 0.8679245, b: 0.8679245, a: 1}
     - _RimColor: {r: 0.4245283, g: 0.4245283, b: 0.4245283, a: 1}
     - _SelfShadowColor: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 1}

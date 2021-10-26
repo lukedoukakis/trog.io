@@ -85,11 +85,12 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 	}
 		SubShader
 		{
-			Tags{"DisableBatching" = "true" "RenderType"="Transparent" "Queue"="Transparent"}
+			Tags{"DisableBatching" = "true" "RenderType"="Opaque"}
+			
 			//Blend SrcAlpha OneMinusSrcAlpha
 			pass
 			{
-			Tags{"RenderPipeline" = "UniversalPipeline" "RenderType"="Transparent" "Queue"="Transparent"}
+			Tags{"RenderPipeline" = "UniversalPipeline" "RenderType"="Opaque"}
 			//Blend SrcAlpha OneMinusSrcAlpha
 			LOD 100
 
@@ -325,8 +326,10 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 							// change geometry height based on proximity to water and player's campsite
 							float awayFromWaterModifier = clamp(0, 1, invLerp(_WaterHeight, _WaterHeight + 1, UnityObjectToWorld(input[ii].objPos).y));
 							float awayFromCampModifier = clamp(0, 1, invLerp(_CampRadius, _CampRadius + 1, distance(UnityObjectToWorld(input[ii].objPos), _CampOrigin)));
+							float awayFromSnowModifier = clamp(0, 1, invLerp(_SnowHeightCap - 30, _SnowHeightCap, UnityObjectToWorld(input[ii].objPos).y));
+							awayFromSnowModifier = 1;
 							float awayFromDesertnessModifier = clamp(0, 1, 1 - invLerp(.7, .75, _Desertness));
-							float heightMod = min(min(awayFromWaterModifier, awayFromCampModifier), awayFromDesertnessModifier);
+							float heightMod = min(min(min(awayFromWaterModifier, awayFromCampModifier), awayFromSnowModifier), awayFromDesertnessModifier);
 
 							objSpace = float4(input[ii].objPos + NewNormal * _OffsetValue*i*heightMod + (offsetNormal*heightMod));
 							o.color = (i / (_NumberOfStacks - _GrassCut));
