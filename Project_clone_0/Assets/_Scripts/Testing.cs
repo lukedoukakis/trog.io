@@ -50,7 +50,7 @@ public class Testing : MonoBehaviour
             }
             if (Input.GetKeyUp(KeyCode.R))
             {
-                playerHandle.gameObject.transform.position = new Vector3(Random.Range(-50000f, 50000f), ChunkGenerator.ElevationAmplitude + 200f, Random.Range(-50000f, 50000f));
+                playerHandle.gameObject.transform.position = new Vector3(Random.Range(-50000f, 50000f), 4750f, Random.Range(-50000f, 50000f));
             }
             if (Input.GetKeyUp(KeyCode.K))
             {

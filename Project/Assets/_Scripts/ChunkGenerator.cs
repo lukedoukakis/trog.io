@@ -310,7 +310,7 @@ public class ChunkGenerator : MonoBehaviour
                 //temperatureValue = Mathf.Clamp01(temperatureValue);
 
                 // lock temperature
-                temperatureValue = .99f;
+                //temperatureValue = .99f;
 
 
 
@@ -341,7 +341,7 @@ public class ChunkGenerator : MonoBehaviour
                 float mtn1 = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / MountainMapScale, (z + zOffset - Seed + 100000.01f) / MountainMapScale);
                 float mtn3 = Mathf.PerlinNoise((x + xOffset - Seed + 200000.01f) / MountainMapScale, (z + zOffset - Seed + 200000.01f) / MountainMapScale);
 
-                mountainValue = Mathf.Min(mtn0, mtn1, mtn3);
+                mountainValue = Mathf.Min(mtn0, mtn1);
                 //mountainValue = Mathf.InverseLerp(.3f, .7f, mountainValue);
                 //mountainValue = .99f;
                 mountainValue *= .75f;
@@ -364,7 +364,7 @@ public class ChunkGenerator : MonoBehaviour
                 //humidityValue = Mathf.InverseLerp(.2f, .8f, humidityValue);
 
                 // lock humidity
-                humidityValue = 0f;
+                //humidityValue = 0f;
                 // -------------------------------------------------------
 
 

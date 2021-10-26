@@ -57,12 +57,11 @@ public class ShaderController : MonoBehaviour
         if(cd == null){ return; }
 
         Vector2 coordinatesInChunk = ChunkGenerator.GetCoordinatesInChunk(refPosition);
-        float humidity = cd.HumidityMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y];
-        float targetGrassNormal = Mathf.Lerp(ChunkGenerator.GrassNormalMin, ChunkGenerator.GrassNormalMax, 1f - humidity);
+        float desertnessAtCoordinates = ChunkGenerator.CalculateDesertness(cd.TemperatureMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y], cd.HumidityMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y]);
 
 
         foreach(Material mat in GrassNormalSensitiveMaterials){
-            mat.SetFloat("_GrassNormal", targetGrassNormal);
+            mat.SetFloat("_GrassNormal", Mathf.Lerp(ChunkGenerator.GrassNormalMin, ChunkGenerator.GrassNormalMax, desertnessAtCoordinates));
         }
     }
 
