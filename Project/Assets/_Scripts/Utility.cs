@@ -195,6 +195,20 @@ public class Utility : MonoBehaviour
         return sor;
     }
 
+    public static bool IsInHierarchy(Transform baseChild, Transform target)
+    {
+        Transform compare = baseChild;
+        while(!ReferenceEquals(compare, target))
+        {
+            compare = compare.parent;
+            if(compare == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static void DestroyInSeconds(GameObject o, float seconds){
         instance.StartCoroutine(instance._DestroyInSeconds(o, seconds));
     }

@@ -929,7 +929,9 @@ public class EntityBehavior : EntityComponent
         }
         else
         {
-            return ReferenceEquals(otherObject, activeAction.targetedWorldObject);
+            return Utility.IsInHierarchy(otherObject.transform, activeAction.targetedWorldObject.transform);
+
+            //return ReferenceEquals(otherObject, activeAction.targetedWorldObject);
         }
     }
 

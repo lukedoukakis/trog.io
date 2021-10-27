@@ -1203,7 +1203,6 @@ public class EntityPhysics : EntityComponent
         EntityStats hitObjectStats = null;
         //Debug.Log(hitObject.layer);
         
-        //if (hitObject.layer == LayerMask.NameToLayer("Creature") || hitObject.layer == LayerMask.NameToLayer("Feature") || hitObject.layer == LayerMask.NameToLayer("Item"))
         if (LayerMaskController.HITTABLE == (LayerMaskController.HITTABLE | (1 << hitObject.layer)))
         {
             EntityHitDetection ehd = collider.gameObject.GetComponentInParent<EntityHitDetection>();
@@ -1241,11 +1240,6 @@ public class EntityPhysics : EntityComponent
                     ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Chase, hitObject, Vector3.zero, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, InterruptionTier.Anything, true);
                     entityInfo.faction.SendPartyCommand(ap);
                 }
-            }
-            
-            if(entityActionRecorder != null)
-            {
-                //entityActionRecorder.RecordAction(ap);
             }
         }
 

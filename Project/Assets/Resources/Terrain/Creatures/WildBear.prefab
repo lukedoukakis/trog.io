@@ -109,6 +109,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
@@ -139,6 +140,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
@@ -146,6 +148,8 @@ MonoBehaviour:
   nickname: Barry
   species: 2
   faction: {fileID: 0}
+  isFactionLeader: 0
+  isFactionFollower: 0
   speciesInfo: {fileID: 0}
 --- !u!114 &7223609859536449621
 MonoBehaviour:
@@ -169,6 +173,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
@@ -199,17 +204,20 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   behaviorProfile: {fileID: 0}
-  home: {fileID: 0}
+  homeT: {fileID: 0}
+  isPlayer: 0
+  isAtHome: 0
   move: {x: 0, y: 0, z: 0}
   urgent: 0
   timeSince_creatureSense: 0
   timeSince_attack: 0
   activeAction: {fileID: 0}
-  actions: []
+  actionQueue: []
 --- !u!114 &7223609859536449627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,6 +240,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
@@ -265,26 +274,20 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
   worldCollider: {fileID: 0}
   highFrictionMat: {fileID: 0}
   noFrictionMat: {fileID: 0}
-  layerMask_water:
-    serializedVersion: 2
-    m_Bits: 0
-  layerMask_walkable:
-    serializedVersion: 2
-    m_Bits: 0
-  layerMask_feature:
-    serializedVersion: 2
-    m_Bits: 0
   rb: {fileID: 0}
-  animator: {fileID: 0}
+  mainAnimator: {fileID: 0}
+  helperAnimator: {fileID: 0}
   iKTargetAnimator: {fileID: 0}
   gyro: {fileID: 0}
   body: {fileID: 0}
+  model: {fileID: 0}
   bodyPartTs: []
   bodyPartTs_legs: []
   bodyPartTs_upperBody: []
@@ -304,11 +307,10 @@ MonoBehaviour:
   obstacleHeightSense: {fileID: 0}
   kneeHeightT: {fileID: 0}
   moveDir: {x: 0, y: 0, z: 0}
-  onWalkableGround: 0
-  jumping: 0
+  isJumping: 0
   jumpOffLeft: 0
   jumpOffRight: 0
-  sprinting: 0
+  isSprinting: 0
   offWallTime: 0
   offWaterTime: 0
   jumpTime: 0
@@ -323,14 +325,20 @@ MonoBehaviour:
   crouch: 0
   handFree_right: 0
   handFree_left: 0
-  insideCamp: 0
-  handGrab: 0
+  isMoving: 0
+  isGrounded: 0
+  isGroundedStrict: 0
+  isInsideCamp: 0
+  isHandGrab: 0
   speedLimitModifier_launch: 0
-  ROTATION_Y_THIS: 0
-  ROTATION_Y_LAST: 0
+  differenceInDegreesBetweenMovementAndFacing: 0
+  velHoriz_this: {x: 0, y: 0, z: 0}
+  velHoriz_last: {x: 0, y: 0, z: 0}
+  velHoriz_delta: {x: 0, y: 0, z: 0}
+  changeInVelocityFactor: 0
   GROUNDTOUCH: 0
   WALLTOUCH: 0
-  IN_WATER: 0
+  isInWater: 0
   ikEnabled: 0
   ikScript_hips: {fileID: 0}
   ikScript_footLeft: {fileID: 0}
@@ -341,9 +349,10 @@ MonoBehaviour:
   ikScript_handLeft: {fileID: 0}
   ikScript_fingerRight: {fileID: 0}
   ikScript_fingerLeft: {fileID: 0}
-  ikScripts: []
+  ikScripts_all: []
   ikScripts_legs: []
-  ikScripts_upperBody: []
+  ikScripts_arms: []
+  ikScripts_torso: []
   ikParent: {fileID: 0}
   basePositionHips: {fileID: 0}
   basePositionFootRight: {fileID: 0}
@@ -373,12 +382,18 @@ MonoBehaviour:
   updateTime_handLeft: 0
   updateTime_hips: 0
   ikProfile: {fileID: 0}
-  quadripedal: 0
+  isQuadripedal: 0
   hasFingersAndToes: 0
   runCycle_strideFrequency: 0
   runCycle_lerpTightness: 0
   runCycle_limbVerticalDisplacement: 0
   runCycle_limbForwardReachDistance: 0
+  grabOriginTs: {fileID: 0}
+  grabOrigin_handRight: {fileID: 0}
+  grabOrigin_handLeft: {fileID: 0}
+  weaponChargeTime: 0
+  weaponCharging: 0
+  weaponChargeAmount: 0
   meleeAttackCanHit: 0
   attackHit: 0
 --- !u!114 &7223609859536449625
@@ -403,6 +418,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
@@ -430,6 +446,7 @@ MonoBehaviour:
   entityPhysics: {fileID: 0}
   entityStatus: {fileID: 0}
   entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
@@ -531,12 +548,32 @@ PrefabInstance:
     - target: {fileID: 1902126483733769833, guid: 541058b98845a0f4cb512dd24e163012,
         type: 3}
       propertyPath: m_ConnectedAnchor.x
-      value: 0.0000000010331861
+      value: 0.0000000010040823
       objectReference: {fileID: 0}
     - target: {fileID: 1902126483733769833, guid: 541058b98845a0f4cb512dd24e163012,
         type: 3}
       propertyPath: m_ConnectedAnchor.z
-      value: 0.0000000027939662
+      value: 0.0000000032596268
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243254767676747384, guid: 541058b98845a0f4cb512dd24e163012,
+        type: 3}
+      propertyPath: m_Radius
+      value: 0.0031515372
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243254767676747384, guid: 541058b98845a0f4cb512dd24e163012,
+        type: 3}
+      propertyPath: m_Center.x
+      value: -0.00014186192
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243254767676747384, guid: 541058b98845a0f4cb512dd24e163012,
+        type: 3}
+      propertyPath: m_Center.y
+      value: -0.003185322
+      objectReference: {fileID: 0}
+    - target: {fileID: 2243254767676747384, guid: 541058b98845a0f4cb512dd24e163012,
+        type: 3}
+      propertyPath: m_Center.z
+      value: 0.0010964312
       objectReference: {fileID: 0}
     - target: {fileID: 7159296744588251058, guid: 541058b98845a0f4cb512dd24e163012,
         type: 3}
