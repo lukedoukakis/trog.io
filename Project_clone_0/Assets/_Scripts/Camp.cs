@@ -59,7 +59,9 @@ public class Camp : MonoBehaviour
         // determine if flat enough
         return true;
     }
-    public static Camp PlaceCamp(Faction faction, Transform originT){        
+    public static Camp PlaceCamp(Faction faction, Transform originT)
+    {        
+
         Camp camp = GameManager.current.gameObject.AddComponent<Camp>();
         faction.camp = camp;
         camp.faction = faction;
@@ -76,6 +78,10 @@ public class Camp : MonoBehaviour
         camp.SetCampLayout(campPlacementPos, originT.rotation);
         camp.PlaceCampComponents(originT);
         camp.SetTribeMemberStandingPositions();
+
+        // todo: update all memnbers in camp status from checking distance to origin
+        camp.faction.leaderHandle.entityPhysics.isInsideCamp = true;
+        camp.faction.UpdateLeaderCampStatus();
 
         // call the shader controller to update according to new origin position and radius
         ShaderController.instance.UpdateGrassSettings(camp);

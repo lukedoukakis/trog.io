@@ -158,6 +158,10 @@ public class EntityStats : EntityComponent
         //Debug.Log("DED");
 
         // todo: death 'animation'/being destroyed visuals
+        if(entityBehavior != null)
+        {
+            Destroy(entityBehavior.homeT.gameObject);
+        }
         GameObject.Destroy(this.gameObject);
 
         SpawnDrops(this.transform.position, attackerHandle);

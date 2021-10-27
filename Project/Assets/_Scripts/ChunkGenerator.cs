@@ -346,7 +346,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // lock humidity
                 //humidityValue = 0f;
-                //humidityValue = .99f;
+                humidityValue = .99f;
                 // -------------------------------------------------------
 
                 // MountainMap [0, 1]

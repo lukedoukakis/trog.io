@@ -39,7 +39,7 @@ public class EntityPhysics : EntityComponent
 
 
     public Vector3 moveDir;
-    public bool isJumping, jumpOffLeft, jumpOffRight, sprinting;
+    public bool isJumping, jumpOffLeft, jumpOffRight, isSprinting;
     Vector3 jumpPoint;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
     public float acceleration;
@@ -397,7 +397,7 @@ public class EntityPhysics : EntityComponent
                     if (updateTime_footRight >= 1f)
                     {
                         CycleFootPlantPosition(targetFootRight, basePositionFootRight, ref plantPosFootRight, ref updateTime_footRight, isInWater);
-                        if (isQuadripedal && sprinting)
+                        if (isQuadripedal && isSprinting)
                         {
                             rb.AddForce(Vector3.up * 500f);
                         }
@@ -834,7 +834,7 @@ public class EntityPhysics : EntityComponent
 
                 if (isMoving)
                 {
-                    if (sprinting)
+                    if (isSprinting)
                     {
                         mainAnimator.SetBool("Sprint", true);
                         mainAnimator.SetBool("Run", false);
@@ -878,10 +878,27 @@ public class EntityPhysics : EntityComponent
     public void Move(Vector3 direction, float speed)
     {
         float speedStat = speed * Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed);
-        sprinting = entityBehavior.urgent || (isLocalPlayer && entityUserInput.pressSprint);
+        SetIsSprinting();
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
         rb.AddForce(move * speedStat, ForceMode.Force);
 
+    }
+
+    void SetIsSprinting()
+    {
+        if(isLocalPlayer)
+        {
+            isSprinting = entityUserInput.pressSprint;
+        }
+        else
+        {
+
+            isSprinting = entityBehavior.urgent;
+            if(entityInfo.isFactionFollower)
+            {
+                isSprinting = isSprinting || entityInfo.faction.leaderHandle.entityPhysics.isSprinting;
+            }
+        }
     }
 
     public void Jump(float power)
@@ -1221,7 +1238,7 @@ public class EntityPhysics : EntityComponent
             {
                 if(hitObjectStats.hp > 0)
                 {
-                    ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Chase, hitObject, Vector3.zero, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, InteruptionTier.Anything, true);
+                    ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Chase, hitObject, Vector3.zero, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, InterruptionTier.Anything, true);
                     entityInfo.faction.SendPartyCommand(ap);
                 }
             }
@@ -1465,7 +1482,7 @@ public class EntityPhysics : EntityComponent
         }
         else
         {
-            max = sprinting ? maxSpeed_sprint : maxSpeed_run;
+            max = isSprinting ? maxSpeed_sprint : maxSpeed_run;
         }
 
         if (!isJumping)

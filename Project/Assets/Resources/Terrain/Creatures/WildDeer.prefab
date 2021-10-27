@@ -254,15 +254,6 @@ MonoBehaviour:
   worldCollider: {fileID: 0}
   highFrictionMat: {fileID: 0}
   noFrictionMat: {fileID: 0}
-  layerMask_water:
-    serializedVersion: 2
-    m_Bits: 0
-  layerMask_walkable:
-    serializedVersion: 2
-    m_Bits: 0
-  layerMask_feature:
-    serializedVersion: 2
-    m_Bits: 0
   rb: {fileID: 0}
   mainAnimator: {fileID: 0}
   helperAnimator: {fileID: 0}
@@ -432,7 +423,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   entityCommandServer: {fileID: 0}
-  species: 4
+  species: 3
 --- !u!114 &4761202945426959485
 MonoBehaviour:
   m_ObjectHideFlags: 0

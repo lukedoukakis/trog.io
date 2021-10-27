@@ -168,6 +168,11 @@ public class Utility : MonoBehaviour
         return new Vector3(UnityEngine.Random.Range(-100f, 100f), UnityEngine.Random.Range(-100f, 100f), UnityEngine.Random.Range(-100f, 100f)).normalized * magnitude;
     }
 
+    public static Vector3 GetRandomVectorHorizontal(float magnitude)
+    {
+        return new Vector3(UnityEngine.Random.Range(-100f, 100f), 0f, UnityEngine.Random.Range(-100f, 100f)).normalized * magnitude;
+    }
+
     public static Quaternion GetRandomRotation(float maxDegrees){
         return Quaternion.Euler(UnityEngine.Random.Range(0f, maxDegrees), UnityEngine.Random.Range(0f, maxDegrees), UnityEngine.Random.Range(0f, maxDegrees));
     }

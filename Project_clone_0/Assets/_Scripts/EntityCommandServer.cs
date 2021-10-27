@@ -40,8 +40,10 @@ public class EntityCommandServer : EntityComponent
 
         EntityInfo npcInfo = npcHandle.entityInfo;
         npcInfo.name = "new npc";
+        npcInfo.faction = owningPlayerFaction;
         npcInfo.isFactionLeader = false;
         npcInfo.isFactionFollower = true;
+        npcHandle.GetComponent<EntityBehavior>().UpdateHomePosition(owningPlayerFaction.leaderInCamp);
 
         //npcHandle.entityItems.EquipClothing(Item.ClothingTest);
 
@@ -50,8 +52,6 @@ public class EntityCommandServer : EntityComponent
             Utility.IgnorePhysicsCollisions(npcHandle.transform, factionMemberHandle.transform);
         }
         owningPlayerFaction.AddMember(npcHandle, true);
-
-        owningPlayerFaction.SendPartyCommand("Follow Faction Leader");
 
 
         NetworkServer.Spawn(npc, leaderHandle.gameObject);

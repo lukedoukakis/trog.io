@@ -5,7 +5,7 @@ using System;
 
 
 public enum ActionType{ Idle, GoTo, Follow, RunFrom, Collect, Pickup, Chase, Attack, AttackRecover, Build, Hunt, StepBack, StepSide }
-public enum InteruptionTier{ Anything, SenseDanger, Hit, Nothing }
+public enum InterruptionTier{ Anything, SenseDanger, BeenHit, Nothing }
 
 public class ActionParameters : ScriptableObject
 {
@@ -14,7 +14,7 @@ public class ActionParameters : ScriptableObject
     public EntityHandle doerHandle;
 
     // type of action
-    public Enum type;
+    public ActionType type;
 
     // gameobject to interact with
     public GameObject targetedWorldObject;
@@ -35,9 +35,9 @@ public class ActionParameters : ScriptableObject
     public float distanceThreshold;
 
     // body rotation mode
-    public Enum bodyRotationMode;
+    public BodyRotationMode bodyRotationMode;
 
-    public Enum interruptionLevel;
+    public InterruptionTier interruptionTier;
     // is urgent, i.e. will the entity sprint to accomplish the action etc.
     public bool urgent;
 
@@ -45,7 +45,7 @@ public class ActionParameters : ScriptableObject
     // maximum time to be spent executing the action
     public float maxTime;
 
-    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, Enum _type, GameObject _targetWorldObject, Vector3 _offset, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, Enum _bodyRotationMode, Enum _interruptionLevel, bool _urgent)
+    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, ActionType _type, GameObject _targetWorldObject, Vector3 _offset, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, BodyRotationMode _bodyRotationMode, InterruptionTier _interruptionTier, bool _urgent)
     {
         ActionParameters a = ActionParameters.GenerateActionParameters();
         a.doerHandle = _doerHandle;
@@ -58,7 +58,7 @@ public class ActionParameters : ScriptableObject
         a.maxTime = _maxTime;
         a.distanceThreshold = _distanceThreshold;
         a.bodyRotationMode = _bodyRotationMode;
-        a.interruptionLevel = _interruptionLevel;
+        a.interruptionTier = _interruptionTier;
         a.urgent = _urgent;
 
         return a;
@@ -78,39 +78,20 @@ public class ActionParameters : ScriptableObject
 
             case "Go Home" :
 
-                // set home transform
-                Transform campT = doerHandle.entityInfo.faction.camp.GetOpenTribeMemberStandPosition();
-                Transform newHomeT = new GameObject().transform;
-                newHomeT.position = campT.position;
-                newHomeT.transform.SetParent(campT);
-                Destroy(ap.doerHandle.entityBehavior.homeT.gameObject);
-                ap.doerHandle.entityBehavior.homeT = newHomeT;
-
-                // set action parameters
                 ap.type = ActionType.Follow;
-                ap.targetedWorldObject = newHomeT.gameObject;
+                ap.targetedWorldObject = doerHandle.entityBehavior.homeT.gameObject;
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
-                ap.urgent = true;
-                break;
-
-            case "Follow Player" :
-
-                Transform directionalTs = Utility.FindDeepChild(GameManager.current.localPlayer.gameObject.transform, "DirectionalTs");
-            
-                ap.type = ActionType.Follow;
-                ap.targetedWorldObject = directionalTs.GetChild(UnityEngine.Random.Range(0, directionalTs.childCount - 1)).gameObject;
-                ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
+                ap.maxTime = 1f;
+                ap.urgent = false;
                 break;
 
             case "Follow Faction Leader" :
 
-                Transform _directionalTs = Utility.FindDeepChild(doerHandle.entityInfo.faction.leaderHandle.gameObject.transform, "DirectionalTs");
-            
                 ap.type = ActionType.Follow;
-                ap.targetedWorldObject = _directionalTs.GetChild(UnityEngine.Random.Range(0, _directionalTs.childCount - 1)).gameObject;
-                ap.distanceThreshold = 5;
-                ap.maxTime = -1f;
-                ap.urgent = true;
+                ap.targetedWorldObject = doerHandle.entityBehavior.homeT.gameObject;
+                ap.offset = Utility.GetHorizontalVector(Utility.GetRandomVectorHorizontal(2.5f));
+                ap.distanceThreshold = 2.5f;
+                ap.urgent = false;
                 break;
 
             case "Run From Player" :
@@ -186,7 +167,7 @@ public class ActionParameters : ScriptableObject
 
         ActionParameters ap = ScriptableObject.CreateInstance<ActionParameters>();
         ap.doerHandle = null;
-        ap.type = null;
+        ap.type = ActionType.Idle;
         ap.targetedWorldObject = null;
         ap.offset = Vector3.zero;
         ap.number = -1;
@@ -195,7 +176,7 @@ public class ActionParameters : ScriptableObject
         ap.maxTime = -1;
         ap.distanceThreshold = -1;
         ap.bodyRotationMode = BodyRotationMode.Normal;
-        ap.interruptionLevel = InteruptionTier.Anything;
+        ap.interruptionTier = InterruptionTier.Anything;
         ap.urgent = false;
         return ap;
     }
@@ -213,7 +194,7 @@ public class ActionParameters : ScriptableObject
         newAp.maxTime = baseAp.maxTime;
         newAp.distanceThreshold = baseAp.distanceThreshold;
         newAp.bodyRotationMode = baseAp.bodyRotationMode;
-        newAp.interruptionLevel = baseAp.interruptionLevel;
+        newAp.interruptionTier = baseAp.interruptionTier;
         newAp.urgent = baseAp.urgent;
 
         return newAp;

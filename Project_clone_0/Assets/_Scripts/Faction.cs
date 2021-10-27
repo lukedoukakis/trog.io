@@ -30,7 +30,7 @@ public class Faction : MonoBehaviour
             //Debug.Log("party member do shit");
             if(commandeeHandle != null)
             {
-                commandeeHandle.entityBehavior.InsertActionImmediate(ActionParameters.GenerateActionParameters(command, commandeeHandle), true);  
+                commandeeHandle.entityBehavior.InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(command, commandeeHandle), true);  
             }
         }
         //Debug.Log("Commands sent!");
@@ -43,14 +43,14 @@ public class Faction : MonoBehaviour
             {
                 ActionParameters newAp = ActionParameters.Clone(ap);
                 ap.doerHandle = commandeeHandle;
-                commandeeHandle.entityBehavior.InsertActionImmediate(newAp, true);  
+                commandeeHandle.entityBehavior.InsertActionAndExecuteAsap(newAp, true);  
             }
         }
     }
 
     public void SendIndividualCommand(EntityHandle calleeHandle, string command, Vector3 callPosition)
     {
-        calleeHandle.entityBehavior.InsertActionImmediate(ActionParameters.GenerateActionParameters(command, calleeHandle), true);
+        calleeHandle.entityBehavior.InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(command, calleeHandle), true);
     }
 
 
@@ -179,6 +179,10 @@ public class Faction : MonoBehaviour
     public void UpdateLeaderCampStatus()
     {
         leaderInCamp = leaderHandle.entityPhysics.isInsideCamp;
+        foreach(EntityHandle partyHandle in partyHandles)
+        {
+            partyHandle.entityBehavior.UpdateHomePosition(leaderInCamp);
+        }
     }
 
 

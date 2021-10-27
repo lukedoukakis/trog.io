@@ -83,9 +83,9 @@ public class SpeciesInfo : ScriptableObject{
                 Stats.InstantiateStats(1f,1f,1f,.7f,.24f,1f,1f,1f,1f,1f,1f,1f),
                 IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", false, false, true, 3f, 8f, 2f, .5f),
                 BehaviorProfile.InstantiateBehaviorProfile(
-                    BehaviorType.Aggressive,
+                    BehaviorType.Steadfast,
                     new List<AttackType>(){AttackType.Weapon},
-                    new List<Enum>(){ ActionType.StepBack },
+                    new List<ActionType>(){ ActionType.StepSide },
                     .5f,
                     true,
                     false
@@ -107,7 +107,7 @@ public class SpeciesInfo : ScriptableObject{
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Steadfast,
                     new List<AttackType>(){AttackType.Swipe},
-                    new List<Enum>(){ },
+                    new List<ActionType>(){ },
                     .75f,
                     false,
                     false
@@ -131,7 +131,7 @@ public class SpeciesInfo : ScriptableObject{
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Timid,
                     new List<AttackType>(){ AttackType.Swipe },
-                    new List<Enum>(){ },
+                    new List<ActionType>(){ },
                     .75f,
                     false,
                     false
@@ -191,7 +191,7 @@ public class BehaviorProfile : ScriptableObject
 
     public BehaviorType behaviorType;
     public List<AttackType> attackTypes;
-    public List<Enum> attackRecoverySequence;
+    public List<ActionType> attackRecoverySequence;
     public float lungePower;
     public bool canJump;
 
@@ -199,7 +199,7 @@ public class BehaviorProfile : ScriptableObject
 
 
 
-    public static BehaviorProfile InstantiateBehaviorProfile(BehaviorType behaviorType, List<AttackType> attackTypes, List<Enum> attackRecoverySequence, float lungePower, bool canJump, bool domesticatable)
+    public static BehaviorProfile InstantiateBehaviorProfile(BehaviorType behaviorType, List<AttackType> attackTypes, List<ActionType> attackRecoverySequence, float lungePower, bool canJump, bool domesticatable)
     {
         BehaviorProfile bp = ScriptableObject.CreateInstance<BehaviorProfile>();
         bp.behaviorType = behaviorType;
