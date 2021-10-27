@@ -15,6 +15,7 @@ public class Faction : MonoBehaviour
     public ItemCollection ownedItems;
     public Camp camp;
     public List<GameObject> targetedObjects; // items being pursued by members of this faction
+    public bool leaderInCamp;
 
     public bool itemLogisticsHappening;
 
@@ -161,16 +162,23 @@ public class Faction : MonoBehaviour
 
 
 
-    public static void OnItemPickup(Item i, GameObject o, Faction fac){
+    public static void OnItemPickup(Item i, GameObject o, Faction fac)
+    {
         
     }
 
-    public bool ItemIsTargetedByThisFaction(GameObject o){
+    public bool ItemIsTargetedByThisFaction(GameObject o)
+    {
         return targetedObjects.Contains(o);
     }
 
     public void OnPopulationChange(){
         camp.UpdateTentCount();
+    }
+
+    public void UpdateLeaderCampStatus()
+    {
+        leaderInCamp = leaderHandle.entityPhysics.isInsideCamp;
     }
 
 

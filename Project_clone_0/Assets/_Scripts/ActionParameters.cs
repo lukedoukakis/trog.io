@@ -5,6 +5,7 @@ using System;
 
 
 public enum ActionType{ Idle, GoTo, Follow, RunFrom, Collect, Pickup, Chase, Attack, AttackRecover, Build, Hunt, StepBack, StepSide }
+public enum InteruptionTier{ Anything, SenseDanger, Hit, Nothing }
 
 public class ActionParameters : ScriptableObject
 {
@@ -36,6 +37,7 @@ public class ActionParameters : ScriptableObject
     // body rotation mode
     public Enum bodyRotationMode;
 
+    public Enum interruptionLevel;
     // is urgent, i.e. will the entity sprint to accomplish the action etc.
     public bool urgent;
 
@@ -43,7 +45,7 @@ public class ActionParameters : ScriptableObject
     // maximum time to be spent executing the action
     public float maxTime;
 
-    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, Enum _type, GameObject _targetWorldObject, Vector3 _offset, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, Enum _bodyRotationMode, bool _urgent)
+    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, Enum _type, GameObject _targetWorldObject, Vector3 _offset, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, Enum _bodyRotationMode, Enum _interruptionLevel, bool _urgent)
     {
         ActionParameters a = ActionParameters.GenerateActionParameters();
         a.doerHandle = _doerHandle;
@@ -56,6 +58,7 @@ public class ActionParameters : ScriptableObject
         a.maxTime = _maxTime;
         a.distanceThreshold = _distanceThreshold;
         a.bodyRotationMode = _bodyRotationMode;
+        a.interruptionLevel = _interruptionLevel;
         a.urgent = _urgent;
 
         return a;
@@ -181,19 +184,20 @@ public class ActionParameters : ScriptableObject
     public static ActionParameters GenerateActionParameters()
     {
 
-        ActionParameters a = ScriptableObject.CreateInstance<ActionParameters>();
-        a.doerHandle = null;
-        a.type = null;
-        a.targetedWorldObject = null;
-        a.offset = Vector3.zero;
-        a.number = -1;
-        a.item_result = null;
-        a.item_target = null;
-        a.maxTime = -1;
-        a.distanceThreshold = -1;
-        a.bodyRotationMode = BodyRotationMode.Normal;
-        a.urgent = false;
-        return a;
+        ActionParameters ap = ScriptableObject.CreateInstance<ActionParameters>();
+        ap.doerHandle = null;
+        ap.type = null;
+        ap.targetedWorldObject = null;
+        ap.offset = Vector3.zero;
+        ap.number = -1;
+        ap.item_result = null;
+        ap.item_target = null;
+        ap.maxTime = -1;
+        ap.distanceThreshold = -1;
+        ap.bodyRotationMode = BodyRotationMode.Normal;
+        ap.interruptionLevel = InteruptionTier.Anything;
+        ap.urgent = false;
+        return ap;
     }
 
     public static ActionParameters Clone(ActionParameters baseAp)
@@ -209,6 +213,7 @@ public class ActionParameters : ScriptableObject
         newAp.maxTime = baseAp.maxTime;
         newAp.distanceThreshold = baseAp.distanceThreshold;
         newAp.bodyRotationMode = baseAp.bodyRotationMode;
+        newAp.interruptionLevel = baseAp.interruptionLevel;
         newAp.urgent = baseAp.urgent;
 
         return newAp;

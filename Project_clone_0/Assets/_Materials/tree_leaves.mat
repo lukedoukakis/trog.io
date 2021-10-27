@@ -8,13 +8,13 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: tree_leaves
-  m_Shader: {fileID: -6465566751694194690, guid: b62a38319167f37409790434ffbb1835,
+  m_Shader: {fileID: -6465566751694194690, guid: 209b8cc76d98c744594a4e3b1f3f8cda,
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3001
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -58,4 +58,4 @@ Material:
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}
-    - _TargetVector: {r: -49.36062, g: 4615.415, b: 72.83499, a: 0}
+    - _TargetVector: {r: -49006.516, g: 4648.0254, b: -36792.438, a: 0}

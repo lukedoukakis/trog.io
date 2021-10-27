@@ -1221,7 +1221,7 @@ public class EntityPhysics : EntityComponent
             {
                 if(hitObjectStats.hp > 0)
                 {
-                    ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Chase, hitObject, Vector3.zero, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, true);
+                    ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Chase, hitObject, Vector3.zero, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, InteruptionTier.Anything, true);
                     entityInfo.faction.SendPartyCommand(ap);
                 }
             }
@@ -1611,6 +1611,29 @@ public class EntityPhysics : EntityComponent
 
     }
 
+    public void OnCampBorderEnter()
+    {
+        //Debug.Log("OnCampBorderCross()");
+        isInsideCamp = true;
+        entityItems.EmptyInventory();
+        if(entityInfo.isFactionLeader)
+        {
+            entityInfo.faction.UpdateLeaderCampStatus();
+        }
+        // todo: command tribe memebrs to line up to orientations
+    }
+
+    public void OnCampBorderExit()
+    {
+        //Debug.Log("OnCampBorderCross()");
+        isInsideCamp = false;
+        if(entityInfo.isFactionLeader)
+        {
+            entityInfo.faction.UpdateLeaderCampStatus();
+        }
+        // todo: command tribe memebrs to follow
+    }
+
 
 
     void OnTriggerEnter(Collider col)
@@ -1630,11 +1653,7 @@ public class EntityPhysics : EntityComponent
                 if (System.Object.ReferenceEquals(objectReference.GetObjectReference(), entityInfo.faction.camp))
                 {
                     //Debug.Log("Border Enter");
-                    entityItems.OnCampBorderEnter();
-                    // if (entityInfo.isFactionLeader)
-                    // {
-                    //     PlayerCommand.current.SendCommand("Go Home");
-                    // }
+                    OnCampBorderEnter();
                 }
             }
         }
@@ -1655,11 +1674,7 @@ public class EntityPhysics : EntityComponent
                 if (System.Object.ReferenceEquals(objectReference.GetObjectReference(), entityInfo.faction.camp))
                 {
                     //Debug.Log("Border Exit");
-                    entityItems.OnCampBorderExit();
-                    // if (entityInfo.isFactionLeader)
-                    // {
-                    //     entityInfo.faction.SendPartyCommand("Follow Faction Leader");
-                    // }
+                    OnCampBorderExit();
                 }
             }
         }
