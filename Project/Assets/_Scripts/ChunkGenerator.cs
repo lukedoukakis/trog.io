@@ -10,10 +10,10 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 7;
-    public static float Scale = 100f;
+    public static float Scale = 120f;
     public static float ElevationAmplitude = 5400f;
     public static float MountainMapScale = 80f;
-    public static float ElevationMapScale = 16000f;
+    public static float ElevationMapScale = 3000f;
     public static int TemperatureMapScale = 800;
     public static int HumidityMapScale = 800;
     public static float meter = 1f / ElevationAmplitude;
@@ -513,12 +513,9 @@ public class ChunkGenerator : MonoBehaviour
 
                 // -------------------------------------------------------
 
-
-
                 //posterize all land
-                // float postNes = .75f;
-                // heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 350, .9f + postNes);
-                // heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 750, 0f + postNes);
+                //heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 350, .1f);
+                //heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 750, .75f);
 
 
                 // dip

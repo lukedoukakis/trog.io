@@ -15,6 +15,7 @@ public class EntityBehavior : EntityComponent
     public bool isAtHome;
     public Vector3 move;
     public bool urgent;
+    public Vector3 followOffset;
 
 
     public static float RANDOM_OFFSET_RANGE = 1f;
@@ -67,6 +68,7 @@ public class EntityBehavior : EntityComponent
 
         isPlayer = tag == "Player";
         homeT = new GameObject().transform;
+        followOffset = Utility.GetHorizontalVector(Utility.GetRandomVectorHorizontal(2.5f));
         actionQueue = new List<ActionParameters>();
         randomOffset = new Vector3(UnityEngine.Random.Range(RANDOM_OFFSET_RANGE*-1f, RANDOM_OFFSET_RANGE), 0f, UnityEngine.Random.Range(RANDOM_OFFSET_RANGE*-1f, 0));
         actionLayers = new Dictionary<string, ActionParameters>{
@@ -81,8 +83,6 @@ public class EntityBehavior : EntityComponent
             {"Hands", null},
             {"Head", null }
         };
-
-        homeT = new GameObject().transform;
 
     }
 
@@ -192,10 +192,6 @@ public class EntityBehavior : EntityComponent
         }
         activeAction = actionQueue[0];
         actionQueue.RemoveAt(0);
-        if(entityInfo.isFactionFollower)
-        {
-            Debug.Log("Active Action: " + activeAction.type);
-        }
         ExecuteAction(activeAction);
         return activeAction;
     }
@@ -929,7 +925,14 @@ public class EntityBehavior : EntityComponent
         }
         else
         {
-            return Utility.IsInHierarchy(otherObject.transform, activeAction.targetedWorldObject.transform);
+            if(activeAction.targetedWorldObject == null)
+            {
+                return true;
+            }
+            else
+            {
+                return Utility.IsInHierarchy(otherObject.transform, activeAction.targetedWorldObject.transform);
+            }
 
             //return ReferenceEquals(otherObject, activeAction.targetedWorldObject);
         }
@@ -1002,6 +1005,8 @@ public class EntityBehavior : EntityComponent
         {
             //Debug.Log("(leader in camp)");
             Transform campPositionT = entityInfo.faction.camp.GetOpenTribeMemberStandPosition();
+            Debug.Log(homeT.gameObject.name);
+            Debug.Log(campPositionT.gameObject.name);
             homeT.transform.SetParent(campPositionT);
             homeT.transform.position = campPositionT.position;
         }

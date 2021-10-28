@@ -89,8 +89,9 @@ public class ActionParameters : ScriptableObject
 
                 ap.type = ActionType.Follow;
                 ap.targetedWorldObject = doerHandle.entityBehavior.homeT.gameObject;
-                ap.offset = Utility.GetHorizontalVector(Utility.GetRandomVectorHorizontal(2.5f));
+                ap.offset = ap.doerHandle.entityBehavior.followOffset;
                 ap.distanceThreshold = 2.5f;
+                ap.maxTime = 1f;
                 ap.urgent = false;
                 break;
 

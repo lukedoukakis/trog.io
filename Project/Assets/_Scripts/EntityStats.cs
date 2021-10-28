@@ -154,18 +154,31 @@ public class EntityStats : EntityComponent
 
     }
 
-    void OnHealthEmptied(EntityHandle attackerHandle){
+    void OnHealthEmptied(EntityHandle attackerHandle)
+    {
+        Die(attackerHandle);
+    }
+
+    void Die(EntityHandle attackerHandle)
+    {
         //Debug.Log("DED");
 
         // todo: death 'animation'/being destroyed visuals
         if(entityBehavior != null)
         {
+            entityBehavior.homeT.SetParent(null);
             Destroy(entityBehavior.homeT.gameObject);
         }
+        if(entityItems != null)
+        {
+            entityItems.DropEverything();
+        }
+        if(entityInfo != null)
+        {
+            entityInfo.faction.RemoveMember(entityHandle);
+        }
         GameObject.Destroy(this.gameObject);
-
         SpawnDrops(this.transform.position, attackerHandle);
-
     }
 
 

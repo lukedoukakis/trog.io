@@ -35,6 +35,7 @@ public class ItemCollection
     public void RemoveItem(Item i, int count){
         if(items.ContainsKey(i)){
             items[i] -= count;
+            items[i] = Mathf.Max(items[i], 0);
         }
         else
         {

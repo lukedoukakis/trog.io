@@ -158,7 +158,8 @@ public class ObjectRack : CampComponent
 
     }
 
-    public virtual void RemoveObjects(Item item, ref int countToRemove, bool moveToAnotherPlace, object destination){
+    public virtual void RemoveObjects(Item item, ref int countToRemove, bool moveToAnotherPlace, object destination)
+    {
 
 
         //Debug.Log("Removing " + countToRemove + " " + item.nme);
@@ -166,6 +167,10 @@ public class ObjectRack : CampComponent
         // count the number of occurences of the item, and remove that many from the objects
         GameObject[] matches = objectsOnRack.Where(o => o.name == item.nme).ToArray();
         int occurences = matches.Length;
+
+        Debug.Log("occurences: " + occurences);
+
+        // if there are any instances of the object on this rack
         if (occurences > 0)
         {
             int c = countToRemove;
@@ -185,6 +190,7 @@ public class ObjectRack : CampComponent
                         float delay = i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP;
                         Utility.DestroyInSeconds(tempT.gameObject, delay + 5f);
                         camp.faction.AddItemOwned(item, 1, (ObjectRack)destination, tempT, delay);
+                        
                         objectsOnRack.Remove(foundObject);
                         GameObject.Destroy(foundObject);
 
@@ -193,25 +199,33 @@ public class ObjectRack : CampComponent
                     // if moving to an EntityItems, call the EntityItems to take the object
                     else if(destination is EntityItems)
                     {
+                        Transform tempT = new GameObject().transform;
+                        tempT.SetPositionAndRotation(foundObject.transform.position, foundObject.transform.rotation);
+                        float delay = i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP;
+                        Utility.DestroyInSeconds(tempT.gameObject, delay + 5f); 
+                          
                         EntityItems ei = (EntityItems)destination;
                         ei.OnObjectTake(foundObject, this);
+
+
+                        //ei.OnObjectTake(foundObject, null);
                     }
                     
                 }
 
-                // if not moving to another location remove and destroy the object
+                // if not moving to another location, remove and destroy the object
                 else
                 {
                     objectsOnRack.Remove(foundObject);
                     GameObject.Destroy(foundObject);
                 }
-    
+
                 --countToRemove;
             }
         }
     
         if(countToRemove > 0){
-            if(camp.faction.GetItemCount(item) > 1)
+            if(camp.faction.GetItemCount(item) > 0)
             {
                 // call to remove remaining count
                 camp.RemoveObjectsAnyRack(item, ref countToRemove, moveToAnotherPlace, destination);
@@ -239,8 +253,8 @@ public class ObjectRack : CampComponent
                     _o.transform.parent = orientation;
 
                     // animate movement of object to rack
-                    Utility.ToggleObjectPhysics(o, false, false, false, false);
-                    o.SetActive(false);
+                    Utility.ToggleObjectPhysics(_o, false, false, false, false);
+                    _o.SetActive(false);
                     System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
                     timer.Start();
                     while (timer.ElapsedMilliseconds / 1000f < delay)
@@ -248,8 +262,8 @@ public class ObjectRack : CampComponent
                         yield return null;
                     }
                     timer.Stop();
-                    o.transform.position = originT.transform.position;
-                    o.SetActive(true);
+                    _o.transform.position = originT.transform.position;
+                    _o.SetActive(true);
                     Vector3 curOrPos, lastOrPos;
                     lastOrPos = orientation.position;
                     curOrPos = Vector3.zero;
@@ -257,7 +271,7 @@ public class ObjectRack : CampComponent
                     {
                         curOrPos = orientation.position;
                         _o.transform.position = Vector3.Lerp(_o.transform.position, orientation.position, OBJECT_MOVEMENT_ANIMATION_SPEED * Time.deltaTime);
-                        o.transform.Rotate(Vector3.right * 20f);
+                        _o.transform.Rotate(Vector3.right * 20f);
                         lastOrPos = curOrPos;
                         yield return null;
                     }

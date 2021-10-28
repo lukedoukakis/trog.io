@@ -1222,10 +1222,14 @@ public class EntityPhysics : EntityComponent
             }
 
             // apply fixed weapon position effect if applicable
-            if (entityItems != null)
+            if(isLocalPlayer)
             {
-                StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
+                if (entityItems != null)
+                {
+                    StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
+                }
             }
+        
 
             StopMeleeAttackHitTime();
         }

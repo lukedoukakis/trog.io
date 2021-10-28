@@ -85,7 +85,8 @@ public class EntityItems : EntityComponent
     }
 
     // client method when an object is interacted with
-    public void OnObjectTake(GameObject worldObject, object attachedObject){
+    public void OnObjectTake(GameObject worldObject, object attachedObject)
+    {
         Item item = Item.GetItemByName(worldObject.name);
         switch (item.type) {
             case ItemType.Food :
@@ -182,6 +183,11 @@ public class EntityItems : EntityComponent
             rack.camp.faction.RemoveItemOwned(item, 1, rack, false, null);
             o = Utility.InstantiateSameName(item.worldObjectPrefab, worldObject.transform.position, worldObject.transform.rotation);
         }
+        else if (attachedObject is EntityItems)
+        {
+            // picking up from another human
+            o = worldObject; 
+        } 
         else if(attachedObject == null)
         {
             o = worldObject;
@@ -207,6 +213,7 @@ public class EntityItems : EntityComponent
 
         //Debug.Log("Dropping");
 
+        // if dropping onto an object rack
         if (targetAttachedObject is ObjectRack)
         {
             ObjectRack rack = (ObjectRack)targetAttachedObject;
@@ -220,7 +227,7 @@ public class EntityItems : EntityComponent
                 entityInfo.faction.AddItemOwned(holding_item, 1, rack, transform, 0f);
                 GameObject.Destroy(holding_object);
             }
-            // if item not not correspond to the rack type
+            // if item not correspond to the rack type
             else
             {
                 entityInfo.faction.AddItemOwned(holding_item, 1, null, transform, 0f);
@@ -229,6 +236,29 @@ public class EntityItems : EntityComponent
 
             holding_item = null;
             holding_object = null;
+        }
+
+        // if dropping onto another entity
+        else if(targetAttachedObject is EntityItems)
+        {
+            EntityItems takerItems = (EntityItems)targetAttachedObject;
+            Item itemToDrop = holding_item;
+            GameObject worldObjectToDrop = weaponEquipped_object;
+            holding_item = null;
+            holding_object = null;
+            takerItems.PickUpHolding(itemToDrop, worldObjectToDrop, this);
+            // if is player and if no equipped weapon, give one from camp
+            if(isLocalPlayer)
+            {
+                if(holding_object == null)
+                {
+                    Debug.Log("Giving player item from camp");
+                    if(entityInfo.faction.GetItemCount(itemToDrop) > 0)
+                    {
+                        entityInfo.faction.RemoveItemOwned(itemToDrop, 1, null, true, this);
+                    }
+                }
+            }
         }
 
         else if (targetAttachedObject == null)
@@ -304,7 +334,8 @@ public class EntityItems : EntityComponent
 
     // weapon
 
-    public void DropEquippedWeapon(object targetAttachedObject){
+    public void DropEquippedWeapon(object targetAttachedObject)
+    {
         
         // if dropping onto an object rack
         if (targetAttachedObject is ObjectRack)
@@ -326,19 +357,24 @@ public class EntityItems : EntityComponent
             weaponEquipped_item = null;
             weaponEquipped_object = null;
             takerItems.PickUpWeapon(itemToDrop, worldObjectToDrop, this);
-            // if is player and if no equipped weapon (weapon from other entity may have been exchanged), give one from camp
+            // if is player and if no equipped weapon, give one from camp
             if(isLocalPlayer)
             {
                 if(weaponEquipped_item == null)
                 {
-                    entityInfo.faction.RemoveItemOwned(itemToDrop, 1, null, true, this);
+                    Debug.Log("Giving player item from camp");
+                    if(entityInfo.faction.GetItemCount(itemToDrop) > 0)
+                    {
+                        entityInfo.faction.RemoveItemOwned(itemToDrop, 1, null, true, this);
+                    }
                 }
             }
         }
         else if (targetAttachedObject == null)
         {
-            if(Camp.EntityIsInsideCamp(entityHandle)){
-                entityInfo.faction.AddItemOwned(weaponEquipped_item, 1,null, transform, 0f);
+            if(Camp.EntityIsInsideCamp(entityHandle))
+            {
+                entityInfo.faction.AddItemOwned(weaponEquipped_item, 1, null, transform, 0f);
                 GameObject.Destroy(weaponEquipped_object);
                 weaponEquipped_item = null;
                 weaponEquipped_object = null;
@@ -562,6 +598,20 @@ public class EntityItems : EntityComponent
             otherEntityItems.OnItemsChange();
         }
         
+    }
+
+    public void DropEverything()
+    {
+        DropHolding(null);
+        if (weaponEquipped_item != null)
+        {
+            DropEquippedWeapon(null);
+        }
+        if (weaponUnequipped_item != null)
+        {
+            ToggleWeaponEquipped();
+            DropEquippedWeapon(null);
+        }
     }
 
 

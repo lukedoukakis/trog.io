@@ -105,7 +105,7 @@ public class Camp : MonoBehaviour
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             AddItemsToCamp(faction.ownedItems, originT);
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
-            UpdateTentCount();
+            //UpdateTentCount();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             ClearFeaturesFromCampRadius();
 
@@ -416,7 +416,7 @@ public class Camp : MonoBehaviour
 
     public void AddObjectsAnyRack(Item item, ref int count, Transform originT, ref int newRacksCount){
         List<ObjectRack> rackList = GetRackListForItemType(item.type);
-         foreach(ObjectRack rack in rackList){
+        foreach(ObjectRack rack in rackList){
             if(!rack.IsFull()){
                 rack.AddObjects(item, ref count, originT, ref newRacksCount);
                 break;
@@ -433,7 +433,7 @@ public class Camp : MonoBehaviour
 
     public void RemoveObjectsAnyRack(Item item, ref int count, bool moveToAnotherRack, object destination)
     {
-        List<ObjectRack> rackList = GetRackListForItemType(item.type);
+        List<ObjectRack> rackList = GetRackListForItemType(item.type).Where(rack => !rack.IsEmpty()).ToList();
         for(int i = rackList.Count - 1; i >= 0; --i){
             if(count > 0){
                 rackList[i].RemoveObjects(item, ref count, moveToAnotherRack, destination);
@@ -443,6 +443,8 @@ public class Camp : MonoBehaviour
             }
         }
     }
+
+
 
     public List<ObjectRack> GetRackListForItemType(Enum itemType){
         List<ObjectRack> rackList;
@@ -479,12 +481,11 @@ public class Camp : MonoBehaviour
     {
         EntityItems casterItems = casterHandle.entityItems;
         Item foodItem = casterItems.holding_item;
-        GameObject foodObject = casterItems.holding_object;
-
         if (foodItem == null) {
             // todo: tell how you can make this happen tooltip
             return;
         }
+        GameObject foodObject = casterItems.holding_object;
         
         StartCoroutine(_CastFoodIntoBonfire());
 
@@ -516,7 +517,10 @@ public class Camp : MonoBehaviour
     {
         //Debug.Log("OnFoodCast()");
         StartCoroutine(casterHandle.entityCommandServer.SpawnNpcWhenReady(casterHandle));
-        casterHandle.entityInfo.faction.RemoveItemOwned(foodItem, 1, null, true, casterHandle.entityItems);
+        if(casterHandle.entityInfo.faction.GetItemCount(foodItem) > 0)
+        {
+            casterHandle.entityInfo.faction.RemoveItemOwned(foodItem, 1, null, true, casterHandle.entityItems);
+        }
 
     }
 

@@ -62,6 +62,12 @@ public class Faction : MonoBehaviour
             AddToParty(handle);
         }
     }
+    public void RemoveMember(EntityHandle handle)
+    {
+        handle.entityInfo.faction = null;
+        memberHandles.Remove(handle);
+        RemoveFromParty(handle);
+    }
 
     public void AddToParty(EntityHandle handle){
         if(!partyHandles.Contains(handle)){
@@ -99,6 +105,7 @@ public class Faction : MonoBehaviour
         yield return new WaitForSecondsRealtime(delay);
 
         //Debug.Log("Adding item: " + item.nme);
+
         ownedItems.AddItem(item, count);
 
         if (camp != null)
@@ -115,7 +122,6 @@ public class Faction : MonoBehaviour
                 rack.AddObjects(item, ref count, originT, ref zeroRacksRef);
             }
         }
-        yield return null;
 
         itemLogisticsHappening = false;
     }
@@ -124,7 +130,18 @@ public class Faction : MonoBehaviour
     public void RemoveItemOwned(Item item, int count, ObjectRack rackToRemoveFrom, bool moveToAnotherPlace, object destination)
     {
 
-        ownedItems.RemoveItem(item, count);
+        bool r = true;
+        if(destination != null)
+        {
+            if(destination is EntityItems)
+            {
+                r = false;
+            }
+        }
+
+        if(r){ ownedItems.RemoveItem(item, count); }
+
+        //ownedItems.RemoveItem(item, count);
 
         if (camp != null)
         {
@@ -139,6 +156,10 @@ public class Faction : MonoBehaviour
                 rackToRemoveFrom.RemoveObjects(item, ref count, moveToAnotherPlace, destination);
             }
         }
+
+        //Debug.Log("Faction " + item.nme + " count: " + GetItemCount(item));
+
+
     }
 
 
@@ -173,7 +194,7 @@ public class Faction : MonoBehaviour
     }
 
     public void OnPopulationChange(){
-        camp.UpdateTentCount();
+        //camp.UpdateTentCount();
     }
 
     public void UpdateLeaderCampStatus()
