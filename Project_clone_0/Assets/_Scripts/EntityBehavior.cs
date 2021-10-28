@@ -320,7 +320,6 @@ public class EntityBehavior : EntityComponent
                         move = GetNavigationDirection(targetPos, false);
                         entityPhysics.moveDir = move;
                     }
-                    //SetHeadLookAt(a.obj.transform.position, -1f);
                     yield return null;
                 }
             }
