@@ -3,12 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public enum StatsSlot{ Base, Weapon, Clothing, Food, Tonic }
+
 public class EntityStats : EntityComponent
 {
 
 
-    public List<Stats> statsModifiers;
-    public Stats statsCombined;
+
+    Dictionary<StatsSlot, Stats> statsSlots;
+    List<Stats> activeStatsModifiers;
+    public Stats combinedStats;
     public ItemCollection drops;
 
 
@@ -23,11 +28,18 @@ public class EntityStats : EntityComponent
 
         base.Awake();
 
-        statsModifiers = new List<Stats>();
-        statsCombined = Stats.InstantiateStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        statsSlots = new Dictionary<StatsSlot, Stats>(){
+            { StatsSlot.Base, Stats.NONE },
+            { StatsSlot.Weapon, Stats.NONE },
+            { StatsSlot.Food, Stats.NONE },
+            { StatsSlot.Clothing, Stats.NONE },
+        };
+
+        activeStatsModifiers = new List<Stats>();
+        combinedStats = Stats.InstantiateStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
         if(entityInfo != null){
-            AddSpeciesBaseModifier();
+            SetStatsSlot(StatsSlot.Base, entityInfo.speciesInfo.baseStats);
             SetBaseHpAndStamina();
             drops = entityInfo.speciesInfo.baseDrop;
         }
@@ -35,37 +47,49 @@ public class EntityStats : EntityComponent
 
     }
 
-    public void AddSpeciesBaseModifier(){
-        AddStatsModifier(entityInfo.speciesInfo.baseStats);
+
+    public void SetStatsSlot(StatsSlot slot, Stats newStats)
+    {
+
+        Stats oldStats = statsSlots[slot];
+        if(!ReferenceEquals(oldStats, Stats.NONE))
+        {
+            RemoveStatsModifier(oldStats);
+        }
+        statsSlots[slot] = newStats;
+        AddStatsModifier(newStats);
+
+        OnStatsChange();
     }
 
-    public void SetBaseHpAndStamina(){
-        hp = (int)(BASE_AMOUNT_HP * Stats.GetStatValue(statsCombined, Stats.StatType.Health));
-        stamina = (int)(BASE_AMOUNT_STAMINA * Stats.GetStatValue(statsCombined, Stats.StatType.Stamina));
+
+    public void SetBaseHpAndStamina()
+    {
+        hp = (int)(BASE_AMOUNT_HP * Stats.GetStatValue(combinedStats, Stats.StatType.Health));
+        stamina = (int)(BASE_AMOUNT_STAMINA * Stats.GetStatValue(combinedStats, Stats.StatType.Stamina));
     }
 
 
-    public void AddStatsModifier(Stats statsToAdd){
-        statsModifiers.Add(statsToAdd);
+    void AddStatsModifier(Stats statsToAdd){
+        activeStatsModifiers.Add(statsToAdd);
         Enum statType;
         foreach(int statNum in Enum.GetValues(typeof(Stats.StatType))){
             statType = (Stats.StatType)statNum;
-            Stats.SetStatValue(statsCombined, statType, Stats.GetStatValue(statsCombined, statType) + Stats.GetStatValue(statsToAdd, statType));
+            Stats.SetStatValue(combinedStats, statType, Stats.GetStatValue(combinedStats, statType) + Stats.GetStatValue(statsToAdd, statType));
         }
-        OnStatsChange();
         //Debug.Log("Added stats modifier");
     }
-    public void RemoveStatsModifier(Stats statsToRemove){
+    void RemoveStatsModifier(Stats statsToRemove){
         if (statsToRemove != null)
         {
-            bool removed = statsModifiers.Remove(statsToRemove);
+            bool removed = activeStatsModifiers.Remove(statsToRemove);
             if (removed)
             {
                 Enum statType;
                 foreach (int statNum in Enum.GetValues(typeof(Stats.StatType)))
                 {
                     statType = (Stats.StatType)statNum;
-                    Stats.SetStatValue(statsCombined, statType, Stats.GetStatValue(statsCombined, statType) - Stats.GetStatValue(statsToRemove, statType));
+                    Stats.SetStatValue(combinedStats, statType, Stats.GetStatValue(combinedStats, statType) - Stats.GetStatValue(statsToRemove, statType));
                 }
             }
             else
@@ -98,7 +122,7 @@ public class EntityStats : EntityComponent
         {
             EntityItems attackerItems = attackerHandle.entityItems;
             attackerWeapon = attackerItems == null ? Item.None : attackerItems.weaponEquipped_item;
-            attackerStats = attackerHandle.entityStats.statsCombined;
+            attackerStats = attackerHandle.entityStats.combinedStats;
         }
         else
         {
@@ -111,7 +135,7 @@ public class EntityStats : EntityComponent
         float hpLoss;
         if (!instantKill)
         {
-            float armorBase = Stats.GetStatValue(this.statsCombined, Stats.StatType.ArmorBase);
+            float armorBase = Stats.GetStatValue(this.combinedStats, Stats.StatType.ArmorBase);
             Enum armorStatType;
             switch (attackerWeapon.damageType)
             {
@@ -128,7 +152,7 @@ public class EntityStats : EntityComponent
                     armorStatType = Stats.StatType.ArmorBase;
                     break;
             }
-            float armorFromWeaponType = Stats.GetStatValue(this.statsCombined, armorStatType);
+            float armorFromWeaponType = Stats.GetStatValue(this.combinedStats, armorStatType);
 
             hpLoss = hpLossFromHit_base;
             hpLoss *= attackerAttack;
@@ -274,7 +298,7 @@ public class EntityStats : EntityComponent
         foreach (int i in Enum.GetValues(typeof(Stats.StatType)))
         {
             Enum statType = (Stats.StatType)i;
-            list += Stats.GetStatName(statsCombined, statType) + ": " + Stats.GetStatValue(statsCombined, statType);
+            list += Stats.GetStatName(combinedStats, statType) + ": " + Stats.GetStatValue(combinedStats, statType);
         }
         
         return list;

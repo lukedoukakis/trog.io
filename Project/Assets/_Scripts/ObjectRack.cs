@@ -168,7 +168,7 @@ public class ObjectRack : CampComponent
         GameObject[] matches = objectsOnRack.Where(o => o.name == item.nme).ToArray();
         int occurences = matches.Length;
 
-        Debug.Log("occurences: " + occurences);
+        //Debug.Log("occurences: " + occurences);
 
         // if there are any instances of the object on this rack
         if (occurences > 0)

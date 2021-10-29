@@ -895,16 +895,16 @@ public class EntityBehavior : EntityComponent
     }
 
     public float CalculateChaseTime(){
-        return BASE_TIME_CHASE * entityStats.statsCombined.stamina;
+        return BASE_TIME_CHASE * entityStats.combinedStats.stamina;
     }
 
     public float CalculateFleeTime(){
-        return BASE_TIME_FLEE * entityStats.statsCombined.stamina;
+        return BASE_TIME_FLEE * entityStats.combinedStats.stamina;
     }
 
     public float CalculateAttackCooldownTime()
     {
-        return BASE_TIMESTEP_ATTACK * entityStats.statsCombined.attackSpeed;
+        return BASE_TIMESTEP_ATTACK * entityStats.combinedStats.attackSpeed;
     }
 
     public float CalculateTimeUntilCanAttack()

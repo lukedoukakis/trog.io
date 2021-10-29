@@ -197,8 +197,8 @@ public class EntityPhysics : EntityComponent
         ikScripts_torso = new FastIKFabric[] { ikScript_hips };
         iKTargetAnimator = ikParent.GetComponent<Animator>();
 
-        acceleration = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Agility) * BASE_ACCELERATION;
-        maxSpeed_run = Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed) * BASE_MAX_SPEED;
+        acceleration = Stats.GetStatValue(entityStats.combinedStats, Stats.StatType.Agility) * BASE_ACCELERATION;
+        maxSpeed_run = Stats.GetStatValue(entityStats.combinedStats, Stats.StatType.Speed) * BASE_MAX_SPEED;
         maxSpeed_sprint = maxSpeed_run * 3f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * .75f;
@@ -877,7 +877,7 @@ public class EntityPhysics : EntityComponent
 
     public void Move(Vector3 direction, float speed)
     {
-        float speedStat = speed * Stats.GetStatValue(entityStats.statsCombined, Stats.StatType.Speed);
+        float speedStat = speed * Stats.GetStatValue(entityStats.combinedStats, Stats.StatType.Speed);
         SetIsSprinting();
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
         rb.AddForce(move * speedStat, ForceMode.Force);
@@ -1004,7 +1004,7 @@ public class EntityPhysics : EntityComponent
 
         IEnumerator _LaunchProjectile()
         {
-            Projectile projectile = Projectile.InstantiateProjectile(entityItems.weaponEquipped_item, entityItems.weaponEquipped_object, entityStats.statsCombined);
+            Projectile projectile = Projectile.InstantiateProjectile(entityItems.weaponEquipped_item, entityItems.weaponEquipped_object, entityStats.combinedStats);
             AttackCollisionDetector acd = projectile.worldObject.transform.Find("HitZone").GetComponent<AttackCollisionDetector>();
             acd.SetOwner(entityHandle);
             acd.SetProjectile(projectile);

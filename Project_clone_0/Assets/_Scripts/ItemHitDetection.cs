@@ -21,7 +21,7 @@ public class ItemHitDetection : MonoBehaviour
         // add and set up info and stats if they don't exist
         if(stats == null){
             stats = gameObject.AddComponent<EntityStats>();
-            stats.AddStatsModifier(item.baseStats);
+            stats.SetStatsSlot(StatsSlot.Base, item.baseStats);
             stats.SetBaseHpAndStamina();
             stats.drops = item.drops;
             //Debug.Log("Item: " + item.nme);

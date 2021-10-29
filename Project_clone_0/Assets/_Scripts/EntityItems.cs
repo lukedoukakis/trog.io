@@ -293,7 +293,22 @@ public class EntityItems : EntityComponent
 
     public void ConsumeHolding(Item item)
     {
-        entityStats.AddStatsModifier(holding_item.baseStats);
+
+        StatsSlot slot;
+        if(item.type.Equals(ItemType.Food))
+        {
+            slot = StatsSlot.Food;
+        }
+        else if(item.type.Equals(ItemType.Clothing))
+        {
+            slot = StatsSlot.Clothing;
+        }
+        else
+        {
+            slot = StatsSlot.Food;
+        }
+
+        entityStats.SetStatsSlot(slot, item.wielderStatsModifier);
         GameObject.Destroy(holding_object);
         holding_item = null;
         holding_object = null;
@@ -417,9 +432,6 @@ public class EntityItems : EntityComponent
         weaponEquipped_item = item;
         weaponEquipped_object = worldObject;
 
-        // add stats
-        entityStats.AddStatsModifier(item.wielderStatsModifier);
-
         // turn off physics
         Utility.ToggleObjectPhysics(weaponEquipped_object, false, false, false, false);
 
@@ -447,14 +459,12 @@ public class EntityItems : EntityComponent
         if (weaponEquipped_item != null)
         {
             Utility.ToggleObjectPhysics(weaponEquipped_object, false, false, false, false);
-            entityStats.AddStatsModifier(weaponEquipped_item.wielderStatsModifier);
             weaponEquipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().SetOwner(entityHandle);
         }
 
         if (weaponUnequipped_item != null)
         {
             Utility.ToggleObjectPhysics(weaponUnequipped_object, false, false, false, false);
-            entityStats.RemoveStatsModifier(weaponUnequipped_item.wielderStatsModifier);
             if (weaponUnequipped_object != null)
             {
                 weaponUnequipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>().RemoveOwner();
@@ -507,9 +517,6 @@ public class EntityItems : EntityComponent
 
             // unequip clothing on model
             meshParentT.Find(clothing.nme).gameObject.SetActive(false);
-
-            // remove stats
-            entityStats.RemoveStatsModifier(clothing.wielderStatsModifier);
 
             clothing = null;
         }
@@ -622,6 +629,11 @@ public class EntityItems : EntityComponent
             //Utility.IgnorePhysicsCollisions(transform, weaponEquipped_object.transform);
             Utility.IgnorePhysicsCollisions(weaponEquipped_object.transform, entityInfo.faction.memberHandles.Where(handle => handle != null).Select(handle => handle.transform).ToArray());
             weaponEquipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
+            entityStats.SetStatsSlot(StatsSlot.Weapon, weaponEquipped_item.wielderStatsModifier);
+        }
+        else
+        {
+            entityStats.SetStatsSlot(StatsSlot.Weapon, Stats.NONE);
         }
         if(weaponUnequipped_object != null){
              Utility.IgnorePhysicsCollisions(weaponUnequipped_object.transform, weaponUnequipped_object.transform);
