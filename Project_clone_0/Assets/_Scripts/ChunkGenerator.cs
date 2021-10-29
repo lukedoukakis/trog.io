@@ -81,8 +81,7 @@ public class ChunkGenerator : MonoBehaviour
     // features and creatures
     Transform FeaturesParent;
     public static List<GameObject> activeCreatures;
-    public static List<GameObject> Features;
-    public static List<GameObject> Creatures;
+    public static List<GameObject> Features, Creatures, Items;
     public static readonly float creatureDespawnTimestep = 5f;
     public static float creatureDespawnTime = 0f;
     
@@ -139,6 +138,7 @@ public class ChunkGenerator : MonoBehaviour
 
         Features = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Features"));
         Creatures = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Creatures"));
+        Items = Item.Items.Values.Select(item => item.worldObjectPrefab).Where(o => o != null).ToList();
 
         activeCreatures = new List<GameObject>();
 
@@ -629,63 +629,73 @@ public class ChunkGenerator : MonoBehaviour
                 //yield return new WaitUntil(() => !cd.IsEdgeChunk());
                 //yield return new WaitForSecondsRealtime(2f);
 
-                foreach (GameObject feature in Features)
+                foreach (GameObject feature in Features.Concat(Items))
                 {
 
                     // break if chunk not loaded
                     if (cd == null || (cd.featuresParent == null)) { break; }
 
+
                     spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
-                    placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
-                    if (placementDensity > 0)
+                    if (spawnParameters != null)
                     {
-                        randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + _xOffset + .01f) / 2f, (z + _zOffset + .01f) / 2f) * 2f - 1f);
-                        int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - placementDensity) + randomDivisorOffset);
-                        if (divisor < 1)
+                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                        if (placementDensity > 0)
                         {
-                            divisor = 1;
-                        }
-                        if ((x + _xOffset) % divisor == 0 && (z + _zOffset) % divisor == 0)
-                        {
-                            bundleName = SpawnParameters.GetBundleName(feature.name);
-                            randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
-                            Vector3 rawHorizontalPosition = new Vector3(x + _xOffset + skewHoriz + randomPositionOffset.x, 0f, z + _zOffset + skewHoriz + randomPositionOffset.z);
-                            ChunkData chunkAtPosition = GetChunkFromRawPosition(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.z));
-                            if (chunkAtPosition != null)
+                            randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + _xOffset + .01f) / 2f, (z + _zOffset + .01f) / 2f) * 2f - 1f);
+                            int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - placementDensity) + randomDivisorOffset);
+                            if (divisor < 1)
                             {
-                                Vector2 coordinatesInChunk = GetCoordinatesInChunk(rawHorizontalPosition);
-                                int posChunkX = (int)coordinatesInChunk.x;
-                                int posChunkZ = (int)coordinatesInChunk.y;
-                                float posChunkHeight = chunkAtPosition.HeightMap[posChunkX, posChunkZ];
-                                float posChunkSkewHoriz = chunkAtPosition.SkewHorizMap[posChunkX, posChunkZ];
-                                float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ];
-                                placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, posChunkHeight, posChunkYNormal);
-                                if (placementDensity > 0)
+                                divisor = 1;
+                            }
+                            if ((x + _xOffset) % divisor == 0 && (z + _zOffset) % divisor == 0)
+                            {
+                                bundleName = SpawnParameters.GetBundleName(feature.name);
+                                for (int i = 0; i < spawnParameters.numberToSpawn; ++i)
                                 {
-                                    spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.ElevationAmplitude) + Vector3.right * posChunkSkewHoriz + Vector3.forward * posChunkSkewHoriz;
-                                    spawnScale = Vector3.one * spawnParameters.scale;
-                                    o = GameObject.Instantiate(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up), cd.featuresParent);
-                                    o.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
-
-                                    bool noBundle = (bundleName == bundleName_last && !spawnParameters.bundle);
-                                    bundleName_last = bundleName;
-
-                                    if (noBundle)
+                                    randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
+                                    Vector3 rawHorizontalPosition = new Vector3(x + _xOffset + skewHoriz + randomPositionOffset.x, 0f, z + _zOffset + skewHoriz + randomPositionOffset.z);
+                                    ChunkData chunkAtPosition = GetChunkFromRawPosition(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.z));
+                                    if (chunkAtPosition != null)
                                     {
-                                        bundleIteration = 0f;
-                                        //break;
-                                    }
-                                    else
-                                    {
-                                        ++bundleIteration;
+                                        Vector2 coordinatesInChunk = GetCoordinatesInChunk(rawHorizontalPosition);
+                                        int posChunkX = (int)coordinatesInChunk.x;
+                                        int posChunkZ = (int)coordinatesInChunk.y;
+                                        float posChunkHeight = chunkAtPosition.HeightMap[posChunkX, posChunkZ];
+                                        float posChunkSkewHoriz = chunkAtPosition.SkewHorizMap[posChunkX, posChunkZ];
+                                        float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ];
+                                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, posChunkHeight, posChunkYNormal);
+                                        if (placementDensity > 0)
+                                        {
+                                            spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.ElevationAmplitude) + Vector3.right * posChunkSkewHoriz + Vector3.forward * posChunkSkewHoriz;
+                                            spawnScale = Vector3.one * spawnParameters.scale;
+                                            o = Utility.InstantiateSameName(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up));
+                                            o.transform.SetParent(cd.featuresParent);
+                                            o.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
+
+                                            bool noBundle = (bundleName == bundleName_last && !spawnParameters.bundle);
+                                            bundleName_last = bundleName;
+
+                                            if (noBundle)
+                                            {
+                                                bundleIteration = 0f;
+                                                //break;
+                                            }
+                                            else
+                                            {
+                                                ++bundleIteration;
+                                            }
+                                        }
                                     }
                                 }
-                            }
-                            
+                                
 
-                            
+
+
+                            }
                         }
                     }
+
                 }
 
                 foreach (GameObject creature in Creatures)
@@ -695,34 +705,36 @@ public class ChunkGenerator : MonoBehaviour
                     if (cd == null) { break; }
 
                     spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
-                    placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
-
-
-                    int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
-                    int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
-                    //Debug.Log(placementOffsetX);
-                    //Debug.Log(placementOffsetZ);
-                    //placementDensity = .1f;
-                    if (placementDensity > 0f)
+                    if (spawnParameters != null)
                     {
-                        randomDivisorOffset = 0;
-                        int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
-                        if (divisor < 1) { divisor = 1; }
-                        if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
+                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                        int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
+                        int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
+                        //Debug.Log(placementOffsetX);
+                        //Debug.Log(placementOffsetZ);
+                        //placementDensity = .1f;
+                        if (placementDensity > 0f)
                         {
-                            bundleName = SpawnParameters.GetBundleName(creature.name);
-                            spawnPosition = new Vector3(x + _xOffset, height * ElevationAmplitude + 10f, z + _zOffset);
-                            spawnScale = Vector3.one * spawnParameters.scale;
-                            o = GameObject.Instantiate(creature, spawnPosition, Quaternion.identity, null);
-                            o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-                            activeCreatures.Add(o);
+                            randomDivisorOffset = 0;
+                            int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
+                            if (divisor < 1) { divisor = 1; }
+                            if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
+                            {
+                                bundleName = SpawnParameters.GetBundleName(creature.name);
+                                spawnPosition = new Vector3(x + _xOffset, height * ElevationAmplitude + 10f, z + _zOffset);
+                                spawnScale = Vector3.one * spawnParameters.scale;
+                                o = Utility.InstantiateSameName(creature, spawnPosition, Quaternion.identity);
+                                o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                                activeCreatures.Add(o);
 
-                            bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
-                            bundleName_last = bundleName;
+                                bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
+                                bundleName_last = bundleName;
 
-                            if (breaker) { break; }
+                                if (breaker) { break; }
+                            }
                         }
                     }
+
                 }
 
             }

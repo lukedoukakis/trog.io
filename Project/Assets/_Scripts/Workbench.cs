@@ -6,8 +6,8 @@ using System.Linq;
 public class Workbench : ObjectRack
 {
 
-    public static float NEW_OBJECT_CRAFT_SPIN_TIME = .5f;
-    public static float NEW_OBJECT_CRAFT_SPIN_FORCE = 5000f;
+    public static float NEW_OBJECT_CRAFT_FLIP_TIME = .5f;
+    public static float NEW_OBJECT_CRAFT_FLIP_FORCE = 5000f;
     public static float NEW_OBJECT_CRAFT_UPWARD_TRANSLATION = 1f;
 
     public List<Item> itemsOnTable;            // the current items on the table
@@ -91,18 +91,7 @@ public class Workbench : ObjectRack
             Utility.ToggleObjectPhysics(craftedObject, false, false, false, false);
             ConsumeRecipeObjects();
 
-            // do cool fx
-            Vector3 targetPos = craftedObject.transform.position + Vector3.up * NEW_OBJECT_CRAFT_UPWARD_TRANSLATION;
-            float spinForce = NEW_OBJECT_CRAFT_SPIN_FORCE;
-            for(int i = 0; i * .01f < NEW_OBJECT_CRAFT_SPIN_TIME; ++i)
-            {
-                craftedObject.transform.Rotate((Vector3.up + Vector3.right) * spinForce);
-                //craftedObjectRb.AddTorque((Vector3.up + Vector3.right) * NEW_OBJECT_CRAFT_SPIN_FORCE);
-                craftedObject.transform.position = Vector3.Lerp(craftedObject.transform.position, targetPos, 10f * Time.deltaTime);
-                spinForce *= .8f;
-                yield return new WaitForSecondsRealtime(.01f);
-            }
-            Quaternion targetRot = Quaternion.identity;
+            yield return StartCoroutine(Utility.FlipForTime(craftedObject, NEW_OBJECT_CRAFT_UPWARD_TRANSLATION, NEW_OBJECT_CRAFT_FLIP_FORCE, NEW_OBJECT_CRAFT_FLIP_TIME));
             yield return new WaitForSecondsRealtime(.1f);
             Destroy(craftedObject);
 

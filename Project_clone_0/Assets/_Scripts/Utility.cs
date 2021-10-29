@@ -209,6 +209,23 @@ public class Utility : MonoBehaviour
         return true;
     }
 
+
+    public static IEnumerator FlipForTime(GameObject worldObject, float upwardTranslation, float flipForce, float flipTime)
+    {
+        Vector3 targetPos = worldObject.transform.position + Vector3.up * upwardTranslation;
+        float spinForce = flipForce;
+        for (int i = 0; i * .01f < flipTime; ++i)
+        {
+            worldObject.transform.Rotate((Vector3.up + Vector3.right) * spinForce);
+            worldObject.transform.position = Vector3.Lerp(worldObject.transform.position, targetPos, 10f * Time.deltaTime);
+            spinForce *= .8f;
+            yield return new WaitForSecondsRealtime(.01f);
+        }
+        Quaternion targetRot = Quaternion.identity;
+    }
+
+
+
     public static void DestroyInSeconds(GameObject o, float seconds){
         instance.StartCoroutine(instance._DestroyInSeconds(o, seconds));
     }

@@ -275,7 +275,7 @@ public class EntityStats : EntityComponent
                 {
                     //Debug.Log("adding drops to inventory");
                     // if not in camp, add to reciver's inventory and delay small timestep
-                    receiverHandle.entityItems.AddToInventory(item, worldObject, .5f + i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
+                    receiverHandle.entityItems.AddToInventory(item, worldObject, false, .5f + i * ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP);
                 }
                 
             }

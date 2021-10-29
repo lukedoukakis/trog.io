@@ -185,17 +185,20 @@ public class EntityItems : EntityComponent
         }
         else if (attachedObject is EntityItems)
         {
-            // picking up from another human
             o = worldObject; 
         } 
         else if(attachedObject == null)
         {
             o = worldObject;
+            if(!entityPhysics.isInsideCamp && item.isRackable)
+            {
+                AddToInventory(item, worldObject, true, 0f);
+                return;
+            }
         }
         else{
             o = worldObject;
         }
-        // todo: if getting from another human
 
         if(holding_item != null){
             DropHolding(attachedObject);
@@ -525,7 +528,7 @@ public class EntityItems : EntityComponent
 
     // inventory
 
-    public void AddToInventory(Item item, GameObject worldObject, float delay)
+    public void AddToInventory(Item item, GameObject worldObject, bool doFlip, float delay)
     {
         inventory.AddItem(item, 1);
         StartCoroutine(_MoveObject());
@@ -535,8 +538,14 @@ public class EntityItems : EntityComponent
 
             yield return new WaitForSecondsRealtime(delay);
 
-            // move object to player location before destroying
             Utility.ToggleObjectPhysics(worldObject, false, false, false, false);
+
+            if(doFlip)
+            {
+                yield return StartCoroutine(Utility.FlipForTime(worldObject, .5f, 5000f, .25f));
+            }
+
+            // move object to player location before destroying
             while (Vector3.Distance(worldObject.transform.position, transform.position) > .5f)
             {
                 worldObject.transform.position = Vector3.Lerp(worldObject.transform.position, transform.position, ObjectRack.OBJECT_MOVEMENT_ANIMATION_SPEED * Time.deltaTime);
