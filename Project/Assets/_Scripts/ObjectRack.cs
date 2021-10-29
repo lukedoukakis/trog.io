@@ -140,6 +140,7 @@ public class ObjectRack : CampComponent
                 GameObject newWorldObject = Utility.InstantiateSameName(item.worldObjectPrefab);
                 newWorldObject.GetComponent<ObjectReference>().SetObjectReference(this);
                 SetObjectOrientation(newWorldObject, originT, (OBJECT_PLACEMENT_DELAY_TIMESTEP * countAdded) + (Camp.CAMP_COMPONENT_PLACING_TIME_GAP * newRacksCount));
+                Utility.SetGlobalScale(newWorldObject.transform, Vector3.one);
                 objectsOnRack.Add(newWorldObject);
                 --countToAdd;
             }

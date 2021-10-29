@@ -542,7 +542,7 @@ public class EntityItems : EntityComponent
 
             if(doFlip)
             {
-                yield return StartCoroutine(Utility.FlipForTime(worldObject, .5f, 5000f, .25f));
+                yield return StartCoroutine(Utility.FlipForTime(worldObject, .5f, 1000f, .25f));
             }
 
             // move object to player location before destroying

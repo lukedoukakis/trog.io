@@ -110,7 +110,7 @@ public class SpawnParameters
         {"WildDeer", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1, true)},
         
         // items
-        {"StoneSmall", new SpawnParameters(.5f, hgtBankAndDry, all, all, new Vector2(.8f, 1f), new Vector2(.01f, .05f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 3, true)},
+        {"StoneSmall", new SpawnParameters(1f, hgtBankAndDry, all, all, new Vector2(.8f, 1f), new Vector2(.01f, .05f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 3, true)},
         {"WoodPiece", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(ChunkGenerator.GrassNormalMin, .96f), new Vector2(.1f, .2f), DensityCalculationType.Binary, DensityCalculationType.DenserAtMaximum, DensityCalculationType.DenserAtMaximum, DensityCalculationType.Binary, 1, false)}
     };
 

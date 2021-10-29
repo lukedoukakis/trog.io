@@ -97,7 +97,7 @@ public class Camp : MonoBehaviour
 
         IEnumerator _PlaceCampComponents()
         {
-
+            ClearFeaturesFromCampRadius();
             PlaceBorderSphere();
             PlaceBonfire();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
@@ -107,7 +107,6 @@ public class Camp : MonoBehaviour
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             //UpdateTentCount();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
-            ClearFeaturesFromCampRadius();
 
         }
     }
