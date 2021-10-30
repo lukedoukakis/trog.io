@@ -1354,7 +1354,7 @@ public class EntityPhysics : EntityComponent
         IEnumerator _Lunge()
         {
             Vector3 dir = ((direction).normalized + Vector3.up * .5f) * 200f * entityBehavior.behaviorProfile.lungePower;
-            for (int i = 0; i < 25f; ++i)
+            for (int i = 0; i < 10f; ++i)
             {
                 rb.AddForce(dir, ForceMode.Acceleration);
                 yield return new WaitForSecondsRealtime(.01f);
