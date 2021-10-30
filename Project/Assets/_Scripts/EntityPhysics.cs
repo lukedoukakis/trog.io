@@ -36,14 +36,17 @@ public class EntityPhysics : EntityComponent
     public static float BASE_COOLDOWN_JUMP = .15f;
     public static float WEAPON_CHARGETIME_MAX = .25f;
     public static float WEAPON_HITTIME_MAX = .25f;
+    public static float BASE_COOLDOWN_DODGE = .5f;
+    public static float DODGE_LASTING_TIME = 1f;
 
 
     public Vector3 moveDir;
     public bool isJumping, jumpOffLeft, jumpOffRight, isSprinting;
+    public bool isDodging;
     Vector3 jumpPoint;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
     public float acceleration;
-    public float maxSpeed_run, maxSpeed_sprint, maxSpeed_climb, maxSpeed_swim;
+    public float maxSpeed_run, maxSpeed_sprint, maxSpeed_climb, maxSpeed_swim, maxSpeed_dodge;
 
 
 
@@ -103,6 +106,7 @@ public class EntityPhysics : EntityComponent
     float attackHitTime;
     public bool meleeAttackCanHit;
     public bool attackHit;
+    public float dodgeTime;
 
 
 
@@ -201,7 +205,8 @@ public class EntityPhysics : EntityComponent
         maxSpeed_run = Stats.GetStatValue(entityStats.combinedStats, Stats.StatType.Speed) * BASE_MAX_SPEED;
         maxSpeed_sprint = maxSpeed_run * 3f;
         maxSpeed_climb = maxSpeed_run * .25f;
-        maxSpeed_swim = maxSpeed_run * .75f;
+        maxSpeed_swim = maxSpeed_run * 1f;
+        maxSpeed_dodge = maxSpeed_run * 6f;
 
         plantPosFootRight = targetFootRight.position;
         plantPosFootLeft = targetFootLeft.position;
@@ -276,6 +281,8 @@ public class EntityPhysics : EntityComponent
         }
 
         velHoriz_this = velHoriz_last = velHoriz_delta = Vector3.zero;
+
+        dodgeTime = 0f;
 
     }
 
@@ -901,6 +908,28 @@ public class EntityPhysics : EntityComponent
         }
     }
 
+    public void TryDodge()
+    {
+        if(dodgeTime >= BASE_COOLDOWN_DODGE)
+        {
+            Dodge();
+        }
+    }
+
+    public void Dodge()
+    {
+        StartCoroutine(_Dodge());
+
+        IEnumerator _Dodge()
+        {
+            dodgeTime = 0f;
+            isDodging = true;
+            Vector3 direction = velHoriz_this.normalized;
+            yield return new WaitForSecondsRealtime(DODGE_LASTING_TIME);
+            isDodging = false;
+        }
+    }
+
     public void Jump(float power)
     {
         if (!isJumping)
@@ -1480,7 +1509,13 @@ public class EntityPhysics : EntityComponent
         }
         else
         {
+
             max = isSprinting ? maxSpeed_sprint : maxSpeed_run;
+            if(isDodging)
+            {
+                max = Mathf.Lerp(max, maxSpeed_sprint * 2f, Mathf.Sin((dodgeTime / 60f * 100f) * Mathf.PI));
+            }
+            
         }
 
         if (!isJumping)
@@ -1582,6 +1617,7 @@ public class EntityPhysics : EntityComponent
         jumpTime += dTime;
         offWallTime += dTime;
         offWaterTime += dTime;
+        dodgeTime += dTime;
 
         if (crouch > 0f)
         {

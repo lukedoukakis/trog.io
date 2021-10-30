@@ -11,6 +11,7 @@ public class EntityUserInput : EntityComponent
     public static float DISTANCE_INTERACTABLE = 2f;
 
     public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressCrouch;
+    public bool pressDodge;
     public bool pressToggleAttackRanged;
     public float mouseX, mouseY, mouseZ;
 
@@ -78,6 +79,8 @@ public class EntityUserInput : EntityComponent
         pressCrouch = Input.GetKey(KeyCode.LeftControl);
         pressToggleAttackRanged = Input.GetKeyDown(KeyCode.X);
 
+        pressDodge = Input.GetKeyDown(KeyCode.LeftShift) && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D));
+
         if (pressForward)
         {
             move.z += 1;
@@ -112,6 +115,12 @@ public class EntityUserInput : EntityComponent
                 entityItems.ToggleWeaponRanged();
             }
         }
+        if(pressDodge)
+        {
+            Debug.Log("DODGE!!");
+            entityPhysics.TryDodge();
+        }
+
 
 
 
