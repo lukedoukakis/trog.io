@@ -2988,9 +2988,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.157141
-  m_Height: 0.40097845
+  m_Height: 0.314282
   m_Direction: 1
-  m_Center: {x: -0.058727667, y: 0.3199094, z: -0.045818627}
+  m_Center: {x: -0.058727667, y: 0.27656117, z: -0.045818627}
 --- !u!95 &5683883934931145197
 Animator:
   serializedVersion: 3
@@ -6764,7 +6764,7 @@ PrefabInstance:
     - target: {fileID: 7064602360985020552, guid: ca7f7ef907f9c4442884708b46618d7d,
         type: 3}
       propertyPath: m_Materials.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7064602360985020552, guid: ca7f7ef907f9c4442884708b46618d7d,
         type: 3}

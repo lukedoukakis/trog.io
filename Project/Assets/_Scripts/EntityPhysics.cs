@@ -579,6 +579,10 @@ public class EntityPhysics : EntityComponent
     float GetRunCycleVerticality(float updateTime, bool water)
     {
         float verticalityBase = water ? .006f : .015f;
+        if(isDodging)
+        {
+            verticalityBase *= 3f;
+        }
         verticalityBase *= runCycle_limbVerticalDisplacement;
         return (verticalityBase + .025f * Mathf.InverseLerp(0f, 2f, rb.velocity.y)) * Mathf.Pow(GetRunCyclePhase(updateTime, 0f), 1f);
     }
@@ -925,14 +929,21 @@ public class EntityPhysics : EntityComponent
             dodgeTime = 0f;
             isDodging = true;
             Vector3 forceDirection = velHoriz_this.normalized;
-            Vector3 bodyDirection = Vector3.Cross(velHoriz_this, Vector3.up) * -1f;
-            //ToggleIk(ikScripts_legs, false);
+            Vector3 bodyDirection;
+            if(isMoving)
+            {
+                bodyDirection = Vector3.Cross(velHoriz_this, Vector3.up) * -1f;
+            }
+            else
+            {
+                bodyDirection = Vector3.Cross(transform.right, Vector3.up) * -1f;
+            }
             for(int i = 0 ; i < DODGE_LASTING_TIME * 100f; ++i)
             {
+                bodyDirection = Vector3.Cross(velHoriz_this, Vector3.up) * -1f;
                 entityOrientation.body.RotateAround(obstacleHeightSense.position, bodyDirection, (360f / 100f) * 1.5f);
                 yield return new WaitForSecondsRealtime(.01f);
             }
-            //ToggleIk(ikScripts_legs, true);
             isDodging = false;
         }
     }

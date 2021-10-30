@@ -11,7 +11,7 @@ public class EntityUserInput : EntityComponent
     public static float DISTANCE_INTERACTABLE = 2f;
 
     public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressCrouch;
-    public bool pressDodge;
+    public bool pressDodge, dodgeNeedRepress;
     public bool pressToggleAttackRanged;
     public float mouseX, mouseY, mouseZ;
 
@@ -37,6 +37,7 @@ public class EntityUserInput : EntityComponent
     void Start()
     {
         pressToggleAttackRanged = false;
+        dodgeNeedRepress = false;
     }
 
     
@@ -79,7 +80,16 @@ public class EntityUserInput : EntityComponent
         pressCrouch = Input.GetKey(KeyCode.LeftControl);
         pressToggleAttackRanged = Input.GetKeyDown(KeyCode.X);
 
-        pressDodge = Input.GetKeyDown(KeyCode.LeftShift) && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D));
+        if(Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            dodgeNeedRepress = false;
+        }
+
+        pressDodge = !dodgeNeedRepress && Input.GetKey(KeyCode.LeftShift) && (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D));
+        if(pressDodge)
+        {
+            dodgeNeedRepress = true;
+        }
 
         if (pressForward)
         {

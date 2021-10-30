@@ -447,7 +447,10 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 
 				// EDIT 5
 				// darken color closer to water or in camp
-				if(i.worldPos.y <= _WaterHeight || distance(i.worldPos, _CampOrigin) < _CampRadius){
+				// if(i.worldPos.y <= _WaterHeight || distance(i.worldPos, _CampOrigin) < _CampRadius){
+				// 	_Color *= .8;
+				// }
+				if(i.worldPos.y <= _WaterHeight){
 					_Color *= .8;
 				}
 				
