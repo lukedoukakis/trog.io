@@ -37,7 +37,7 @@ public class EntityPhysics : EntityComponent
     public static float WEAPON_CHARGETIME_MAX = .25f;
     public static float WEAPON_HITTIME_MAX = .25f;
     public static float BASE_COOLDOWN_DODGE = .5f;
-    public static float DODGE_LASTING_TIME = 1f;
+    public static float DODGE_LASTING_TIME = .5f;
 
 
     public Vector3 moveDir;
@@ -206,7 +206,7 @@ public class EntityPhysics : EntityComponent
         maxSpeed_sprint = maxSpeed_run * 3f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * 1f;
-        maxSpeed_dodge = maxSpeed_run * 6f;
+        maxSpeed_dodge = maxSpeed_run * 3f;
 
         plantPosFootRight = targetFootRight.position;
         plantPosFootLeft = targetFootLeft.position;
@@ -924,8 +924,15 @@ public class EntityPhysics : EntityComponent
         {
             dodgeTime = 0f;
             isDodging = true;
-            Vector3 direction = velHoriz_this.normalized;
-            yield return new WaitForSecondsRealtime(DODGE_LASTING_TIME);
+            Vector3 forceDirection = velHoriz_this.normalized;
+            Vector3 bodyDirection = Vector3.Cross(velHoriz_this, Vector3.up) * -1f;
+            //ToggleIk(ikScripts_legs, false);
+            for(int i = 0 ; i < DODGE_LASTING_TIME * 100f; ++i)
+            {
+                entityOrientation.body.RotateAround(obstacleHeightSense.position, bodyDirection, (360f / 100f) * 1.5f);
+                yield return new WaitForSecondsRealtime(.01f);
+            }
+            //ToggleIk(ikScripts_legs, true);
             isDodging = false;
         }
     }

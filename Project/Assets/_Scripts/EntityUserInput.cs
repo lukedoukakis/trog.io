@@ -117,7 +117,7 @@ public class EntityUserInput : EntityComponent
         }
         if(pressDodge)
         {
-            Debug.Log("DODGE!!");
+            //Debug.Log("DODGE!!");
             entityPhysics.TryDodge();
         }
 

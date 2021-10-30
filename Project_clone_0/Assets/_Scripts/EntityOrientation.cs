@@ -8,8 +8,8 @@ public enum BodyRotationMode { Normal, Target }
 public class EntityOrientation : EntityComponent
 {
 
-    public Rigidbody rb;
     public Transform body;
+    public Transform model;
     public Transform head;
 
     Animator animator;
@@ -43,9 +43,8 @@ public class EntityOrientation : EntityComponent
         base.Awake();
 
       
-        rb = GetComponent<Rigidbody>();
         body = Utility.FindDeepChildWithTag(this.transform, "Body");
-        //body = Utility.FindDeepChildWithTag(this.transform, "Body2");
+        model = Utility.FindDeepChildWithTag(this.transform, "Model");
         head = Utility.FindDeepChild(body, "B-head");
         if(tag == "Player"){
             bodyRotationSpeed = bodyRotationSpeed_player;
@@ -77,7 +76,8 @@ public class EntityOrientation : EntityComponent
     }
 
 
-    void UpdateBodyRotation(){
+    void UpdateBodyRotation()
+    {
 
         if (isLocalPlayer && !entityPhysics.isInWater)
         {
@@ -101,8 +101,12 @@ public class EntityOrientation : EntityComponent
 
                 dirCombined += (Vector3.up * bodyLean * -1f * (1f - (Vector3.Distance(dirForward, dirMovement) / 2f)));
 
-                Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
-                body.rotation = Quaternion.Slerp(body.rotation, rot, .01f);
+                if(!entityPhysics.isDodging)
+                {
+                    Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
+                    body.rotation = Quaternion.Slerp(body.rotation, rot, .02f);
+                }
+                
 
                 body.position = transform.position;
             }
@@ -120,8 +124,11 @@ public class EntityOrientation : EntityComponent
 
             dirCombined += (Vector3.up * bodyLean * -1f * (1f - (Vector3.Distance(dirForward, dirMovement) / 2f)));
 
-            Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
-            body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
+            if(!entityPhysics.isDodging)
+            {
+                Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
+                body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
+            }
 
             body.position = transform.position;
 
