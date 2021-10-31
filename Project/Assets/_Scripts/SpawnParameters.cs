@@ -43,10 +43,10 @@ public class SpawnParameters
     public static SpawnParameters GetSpawnParameters(string name)
     {
 
-        if(SpawnParametersDict.ContainsKey(name))
+
+        string bundleName = GetBundleName(name);
+        if(SpawnParametersDict.ContainsKey(bundleName))
         {
-            string bundleName = GetBundleName(name);
-            //Debug.Log(name);
             SpawnParameters spawnParameters = SpawnParametersDict[bundleName];
             return spawnParameters;
         }
@@ -95,6 +95,7 @@ public class SpawnParameters
         // stones
         {"Stone", new SpawnParameters(1f, hgtBankAndDry, new Vector2(0f, .75f), all, new Vector2(.8f, 1f), new Vector2(.025f, .7f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtMinimum, 1, true)},
         {"StoneDesert", new SpawnParameters(5f, hgtBankAndDry, q4, q1, new Vector2(.75f, .78f), new Vector2(0f, .5f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, true)},
+        //{"StoneAll", new SpawnParameters(5f, hgtBankAndDry, all, all, new Vector2(.75f, .78f), new Vector2(0f, .5f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, true)},
 
         // smaller plants
         {"Grass", new SpawnParameters(1.5f, hgtWaterAndBank, q3, q3, normGrass, new Vector2(.1f, .8f), DensityCalculationType.DenserAtMinimum, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1, true)},

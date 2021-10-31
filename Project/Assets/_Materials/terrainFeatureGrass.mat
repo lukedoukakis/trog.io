@@ -1,0 +1,114 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: terrainFeatureGrass
+  m_Shader: {fileID: 4800000, guid: 57b0dd448af507049843cc9662a2f794, type: 3}
+  m_ShaderKeywords: USE_S _RTEFFECT_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - Texture2D_127D54B3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorGradient:
+        m_Texture: {fileID: 2800000, guid: 6a2b53bfa0c06394485830fc39664c26, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorNoise:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ColorNoiseTex:
+        m_Texture: {fileID: 2800000, guid: 6a2b53bfa0c06394485830fc39664c26, type: 3}
+        m_Scale: {x: 10, y: 10}
+        m_Offset: {x: 0, y: 0}
+    - _Distortion:
+        m_Texture: {fileID: 2800000, guid: 7f25c6183047a8a4bb1552aab341ba92, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GrassTex:
+        m_Texture: {fileID: 2800000, guid: 02a7b9834cd275645848286c8835c62d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GroundTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 10, y: 10}
+        m_Offset: {x: 0, y: 0}
+    - _NoGrassTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Noise:
+        m_Texture: {fileID: 2800000, guid: 529789b31389da34d9a7f98c613bf944, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - Vector1_46F91617: 0.5
+    - Vector1_5DF723E9: 0.5
+    - _CampRadius: 6.3
+    - _ColorNoise: 0
+    - _ColorTiling: 0.005
+    - _Desertness: 0
+    - _FadeDistanceEnd: 201
+    - _FadeDistanceStart: 200
+    - _GrassCut: 0.347
+    - _GrassNormal: 0
+    - _GrassSaturation: 0.5
+    - _GrassShading: 1
+    - _GrassThinness: 1
+    - _GrassThinnessIntersection: 0.43
+    - _LightIntensity: 0.02
+    - _MinimumNormal: 0.8
+    - _MinimumNumberStacks: 17
+    - _NoisePower: 2
+    - _NumberOfStacks: 17
+    - _OffsetValue: 0
+    - _ProceduralDistance: 5.5
+    - _ProceduralStrength: 1.5
+    - _RimMax: 0.62
+    - _RimMin: 0.661
+    - _RimPower: 4.08
+    - _SnowDepth: 0.1
+    - _SnowHeightCap: 4703.4
+    - _SnowHeightStart: 4001.4
+    - _SnowMinimumSurfaceNormal: 3
+    - _TilingN1: 10
+    - _TilingN2: 0.05
+    - _TilingN3: 10000000
+    - _UsePR: 0
+    - _UseRT: 0
+    - _UseShadow: 1
+    - _UseShadowCast: 0
+    - _UseWC: 0
+    - _WaterHeight: 4590.4404
+    - _WindForce: 0.25
+    - _WindMovement: 100
+    - _WorldRotation: 0
+    - _WorldScale: 10
+    m_Colors:
+    - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
+    - Color_962802DE: {r: 0.9677934, g: 1, b: 0.8066038, a: 0}
+    - _CampOrigin: {r: -99.95675, g: 4594.7393, b: -57.60292, a: 0}
+    - _Color: {r: 0.9154147, g: 1, b: 0.7311321, a: 1}
+    - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OffsetVector: {r: 0, g: 3, b: 0, a: 0}
+    - _ProjectedShadowColor: {r: 0.8679245, g: 0.8679245, b: 0.8679245, a: 1}
+    - _RimColor: {r: 0.4245283, g: 0.4245283, b: 0.4245283, a: 1}
+    - _SelfShadowColor: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 1}

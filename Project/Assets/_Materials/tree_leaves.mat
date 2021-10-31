@@ -32,6 +32,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture2DAsset_91C3A819_Out_0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - Boolean_891C2B1B: 1
     - Vector1_116F49B0: 0
@@ -39,10 +43,13 @@ Material:
     - Vector1_24802EB: 0.2
     - Vector1_25E0AF6F: 0.5
     - Vector1_44CFF1E7: 1.5
+    - Vector1_49092716: 1
     - Vector1_4A3933E: 1.5
     - Vector1_61F46C5F: 20
     - Vector1_656083AD: 1.1
+    - Vector1_6756ADD4: 0.5
     - Vector1_7528B216: 0.3
+    - Vector1_7EC73CB8: 0.3
     - Vector1_90439BCB: 0.2
     - Vector1_AE23F62D: 8
     - Vector1_B1CE0AD9: 10
@@ -52,12 +59,17 @@ Material:
     - Vector1_E38A57BE: 9
     - Vector1_F552BBDC: 1
     - _ColorNoise: 1
+    - _Desertness: 0
     - _SnowDepth: 0.1
     - _SnowHeightCap: 4703.4
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 0.8
+    - _WaterHeight: 0
     m_Colors:
+    - Color_1DD039A2: {r: 0.99056596, g: 0.9086226, b: 0.6588199, a: 0}
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}
-    - _TargetVector: {r: 15.387169, g: 4590.782, b: -25.310722, a: 0}
+    - Color_B9FC0D65: {r: 1, g: 1, b: 1, a: 0}
+    - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
+    - _TargetVector: {r: 54.92995, g: 4592.5894, b: 225.20386, a: 0}

@@ -22,7 +22,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float BankLevel = SeaLevel + meter;
     public static float SnowLevel = .871f;
     //public static float SnowLevel = float.MaxValue;
-    public static float GrassNormalMin = .57f;
+    public static float GrassNormalMin = .7f;
     public static float GrassNormalMax = .98f;
     public static float SnowNormal = .57f;
     public static float CaveNormal = .4f;
@@ -333,7 +333,7 @@ public class ChunkGenerator : MonoBehaviour
                 float bigMoundCap = .04f;
                 bigMound *= bigMoundCap;
                 bigMound *= (1f - Mathf.InverseLerp(.25f, .75f, temperatureValue));
-                bigMound = 0f;
+                //bigMound = 0f;
                 elevationValue += bigMound;
                 float maxE = Mathf.Pow(1f + .5f, .5f) - 1f;
                 float minE = Mathf.Pow(0f + .5f, .5f) - 1f;
@@ -636,10 +636,10 @@ public class ChunkGenerator : MonoBehaviour
                     // break if chunk not loaded
                     if (cd == null || (cd.featuresParent == null)) { break; }
 
-
                     spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
                     if (spawnParameters != null)
                     {
+                        //Debug.Log(feature.name);
                         placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
                         if (placementDensity > 0)
                         {
