@@ -83,8 +83,8 @@ public class ShaderController : MonoBehaviour
         Vector2 coordinatesInChunk = ChunkGenerator.GetCoordinatesInChunk(refPosition);
         float desertnessAtCoordinates = 0;
         desertnessAtCoordinates = ChunkGenerator.CalculateDesertness(cd.TemperatureMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y], cd.HumidityMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y]);
-        
-        
+        //Debug.Log(desertnessAtCoordinates);
+
         foreach (Material mat in DesertSensitiveMaterials)
         {
             mat.SetFloat("_Desertness", desertnessAtCoordinates);

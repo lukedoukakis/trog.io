@@ -206,7 +206,7 @@ public class EntityPhysics : EntityComponent
         maxSpeed_sprint = maxSpeed_run * 3f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * 1f;
-        maxSpeed_dodge = maxSpeed_run * 3f;
+        maxSpeed_dodge = maxSpeed_run * 4f;
 
         plantPosFootRight = targetFootRight.position;
         plantPosFootLeft = targetFootLeft.position;
@@ -358,18 +358,18 @@ public class EntityPhysics : EntityComponent
             isHandGrab = false;
 
             // reach up right
-            //isHandGrab = HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.up).normalized, ref updateTime_handRight, handFree_right, isInWater);
+            isHandGrab = HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.up).normalized, ref updateTime_handRight, handFree_right, isInWater);
 
             // reach up left
-            //isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.up).normalized, ref updateTime_handLeft, handFree_left, isInWater);
+            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.up).normalized, ref updateTime_handLeft, handFree_left, isInWater);
 
 
 
             // vault right
-            //isHandGrab = isHandGrab || HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.forward).normalized, ref updateTime_handRight, handFree_right, IN_WATER);
+            isHandGrab = isHandGrab || HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.forward).normalized, ref updateTime_handRight, handFree_right, isInWater);
 
             // vault left
-            //isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.forward).normalized, ref updateTime_handLeft, handFree_left, IN_WATER);
+            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.forward).normalized, ref updateTime_handLeft, handFree_left, isInWater);
             
             
         }
@@ -1531,7 +1531,7 @@ public class EntityPhysics : EntityComponent
             max = isSprinting ? maxSpeed_sprint : maxSpeed_run;
             if(isDodging)
             {
-                max = Mathf.Lerp(max, maxSpeed_sprint * 2f, Mathf.Sin((dodgeTime / 60f * 100f) * Mathf.PI));
+                max = Mathf.Lerp(max, maxSpeed_dodge, Mathf.Sin((dodgeTime / 60f * 100f) * Mathf.PI));
             }
             
         }

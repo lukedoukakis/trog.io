@@ -69,6 +69,7 @@ public class EntityUserInput : EntityComponent
 
     void HandleMovement(){
 
+        Vector3 oldMove = move;
         move = Vector3.zero;
 
         pressForward = Input.GetKey(KeyCode.W);
@@ -129,6 +130,11 @@ public class EntityUserInput : EntityComponent
         {
             //Debug.Log("DODGE!!");
             entityPhysics.TryDodge();
+        }
+
+        if(move == Vector3.zero && entityPhysics.isDodging)
+        {
+            move = oldMove;
         }
 
 

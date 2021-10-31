@@ -13,7 +13,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -56,7 +56,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Noise:
-        m_Texture: {fileID: 2800000, guid: 529789b31389da34d9a7f98c613bf944, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -69,7 +69,7 @@ Material:
     - _FadeDistanceEnd: 201
     - _FadeDistanceStart: 200
     - _GrassCut: 0
-    - _GrassNormal: 0.7
+    - _GrassNormal: 0.6
     - _GrassSaturation: 0.5
     - _GrassShading: 1
     - _GrassThinness: 1
@@ -84,12 +84,12 @@ Material:
     - _ProceduralStrength: 1.5
     - _RimMax: 0.62
     - _RimMin: 0.661
-    - _RimPower: 4.08
+    - _RimPower: 8
     - _SnowDepth: 0.1
     - _SnowHeightCap: 4703.4
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 3
-    - _TilingN1: 10
+    - _TilingN1: 23
     - _TilingN2: 0.05
     - _TilingN3: 10000000
     - _UsePR: 0
@@ -105,10 +105,10 @@ Material:
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.9677934, g: 1, b: 0.8066038, a: 0}
-    - _CampOrigin: {r: -20.588394, g: 4601.6367, b: 122.42037, a: 0}
+    - _CampOrigin: {r: -449.3558, g: 4591.717, b: -138.87949, a: 0}
     - _Color: {r: 0.9154147, g: 1, b: 0.7311321, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
-    - _OffsetVector: {r: 0, g: 3, b: 0, a: 0}
+    - _OffsetVector: {r: 0, g: 1.06, b: 0, a: 0}
     - _ProjectedShadowColor: {r: 0.8679245, g: 0.8679245, b: 0.8679245, a: 1}
     - _RimColor: {r: 0.4245283, g: 0.4245283, b: 0.4245283, a: 1}
     - _SelfShadowColor: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 1}

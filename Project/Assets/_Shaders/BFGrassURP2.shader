@@ -85,12 +85,11 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 	}
 		SubShader
 		{
-			Tags{"DisableBatching" = "true" "RenderType"="Opaque"}
-			
+			Tags{"DisableBatching" = "true" "RenderType"="Transparent"}
 			//Blend SrcAlpha OneMinusSrcAlpha
 			pass
 			{
-			Tags{"RenderPipeline" = "UniversalPipeline" "RenderType"="Opaque"}
+			Tags{"RenderPipeline" = "UniversalPipeline" "RenderType"="Transparent"}
 			//Blend SrcAlpha OneMinusSrcAlpha
 			LOD 100
 
@@ -313,6 +312,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				// Loop 3 times * numbersOfStacks for the grass
 					for (float i = 1; i <= _NumberOfStacks; i++)
 					{
+						//float normalFactor = clamp(0, 1, invLerp(_GrassNormal + .01, _GrassNormal + .02, input[i].normal.y));
 						float4 offsetNormal = _OffsetVector * i*0.01;
 						for (int ii = 0; ii < 3; ii++)
 						{
@@ -443,7 +443,9 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				{
 					if (alpha*(ripples3 + 1) - (i.color.r) < -0.02)discard;
 				}
+
 				_Color *= 2;
+
 
 				// EDIT 5
 				// darken color closer to water or in camp
@@ -453,6 +455,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				if(i.worldPos.y <= _WaterHeight){
 					_Color *= .8;
 				}
+
 				
 
 				col.xyz = (pow(abs(col), _GrassSaturation) * _GrassSaturation)*float3(_Color.x, _Color.y, _Color.z);
@@ -466,6 +469,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 					col.xyz = lerp(col.xyz, colGround.xyz, 1 - NoGrass.r);
 				}
 				col.xyz += _RimColor.rgb * pow(abs(rimLight), _RimPower);
+
 
 				float4 shadowCoord;	
 				half3 lm = 1;
@@ -481,6 +485,9 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				half3 shadowmapColor = lerp(_ProjectedShadowColor, 1, mainLight.shadowAttenuation);
 #ifdef LIGHTMAP_ON
 				lm = SampleLightmap(i.lmap, normalDir);
+
+				// change alpha
+				//col.a = .1f;
 
 				col.rgb *= saturate(lm + 0.1);
 #else
@@ -515,7 +522,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 // 		{
 // 			Name "ShadowCaster"
 // 				Tags {"LightMode" = "ShadowCaster" "RenderPipeline" = "UniversalPipeline" "RenderType"="Transparent" "Queue"="Transparent"}
-// 				//Blend SrcAlpha OneMinusSrcAlpha
+// 				Blend SrcAlpha OneMinusSrcAlpha
 
 // 			HLSLPROGRAM
 // 			#pragma target 4.5
