@@ -36,9 +36,11 @@ public class ShaderController : MonoBehaviour
 
     void UpdateFadeMaterials()
     {
+        if(GameManager.instance.localPlayerHandle == null){ return; }
+        
         foreach (Material mat in FadeMaterials)
         {
-            mat.SetVector("_TargetVector", GameManager.current.localPlayerHandle.entityPhysics.hips.position);
+            mat.SetVector("_TargetVector", GameManager.instance.localPlayerHandle.entityPhysics.hips.position);
         }
     }
 

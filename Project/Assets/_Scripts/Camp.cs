@@ -62,7 +62,7 @@ public class Camp : MonoBehaviour
     public static Camp PlaceCamp(Faction faction, Transform originT)
     {        
 
-        Camp camp = GameManager.current.gameObject.AddComponent<Camp>();
+        Camp camp = GameManager.instance.gameObject.AddComponent<Camp>();
         faction.camp = camp;
         camp.faction = faction;
         camp.racks_food = new List<ObjectRack>();
@@ -274,7 +274,7 @@ public class Camp : MonoBehaviour
     }
 
     public void PlaceBonfire(){
-        Bonfire bonfire = GameManager.current.gameObject.AddComponent<Bonfire>();
+        Bonfire bonfire = GameManager.instance.gameObject.AddComponent<Bonfire>();
         bonfire.SetBonfire(this, faction.ownedItems.GetItemCount(Item.LogFir) > 1f, 1f, 1f);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Bonfire);
         bonfire.worldObject.transform.position = targetOrientation.position;
@@ -285,7 +285,7 @@ public class Camp : MonoBehaviour
     }
 
     public void PlaceWorkbench(){
-        Workbench workbench = GameManager.current.gameObject.AddComponent<Workbench>();
+        Workbench workbench = GameManager.instance.gameObject.AddComponent<Workbench>();
         workbench.SetWorkbench(this);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Workbench);
         workbench.worldObject.transform.position = targetOrientation.position;
@@ -297,7 +297,7 @@ public class Camp : MonoBehaviour
     public ObjectRack PlaceObjectRack(Enum itemType, float delay){
 
 
-        ObjectRack objectRack = GameManager.current.gameObject.AddComponent<ObjectRack>();
+        ObjectRack objectRack = GameManager.instance.gameObject.AddComponent<ObjectRack>();
         objectRack.SetObjectRack(this, itemType);
         List<ObjectRack> rackList = GetRackListForItemType(itemType);
         Enum componentType;
@@ -370,7 +370,7 @@ public class Camp : MonoBehaviour
         }
     }
     public void PlaceTent(){
-        Tent tent = GameManager.current.gameObject.AddComponent<Tent>();
+        Tent tent = GameManager.instance.gameObject.AddComponent<Tent>();
         tent.SetTent(this);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Tent);
         tent.worldObject.transform.position = targetOrientation.position;
@@ -515,7 +515,7 @@ public class Camp : MonoBehaviour
     void OnFoodCast(EntityHandle casterHandle, Item foodItem)
     {
         //Debug.Log("OnFoodCast()");
-        StartCoroutine(casterHandle.entityCommandServer.SpawnNpcWhenReady(casterHandle));
+        StartCoroutine(casterHandle.entityCommandServer.SpawnNpcWhenReady(casterHandle.entityInfo.faction.leaderHandle, GetOpenTribeMemberStandPosition().position));
         if(casterHandle.entityInfo.faction.GetItemCount(foodItem) > 0)
         {
             casterHandle.entityInfo.faction.RemoveItemOwned(foodItem, 1, null, true, casterHandle.entityItems);

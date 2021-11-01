@@ -6,7 +6,7 @@ using System.Linq;
 
 public class ChunkGenerator : MonoBehaviour
 {
-    public static ChunkGenerator current;
+    public static ChunkGenerator instance;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 7;
@@ -81,7 +81,8 @@ public class ChunkGenerator : MonoBehaviour
     // features and creatures
     Transform FeaturesParent;
     public static List<GameObject> activeCreatures;
-    public static List<GameObject> Features, Creatures, Items;
+    public static List<GameObject> Features, Creatures, Humans, Items;
+    public static bool humanSpawned = false;
     public static readonly float creatureDespawnTimestep = 5f;
     public static float creatureDespawnTime = 0f;
     
@@ -91,7 +92,7 @@ public class ChunkGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        current = this;
+        instance = this;
         Init();
 
     }
@@ -138,6 +139,7 @@ public class ChunkGenerator : MonoBehaviour
 
         Features = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Features"));
         Creatures = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Creatures"));
+        Humans = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Humans"));
         Items = Item.Items.Values.Select(item => item.worldObjectPrefab).Where(o => o != null).ToList();
 
         activeCreatures = new List<GameObject>();
@@ -640,7 +642,6 @@ public class ChunkGenerator : MonoBehaviour
                     spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
                     if (spawnParameters != null)
                     {
-                        //Debug.Log(feature.name);
                         placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
                         if (placementDensity > 0)
                         {
@@ -712,9 +713,6 @@ public class ChunkGenerator : MonoBehaviour
                         placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
                         int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
                         int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
-                        //Debug.Log(placementOffsetX);
-                        //Debug.Log(placementOffsetZ);
-                        //placementDensity = .1f;
                         if (placementDensity > 0f)
                         {
                             randomDivisorOffset = 0;
@@ -728,6 +726,48 @@ public class ChunkGenerator : MonoBehaviour
                                 o = Utility.InstantiateSameName(creature, spawnPosition, Quaternion.identity);
                                 o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
                                 activeCreatures.Add(o);
+
+                                bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
+                                bundleName_last = bundleName;
+
+                                if (breaker) { break; }
+                            }
+                        }
+                    }
+
+                }
+
+                foreach (GameObject human in Humans)
+                {
+
+                    // break if chunk not loaded
+                    if (cd == null) { break; }
+
+                    if(humanSpawned){ break; }
+
+                    spawnParameters = SpawnParameters.GetSpawnParameters(human.name);
+                    if (spawnParameters != null)
+                    {
+                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                        int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, human.name.GetHashCode()) * 2f - 1f) * 50f);
+                        int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (human.name + "_").GetHashCode()) * 2f - 1f) * 50f);
+                        if (placementDensity > 0f)
+                        {
+                            randomDivisorOffset = 0;
+                            int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
+                            if (divisor < 1) { divisor = 1; }
+                            if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
+                            {
+                                bundleName = SpawnParameters.GetBundleName(human.name);
+                                spawnPosition = new Vector3(x + _xOffset, height * ElevationAmplitude + 10f, z + _zOffset);
+                                spawnScale = Vector3.one * spawnParameters.scale;
+
+                                Debug.Log("WILD NPC");
+                                instance.StartCoroutine(GameManager.instance.localPlayerHandle.entityCommandServer.SpawnNpcWhenReady(null, spawnPosition));
+                                //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                                //activeCreatures.Add(o);
+
+                                humanSpawned = true;
 
                                 bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
                                 bundleName_last = bundleName;

@@ -98,7 +98,7 @@ public class ActionParameters : ScriptableObject
             case "Run From Player" :
 
                 ap.type = ActionType.RunFrom;
-                ap.targetedWorldObject = GameManager.current.localPlayer.gameObject;
+                ap.targetedWorldObject = GameManager.instance.localPlayer.gameObject;
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_CHASE;
                 ap.urgent = true;
                 break;
@@ -106,7 +106,7 @@ public class ActionParameters : ScriptableObject
             case "Attack Player" :
 
                 ap.type = ActionType.Chase;
-                ap.targetedWorldObject = GameManager.current.localPlayer.gameObject;
+                ap.targetedWorldObject = GameManager.instance.localPlayer.gameObject;
                 ap.maxTime = doerHandle.entityBehavior.CalculateChaseTime();
                 ap.urgent = true;
                 break;

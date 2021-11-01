@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using Mirror;
+using System.Reflection;
 
 public class EntityComponent : NetworkBehaviour
 {
+
+    protected string fieldName;
 
     [HideInInspector] public EntityHandle entityHandle;
     [HideInInspector] public EntityInfo entityInfo;
@@ -20,17 +24,14 @@ public class EntityComponent : NetworkBehaviour
     [HideInInspector] public EntityCommandServer entityCommandServer;
 
 
-    protected virtual void Awake(){
+    protected virtual void Awake()
+    {
         FindAndSetEntityReferences();
     }
 
 
-    // public static void SetupEntity()
-    // {
-
-    // }
-
-    public void FindAndSetEntityReferences(){
+    public void FindAndSetEntityReferences()
+    {
         entityHandle = GetComponent<EntityHandle>();
         entityInfo = GetComponent<EntityInfo>();
         entityStats = GetComponent<EntityStats>();
@@ -43,6 +44,15 @@ public class EntityComponent : NetworkBehaviour
         entityHitDetection = GetComponent<EntityHitDetection>();
         entityUserInput = GetComponent<EntityUserInput>();
         entityCommandServer = GetComponent<EntityCommandServer>();
+
+
+        Type thisComponentType = GetType();
+        FieldInfo componentFieldInfo;
+        foreach(EntityComponent component in GetComponents<EntityComponent>())
+        {
+            componentFieldInfo = thisComponentType.GetField(this.fieldName);
+            componentFieldInfo.SetValue(component, this);
+        }
     }
 
 

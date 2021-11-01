@@ -13,53 +13,44 @@ public class EntityHandle : EntityComponent
     public bool localP;
 
 
+
+    protected override void Awake()
+    {
+        this.fieldName = "entityHandle";
+
+        base.Awake();
+    }
+
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
         
         if(isLocalPlayer){
             localP = true;
-            InitAsLocalPlayer(false);
+            InitAsLocalPlayer();
         }
     }
 
-    public void InitAsLocalPlayer(bool fromMemory){
+    public void InitAsLocalPlayer()
+    {
 
         // set global variables
-        GameManager.current.SetLocalPlayer(this.gameObject);
+        GameManager.instance.SetLocalPlayer(this.gameObject);
         Testing.instance.playerHandle = this.gameObject.GetComponent<EntityHandle>();
-        ChunkGenerator.current.playerT = transform;
+        ChunkGenerator.instance.playerT = transform;
         CameraController.current.enabled = true;
         CameraController.current.Init(this.transform);
+        
 
         // init player specific entity settings
         transform.position = new Vector3(0f, 4720f, 0f);
+
+        // start new faction with this as the leader
         StartCoroutine(entityCommandServer.SetNewFactionWhenReady(this));
 
-        // spawn initial tribe members
-        for(int i = 0; i < GameManager.startingTribeMembers; i++){
-            StartCoroutine(entityCommandServer.SpawnNpcWhenReady(this));
-        }
 
         UIController.current.SetUIMode(false);
 
-
-
-
-
-
-
-
-
-        // if loading from memory
-        if(fromMemory){
-            
-        }
-
-        // if new game
-        else{
-
-        }
     }
 
 

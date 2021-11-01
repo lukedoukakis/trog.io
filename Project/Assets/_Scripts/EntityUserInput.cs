@@ -26,7 +26,10 @@ public class EntityUserInput : EntityComponent
 
     public Vector3 move;
 
-    protected override void Awake(){
+    protected override void Awake()
+    {
+
+        this.fieldName = "entityUserInput";
 
         base.Awake();
 

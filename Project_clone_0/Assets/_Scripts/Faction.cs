@@ -5,8 +5,6 @@ using System;
 
 public class Faction : MonoBehaviour
 {
-
-
     public int id;
     public string factionName;
     public EntityHandle leaderHandle;
@@ -18,7 +16,6 @@ public class Faction : MonoBehaviour
     public bool leaderInCamp;
 
     public bool itemLogisticsHappening;
-
 
 
 
@@ -54,34 +51,38 @@ public class Faction : MonoBehaviour
     }
 
 
-    public void AddMember(EntityHandle handle, bool addToparty){
-        handle.entityInfo.faction = this;
-        memberHandles.Add(handle);
+    public void AddMember(EntityHandle newMemberHandle, bool addToparty)
+    {
+
+        Debug.Log("newMemberHandle null? " + newMemberHandle == null);
+        //Debug.Log("info null? " + newMemberHandle.entityInfo == null);
+        newMemberHandle.entityInfo.faction = this;
+        memberHandles.Add(newMemberHandle);
         if(addToparty)
         {
-            AddToParty(handle);
+            AddToParty(newMemberHandle);
         }
     }
-    public void RemoveMember(EntityHandle handle)
+    public void RemoveMember(EntityHandle removedMemberHandle)
     {
-        handle.entityInfo.faction = null;
-        memberHandles.Remove(handle);
-        RemoveFromParty(handle);
+        removedMemberHandle.entityInfo.faction = null;
+        memberHandles.Remove(removedMemberHandle);
+        RemoveFromParty(removedMemberHandle);
     }
 
-    public void AddToParty(EntityHandle handle){
-        if(!partyHandles.Contains(handle)){
-            partyHandles.Add(handle);
+    public void AddToParty(EntityHandle newPartyMemberHandle){
+        if(!partyHandles.Contains(newPartyMemberHandle)){
+            partyHandles.Add(newPartyMemberHandle);
         }
     }
-    public void RemoveFromParty(EntityHandle handle){
-        if(partyHandles.Contains(handle)){
-            partyHandles.Remove(handle);
+    public void RemoveFromParty(EntityHandle removedPartyMemberHandle){
+        if(partyHandles.Contains(removedPartyMemberHandle)){
+            partyHandles.Remove(removedPartyMemberHandle);
         }
     }
 
-    public void AddItemTargeted(GameObject o){
-        targetedObjects.Add(o);
+    public void AddObjectTargeted(GameObject worldObjectTargeted){
+        targetedObjects.Add(worldObjectTargeted);
     }
 
     public void AddItemsOwned(ItemCollection itemCollection, ObjectRack rack, Transform originT, float delay)
@@ -209,7 +210,7 @@ public class Faction : MonoBehaviour
 
 
     public static Faction InstantiateFaction(string _factionName){
-        Faction f = GameManager.current.gameObject.AddComponent<Faction>();
+        Faction f = GameManager.instance.gameObject.AddComponent<Faction>();
         f.id = UnityEngine.Random.Range(0, int.MaxValue);
         f.factionName = _factionName;
         f.leaderHandle = null;

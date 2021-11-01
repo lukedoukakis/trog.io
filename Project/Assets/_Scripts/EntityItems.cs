@@ -51,7 +51,10 @@ public class EntityItems : EntityComponent
 
 
 
-    protected override void Awake(){
+    protected override void Awake()
+    {
+
+        this.fieldName = "entityItems";
      
         base.Awake();
 

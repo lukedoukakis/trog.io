@@ -12,6 +12,8 @@ public class EntityActionRecorder : EntityComponent
 
     protected override void Awake()
     {
+
+        this.fieldName = "entityActionRecorder";
         base.Awake();
 
         actionsPast = new Dictionary<ActionParameters, float>();

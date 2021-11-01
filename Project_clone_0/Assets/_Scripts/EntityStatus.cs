@@ -10,6 +10,14 @@ public class EntityStatus : EntityComponent
 
 
 
+    protected override void Awake()
+    {
+
+        this.fieldName = "entityStatus";
+
+        base.Awake();
+    }
+
     void Start(){
         
     }

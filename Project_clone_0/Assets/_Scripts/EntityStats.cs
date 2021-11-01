@@ -24,7 +24,10 @@ public class EntityStats : EntityComponent
     public int stamina;
 
 
-    protected override void Awake(){
+    protected override void Awake()
+    {
+
+        this.fieldName = "entityStats";
 
         base.Awake();
 

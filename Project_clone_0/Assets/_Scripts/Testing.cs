@@ -27,7 +27,7 @@ public class Testing : MonoBehaviour
     }
 
     void AddItemsToFaction(){
-        faction = GameManager.current.localPlayer.GetComponent<EntityInfo>().faction;
+        faction = GameManager.instance.localPlayer.GetComponent<EntityInfo>().faction;
         faction.AddItemOwned(Item.ClothingTest, 2, null, playerHandle.transform, 0f);
         faction.AddItemOwned(Item.Meat, 2, null, playerHandle.transform, 0f);
         faction.AddItemOwned(Item.Spear, 2, null, playerHandle.transform, 0f);
@@ -46,7 +46,7 @@ public class Testing : MonoBehaviour
         {
             if (Input.GetKeyUp(KeyCode.C))
             {
-                Camp.TryPlaceCamp(playerHandle.entityInfo.faction, GameManager.current.localPlayer.transform);
+                Camp.TryPlaceCamp(playerHandle.entityInfo.faction, GameManager.instance.localPlayer.transform);
             }
             if (Input.GetKeyUp(KeyCode.R))
             {

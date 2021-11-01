@@ -21,7 +21,9 @@ public class EntityInfo : EntityComponent
     public SpeciesInfo speciesInfo;
 
 
-    protected override void Awake(){
+    protected override void Awake()
+    {
+        this.fieldName = "entityInfo";
 
         base.Awake();
 

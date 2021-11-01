@@ -115,6 +115,8 @@ public class EntityPhysics : EntityComponent
     protected override void Awake()
     {
 
+        this.fieldName = "entityPhysics";
+
         base.Awake();
 
         body = Utility.FindDeepChildWithTag(this.transform, "Body");

@@ -112,7 +112,14 @@ public class SpawnParameters
         
         // items
         {"StoneSmall", new SpawnParameters(1f, hgtBankAndDry, all, all, new Vector2(.8f, 1f), new Vector2(.01f, .05f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 3, true)},
-        {"WoodPiece", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(ChunkGenerator.GrassNormalMin, .96f), new Vector2(.1f, .2f), DensityCalculationType.Binary, DensityCalculationType.DenserAtMaximum, DensityCalculationType.DenserAtMaximum, DensityCalculationType.Binary, 1, false)}
+        {"WoodPiece", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(ChunkGenerator.GrassNormalMin, .96f), new Vector2(.1f, .2f), DensityCalculationType.Binary, DensityCalculationType.DenserAtMaximum, DensityCalculationType.DenserAtMaximum, DensityCalculationType.Binary, 1, false)},
+    
+    
+        // AI faction leader
+        {"Npc", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.9f, 1f), new Vector2(.99f, 1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, false)},
+
+
+    
     };
 
 

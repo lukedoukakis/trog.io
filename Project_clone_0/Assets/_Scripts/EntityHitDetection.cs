@@ -7,6 +7,14 @@ public class EntityHitDetection : EntityComponent
     
     [SerializeField] public Species species;
 
+
+    protected override void Awake()
+    {
+        this.fieldName = "entityHitDetection";
+
+        base.Awake();
+    }
+
     public void OnHit(EntityHandle attackerHandle, Vector3 hitPoint, Projectile projectile, bool instantKill){
 
         // add and set up info and stats if they don't exist

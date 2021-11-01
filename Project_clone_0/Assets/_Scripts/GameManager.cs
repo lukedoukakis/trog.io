@@ -6,7 +6,7 @@ using Mirror;
 public class GameManager : MonoBehaviour
 {
 
-    public static GameManager current;
+    public static GameManager instance;
     public int gameId;
     public GameObject localPlayer;
     public EntityHandle localPlayerHandle;
@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
 
 
     void Awake(){
-        current = this;
+        instance = this;
 
     }
 

@@ -62,7 +62,10 @@ public class EntityBehavior : EntityComponent
     public Dictionary<string, IEnumerator> coroutineLayers;
 
 
-    protected override void Awake(){
+    protected override void Awake()
+    {
+
+        this.fieldName = "entityBehavior";
 
         base.Awake();
 
@@ -543,7 +546,7 @@ public class EntityBehavior : EntityComponent
         else{
             //Log("Collect: picking up object");
             GameObject targetWorldObject = foundObjects[0];
-            entityInfo.faction.AddItemTargeted(targetWorldObject);
+            entityInfo.faction.AddObjectTargeted(targetWorldObject);
             ActionParameters goToObject = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, targetWorldObject, Vector3.zero, -1, Item.GetItemByName(targetWorldObject.name), null, -1, DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Normal, InterruptionTier.SenseDanger, false);
             ActionParameters pickupObject = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Pickup, targetWorldObject, Vector3.zero, -1, Item.GetItemByName(targetWorldObject.name), null, -1, -1f, BodyRotationMode.Normal, InterruptionTier.Nothing, false);
             ActionParameters followPlayer = ActionParameters.GenerateActionParameters("Follow Player", entityHandle);
@@ -913,7 +916,7 @@ public class EntityBehavior : EntityComponent
     }
 
     bool WithinActiveDistance(){
-        return Vector3.Distance(GameManager.current.localPlayer.transform.position, transform.position) <= DISTANCE_THRESHOLD_ACTIVE;
+        return Vector3.Distance(GameManager.instance.localPlayer.transform.position, transform.position) <= DISTANCE_THRESHOLD_ACTIVE;
     }
 
     public bool IsTargetedObject(GameObject otherObject)
@@ -1004,8 +1007,8 @@ public class EntityBehavior : EntityComponent
         {
             //Debug.Log("(leader in camp)");
             Transform campPositionT = entityInfo.faction.camp.GetOpenTribeMemberStandPosition();
-            Debug.Log(homeT.gameObject.name);
-            Debug.Log(campPositionT.gameObject.name);
+            //Debug.Log(homeT.gameObject.name);
+            //Debug.Log(campPositionT.gameObject.name);
             homeT.transform.SetParent(campPositionT);
             homeT.transform.position = campPositionT.position;
         }
