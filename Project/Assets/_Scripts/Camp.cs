@@ -515,7 +515,7 @@ public class Camp : MonoBehaviour
     void OnFoodCast(EntityHandle casterHandle, Item foodItem)
     {
         //Debug.Log("OnFoodCast()");
-        StartCoroutine(casterHandle.entityCommandServer.SpawnNpcWhenReady(casterHandle.entityInfo.faction.leaderHandle, GetOpenTribeMemberStandPosition().position));
+        StartCoroutine(ClientCommand.instance.SpawnNpcFollowerWhenReady(casterHandle.entityInfo.faction.leaderHandle, GetOpenTribeMemberStandPosition().position));
         if(casterHandle.entityInfo.faction.GetItemCount(foodItem) > 0)
         {
             casterHandle.entityInfo.faction.RemoveItemOwned(foodItem, 1, null, true, casterHandle.entityItems);

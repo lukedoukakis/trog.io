@@ -51,14 +51,14 @@ GameObject:
   - component: {fileID: 8069827555116078494}
   - component: {fileID: 8069827555116078493}
   - component: {fileID: 5176456060878539918}
-  - component: {fileID: 8374234257668663390}
   - component: {fileID: 905915180885855587}
+  - component: {fileID: 5522565663618146216}
   - component: {fileID: 2947814671508615466}
   - component: {fileID: 5656550286591847306}
   - component: {fileID: 4510218948483313081}
   - component: {fileID: 2441214465481829266}
   m_Layer: 12
-  m_Name: PlayerIK
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -126,7 +126,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   hovering: 0
   selecting: 0
   selected: 0
@@ -157,7 +156,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   id: 0
   nickname: Player
   species: 1
@@ -190,7 +188,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   combinedStats: {fileID: 0}
   BASE_AMOUNT_STAMINA: 100
   hp: 0
@@ -220,7 +217,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   behaviorProfile: {fileID: 0}
   homeT: {fileID: 0}
   isPlayer: 0
@@ -257,7 +253,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   body: {fileID: 0}
   model: {fileID: 0}
   head: {fileID: 0}
@@ -291,7 +286,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   worldCollider: {fileID: 0}
   highFrictionMat: {fileID: 0}
   noFrictionMat: {fileID: 0}
@@ -438,7 +432,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   hp: 0
   alive: 0
 --- !u!114 &8069827555116078480
@@ -466,7 +459,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   holding_item: {fileID: 0}
   holding_object: {fileID: 0}
   weaponEquipped_item: {fileID: 0}
@@ -522,7 +514,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   pressForward: 0
   pressBack: 0
   pressLeft: 0
@@ -564,35 +555,7 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   species: 1
---- !u!114 &8374234257668663390
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8069827555116078467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b6b30ed41c0ca74a9b1ee1b542728a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  entityHandle: {fileID: 0}
-  entityInfo: {fileID: 0}
-  entityStats: {fileID: 0}
-  entityBehavior: {fileID: 0}
-  entityOrientation: {fileID: 0}
-  entityPhysics: {fileID: 0}
-  entityStatus: {fileID: 0}
-  entityItems: {fileID: 0}
-  entityActionRecorder: {fileID: 0}
-  entityHitDetection: {fileID: 0}
-  entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
-  npcPrefab: {fileID: 0}
 --- !u!114 &905915180885855587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -618,7 +581,21 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
+--- !u!114 &5522565663618146216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8069827555116078467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b6b30ed41c0ca74a9b1ee1b542728a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  npcPrefab: {fileID: 0}
 --- !u!114 &2947814671508615466
 MonoBehaviour:
   m_ObjectHideFlags: 0

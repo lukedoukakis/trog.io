@@ -763,11 +763,13 @@ public class ChunkGenerator : MonoBehaviour
                                 spawnScale = Vector3.one * spawnParameters.scale;
 
                                 Debug.Log("WILD NPC");
-                                instance.StartCoroutine(GameManager.instance.localPlayerHandle.entityCommandServer.SpawnNpcWhenReady(null, spawnPosition));
+                                instance.StartCoroutine(ClientCommand.instance.SpawnNpcIndependentWhenReady(spawnPosition, true));
+                                
+                                
                                 //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
                                 //activeCreatures.Add(o);
 
-                                humanSpawned = true;
+                                //humanSpawned = true;
 
                                 bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
                                 bundleName_last = bundleName;

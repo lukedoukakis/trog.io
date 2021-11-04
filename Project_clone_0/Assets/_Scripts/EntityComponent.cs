@@ -21,7 +21,6 @@ public class EntityComponent : NetworkBehaviour
     [HideInInspector] public EntityActionRecorder entityActionRecorder;
     [HideInInspector] public EntityHitDetection entityHitDetection;
     [HideInInspector] public EntityUserInput entityUserInput;
-    [HideInInspector] public EntityCommandServer entityCommandServer;
 
 
     protected virtual void Awake()
@@ -43,7 +42,6 @@ public class EntityComponent : NetworkBehaviour
         entityActionRecorder = GetComponent<EntityActionRecorder>();
         entityHitDetection = GetComponent<EntityHitDetection>();
         entityUserInput = GetComponent<EntityUserInput>();
-        entityCommandServer = GetComponent<EntityCommandServer>();
 
 
         Type thisComponentType = GetType();

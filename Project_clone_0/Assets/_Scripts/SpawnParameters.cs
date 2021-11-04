@@ -116,7 +116,7 @@ public class SpawnParameters
     
     
         // AI faction leader
-        {"Npc", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.9f, 1f), new Vector2(.99f, 1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, false)},
+        {"Npc", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, false)},
 
 
     

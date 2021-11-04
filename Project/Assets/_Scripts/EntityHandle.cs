@@ -46,7 +46,7 @@ public class EntityHandle : EntityComponent
         transform.position = new Vector3(0f, 4720f, 0f);
 
         // start new faction with this as the leader
-        StartCoroutine(entityCommandServer.SetNewFactionWhenReady(this));
+        StartCoroutine(ClientCommand.instance.SetNewFactionWhenReady(this, false));
 
 
         UIController.current.SetUIMode(false);

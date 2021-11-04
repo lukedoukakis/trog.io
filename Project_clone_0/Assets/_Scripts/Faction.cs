@@ -53,9 +53,6 @@ public class Faction : MonoBehaviour
 
     public void AddMember(EntityHandle newMemberHandle, bool addToparty)
     {
-
-        Debug.Log("newMemberHandle null? " + newMemberHandle == null);
-        //Debug.Log("info null? " + newMemberHandle.entityInfo == null);
         newMemberHandle.entityInfo.faction = this;
         memberHandles.Add(newMemberHandle);
         if(addToparty)
