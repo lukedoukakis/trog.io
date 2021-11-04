@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+
+public enum FactionStartingItemsTier{ Nothing, Weak, Medium, Strong }
+
 public class Faction : MonoBehaviour
 {
     public int id;
@@ -202,6 +205,86 @@ public class Faction : MonoBehaviour
         {
             partyHandle.entityBehavior.UpdateHomePosition(leaderInCamp);
         }
+    }
+
+    // add starting items (and tribe members) to faction, mainly used for spawning AI factions
+    public void AddStartingResources(FactionStartingItemsTier tier)
+    {
+        int memberCount;
+        int itemCount;
+        switch (tier)
+        {
+            case FactionStartingItemsTier.Nothing :
+                memberCount = 2;
+                itemCount = 0;
+                break;
+            case FactionStartingItemsTier.Weak :
+                memberCount = 5;
+                itemCount = 5;
+                break;
+            case FactionStartingItemsTier.Medium :
+                memberCount = 12;
+                itemCount = 12;
+                break;
+            case FactionStartingItemsTier.Strong :
+                memberCount = 25;
+                itemCount = 25;
+                break;
+            default :
+                memberCount = 2;
+                itemCount = 0;
+                break;
+        }
+
+        // spawn tribe members
+        bool spawnWithGear = !tier.Equals(FactionStartingItemsTier.Nothing);
+        //spawnWithGear = false;
+        for(int i = 0; i < memberCount; ++i)
+        {
+            StartCoroutine(ClientCommand.instance.SpawnNpcFollowerWhenReady(leaderHandle, leaderHandle.transform.position, spawnWithGear));
+        }
+
+
+        // spawn items
+        AddItemOwned(Item.ClothingTest, itemCount, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.Meat, itemCount, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.Spear, itemCount / 2, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.Axe, itemCount / 2, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.WoodPiece, itemCount, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.BonePiece, itemCount, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.StoneSmall, itemCount, null, leaderHandle.transform, 0f);
+    }
+
+
+    // pack up all faction items from camp and (todo: add to backpack)
+    public void PackUp()
+    {
+        camp.Dismantle();
+    }
+
+    public void DestroyFaction()
+    {
+        // destroy camp and all items in it
+        List<Item> items = new List<Item>(ownedItems.items.Keys);
+        List<int> counts = new List<int>(ownedItems.items.Values);
+        for(int i = 0; i < items.Count; ++i)
+        {
+            RemoveItemOwned(items[i], counts[i], null, false, null);
+        }
+
+        // destroy all members
+        foreach(EntityHandle memberHandle in memberHandles)
+        {
+            memberHandle.DestroyEntity();
+        }
+
+        if(camp != null)
+        {
+            camp.Dismantle();
+        }
+
+        // destroy this
+        Destroy(this);
     }
 
 

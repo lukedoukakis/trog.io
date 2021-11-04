@@ -22,19 +22,21 @@ public class Testing : MonoBehaviour
     }
 
 
-    public void OnFactionCreation(){
+    public void OnFactionCreation()
+    {
         AddItemsToFaction();
     }
 
-    void AddItemsToFaction(){
-        faction = GameManager.instance.localPlayer.GetComponent<EntityInfo>().faction;
-        faction.AddItemOwned(Item.ClothingTest, 2, null, playerHandle.transform, 0f);
-        faction.AddItemOwned(Item.Meat, 2, null, playerHandle.transform, 0f);
-        faction.AddItemOwned(Item.Spear, 2, null, playerHandle.transform, 0f);
-        faction.AddItemOwned(Item.Axe, 8, null, playerHandle.transform, 0f);
-        faction.AddItemOwned(Item.WoodPiece, 7, null, playerHandle.transform, 0f);
-        faction.AddItemOwned(Item.BonePiece, 4, null, playerHandle.transform, 0f);
-        faction.AddItemOwned(Item.StoneSmall, 8, null, playerHandle.transform, 0f);
+    void AddItemsToFaction()
+    {
+        // faction = GameManager.instance.localPlayer.GetComponent<EntityInfo>().faction;
+        // faction.AddItemOwned(Item.ClothingTest, 2, null, playerHandle.transform, 0f);
+        // faction.AddItemOwned(Item.Meat, 2, null, playerHandle.transform, 0f);
+        // faction.AddItemOwned(Item.Spear, 2, null, playerHandle.transform, 0f);
+        // faction.AddItemOwned(Item.Axe, 8, null, playerHandle.transform, 0f);
+        // faction.AddItemOwned(Item.WoodPiece, 7, null, playerHandle.transform, 0f);
+        // faction.AddItemOwned(Item.BonePiece, 4, null, playerHandle.transform, 0f);
+        // faction.AddItemOwned(Item.StoneSmall, 8, null, playerHandle.transform, 0f);
     }
 
 
@@ -47,6 +49,10 @@ public class Testing : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.C))
             {
                 Camp.TryPlaceCamp(playerHandle.entityInfo.faction, GameManager.instance.localPlayer.transform);
+            }
+            if (Input.GetKeyUp(KeyCode.X))
+            {
+                playerHandle.entityInfo.faction.PackUp();
             }
             if (Input.GetKeyUp(KeyCode.R))
             {

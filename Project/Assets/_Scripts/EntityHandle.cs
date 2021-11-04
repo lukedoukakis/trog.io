@@ -46,7 +46,7 @@ public class EntityHandle : EntityComponent
         transform.position = new Vector3(0f, 4720f, 0f);
 
         // start new faction with this as the leader
-        StartCoroutine(ClientCommand.instance.SetNewFactionWhenReady(this, false));
+        StartCoroutine(ClientCommand.instance.SetNewFactionWhenReady(this, false, FactionStartingItemsTier.Nothing));
 
 
         UIController.current.SetUIMode(false);
@@ -68,6 +68,11 @@ public class EntityHandle : EntityComponent
         else{
             //rdr.sharedMaterial = mat_none;
         }
+    }
+
+    public void DestroyEntity()
+    {
+        Destroy(this.gameObject);
     }
 
     public void ShowTooltip(){

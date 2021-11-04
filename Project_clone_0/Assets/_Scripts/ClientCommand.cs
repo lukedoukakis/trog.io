@@ -23,7 +23,7 @@ public class ClientCommand : NetworkBehaviour
         //Debug.Log("npcPrefab: " + npcPrefab.name);
     }
 
-    public IEnumerator SpawnNpcFollowerWhenReady(EntityHandle leaderHandle, Vector3 position)
+    public IEnumerator SpawnNpcFollowerWhenReady(EntityHandle leaderHandle, Vector3 position, bool spawnWithGear)
     {
         Debug.Log("SpawnNpcWhenReady() start");
         while (!NetworkClient.ready)
@@ -31,12 +31,12 @@ public class ClientCommand : NetworkBehaviour
             //Debug.Log("CHECKING...");
             yield return new WaitForSecondsRealtime(.05f);
         }
-        SpawnNpcFollower(leaderHandle, position);
+        SpawnNpcFollower(leaderHandle, position, spawnWithGear);
         Debug.Log("SpawnNpcWhenReady() finished");
     }
 
 
-    public IEnumerator SpawnNpcIndependentWhenReady(Vector3 position, bool createCamp)
+    public IEnumerator SpawnNpcIndependentWhenReady(Vector3 position, bool createCamp, FactionStartingItemsTier factionTier)
     {
         Debug.Log("SpawnNpcWhenReady() start");
         while (!NetworkClient.ready)
@@ -44,14 +44,14 @@ public class ClientCommand : NetworkBehaviour
             //Debug.Log("CHECKING...");
             yield return new WaitForSecondsRealtime(.05f);
         }
-        SpawnNpcIndependent(position, createCamp);
+        SpawnNpcIndependent(position, createCamp, factionTier);
         Debug.Log("SpawnNpcWhenReady() finished");
     }
 
 
 
     [Command]
-    public void SpawnNpcFollower(EntityHandle leaderHandle, Vector3 position)
+    public void SpawnNpcFollower(EntityHandle leaderHandle, Vector3 position, bool spawnWithGear)
     {
         GameObject npc = GameObject.Instantiate(npcPrefab, position, Quaternion.identity);
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
@@ -71,31 +71,33 @@ public class ClientCommand : NetworkBehaviour
             Utility.IgnorePhysicsCollisions(npcHandle.transform, factionMemberHandle.transform);
         }
         faction.AddMember(npcHandle, true);
+
+        if(spawnWithGear)
+        {
+            Item weaponItem = Item.GetRandomItem(ItemType.Weapon);
+            GameObject weaponObject = Utility.InstantiateSameName(weaponItem.worldObjectPrefab, npcHandle.transform.position + Vector3.up * 20f, Quaternion.identity);
+            npcHandle.entityItems.SetEquippedWeapon(weaponItem, weaponObject);
+            npcHandle.entityItems.OnItemsChange();
+        }
     }
 
     [Command]
-    public void SpawnNpcIndependent(Vector3 position, bool createCamp)
+    public void SpawnNpcIndependent(Vector3 position, bool createCamp, FactionStartingItemsTier factionTier)
     {
         GameObject npc = GameObject.Instantiate(npcPrefab, position, Quaternion.identity);
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
         NetworkServer.Spawn(npc, GameManager.instance.localPlayer);
-        StartCoroutine(SetNewFactionWhenReady(npcHandle, createCamp));
+        StartCoroutine(SetNewFactionWhenReady(npcHandle, createCamp, factionTier));
     }
 
 
-    public IEnumerator SetNewFactionWhenReady(EntityHandle founderHandle, bool createCamp)
+    public IEnumerator SetNewFactionWhenReady(EntityHandle founderHandle, bool createCamp, FactionStartingItemsTier tier)
     {
         while (!NetworkClient.ready) {
             yield return new WaitForSecondsRealtime(.05f);
         }
 
-        InstantiateNewFaction(founderHandle);
-
-        // spawn tribe members
-        for(int i = 0; i < GameManager.startingTribeMembers; ++i)
-        {
-            StartCoroutine(ClientCommand.instance.SpawnNpcFollowerWhenReady(founderHandle, founderHandle.transform.position));
-        }
+        InstantiateNewFaction(founderHandle, tier);
 
         if(createCamp)
         {
@@ -104,7 +106,7 @@ public class ClientCommand : NetworkBehaviour
     }
 
     [Command]
-    public void InstantiateNewFaction(EntityHandle founderHandle)
+    public void InstantiateNewFaction(EntityHandle founderHandle, FactionStartingItemsTier tier)
     {
         //Debug.Log("SETTING FACTION");
         Faction faction = Faction.InstantiateFaction("Faction " + (Random.Range(0, int.MaxValue)).ToString());
@@ -114,7 +116,12 @@ public class ClientCommand : NetworkBehaviour
         founderHandle.entityInfo.isFactionLeader = true;
         founderHandle.entityInfo.isFactionFollower = false;
 
-        Testing.instance.OnFactionCreation();
+        faction.AddStartingResources(tier);
+
+        if(ReferenceEquals(founderHandle, GameManager.instance.localPlayerHandle))
+        {
+            Testing.instance.OnFactionCreation();
+        }
     }
 
 

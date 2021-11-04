@@ -52,7 +52,7 @@ public class LightingController : MonoBehaviour
         SetColors(time);
 
         // pause time of day: comment out this line
-        // time += Time.deltaTime;
+        //time += Time.deltaTime;
     }
 
     void SetCelestialBodies(float time)

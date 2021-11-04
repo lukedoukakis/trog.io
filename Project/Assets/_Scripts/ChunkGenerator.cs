@@ -22,8 +22,8 @@ public class ChunkGenerator : MonoBehaviour
     public static float BankLevel = SeaLevel + meter;
     public static float SnowLevel = .871f;
     //public static float SnowLevel = float.MaxValue;
-    public static float GrassNormalMin = .6f;
-    public static float GrassNormalMax = .98f;
+    public static float GrassNormalMin = .25f;
+    public static float GrassNormalMax = .25f;
     public static float SnowNormal = .57f;
     public static float CaveNormal = .4f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -313,7 +313,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // lock temperature
                 //temperatureValue = .99f;
-                //temperatureValue = .25f;
+                temperatureValue = .25f;
 
 
 
@@ -348,7 +348,7 @@ public class ChunkGenerator : MonoBehaviour
                 //humidityValue = Mathf.InverseLerp(.4f, .6f, humidityValue);
 
                 // lock humidity
-                humidityValue = 0f;
+                //humidityValue = 0f;
                 //humidityValue = .99f;
                 // -------------------------------------------------------
 
@@ -386,12 +386,12 @@ public class ChunkGenerator : MonoBehaviour
                     freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
 
                     // give rivers character
-                    float character = .1f;
+                    float character = .15f;
                     rough = Mathf.PerlinNoise((x + xOffset + .01f) / 40f, (z + zOffset + .01f) / 40f) * 2f - 1f;
                     freshWaterValue += Mathf.Max(0f, rough) * character;
 
                     // give rivers roughness
-                    if(freshWaterValue > .99f){
+                    if(freshWaterValue > .9f){
                         rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
                         freshWaterValue += rough * .1f;
                     }
@@ -763,7 +763,7 @@ public class ChunkGenerator : MonoBehaviour
                                 spawnScale = Vector3.one * spawnParameters.scale;
 
                                 Debug.Log("WILD NPC");
-                                instance.StartCoroutine(ClientCommand.instance.SpawnNpcIndependentWhenReady(spawnPosition, true));
+                                instance.StartCoroutine(ClientCommand.instance.SpawnNpcIndependentWhenReady(spawnPosition, true, FactionStartingItemsTier.Weak));
                                 
                                 
                                 //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
@@ -797,7 +797,12 @@ public class ChunkGenerator : MonoBehaviour
             if(creature != null){
                 if(Vector3.Distance(playerRawPosition, activeCreatures[i].transform.position) > despawnDistance){
                     activeCreatures.RemoveAt(i);
-                    GameObject.Destroy(creature);
+                    Faction creatureFaction = creature.GetComponent<EntityInfo>().faction;
+                    if(creatureFaction != null)
+                    {
+                        creatureFaction.DestroyFaction();
+                    }
+                    //GameObject.Destroy(creature);
                 }
             }
             else{

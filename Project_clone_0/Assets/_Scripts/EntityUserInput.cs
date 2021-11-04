@@ -82,7 +82,7 @@ public class EntityUserInput : EntityComponent
         pressSprint = Input.GetKey(KeyCode.LeftShift);
         pressJump = Input.GetKey(KeyCode.Space);
         pressCrouch = Input.GetKey(KeyCode.LeftControl);
-        pressToggleAttackRanged = Input.GetKeyDown(KeyCode.X);
+        pressToggleAttackRanged = Input.GetKeyDown(KeyCode.LeftControl);
 
         if(Input.GetKeyDown(KeyCode.LeftShift))
         {

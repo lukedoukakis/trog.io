@@ -8,13 +8,16 @@ public class ItemCollection
     public Dictionary<Item, int> items;
 
 
-    public ItemCollection(){
+    public ItemCollection()
+    {
         this.items = new Dictionary<Item, int>();
     }
-    public ItemCollection(Dictionary<Item, int> _items){
+    public ItemCollection(Dictionary<Item, int> _items)
+    {
         this.items = _items;
     }
-    public ItemCollection(ItemCollection ic){
+    public ItemCollection(ItemCollection ic)
+    {
         this.items = new Dictionary<Item, int>();
         foreach(KeyValuePair<Item, int> kvp in ic.items){
             this.AddItem(kvp.Key, kvp.Value);
@@ -22,7 +25,8 @@ public class ItemCollection
     }
 
 
-    public void AddItem(Item i, int count){
+    public void AddItem(Item i, int count)
+    {
         if(items.ContainsKey(i)){
             items[i] += count;
             // ++items[i]
@@ -32,7 +36,8 @@ public class ItemCollection
         }
     }
 
-    public void RemoveItem(Item i, int count){
+    public void RemoveItem(Item i, int count)
+    {
         if(items.ContainsKey(i)){
             items[i] -= count;
             items[i] = Mathf.Max(items[i], 0);
@@ -43,7 +48,8 @@ public class ItemCollection
         }
     }
 
-    public int GetItemCount(Item i){
+    public int GetItemCount(Item i)
+    {
         if(items.ContainsKey(i)){
             return items[i];
         }
@@ -54,7 +60,8 @@ public class ItemCollection
 
 
     // returns in format... iron:1_wood:4_leather:4
-    public override string ToString(){
+    public override string ToString()
+    {
         string s = "";
         foreach(KeyValuePair<Item, int> kvp in items){
             s += kvp.Key.nme + ":" + kvp.Value + "_" ;

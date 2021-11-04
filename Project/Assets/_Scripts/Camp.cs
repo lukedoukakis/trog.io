@@ -24,6 +24,7 @@ public class Camp : MonoBehaviour
 
 
     // --
+    public Transform rootT;
     public Faction faction;
     public Vector3 origin;
     public float radius;
@@ -41,13 +42,17 @@ public class Camp : MonoBehaviour
     public List<ObjectRack> racks_wood;
     public List<ObjectRack> racks_bone;
     public List<ObjectRack> racks_stone;
+    public List<List<ObjectRack>> racks_all;
 
 
     public List<Transform> tribeMemberStandPositions;
 
 
+
+
     // client method to place a Camp
-    public static void TryPlaceCamp(Faction faction, Transform originT){
+    public static void TryPlaceCamp(Faction faction, Transform originT)
+    {
         if(CanPlaceCamp(originT.position)){
             PlaceCamp(faction, originT);
         }
@@ -65,12 +70,13 @@ public class Camp : MonoBehaviour
         Camp camp = GameManager.instance.gameObject.AddComponent<Camp>();
         faction.camp = camp;
         camp.faction = faction;
+        camp.rootT = new GameObject().transform;
         camp.racks_food = new List<ObjectRack>();
         camp.racks_weapons = new List<ObjectRack>();
         camp.racks_clothing = new List<ObjectRack>();
         camp.racks_wood = new List<ObjectRack>();
         camp.racks_bone = new List<ObjectRack>();
-        camp.racks_stone = new List<ObjectRack>(); 
+        camp.racks_stone = new List<ObjectRack>();
         camp.tents = new List<Tent>();
         Vector3 campPlacementPos = originT.position + originT.forward * 2f;
         camp.SetOrigin(campPlacementPos);
@@ -78,6 +84,7 @@ public class Camp : MonoBehaviour
         camp.SetCampLayout(campPlacementPos, originT.rotation);
         camp.PlaceCampComponents(originT);
         camp.SetTribeMemberStandingPositions();
+        camp.racks_all = new List<List<ObjectRack>>(){ camp.racks_food, camp.racks_weapons, camp.racks_clothing, camp.racks_wood, camp.racks_bone, camp.racks_stone, new List<ObjectRack>(){camp.workbench} };
 
         // todo: update all memnbers in camp status from checking distance to origin
         camp.faction.leaderHandle.entityPhysics.isInsideCamp = true;
@@ -148,7 +155,7 @@ public class Camp : MonoBehaviour
     // place and adjust camp layout for component placement
     public void SetCampLayout(Vector3 position, Quaternion rotation){
 
-        layout = Instantiate(CampResources.PREFAB_CAMPLAYOUT, position, rotation);
+        layout = Instantiate(CampResources.PREFAB_CAMPLAYOUT, position, rotation, rootT);
         foreach(Transform orientation in layout.transform){
             //Debug.Log("AdjustCampLayout(): adjusting orientation: " + orientation.name);
             Vector3 pos = orientation.position;
@@ -259,6 +266,7 @@ public class Camp : MonoBehaviour
             ObjectReference objectReference;
 
             borderSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            borderSphere.transform.SetParent(rootT);
             borderSphere.layer = LayerMask.NameToLayer("CampBorder");
             borderSphere.transform.position = targetOrientation.position;
             borderSphere.transform.localScale = Vector3.one * radius * 2f;
@@ -274,7 +282,7 @@ public class Camp : MonoBehaviour
     }
 
     public void PlaceBonfire(){
-        Bonfire bonfire = GameManager.instance.gameObject.AddComponent<Bonfire>();
+        Bonfire bonfire = (Bonfire)AddCampComponent(typeof(Bonfire));
         bonfire.SetBonfire(this, faction.ownedItems.GetItemCount(Item.LogFir) > 1f, 1f, 1f);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Bonfire);
         bonfire.worldObject.transform.position = targetOrientation.position;
@@ -284,21 +292,32 @@ public class Camp : MonoBehaviour
         SetOrigin(targetOrientation.position);
     }
 
-    public void PlaceWorkbench(){
-        Workbench workbench = GameManager.instance.gameObject.AddComponent<Workbench>();
-        workbench.SetWorkbench(this);
+    public void PlaceWorkbench()
+    {
+        Workbench workbench = (Workbench)AddCampComponent(typeof(Workbench));
+        workbench.SetCampComponent(this);
+        workbench.SetWorkbench();
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Workbench);
         workbench.worldObject.transform.position = targetOrientation.position;
         workbench.worldObject.transform.rotation = targetOrientation.rotation;
         this.workbench = workbench;
     }
 
+    public CampComponent AddCampComponent(Type type)
+    {
+        CampComponent campComponent = (CampComponent)rootT.gameObject.AddComponent(type);
+        campComponent.SetCampComponent(this);
 
-    public ObjectRack PlaceObjectRack(Enum itemType, float delay){
+        return campComponent;
+    }
 
 
-        ObjectRack objectRack = GameManager.instance.gameObject.AddComponent<ObjectRack>();
-        objectRack.SetObjectRack(this, itemType);
+    public ObjectRack PlaceObjectRack(Enum itemType, float delay)
+    {
+
+        ObjectRack objectRack = (ObjectRack)AddCampComponent(typeof(ObjectRack));
+        objectRack.SetCampComponent(this);
+        objectRack.SetObjectRack(itemType);
         List<ObjectRack> rackList = GetRackListForItemType(itemType);
         Enum componentType;
         switch (itemType)
@@ -365,22 +384,17 @@ public class Camp : MonoBehaviour
         }
         else if(tentDeficit < 0){
             for(int i = 0; i < tentDeficit * -1; ++i){
-                RemoveTent();
+                //RemoveTent();
             }
         }
     }
     public void PlaceTent(){
-        Tent tent = GameManager.instance.gameObject.AddComponent<Tent>();
-        tent.SetTent(this);
+        Tent tent = (Tent)AddCampComponent(typeof(Tent));
+        tent.SetCampComponent(this);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Tent);
         tent.worldObject.transform.position = targetOrientation.position;
         tent.worldObject.transform.rotation = targetOrientation.rotation;
         this.tents.Add(tent);
-    }
-    public void RemoveTent(){
-        Tent tent = tents[tents.Count - 1];
-        tents.Remove(tent);
-        tent.DeleteSelf();
     }
 
 
@@ -515,12 +529,51 @@ public class Camp : MonoBehaviour
     void OnFoodCast(EntityHandle casterHandle, Item foodItem)
     {
         //Debug.Log("OnFoodCast()");
-        StartCoroutine(ClientCommand.instance.SpawnNpcFollowerWhenReady(casterHandle.entityInfo.faction.leaderHandle, GetOpenTribeMemberStandPosition().position));
+        StartCoroutine(ClientCommand.instance.SpawnNpcFollowerWhenReady(casterHandle.entityInfo.faction.leaderHandle, GetOpenTribeMemberStandPosition().position, false));
         if(casterHandle.entityInfo.faction.GetItemCount(foodItem) > 0)
         {
             casterHandle.entityInfo.faction.RemoveItemOwned(foodItem, 1, null, true, casterHandle.entityItems);
         }
 
+    }
+
+
+
+    // removes all rack items and adds to (todo: backpack)
+    public void PackUp()
+    {
+
+    }
+
+    public void Dismantle()
+    {
+
+        Debug.Log("Dismantle() start");
+
+        // handle inside camp status (set to outside)
+        faction.leaderHandle.entityPhysics.OnCampBorderExit();
+        borderSphere.SetActive(false);
+        Destroy(borderSphere);
+
+        // handle removal of camp components and packing of items
+        CampComponent[] allCampComponents = rootT.GetComponents<CampComponent>();
+        foreach(CampComponent cp in allCampComponents)
+        {
+            // if camp component is an object rack, move all its items to leader's inventory
+            if(cp is ObjectRack)
+            {
+                ObjectRack rack = (ObjectRack)cp;
+                rack.EmptyObjects(faction.leaderHandle);
+            }
+
+            // destroy and play dismantle animation
+            Utility.DestroyInSeconds(cp.worldObject, 5f);
+            cp.PlayDismantleAnimation();
+        }
+
+        Utility.DestroyInSeconds(rootT.gameObject, 5f);
+
+        Debug.Log("Dismantle() end");
     }
 
     public static bool EntityIsInsideCamp(EntityHandle handle){

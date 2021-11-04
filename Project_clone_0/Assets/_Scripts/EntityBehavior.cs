@@ -813,7 +813,7 @@ public class EntityBehavior : EntityComponent
             o = col.gameObject;
             foundHandle = o.GetComponentInParent<EntityHandle>();
             if(foundHandle != null){
-                if(!foundHandle.entityInfo.species.Equals(entityInfo.species) && (targetSpecies.Equals(Species.Any) || targetSpecies.Equals(foundHandle.entityInfo.species))){
+                if(!entityInfo.faction.memberHandles.Contains(foundHandle) && (targetSpecies.Equals(Species.Any) || targetSpecies.Equals(foundHandle.entityInfo.species))){
                     foundHandles.Add(foundHandle);
                 }
             }

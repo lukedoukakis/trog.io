@@ -32,12 +32,12 @@ public class Item : ScriptableObject
 
 
     // Item defs
-    public static Item None = InitiailizeItem("None", ItemType.Weapon, false, Stats.NONE, Stats.NONE, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, null, null, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
+    public static Item None = InitiailizeItem("None", ItemType.Any, false, Stats.NONE, Stats.NONE, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, null, null, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
     public static Item Meat = InitiailizeItem("Meat", ItemType.Food, true, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_MEAT, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, null, null, Resources.Load<GameObject>("Items/Food/Meat/Gameobject/Meat"), Resources.Load<Image>("Items/Food/Meat/Image"));
     public static Item WoodPiece = InitiailizeItem("WoodPiece", ItemType.Wood, true, Stats.NONE, Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt,ItemCollection. EmptyItemCollection, null, null, Resources.Load<GameObject>("Items/WoodPiece/Gameobject/WoodPiece"), Resources.Load<Image>("Items/WoodPiece/Image"));
     public static Item BonePiece = InitiailizeItem("BonePiece", ItemType.Bone, true, Stats.NONE, Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, null, null, Resources.Load<GameObject>("Items/Bones/BonePiece/Gameobject/BonePiece"), Resources.Load<Image>("Items/Bones/BonePiece/Image"));
     public static Item StoneSmall = InitiailizeItem("StoneSmall", ItemType.Stone, true, Stats.NONE, Stats.NONE, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, null, null, Resources.Load<GameObject>("Items/StoneSmall/Gameobject/StoneSmall"), Resources.Load<Image>("Items/StoneSmall/Image"));
-    public static Item Torch = InitiailizeItem("Torch", ItemType.Weapon, false, Stats.NONE, Stats.NONE, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, new CraftingRecipe(Item.WoodPiece, null, null), null, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
+    public static Item Torch = InitiailizeItem("Torch", ItemType.Misc, false, Stats.NONE, Stats.NONE, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, new CraftingRecipe(Item.WoodPiece, null, null), null, Resources.Load<GameObject>("Items/Torch/Gameobject/Torch"), Resources.Load<Image>("Items/Torch/Image"));
     public static Item Spear = InitiailizeItem("Spear", ItemType.Weapon, true, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_SPEAR, ItemHoldStyle.Spear, ItemDamageType.Pierce, ItemCollection.EmptyItemCollection, new CraftingRecipe(Item.WoodPiece, Item.WoodPiece, Item.StoneSmall), null, Resources.Load<GameObject>("Items/Weapons/Spear/Gameobject/Spear"), Resources.Load<Image>("Items/Weapons/Spear/Image"));
     public static Item Axe = InitiailizeItem("Axe", ItemType.Weapon, true, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_AXE, ItemHoldStyle.Axe, ItemDamageType.Slash, ItemCollection.EmptyItemCollection, new CraftingRecipe(Item.WoodPiece, Item.StoneSmall, Item.StoneSmall), null, Resources.Load<GameObject>("Items/Weapons/Axe/Gameobject/Axe"), Resources.Load<Image>("Items/Weapons/Axe/Image"));
     public static Item CarcassBear = InitiailizeItem("CarcassBear", ItemType.Misc, false, Stats.InstantiateStats(.1f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{BonePiece, 4}, {Meat, 2}}), null, ParticleController.instance.BloodSpatter, Resources.Load<GameObject>("Items/Carcasses/CarcassBear/Gameobject/CarcassBear"), Resources.Load<Image>("Items/Carcasses/CarcassBear/Image"));
@@ -72,6 +72,14 @@ public class Item : ScriptableObject
 
         return Items[_nme];
        
+    }
+
+    public static Item GetRandomItem(ItemType type)
+    {
+        Item[] itemsOfType = Items.Values.Where(i => i.type.Equals(type)).ToArray();
+        Item randomItem = itemsOfType[UnityEngine.Random.Range(0, itemsOfType.Length)];
+        //Debug.Log(randomItem.nme);
+        return randomItem;
     }
 
 

@@ -19,10 +19,10 @@ public class ObjectRack : CampComponent
 
     // --
 
-    public Camp camp;
     public Enum itemType;
     public int capacity;
     public List<GameObject> objectsOnRack;
+    public List<Item> itemsOnRack;
     public Transform worldObject_orientationParent;
     List<Transform> orientations;
     public bool onDemandPlacement;  // whether new racks can be created when this one is filled up; if false, objects cannot be placed when attempting to place on this rack
@@ -32,8 +32,15 @@ public class ObjectRack : CampComponent
     public bool allowRotation;
 
 
-    public void SetObjectRack(Camp camp, Enum itemType){
-        this.camp = camp;
+    public override void SetCampComponent(Camp camp)
+    {
+        base.SetCampComponent(camp);
+    }
+
+
+    public void SetObjectRack(Enum itemType)
+    {
+
         this.itemType = itemType;
         GameObject worldObjectPrefab;
         switch(itemType){
@@ -122,6 +129,7 @@ public class ObjectRack : CampComponent
         ObjectReference reference = this.worldObject.AddComponent<ObjectReference>();
         reference.SetObjectReference(this);
         objectsOnRack = new List<GameObject>();
+        itemsOnRack = new List<Item>();
     }
 
 
@@ -142,6 +150,7 @@ public class ObjectRack : CampComponent
                 SetObjectOrientation(newWorldObject, originT, (OBJECT_PLACEMENT_DELAY_TIMESTEP * countAdded) + (Camp.CAMP_COMPONENT_PLACING_TIME_GAP * newRacksCount));
                 Utility.SetGlobalScale(newWorldObject.transform, Vector3.one);
                 objectsOnRack.Add(newWorldObject);
+                itemsOnRack.Add(item);
                 --countToAdd;
             }
             else{
@@ -193,6 +202,7 @@ public class ObjectRack : CampComponent
                         camp.faction.AddItemOwned(item, 1, (ObjectRack)destination, tempT, delay);
                         
                         objectsOnRack.Remove(foundObject);
+                        itemsOnRack.Remove(item);
                         GameObject.Destroy(foundObject);
 
                     }
@@ -218,6 +228,7 @@ public class ObjectRack : CampComponent
                 else
                 {
                     objectsOnRack.Remove(foundObject);
+                    itemsOnRack.Remove(item);
                     GameObject.Destroy(foundObject);
                 }
 
@@ -231,6 +242,20 @@ public class ObjectRack : CampComponent
                 // call to remove remaining count
                 camp.RemoveObjectsAnyRack(item, ref countToRemove, moveToAnotherPlace, destination);
             }
+        }
+    }
+
+
+    public void EmptyObjects(object destination)
+    {
+        if(IsEmpty()){ return; }
+
+        Debug.Log("EmptyObjects():");
+
+        foreach(Item item in itemsOnRack.ToArray())
+        {
+            Debug.Log("------>");
+            camp.faction.RemoveItemOwned(item, 1, this, true, camp.faction.leaderHandle.entityItems);
         }
     }
 

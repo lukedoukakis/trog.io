@@ -141,6 +141,15 @@ public class EntityItems : EntityComponent
             ObjectRack rack = (ObjectRack)attachedObject;
             rack.camp.faction.RemoveItemOwned(item, 1, rack, false, null);
             o = Utility.InstantiateSameName(item.worldObjectPrefab, worldObject.transform.position, worldObject.transform.rotation);
+
+            // --
+            if(!entityPhysics.isInsideCamp && item.isRackable)
+            {
+                AddToInventory(item, o, true, 0f);
+                return;
+            }
+            // --
+            
         }
         else if (attachedObject is EntityItems)
         {
@@ -152,6 +161,15 @@ public class EntityItems : EntityComponent
         {
             //Log("No attached obj");
             o = worldObject;
+
+            // --
+            if(!entityPhysics.isInsideCamp && item.isRackable)
+            {
+                AddToInventory(item, o, true, 0f);
+                return;
+            }
+            // --
+
         }
         else{
             o = worldObject;
@@ -184,7 +202,17 @@ public class EntityItems : EntityComponent
             // get rack reference from attached object and add the item to faction items with specified rack
             ObjectRack rack = (ObjectRack)attachedObject;
             rack.camp.faction.RemoveItemOwned(item, 1, rack, false, null);
+
+            // --
             o = Utility.InstantiateSameName(item.worldObjectPrefab, worldObject.transform.position, worldObject.transform.rotation);
+            if(!entityPhysics.isInsideCamp && item.isRackable)
+            {
+                AddToInventory(item, o, true, 0f);
+                return;
+            }
+            // --
+
+
         }
         else if (attachedObject is EntityItems)
         {
@@ -548,7 +576,7 @@ public class EntityItems : EntityComponent
                 yield return StartCoroutine(Utility.FlipForTime(worldObject, .5f, 1000f, .25f));
             }
 
-            // move object to player location before destroying
+            // move object to entity location before destroying
             while (Vector3.Distance(worldObject.transform.position, transform.position) > .5f)
             {
                 worldObject.transform.position = Vector3.Lerp(worldObject.transform.position, transform.position, ObjectRack.OBJECT_MOVEMENT_ANIMATION_SPEED * Time.deltaTime);
