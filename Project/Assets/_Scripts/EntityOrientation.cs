@@ -9,6 +9,7 @@ public class EntityOrientation : EntityComponent
 {
 
     public Transform body;
+    public Transform itemOrientationTarget;
     public Transform model;
     public Transform head;
 
@@ -47,6 +48,7 @@ public class EntityOrientation : EntityComponent
 
       
         body = Utility.FindDeepChildWithTag(this.transform, "Body");
+        itemOrientationTarget = Utility.FindDeepChild(this.transform, "ItemOrientationTarget");
         model = Utility.FindDeepChildWithTag(this.transform, "Model");
         head = Utility.FindDeepChild(body, "B-head");
         if(tag == "Player"){
@@ -108,6 +110,7 @@ public class EntityOrientation : EntityComponent
                 {
                     Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
                     body.rotation = Quaternion.Slerp(body.rotation, rot, .02f);
+                    itemOrientationTarget.rotation = rot;
                 }
                 
 
@@ -131,37 +134,18 @@ public class EntityOrientation : EntityComponent
             {
                 Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
                 body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
+                itemOrientationTarget.rotation = rot;
             }
 
             body.position = transform.position;
-
-
-
-            // Vector3 dir;
-            // if (bodyRotationTarget != null)
-            // {
-            //     dir = (bodyRotationTarget.position - body.position).normalized;
-            // }
-            // else
-            // {
-            //     dir = transform.forward;
-            // }
-            // dir += (Vector3.up * bodyLean * -1f);
-            // Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
-            // body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
-
-            // body.position = transform.position;
         
         };
 
-        
-
-        
-
-
-        
-        
-
+        // if (entityItems != null)
+        // {
+        //     entityItems.orientationParent.rotation = itemOrientationTarget.rotation;
+        //     entityItems.orientationParent.position = itemOrientationTarget.position;
+        // }
 
     }
     
@@ -209,6 +193,7 @@ public class EntityOrientation : EntityComponent
     void Update(){
         
     }
+
 
 
 }
