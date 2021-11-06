@@ -16,10 +16,11 @@ public class SpawnParameters
     public float yNormalMin, yNormalMax;
     public float densityMin, densityMax;
     Enum densityCalculationType_height, densityCalculationType_temperature, densityCalculationType_humidity, densityCalculationType_yNormal;
+    public float slantMagnitude;
     public float numberToSpawn;
     public bool bundle;
 
-    public SpawnParameters(float scale, Vector2 heightRange, Vector2 temperatureRange, Vector2 humidityRange, Vector2 yNormalRange, Vector2 densityRange, Enum densityCalculationType_height, Enum densityCalculationType_temperature, Enum densityCalculationType_humidity, Enum densityCalculationType_yNormal, float numberToSpawn, bool bundle)
+    public SpawnParameters(float scale, Vector2 heightRange, Vector2 temperatureRange, Vector2 humidityRange, Vector2 yNormalRange, Vector2 densityRange, Enum densityCalculationType_height, Enum densityCalculationType_temperature, Enum densityCalculationType_humidity, Enum densityCalculationType_yNormal, float slantMagnitude, float numberToSpawn, bool bundle)
     {
         this.scale = scale;
         this.heightMin = heightRange.x;
@@ -36,6 +37,7 @@ public class SpawnParameters
         this.densityCalculationType_temperature = densityCalculationType_temperature;
         this.densityCalculationType_humidity = densityCalculationType_humidity;
         this.densityCalculationType_yNormal = densityCalculationType_yNormal;
+        this.slantMagnitude = slantMagnitude;
         this.numberToSpawn = numberToSpawn;
         this.bundle = bundle;
     }
@@ -73,7 +75,7 @@ public class SpawnParameters
     static Vector2 h2 = new Vector2(.5f, 1f);
     static Vector2 hgtWater = new Vector2(ChunkGenerator.SeaLevel - ChunkGenerator.meter * .05f, ChunkGenerator.SeaLevel);
     static Vector2 hgtBank = new Vector2(ChunkGenerator.SeaLevel, ChunkGenerator.BankLevel);
-    static Vector2 hgtWaterAndBank = new Vector2(ChunkGenerator.SeaLevel - ChunkGenerator.meter * .05f, ChunkGenerator.BankLevel);
+    static Vector2 hgtWaterAndBank = new Vector2(ChunkGenerator.SeaLevel - ChunkGenerator.meter * .25f, ChunkGenerator.BankLevel);
     static Vector2 hgtDry = new Vector2(ChunkGenerator.BankLevel, 1f);
     static Vector3 hgtDryNoSnow = new Vector2(ChunkGenerator.BankLevel, ChunkGenerator.SnowLevel - .005f);
     static Vector3 hgtBankAndDry = new Vector2(ChunkGenerator.SeaLevel, 1f);
@@ -82,41 +84,41 @@ public class SpawnParameters
     static Vector2 normCave = new Vector2(0f, ChunkGenerator.CaveNormal);
     public static Dictionary<string, SpawnParameters> SpawnParametersDict = new Dictionary<string, SpawnParameters>(){
 
-        {"Empty", new SpawnParameters(0f, none, none, none, none, none, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0, false)},
+        {"Empty", new SpawnParameters(0f, none, none, none, none, none, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 0, false)},
 
 
         // trees
-        {"TreeAcacia", new SpawnParameters(.5f, hgtDry, q3, q3, normGrass, new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1, false)},
-        {"TreeJungle", new SpawnParameters(.5f, hgtDry, q4, q4, normGrass, new Vector2(.7f, .7f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1, false)},
-        {"TreeFir", new SpawnParameters(.8f, hgtDry, h1, h2, new Vector2(ChunkGenerator.GrassNormalMin, .96f), new Vector2(.35f, .75f), DensityCalculationType.Binary, DensityCalculationType.DenserAtMaximum, DensityCalculationType.DenserAtMaximum, DensityCalculationType.Binary, 1, false)},
-        {"TreePalm", new SpawnParameters(.625f, hgtDry, q4, h2, normGrass, new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1, false)},
+        {"TreeAcacia", new SpawnParameters(.5f, hgtDry, q3, q3, normGrass, new Vector2(.03f, .06f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1f, 1, false)},
+        {"TreeJungle", new SpawnParameters(.5f, hgtDry, q4, q4, normGrass, new Vector2(.7f, .7f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1f, 1, false)},
+        {"TreeFir", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(.85f, 1f), new Vector2(.25f, .5f), DensityCalculationType.Binary, DensityCalculationType.DenserAtMaximum, DensityCalculationType.DenserAtMaximum, DensityCalculationType.Binary, .25f, 3, false)},
+        {"TreePalm", new SpawnParameters(.625f, hgtDry, q4, h2, normGrass, new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1f, 1, false)},
         //{"TreeOak", new FeatureAttributes(2f, hgtDry, h1, q1, new Vector2(.1f, .4f), false)},
 
         // stones
-        {"Stone", new SpawnParameters(1f, hgtBankAndDry, new Vector2(0f, .75f), all, new Vector2(.8f, 1f), new Vector2(.025f, .7f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtMinimum, 1, true)},
-        {"StoneDesert", new SpawnParameters(5f, hgtBankAndDry, q4, q1, new Vector2(.75f, .78f), new Vector2(0f, .5f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, true)},
-        {"StoneAll", new SpawnParameters(5f, hgtBankAndDry, all, all, new Vector2(.75f, .78f), new Vector2(0f, .8f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, true)},
+        {"Stone", new SpawnParameters(1f, hgtBankAndDry, new Vector2(0f, .75f), all, new Vector2(.8f, 1f), new Vector2(.01f, .2f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtMinimum, 0f, 3, true)},
+        {"StoneDesert", new SpawnParameters(5f, hgtBankAndDry, q4, q1, new Vector2(.75f, .8f), new Vector2(0f, .5f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, true)},
+        {"StoneAll", new SpawnParameters(2f, hgtBankAndDry, all, all, new Vector2(.3f, .75f), new Vector2(0f, .6f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, true)},
 
         // smaller plants
-        {"Grass", new SpawnParameters(1.5f, hgtWaterAndBank, q3, q3, normGrass, new Vector2(.1f, .8f), DensityCalculationType.DenserAtMinimum, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1, true)},
-        {"Plant", new SpawnParameters(1f, hgtDryNoSnow, h1, h2, new Vector2(.95f, 1f), new Vector2(.99f, 1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, true)},
-        {"Reed", new SpawnParameters(1f, hgtWaterAndBank, all, all, normGrass, new Vector2(.1f, .42f), DensityCalculationType.DenserAtMinimum, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtMinimum, 1, true)},
-        {"Mushroom", new SpawnParameters(1.5f, hgtDryNoSnow, all, h2, new Vector2(.95f, 1f), new Vector2(.09f, .1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, true)},
-        {"Bush", new SpawnParameters(.375f, hgtDryNoSnow, h1, all, normGrass, new Vector2(.07f, .25f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtMaximum, 2, true)},
-        {"DeadBush", new SpawnParameters(.75f, hgtDryNoSnow, h2, h1, normGrass, new Vector2(.15f, .15f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, true)},
-        {"Cactus", new SpawnParameters(.625f, hgtDryNoSnow, q4, q1, new Vector2(.98f, 1f), new Vector2(.049f, .05f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, false)},
+        {"Grass", new SpawnParameters(.5f, hgtWaterAndBank, all, all, normGrass, new Vector2(.1f, .8f), DensityCalculationType.DenserAtMinimum, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1f, 3, true)},
+        {"Plant", new SpawnParameters(1f, hgtDryNoSnow, h1, h2, new Vector2(.95f, 1f), new Vector2(.99f, 1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1f, 1, true)},
+        {"Reed", new SpawnParameters(1f, hgtWaterAndBank, all, all, new Vector2(.75f, .1f), new Vector2(.1f, .42f), DensityCalculationType.DenserAtMinimum, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, DensityCalculationType.DenserAtMinimum, .5f, 4, true)},
+        {"Mushroom", new SpawnParameters(1.5f, hgtDryNoSnow, all, h2, new Vector2(.95f, 1f), new Vector2(.09f, .1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1f, 1, true)},
+        {"Bush", new SpawnParameters(.375f, hgtDryNoSnow, h1, all, normGrass, new Vector2(.07f, .25f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtMaximum, 1f, 2, true)},
+        {"DeadBush", new SpawnParameters(.75f, hgtDryNoSnow, h2, h1, normGrass, new Vector2(.15f, .15f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, 1f, true)},
+        {"Cactus", new SpawnParameters(.625f, hgtDryNoSnow, q4, q1, new Vector2(.98f, 1f), new Vector2(.049f, .05f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, 0f, false)},
 
         // creatures
-        {"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1, true)},
-        {"WildDeer", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1, true)},
+        {"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 0f, 1, true)},
+        {"WildDeer", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 0f, 1, true)},
         
         // items
-        {"StoneSmall", new SpawnParameters(1f, hgtBankAndDry, all, all, new Vector2(.8f, 1f), new Vector2(.01f, .05f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 3, true)},
-        {"WoodPiece", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(ChunkGenerator.GrassNormalMin, .96f), new Vector2(.1f, .2f), DensityCalculationType.Binary, DensityCalculationType.DenserAtMaximum, DensityCalculationType.DenserAtMaximum, DensityCalculationType.Binary, 1, false)},
+        {"StoneSmall", new SpawnParameters(1f, hgtBankAndDry, all, all, new Vector2(.8f, 1f), new Vector2(.01f, .05f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 3, true)},
+        {"WoodPiece", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(ChunkGenerator.GrassNormalMin, .96f), new Vector2(.1f, .2f), DensityCalculationType.Binary, DensityCalculationType.DenserAtMaximum, DensityCalculationType.DenserAtMaximum, DensityCalculationType.Binary, 0f, 1, false)},
     
     
         // AI faction leader
-        {"Npc", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, false)},
+        {"Npc", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, false)},
 
 
     

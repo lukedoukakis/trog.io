@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2333787873755612768}
-  - component: {fileID: 3632307178189894107}
   m_Layer: 10
   m_Name: StoneAll 1
   m_TagString: Feature
@@ -32,21 +31,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3632307178189894107
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2333787873755612775}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b6bf48bce3a9dc40893c47b91f42dc9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemNme: Stone
-  item: {fileID: 0}
-  stats: {fileID: 0}
 --- !u!1 &6858444299094640341
 GameObject:
   m_ObjectHideFlags: 0
@@ -74,8 +58,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6858444299094640341}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.57, z: 0}
-  m_LocalScale: {x: 0.6081814, y: 0.3648298, z: 0.6081814}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalScale: {x: 0.6081814, y: 0.7296596, z: 0.6081814}
   m_Children: []
   m_Father: {fileID: 2333787873755612768}
   m_RootOrder: 0

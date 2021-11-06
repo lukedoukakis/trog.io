@@ -22,8 +22,8 @@ public class ChunkGenerator : MonoBehaviour
     public static float BankLevel = SeaLevel + meter;
     public static float SnowLevel = .871f;
     //public static float SnowLevel = float.MaxValue;
-    public static float GrassNormalMin = .25f;
-    public static float GrassNormalMax = .25f;
+    public static float GrassNormalMin = .7f;
+    public static float GrassNormalMax = .7f;
     public static float SnowNormal = .57f;
     public static float CaveNormal = .4f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -331,7 +331,7 @@ public class ChunkGenerator : MonoBehaviour
                 float bm0 = Mathf.PerlinNoise((x + xOffset + 100000.01f) / 1600f, (z + zOffset + 100000.01f) / 1600f) * 2f - 1f;
                 float bm1 = Mathf.PerlinNoise((x + xOffset + 200000.01f) / 1600f, (z + zOffset + 200000.01f) / 1600f) * 2f - 1f;
                 float bigMound = Mathf.Min(bm0, bm1);
-                bigMound = Mathf.Pow(Mathf.Abs(bigMound) * -1f + 1f, 6f);
+                bigMound = Mathf.Pow(Mathf.Abs(bigMound) * -1f + 1f, 10f);
                 float bigMoundCap = .04f;
                 bigMound *= bigMoundCap;
                 bigMound *= (1f - Mathf.InverseLerp(.25f, .75f, temperatureValue));
@@ -377,7 +377,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // FreshWaterMap [0, 1]
 
-                if (bigMound < .1f)
+                if (true)
                 {
                     float riverScale = 180f;
                     riverScale = 900f;
@@ -391,10 +391,10 @@ public class ChunkGenerator : MonoBehaviour
                     freshWaterValue += Mathf.Max(0f, rough) * character;
 
                     // give rivers roughness
-                    if(freshWaterValue > .9f){
-                        rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
-                        freshWaterValue += rough * .1f;
-                    }
+                    // if(freshWaterValue > .9f){
+                    //     rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
+                    //     freshWaterValue += rough * .1f;
+                    // }
                     
 
                     // ridgify
@@ -404,7 +404,7 @@ public class ChunkGenerator : MonoBehaviour
 
                     freshWaterValue = Mathf.Clamp01(freshWaterValue);
                     //Debug.Log(freshWaterValue);
-                    freshWaterValue = Mathf.Pow(freshWaterValue, Mathf.Lerp(3f, 10f, CalculateDesertness(temperatureValue, humidityValue)));
+                    freshWaterValue = Mathf.Pow(freshWaterValue, Mathf.Lerp(1.5f, 10f, CalculateDesertness(temperatureValue, humidityValue)));
 
                     // reduce fresh water value proportionally to mound height
                     //freshWaterValue *= 1f - (Mathf.InverseLerp(.25f, 1f, (bigMound / bigMoundCap)));
@@ -517,8 +517,10 @@ public class ChunkGenerator : MonoBehaviour
                 // -------------------------------------------------------
 
                 //posterize all land
-                //heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 350, .1f);
-                //heightValue = Posterize(SeaLevel - .0001f, 1f, heightValue, 750, .75f);
+                if(heightValue > BankLevel)
+                {
+                    heightValue = Posterize(BankLevel, 1f, heightValue, 60, .95f);
+                }
 
 
                 // dip
@@ -615,7 +617,7 @@ public class ChunkGenerator : MonoBehaviour
             for (int x = 0; x < ChunkSize; x++)
             {
 
-                float yNormal = cd.YNormalsMap[x, z];
+                Vector3 normal = cd.YNormalsMap[x, z];
                 float skewHoriz = cd.SkewHorizMap[x, z];
                 float height = cd.HeightMap[x, z];
                 float temp = cd.TemperatureMap[x, z];
@@ -642,7 +644,7 @@ public class ChunkGenerator : MonoBehaviour
                     spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
                     if (spawnParameters != null)
                     {
-                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, normal.y);
                         if (placementDensity > 0)
                         {
                             randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + _xOffset + .01f) / 2f, (z + _zOffset + .01f) / 2f) * 2f - 1f);
@@ -666,15 +668,20 @@ public class ChunkGenerator : MonoBehaviour
                                         int posChunkZ = (int)coordinatesInChunk.y;
                                         float posChunkHeight = chunkAtPosition.HeightMap[posChunkX, posChunkZ];
                                         float posChunkSkewHoriz = chunkAtPosition.SkewHorizMap[posChunkX, posChunkZ];
-                                        float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ];
+                                        float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ].y;
                                         placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, posChunkHeight, posChunkYNormal);
                                         if (placementDensity > 0)
                                         {
                                             spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.ElevationAmplitude) + Vector3.right * posChunkSkewHoriz + Vector3.forward * posChunkSkewHoriz;
                                             spawnScale = Vector3.one * spawnParameters.scale;
-                                            o = Utility.InstantiateSameName(feature, spawnPosition, Quaternion.AngleAxis(UnityEngine.Random.Range(0f, 360f), Vector3.up));
+                                            o = Utility.InstantiateSameName(feature, spawnPosition, Quaternion.identity);
                                             o.transform.SetParent(cd.featuresParent);
                                             o.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
+                                            if(spawnParameters.slantMagnitude > 0f)
+                                            {
+                                                o.transform.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(Vector3.up, cd.YNormalsMap[x,z]), spawnParameters.slantMagnitude);
+                                            }
+                                            o.transform.Rotate(o.transform.up, UnityEngine.Random.Range(0, 360f));
 
                                             bool noBundle = (bundleName == bundleName_last && !spawnParameters.bundle);
                                             bundleName_last = bundleName;
@@ -710,7 +717,7 @@ public class ChunkGenerator : MonoBehaviour
                     spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
                     if (spawnParameters != null)
                     {
-                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, normal.y);
                         int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
                         int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
                         if (placementDensity > 0f)
@@ -748,7 +755,7 @@ public class ChunkGenerator : MonoBehaviour
                     spawnParameters = SpawnParameters.GetSpawnParameters(human.name);
                     if (spawnParameters != null)
                     {
-                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, normal.y);
                         int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, human.name.GetHashCode()) * 2f - 1f) * 50f);
                         int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (human.name + "_").GetHashCode()) * 2f - 1f) * 50f);
                         if (placementDensity > 0f)
@@ -881,9 +888,9 @@ public class ChunkGenerator : MonoBehaviour
 
         // set up UVs, and place features based on normal value
         int normalIndex;
-        float yNormal;
+        Vector3 normal;
         Vector3[] normals = TerrainMesh.normals;
-        float[,] yNormalsMap = new float[ChunkSize + 2, ChunkSize + 2];
+        Vector3[,] normalsMap = new Vector3[ChunkSize + 2, ChunkSize + 2];
 
         for (int i = 0, z = 0; z < ChunkSize + 2; z++)
         {
@@ -896,10 +903,8 @@ public class ChunkGenerator : MonoBehaviour
                 // features
                 if(z > 0 && x > 0){
                     normalIndex = (z * (ChunkSize + 2)) + x;
-                    yNormal = normals[normalIndex].y;
-                    yNormalsMap[x, z] = yNormal;
-                    //StartCoroutine(GenerateSpawns(cd, yNormal, x, z, xOffset, zOffset, skewHorizMap[x, z]));
-                    //StartCoroutine(cd.GenerateSpawns(yNormal, x, z, xOffset, zOffset, skewHorizMap[x, z]));
+                    normal = normals[normalIndex];
+                    normalsMap[x, z] = normal;
                 }
                 
                 
@@ -911,7 +916,7 @@ public class ChunkGenerator : MonoBehaviour
         MeshCollider mc = Terrain.AddComponent<MeshCollider>();
         mc.sharedMaterial = physicMaterial;
 
-        cd.YNormalsMap = yNormalsMap;
+        cd.YNormalsMap = normalsMap;
         cd.SkewHorizMap = skewHorizMap;
 
     }

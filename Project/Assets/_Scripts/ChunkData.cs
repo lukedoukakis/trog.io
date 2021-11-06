@@ -29,7 +29,7 @@ public class ChunkData
     public float[,] HeightMap;
     public bool[,] TreeMap;
 
-    public float[,] YNormalsMap;
+    public Vector3[,] YNormalsMap;
     public float[,] SkewHorizMap;
 
     public Dictionary<Vector2, ChunkData> neighbors;

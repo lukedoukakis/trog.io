@@ -108,9 +108,12 @@ public class EntityOrientation : EntityComponent
 
                 if(!entityPhysics.isDodging)
                 {
-                    Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
-                    body.rotation = Quaternion.Slerp(body.rotation, rot, .02f);
-                    itemOrientationTarget.rotation = rot;
+                    if(dirCombined.magnitude > 0f)
+                    {
+                        Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
+                        body.rotation = Quaternion.Slerp(body.rotation, rot, .02f);
+                        itemOrientationTarget.rotation = rot;
+                    }
                 }
                 
 
@@ -132,9 +135,12 @@ public class EntityOrientation : EntityComponent
 
             if(!entityPhysics.isDodging)
             {
-                Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
-                body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
-                itemOrientationTarget.rotation = rot;
+                if(dirCombined.magnitude > 0f)
+                {
+                    Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
+                    body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
+                    itemOrientationTarget.rotation = rot;
+                }
             }
 
             body.position = transform.position;

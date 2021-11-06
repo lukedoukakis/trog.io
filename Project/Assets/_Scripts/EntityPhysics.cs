@@ -606,7 +606,7 @@ public class EntityPhysics : EntityComponent
     }
     public void UpdateFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, bool onGround)
     {
-        // move plantPos down until hits terrain
+        // move plantPos down until hits walkable surface
         if (onGround)
         {
             RaycastHit hit;
@@ -653,7 +653,7 @@ public class EntityPhysics : EntityComponent
 
         
 
-        if (!handFree)
+        if (!handFree || !isJumping)
         {
             return false;
         }
@@ -673,7 +673,7 @@ public class EntityPhysics : EntityComponent
         if (needsUpdate)
         {
             
-            RaycastHit[] hits = Physics.SphereCastAll(lookOriginT.position, .5f, lookDirection, armsReachDistance, LayerMask.GetMask("Feature", "Terrain"), QueryTriggerInteraction.Ignore).Where(hit => hit.point.y > 0f).ToArray();
+            RaycastHit[] hits = Physics.SphereCastAll(lookOriginT.position, .5f, lookDirection, armsReachDistance, LayerMaskController.SWINGABLE, QueryTriggerInteraction.Ignore).Where(hit => hit.point.y > 0f).ToArray();
             if (hits.Length > 0f)
             {
                 
