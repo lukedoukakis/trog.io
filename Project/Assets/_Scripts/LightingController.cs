@@ -12,6 +12,7 @@ public class LightingController : MonoBehaviour
     //public PostProcessVolume volume;
     //public ColorGrading colorGrading;
 
+    public GameObject fog;
     public GameObject sun, moon;
     public Light sunLight, moonLight;
     public Color sunLightColor_base, sunLightColor_sunrise, sunLightColor_sunset;
@@ -29,6 +30,7 @@ public class LightingController : MonoBehaviour
     {
         current = this;
 
+        fog = GameObject.Find("Fog");
         sun = GameObject.Find("Sun");
         moon = GameObject.Find("Moon");
         sunLight = sun.GetComponent<Light>();
@@ -48,11 +50,19 @@ public class LightingController : MonoBehaviour
     void Update()
     {
        
+        SetFog(time);
         SetCelestialBodies(time);
         SetColors(time);
 
         // pause time of day: comment out this line
         //time += Time.deltaTime;
+    }
+
+    void SetFog(float time)
+    {
+        Vector3 playerPos = GameManager.instance.localPlayer.transform.position;
+        Vector3 cameraPos = Camera.main.transform.position;
+        fog.transform.position = playerPos;
     }
 
     void SetCelestialBodies(float time)
