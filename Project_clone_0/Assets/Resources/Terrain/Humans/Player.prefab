@@ -922,6 +922,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: HumanIK
       objectReference: {fileID: 0}
+    - target: {fileID: 8016661553262104830, guid: bcf187194d93e87428143f82751631f7,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6666043928345325841, guid: bcf187194d93e87428143f82751631f7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: bcf187194d93e87428143f82751631f7, type: 3}

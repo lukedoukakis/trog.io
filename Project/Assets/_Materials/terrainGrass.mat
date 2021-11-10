@@ -28,7 +28,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorNoise:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: f9a1cc14d1a896842a82ac93f105c266, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorNoiseTex:
@@ -70,7 +70,7 @@ Material:
     - _FadeDistanceStart: 200
     - _GrassCut: 0
     - _GrassNormal: 0.7
-    - _GrassSaturation: 0.5
+    - _GrassSaturation: 0.2
     - _GrassShading: 1
     - _GrassThinness: 1
     - _GrassThinnessIntersection: 0.43
@@ -105,7 +105,7 @@ Material:
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.9677934, g: 1, b: 0.8066038, a: 0}
-    - _CampOrigin: {r: 16.472063, g: 4591.8936, b: 4.3754163, a: 0}
+    - _CampOrigin: {r: 6.7559996, g: 4606.109, b: 9.454877, a: 0}
     - _Color: {r: 0.8850714, g: 0.9150943, b: 0.75538445, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
     - _OffsetVector: {r: 0, g: 3, b: 0, a: 0}

@@ -352,29 +352,29 @@ public class EntityPhysics : EntityComponent
         
         UpdateLimbPositions(isInWater);
 
-        if (!isQuadripedal)
-        {
+        // if (!isQuadripedal)
+        // {
 
-            Transform t = body;
+        //     Transform t = body;
 
-            isHandGrab = false;
+        //     isHandGrab = false;
 
-            // reach up right
-            isHandGrab = HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.up).normalized, ref updateTime_handRight, handFree_right, isInWater);
+        //     // reach up right
+        //     isHandGrab = HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.up).normalized, ref updateTime_handRight, handFree_right, isInWater);
 
-            // reach up left
-            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.up).normalized, ref updateTime_handLeft, handFree_left, isInWater);
+        //     // reach up left
+        //     isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.up).normalized, ref updateTime_handLeft, handFree_left, isInWater);
 
 
 
-            // vault right
-            isHandGrab = isHandGrab || HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.forward).normalized, ref updateTime_handRight, handFree_right, isInWater);
+        //     // vault right
+        //     isHandGrab = isHandGrab || HandleHandGrab(handRight, targetHandRight, ref plantPosHandRight, ikScript_handRight, grabOrigin_handRight, (t.forward).normalized, ref updateTime_handRight, handFree_right, isInWater);
 
-            // vault left
-            isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.forward).normalized, ref updateTime_handLeft, handFree_left, isInWater);
-            
-            
-        }
+        //     // vault left
+        //     isHandGrab = isHandGrab || HandleHandGrab(handLeft, targetHandLeft, ref plantPosHandLeft, ikScript_handLeft, grabOrigin_handLeft, (t.forward).normalized, ref updateTime_handLeft, handFree_left, isInWater);
+
+
+        // }
 
 
         if (!ikProfile.useAnimationMovement)

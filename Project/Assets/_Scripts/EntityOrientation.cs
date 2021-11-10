@@ -111,7 +111,7 @@ public class EntityOrientation : EntityComponent
                     if(dirCombined.magnitude > 0f)
                     {
                         Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
-                        body.rotation = Quaternion.Slerp(body.rotation, rot, .02f);
+                        body.rotation = Quaternion.Slerp(body.rotation, rot, .01f);
                         itemOrientationTarget.rotation = rot;
                     }
                 }

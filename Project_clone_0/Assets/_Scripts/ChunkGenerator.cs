@@ -9,7 +9,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator instance;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 7;
+    public static int ChunkRenderDistance = 3;
     public static float Scale = 120f * 2;
     public static float ElevationAmplitude = 5400f;
     public static float MountainMapScale = 80f * 2f;
@@ -386,15 +386,15 @@ public class ChunkGenerator : MonoBehaviour
                     freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
 
                     // give rivers character
-                    float character = .15f;
-                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 40f, (z + zOffset + .01f) / 40f) * 2f - 1f;
+                    float character = .25f;
+                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 100f, (z + zOffset + .01f) / 100f);
                     freshWaterValue += Mathf.Max(0f, rough) * character;
 
                     // give rivers roughness
-                    // if(freshWaterValue > .9f){
-                    //     rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
-                    //     freshWaterValue += rough * .1f;
-                    // }
+                    if(freshWaterValue > .5f){
+                        rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
+                        freshWaterValue += rough * .1f;
+                    }
                     
 
                     // ridgify
@@ -409,9 +409,6 @@ public class ChunkGenerator : MonoBehaviour
                     // reduce fresh water value proportionally to mound height
                     //freshWaterValue *= 1f - (Mathf.InverseLerp(.25f, 1f, (bigMound / bigMoundCap)));
 
-                }
-                else{
-                    freshWaterValue = 0f;
                 }
 
 
@@ -454,7 +451,7 @@ public class ChunkGenerator : MonoBehaviour
                     float sampleZ = (z + zOffset) / Scale * frequency + Seed;
                     float perlinValue = Mathf.PerlinNoise(sampleX, sampleZ) * 2 - 1;
                     heightValue += perlinValue * amplitude;
-                    amplitude *= persistance * Mathf.Lerp(.25f, 1f, freshWaterValue) * (1f - CalculateDesertness(temperatureValue, humidityValue));
+                    amplitude *= persistance * (1f - CalculateDesertness(temperatureValue, humidityValue));
                     frequency *= lacunarity;
                 }
 
