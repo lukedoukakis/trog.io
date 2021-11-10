@@ -379,8 +379,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 if (true)
                 {
-                    float riverScale = 180f;
-                    riverScale = 900f;
+                    float riverScale = 900f;
 
                     // main river path
                     freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
@@ -391,10 +390,8 @@ public class ChunkGenerator : MonoBehaviour
                     freshWaterValue += Mathf.Max(0f, rough) * character;
 
                     // give rivers roughness
-                    if(freshWaterValue > .5f){
-                        rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
-                        freshWaterValue += rough * .1f;
-                    }
+                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
+                    freshWaterValue += rough * .1f;
                     
 
                     // ridgify
