@@ -85,6 +85,8 @@ public class EntityItems : EntityComponent
         ToggleItemOrientationUpdate(true);
         SetWeaponRangedMode(false);
         SetUpdateWeaponOrientation(true);
+
+        EquipClothing(Item.ClothingTest);
     }
 
     // client method when an object is interacted with
@@ -529,7 +531,8 @@ public class EntityItems : EntityComponent
     // clothing
     // ---
 
-    public void EquipClothing(Item i){
+    public void EquipClothing(Item i)
+    {
 
         // unequip current clothing
         UnequipCurrentClothing();

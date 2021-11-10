@@ -97,7 +97,7 @@ public class SpawnParameters
         // stones
         {"Stone", new SpawnParameters(1f, hgtBankAndDry, new Vector2(0f, .75f), all, new Vector2(.8f, 1f), new Vector2(.01f, .2f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtMinimum, 0f, 3, true)},
         {"StoneDesert", new SpawnParameters(5f, hgtBankAndDry, q4, q1, new Vector2(.75f, .8f), new Vector2(0f, .5f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, true)},
-        {"StoneAll", new SpawnParameters(2f, hgtBankAndDry, all, all, new Vector2(.3f, .75f), new Vector2(0f, .6f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, true)},
+        {"StoneAll", new SpawnParameters(5f, hgtBankAndDry, all, all, new Vector2(.3f, .75f), new Vector2(0f, .6f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, true)},
 
         // smaller plants
         {"Grass", new SpawnParameters(.5f, hgtWaterAndBank, all, all, normGrass, new Vector2(.1f, .8f), DensityCalculationType.DenserAtMinimum, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1f, 3, true)},
@@ -118,7 +118,7 @@ public class SpawnParameters
     
     
         // AI faction leader
-        {"Npc", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, false)},
+        //{"Npc", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, false)},
 
 
     

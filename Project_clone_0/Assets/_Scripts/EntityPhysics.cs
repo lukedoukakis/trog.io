@@ -1275,7 +1275,7 @@ public class EntityPhysics : EntityComponent
             {
                 if (entityItems != null)
                 {
-                    StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
+                    //StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
                 }
             }
         

@@ -30,7 +30,7 @@ public class Testing : MonoBehaviour
     void AddItemsToFaction()
     {
         faction = GameManager.instance.localPlayer.GetComponent<EntityInfo>().faction;
-        faction.AddItemOwned(Item.ClothingTest, 2, null, playerHandle.transform, 0f);
+        //faction.AddItemOwned(Item.ClothingTest, 2, null, playerHandle.transform, 0f);
         faction.AddItemOwned(Item.Meat, 2, null, playerHandle.transform, 0f);
         faction.AddItemOwned(Item.Spear, 2, null, playerHandle.transform, 0f);
         faction.AddItemOwned(Item.Axe, 8, null, playerHandle.transform, 0f);
