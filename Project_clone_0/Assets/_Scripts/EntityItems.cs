@@ -538,7 +538,7 @@ public class EntityItems : EntityComponent
         UnequipCurrentClothing();
 
         // set clothing on model
-        Debug.Log("Equipping clothing of name: " + i.nme);
+        //Debug.Log("Equipping clothing of name: " + i.nme);
         meshParentT.Find(i.nme).gameObject.SetActive(true);
         this.clothing = i;
 

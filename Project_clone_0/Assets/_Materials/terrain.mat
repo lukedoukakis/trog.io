@@ -52,10 +52,27 @@ Material:
         m_Texture: {fileID: 2800000, guid: d1554ad204dd4fc46ac7b4de46f513ac, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture2DAsset_918474f3ee6c5b8fa369d29d1916184b_Out_0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Texture2DAsset_91C3A819_Out_0:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - Vector1_116F49B0: 0
     - Vector1_124AF345: 0
@@ -71,6 +88,8 @@ Material:
     - Vector1_D5D2B22E: 100
     - _ColorNoise: 0
     - _Desertness: 0
+    - _QueueControl: 1
+    - _QueueOffset: 0
     - _SnowCapHeight: 0
     - _SnowDepth: 0.1
     - _SnowHeight: 4645.04
@@ -90,3 +109,17 @@ Material:
     - Color_B9FC0D65: {r: 1, g: 0.9265064, b: 0.8915094, a: 0}
     - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
     - Color_EB41B935: {r: 0.735849, g: 0.67390525, b: 0.6351904, a: 1}
+  m_BuildTextureStacks: []
+--- !u!114 &2664279794138996905
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 5
