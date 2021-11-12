@@ -42,6 +42,7 @@ public class EntityPhysics : EntityComponent
 
     public Vector3 moveDir;
     public bool isJumping, jumpOffLeft, jumpOffRight, isSprinting;
+    public bool animFlag_jump;
     public bool isDodging;
     Vector3 jumpPoint;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
@@ -845,29 +846,43 @@ public class EntityPhysics : EntityComponent
                 mainAnimator.SetLayerWeight(1, 1f - differenceInDegreesBetweenMovementAndFacing);
                 mainAnimator.SetLayerWeight(2, differenceInDegreesBetweenMovementAndFacing);
 
-                if (isMoving)
+                // grounded
+                if (isGrounded && !isJumping)
                 {
-                    if (isSprinting)
+                    if (isMoving)
                     {
-                        mainAnimator.SetBool("Sprint", true);
-                        mainAnimator.SetBool("Run", false);
+                        if (isSprinting)
+                        {
+                            mainAnimator.SetBool("Sprint", true);
+                            mainAnimator.SetBool("Run", false);
+                        }
+                        else
+                        {
+                            mainAnimator.SetBool("Run", true);
+                            mainAnimator.SetBool("Sprint", false);
+                        }
+
+                        mainAnimator.SetBool("Stand", false);
                     }
                     else
                     {
-                        mainAnimator.SetBool("Run", true);
+                        mainAnimator.SetBool("Stand", true);
+                        mainAnimator.SetBool("Run", false);
                         mainAnimator.SetBool("Sprint", false);
                     }
-
-                    mainAnimator.SetBool("Stand", false);
                 }
+
+                // not grounded
                 else
                 {
-                    mainAnimator.SetBool("Stand", true);
+                    mainAnimator.SetBool("Stand", false);
                     mainAnimator.SetBool("Run", false);
                     mainAnimator.SetBool("Sprint", false);
+                    if(animFlag_jump)
+                    {
+                        mainAnimator.SetTrigger("JumpTrigger");
+                    }
                 }
-
-
 
                 mainAnimator.SetLayerWeight(8, Mathf.Min(1f, (weaponChargeTime / WEAPON_CHARGETIME_MAX)) * .25f);
 
@@ -884,6 +899,8 @@ public class EntityPhysics : EntityComponent
             }
             
         }
+
+        animFlag_jump = false;
 
     } 
 
@@ -959,11 +976,11 @@ public class EntityPhysics : EntityComponent
     }
     public void Jump()
     {
-
         Jump(BASE_FORCE_JUMP);
     }
     IEnumerator _Jump(float power)
     {
+        animFlag_jump = true;
         isJumping = true;
         Vector3 horVelDir = velHoriz_this.normalized;
         Vector3 rightFootForwardNess = Vector3.Project(footRight.position - transform.position, horVelDir);

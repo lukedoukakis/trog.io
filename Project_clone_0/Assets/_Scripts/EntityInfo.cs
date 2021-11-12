@@ -82,10 +82,10 @@ public class SpeciesInfo : ScriptableObject{
 
                     }
                 ),
-                Stats.InstantiateStats(1f,1f,1f,.7f,.24f,1f,1f,1f,1f,1f,1f,1f),
-                IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", false, false, true, 3f, 8f, 2f, .5f),
+                Stats.InstantiateStats(1f,1f,1f,.7f,.24f,1f,.7f,1f,1f,1f,1f,1f),
+                IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", true, false, true, 3f, 8f, 2f, .5f),
                 BehaviorProfile.InstantiateBehaviorProfile(
-                    BehaviorType.Aggressive,
+                    BehaviorType.Steadfast,
                     new List<AttackType>(){AttackType.Weapon},
                     new List<ActionType>(){ ActionType.StepSide },
                     .5f,
@@ -107,7 +107,7 @@ public class SpeciesInfo : ScriptableObject{
                 Stats.InstantiateStats(2f, .5f, 6f, .5f, .4f, 1f, .25f, 1f, 1f, 1f, 1f, 10f),
                 IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end", "leg_lower_left_end", "", "", "arm_lower_right_end", "arm_lower_left_end", "", "", false, true, false, 3f, 10f, 1f, .75f),
                 BehaviorProfile.InstantiateBehaviorProfile(
-                    BehaviorType.Steadfast,
+                    BehaviorType.Aggressive,
                     new List<AttackType>(){AttackType.Swipe},
                     new List<ActionType>(){ },
                     .75f,

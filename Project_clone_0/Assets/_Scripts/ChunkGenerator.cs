@@ -10,7 +10,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator instance;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 3;
+    public static int ChunkRenderDistance = 4;
     public static float Scale = 120f * 2;
     public static float ElevationAmplitude = 5400f;
     public static float MountainMapScale = 80f * 2f;
@@ -393,8 +393,8 @@ public class ChunkGenerator : MonoBehaviour
                     freshWaterValue += Mathf.Max(0f, rough) * character;
 
                     // give rivers roughness
-                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
-                    freshWaterValue += rough * .1f;
+                    //rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
+                    //freshWaterValue += rough * .01f;
                     
 
                     // ridgify
@@ -499,13 +499,11 @@ public class ChunkGenerator : MonoBehaviour
                 // create ocean and rivers
                 if (heightValue < FlatLevel)
                 {
-                    heightValue_water = SeaLevel;
-                    float ocean = Mathf.InverseLerp(0f, .004f, FlatLevel - heightValue);
+                    float ocean = Mathf.InverseLerp(0f, .05f, FlatLevel - heightValue);
                     freshWaterValue = ocean;
                 }
                 else
                 {
-                    heightValue_water = Mathf.Max(SeaLevel, Mathf.Lerp(SeaLevel, heightValue - .0001f, .5f));
                     heightValue = Mathf.Lerp(heightValue, SeaLevel - .0001f, freshWaterValue);
                     //heightValue = Mathf.Lerp(heightValue, SeaLevel - .0001f, freshWaterValue * (1f - Mathf.InverseLerp(0f, .1f, bigMound)));
                 }
@@ -516,7 +514,8 @@ public class ChunkGenerator : MonoBehaviour
                 //posterize all land
                 if(heightValue > BankLevel)
                 {
-                    heightValue = Posterize(BankLevel, 1f, heightValue, 60, .95f);
+                    float posterizeSoftness = Mathf.Lerp(.95f, 1f, Mathf.PerlinNoise((x + xOffset + .01f) / 200f, (z + zOffset - Seed + .01f) /200f));
+                    heightValue = Posterize(BankLevel, 1f, heightValue, 60, posterizeSoftness);
                 }
 
 

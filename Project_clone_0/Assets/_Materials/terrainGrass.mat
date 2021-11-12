@@ -59,6 +59,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - Vector1_46F91617: 0.5
     - Vector1_5DF723E9: 0.5
@@ -105,10 +106,11 @@ Material:
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.9677934, g: 1, b: 0.8066038, a: 0}
-    - _CampOrigin: {r: 6.7559996, g: 4606.109, b: 9.454877, a: 0}
+    - _CampOrigin: {r: -35.265675, g: 4597.248, b: 74.37972, a: 0}
     - _Color: {r: 0.8850714, g: 0.9150943, b: 0.75538445, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
-    - _OffsetVector: {r: 0, g: 3, b: 0, a: 0}
+    - _OffsetVector: {r: 0, g: 1.47, b: 0, a: 0}
     - _ProjectedShadowColor: {r: 0.8679245, g: 0.8679245, b: 0.8679245, a: 1}
     - _RimColor: {r: 0.4245283, g: 0.4245283, b: 0.4245283, a: 1}
     - _SelfShadowColor: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 1}
+  m_BuildTextureStacks: []

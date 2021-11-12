@@ -114,9 +114,10 @@ public class EntityStats : EntityComponent
 
     public void TakeDamage(EntityHandle attackerHandle, Projectile projectile, bool instantKill){
 
-        if(isLocalPlayer && Testing.instance.godMode){
-            return;
-        }
+        // if (isLocalPlayer && Testing.instance.godMode)
+        // {
+        //     return;
+        // }
 
         // get attacker's relevant stats and (if applicable) weapon
         Stats attackerStats;

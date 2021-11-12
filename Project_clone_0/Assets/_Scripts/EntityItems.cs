@@ -41,7 +41,7 @@ public class EntityItems : EntityComponent
     public Animator itemOrientationAnimator;
 
     public static float FOLLOW_SPEED_HOLDING_TRANSLATION = 30f;
-    public static float FOLLOW_SPEED_WEAPON_TRANSLATION = 50f;
+    public static float FOLLOW_SPEED_WEAPON_TRANSLATION = 65f;
     public static float FOLLOW_SPEED_WEAPON_ROTATION = 20f;
 
 

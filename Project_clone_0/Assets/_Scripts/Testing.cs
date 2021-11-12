@@ -11,9 +11,7 @@ public class Testing : MonoBehaviour
 
     public EntityHandle playerHandle;
     public Faction faction;
-
-
-    public Material transparentMat;
+    
 
     public static Testing instance;
 

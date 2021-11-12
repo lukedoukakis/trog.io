@@ -20,16 +20,12 @@ public class PoolHelper : MonoBehaviour
         {
             pool = CreateObjectPoolForPrefab(_prefab);
             PoolDict.Add(_prefab, pool);
-            //Debug.Log("Created pool... key name: " + _prefab.name);
         }
-        //Debug.Log("Retuning pool with key: " + _prefab.name);
         return pool;
     }
     public static ObjectPool<GameObject> GetPool(string prefabName)
     {
         List<GameObject> keys = PoolDict.Keys.Where(key => key.name.Equals(prefabName)).ToList();
-        //Debug.Log(keys.Count);
-        //Debug.Log("Get pool for prefab: " + prefabName);
         return GetPool(keys[0]);
     }
 
@@ -37,13 +33,12 @@ public class PoolHelper : MonoBehaviour
     public static ObjectPool<GameObject> CreateObjectPoolForPrefab(GameObject _prefab)
     {
         prefab = _prefab;
-        return new ObjectPool<GameObject>(CreateFunction, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject);
+        return new ObjectPool<GameObject>(CreateFunction, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, defaultCapacity:200);
     }
 
     static GameObject CreateFunction()
     {
         GameObject instantiation = Utility.InstantiateSameName(prefab);
-        Debug.Log("insantiated gameObject name: " + instantiation.name);
         return instantiation;
     }
 
