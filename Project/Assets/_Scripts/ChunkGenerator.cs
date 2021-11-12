@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using UnityEngine.Pool;
 
 public class ChunkGenerator : MonoBehaviour
 {
@@ -377,6 +378,8 @@ public class ChunkGenerator : MonoBehaviour
 
                 // FreshWaterMap [0, 1]
 
+                
+
                 if (true)
                 {
                     float riverScale = 900f;
@@ -624,7 +627,8 @@ public class ChunkGenerator : MonoBehaviour
                 string bundleName_last = "";
                 float bundleIteration = 0f;
                 Vector3 randomPositionOffset, spawnPosition, spawnScale;
-                GameObject o;
+                GameObject worldObject;
+                ObjectPool<GameObject> pool;
 
                 //yield return new WaitUntil(() => !cd.IsEdgeChunk());
                 //yield return new WaitForSecondsRealtime(2f);
@@ -668,14 +672,17 @@ public class ChunkGenerator : MonoBehaviour
                                         {
                                             spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.ElevationAmplitude) + Vector3.right * posChunkSkewHoriz + Vector3.forward * posChunkSkewHoriz;
                                             spawnScale = Vector3.one * spawnParameters.scale;
-                                            o = Utility.InstantiateSameName(feature, spawnPosition, Quaternion.identity);
-                                            o.transform.SetParent(cd.featuresParent);
-                                            o.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
+                                            //worldObject = Utility.InstantiateSameName(feature, spawnPosition, Quaternion.identity);
+                                            pool = PoolHelper.GetPool(feature);
+                                            worldObject = pool.Get();
+                                            worldObject.transform.position = spawnPosition;
+                                            worldObject.transform.SetParent(cd.featuresParent);
+                                            worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
                                             if(spawnParameters.slantMagnitude > 0f)
                                             {
-                                                o.transform.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(Vector3.up, cd.YNormalsMap[x,z]), spawnParameters.slantMagnitude);
+                                                worldObject.transform.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(Vector3.up, cd.YNormalsMap[x,z]), spawnParameters.slantMagnitude);
                                             }
-                                            o.transform.Rotate(o.transform.up, UnityEngine.Random.Range(0, 360f));
+                                            worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
 
                                             bool noBundle = (bundleName == bundleName_last && !spawnParameters.bundle);
                                             bundleName_last = bundleName;
@@ -724,9 +731,12 @@ public class ChunkGenerator : MonoBehaviour
                                 bundleName = SpawnParameters.GetBundleName(creature.name);
                                 spawnPosition = new Vector3(x + _xOffset, height * ElevationAmplitude + 10f, z + _zOffset);
                                 spawnScale = Vector3.one * spawnParameters.scale;
-                                o = Utility.InstantiateSameName(creature, spawnPosition, Quaternion.identity);
-                                o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-                                activeCreatures.Add(o);
+                                worldObject = Utility.InstantiateSameName(creature, spawnPosition, Quaternion.identity);
+                                //pool = PoolHelper.GetPool(creature);
+                                //worldObject = pool.Get();
+                                //worldObject.transform.position = spawnPosition;
+                                worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                                activeCreatures.Add(worldObject);
 
                                 bool breaker = (bundleName == bundleName_last && !spawnParameters.bundle);
                                 bundleName_last = bundleName;
@@ -975,3 +985,4 @@ public class ChunkGenerator : MonoBehaviour
 
 
 }
+

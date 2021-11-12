@@ -2,7 +2,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public enum DensityCalculationType { Binary, DenserAtAverage, DenserAtMinimum, DenserAtMaximum }
 
@@ -19,6 +21,7 @@ public class SpawnParameters
     public float slantMagnitude;
     public float numberToSpawn;
     public bool bundle;
+    ObjectPool<GameObject> pool;
 
     public SpawnParameters(float scale, Vector2 heightRange, Vector2 temperatureRange, Vector2 humidityRange, Vector2 yNormalRange, Vector2 densityRange, Enum densityCalculationType_height, Enum densityCalculationType_temperature, Enum densityCalculationType_humidity, Enum densityCalculationType_yNormal, float slantMagnitude, float numberToSpawn, bool bundle)
     {
@@ -44,8 +47,6 @@ public class SpawnParameters
 
     public static SpawnParameters GetSpawnParameters(string name)
     {
-
-
         string bundleName = GetBundleName(name);
         if(SpawnParametersDict.ContainsKey(bundleName))
         {
@@ -55,9 +56,7 @@ public class SpawnParameters
         else
         {
             return null;
-        }
-
-        
+        }    
     }
 
     public static string GetBundleName(string name){
@@ -82,7 +81,11 @@ public class SpawnParameters
     static Vector2 normGrass = new Vector2(ChunkGenerator.GrassNormalMin, 1f);
     static Vector2 normCliff = new Vector2(ChunkGenerator.CaveNormal, ChunkGenerator.GrassNormalMin);
     static Vector2 normCave = new Vector2(0f, ChunkGenerator.CaveNormal);
-    public static Dictionary<string, SpawnParameters> SpawnParametersDict = new Dictionary<string, SpawnParameters>(){
+
+
+
+    public static Dictionary<string, SpawnParameters> SpawnParametersDict = new Dictionary<string, SpawnParameters>()
+    {
 
         {"Empty", new SpawnParameters(0f, none, none, none, none, none, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 0, false)},
 
@@ -210,5 +213,14 @@ public class SpawnParameters
     }
 
 
+
 }
+
+
+
+
+
+
+    
+
 

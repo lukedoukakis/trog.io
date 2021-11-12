@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Pool;
 
 public class ChunkData
 {
@@ -140,10 +140,23 @@ public class ChunkData
         return neighbors.ContainsValue(cd);
     }
 
+    public void ReleaseFeatures()
+    {
+        GameObject worldObject;
+        foreach(Transform child in featuresParent.transform)
+        {
+            child.SetParent(null);
+            worldObject = child.gameObject;
+            ObjectPool<GameObject> pool = PoolHelper.GetPool(worldObject.name);
+            pool.Release(worldObject);
+        }
+    }
+
 
     public void Deload()
     {
         RemoveReferencesToThisAsANeighbor();
+        ReleaseFeatures();
         Component.Destroy(terrainMesh);
         GameObject.Destroy(chunk);
         GameObject.Destroy(featuresParent);
