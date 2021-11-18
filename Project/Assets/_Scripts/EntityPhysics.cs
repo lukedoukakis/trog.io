@@ -58,9 +58,9 @@ public class EntityPhysics : EntityComponent
     public static float crouch_airTimeThreshhold = 1.2f;
     public float crouch;
     public bool handFree_right, handFree_left;
-    public bool isMoving;
-    public bool isGrounded;
-    public bool isGroundedStrict;
+    public bool isMoving, isMoving_last;
+    public bool isGrounded, isGrounded_last;
+    public bool isGroundedStrict, isGroundedStrict_last;
     public bool isInsideCamp;
     public bool isHandGrab;
     public float speedLimitModifier_launch;
@@ -847,8 +847,13 @@ public class EntityPhysics : EntityComponent
                 mainAnimator.SetLayerWeight(2, differenceInDegreesBetweenMovementAndFacing);
 
                 // grounded
-                if (isGroundedStrict && true)
+                if (isGroundedStrict && !isJumping)
                 {
+                    if(!isGroundedStrict_last)
+                    {
+                        mainAnimator.SetTrigger("Land");
+                    }
+
                     if (isMoving)
                     {
                         if (isSprinting)
@@ -870,6 +875,11 @@ public class EntityPhysics : EntityComponent
                         mainAnimator.SetBool("Run", false);
                         mainAnimator.SetBool("Sprint", false);
                     }
+                }
+
+                if(isGroundedStrict && !isGroundedStrict_last)
+                {
+                    mainAnimator.SetTrigger("Fall");
                 }
 
                 if(animFlag_jump)
@@ -1641,6 +1651,9 @@ public class EntityPhysics : EntityComponent
         UpdateIK();
 
         velHoriz_last = velHoriz_this;
+        isMoving_last = isMoving;
+        isGrounded_last = isGrounded;
+        isGroundedStrict_last = isGroundedStrict;
     }
 
     void Update()
