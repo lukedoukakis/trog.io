@@ -847,7 +847,7 @@ public class EntityPhysics : EntityComponent
                 mainAnimator.SetLayerWeight(2, differenceInDegreesBetweenMovementAndFacing);
 
                 // grounded
-                if (isGrounded && !isJumping)
+                if (isGroundedStrict && true)
                 {
                     if (isMoving)
                     {
@@ -872,17 +872,14 @@ public class EntityPhysics : EntityComponent
                     }
                 }
 
-                // not grounded
-                else
+                if(animFlag_jump)
                 {
                     mainAnimator.SetBool("Stand", false);
                     mainAnimator.SetBool("Run", false);
                     mainAnimator.SetBool("Sprint", false);
-                    if(animFlag_jump)
-                    {
-                        mainAnimator.SetTrigger("JumpTrigger");
-                    }
+                    mainAnimator.SetTrigger("JumpTrigger");
                 }
+
 
                 mainAnimator.SetLayerWeight(8, Mathf.Min(1f, (weaponChargeTime / WEAPON_CHARGETIME_MAX)) * .25f);
 
