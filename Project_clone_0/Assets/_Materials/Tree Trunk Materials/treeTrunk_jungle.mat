@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: treeFir_trunk
+  m_Name: treeTrunk_jungle
   m_Shader: {fileID: -6465566751694194690, guid: 209b8cc76d98c744594a4e3b1f3f8cda,
     type: 3}
   m_ShaderKeywords: 
@@ -109,7 +109,7 @@ Material:
     m_Colors:
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
-    - Color_962802DE: {r: 0.6509434, g: 0.538417, b: 0.4206568, a: 0}
+    - Color_962802DE: {r: 0.46226418, g: 0.37094966, b: 0.2764863, a: 0}
     - Color_EB41B935: {r: 0.4811321, g: 0.36561704, b: 0.27006942, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}

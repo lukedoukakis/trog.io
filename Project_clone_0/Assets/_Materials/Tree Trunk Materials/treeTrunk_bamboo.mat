@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: tree_leaves
+  m_Name: treeTrunk_bamboo
   m_Shader: {fileID: -6465566751694194690, guid: 209b8cc76d98c744594a4e3b1f3f8cda,
     type: 3}
   m_ShaderKeywords: 
@@ -32,7 +32,19 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Texture2DAsset_91C3A819_Out_0:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -50,46 +62,63 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Boolean_891C2B1B: 1
     - Vector1_116F49B0: 0
     - Vector1_124AF345: 0
-    - Vector1_24802EB: 0.2
     - Vector1_25E0AF6F: 0.5
-    - Vector1_44CFF1E7: 1.5
-    - Vector1_49092716: 1
-    - Vector1_4A3933E: 1.5
     - Vector1_61F46C5F: 20
-    - Vector1_656083AD: 1.1
-    - Vector1_6756ADD4: 0.5
+    - Vector1_656083AD: 1
     - Vector1_7528B216: 0.3
-    - Vector1_7EC73CB8: 0.3
-    - Vector1_90439BCB: 0.2
-    - Vector1_AE23F62D: 8
     - Vector1_B1CE0AD9: 10
     - Vector1_C1CE9129: 0
-    - Vector1_D2FDA34A: 0.1
-    - Vector1_D87A4764: 1
-    - Vector1_E38A57BE: 9
-    - Vector1_F552BBDC: 1
-    - _ColorNoise: 1
-    - _Desertness: 0
+    - Vector1_D2FDA34A: 1
+    - _AlphaClip: 0
+    - _Blend: 0
+    - _BlendOp: 0
+    - _BumpScale: 1
+    - _CameraFadingEnabled: 0
+    - _CameraFarFadeDistance: 2
+    - _CameraNearFadeDistance: 1
+    - _ColorMode: 0
+    - _ColorNoise: 0
+    - _Cull: 2
+    - _Cutoff: 0.5
+    - _DistortionBlend: 0.5
+    - _DistortionEnabled: 0
+    - _DistortionStrength: 1
+    - _DistortionStrengthScaled: 0.1
+    - _DstBlend: 0
+    - _FlipbookBlending: 0
+    - _FlipbookMode: 0
+    - _Glossiness: 0
+    - _Metallic: 0
+    - _Mode: 0
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _SnowDepth: 0.1
+    - _ReceiveShadows: 1
+    - _Smoothness: 0.5
+    - _SnowDepth: 0.5
     - _SnowHeightCap: 4703.4
     - _SnowHeightStart: 4001.4
-    - _SnowMinimumSurfaceNormal: 0.8
-    - _WaterHeight: 0
+    - _SnowMinimumSurfaceNormal: 0.57
+    - _SoftParticlesEnabled: 0
+    - _SoftParticlesFarFadeDistance: 1
+    - _SoftParticlesNearFadeDistance: 0
+    - _SrcBlend: 1
+    - _Surface: 0
+    - _ZWrite: 1
     m_Colors:
-    - Color_1DD039A2: {r: 0.99056596, g: 0.9086226, b: 0.6588199, a: 0}
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
-    - Color_962802DE: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}
-    - Color_B9FC0D65: {r: 1, g: 1, b: 1, a: 0}
-    - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
-    - _TargetVector: {r: 4.668285, g: 4595.048, b: -8.259228, a: 0}
+    - Color_962802DE: {r: 0.6037736, g: 0.44198394, b: 0.35542896, a: 0}
+    - Color_EB41B935: {r: 0.4811321, g: 0.36561704, b: 0.27006942, a: 0}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
+    - _CameraFadeParams: {r: 0, g: 0, b: 0, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
---- !u!114 &2690161728965838367
+--- !u!114 &9188594049008623018
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

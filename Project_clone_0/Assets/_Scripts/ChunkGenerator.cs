@@ -143,6 +143,8 @@ public class ChunkGenerator : MonoBehaviour
         Humans = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Humans"));
         Items = Item.Items.Values.Select(item => item.worldObjectPrefab).Where(o => o != null).ToList();
 
+        //Features = Features.OrderBy(feature => SpawnParameters.GetSpawnParameters(feature.name).loadOrder).ToList();
+
         activeCreatures = new List<GameObject>();
 
     
@@ -313,7 +315,7 @@ public class ChunkGenerator : MonoBehaviour
                 temperatureValue = Mathf.Clamp01(temperatureValue);
 
                 // lock temperature
-                temperatureValue = .99f;
+                //temperatureValue = .99f;
                 //temperatureValue = .25f;
 
 
@@ -655,7 +657,8 @@ public class ChunkGenerator : MonoBehaviour
                                     randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
                                     Vector3 rawHorizontalPosition = new Vector3(x + _xOffset + skewHoriz + randomPositionOffset.x, 0f, z + _zOffset + skewHoriz + randomPositionOffset.z);
                                     Vector2 rawHorizontalPositionV2 = new Vector2(rawHorizontalPosition.x, rawHorizontalPosition.z);
-                                    if (!cd.featureFillMap.MapFilled(rawHorizontalPositionV2))
+                                    //if (!cd.featureFillMap.MapFilled(rawHorizontalPositionV2))
+                                    if (true)
                                     {
                                         ChunkData chunkAtPosition = GetChunkFromRawPosition(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.z));
                                         if (chunkAtPosition != null)
@@ -681,7 +684,7 @@ public class ChunkGenerator : MonoBehaviour
                                                     worldObject.transform.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(Vector3.up, cd.YNormalsMap[x, z]), spawnParameters.slantMagnitude);
                                                 }
                                                 worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
-                                                cd.featureFillMap.AddFillPoint(rawHorizontalPositionV2, spawnParameters.fillRadius);
+                                                //cd.featureFillMap.AddFillPoint(rawHorizontalPositionV2, spawnParameters.fillRadius);
                                             }
                                         }
                                     }
