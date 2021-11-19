@@ -23,8 +23,8 @@ public class ChunkGenerator : MonoBehaviour
     public static float BankLevel = SeaLevel + meter;
     public static float SnowLevel = .871f;
     //public static float SnowLevel = float.MaxValue;
-    public static float GrassNormalMin = .7f;
-    public static float GrassNormalMax = .7f;
+    public static float GrassNormalMin = .25f;
+    public static float GrassNormalMax = .25f;
     public static float SnowNormal = .57f;
     public static float CaveNormal = .4f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -313,8 +313,8 @@ public class ChunkGenerator : MonoBehaviour
                 temperatureValue = Mathf.Clamp01(temperatureValue);
 
                 // lock temperature
-                //temperatureValue = .99f;
-                temperatureValue = .25f;
+                temperatureValue = .99f;
+                //temperatureValue = .25f;
 
 
 
@@ -350,7 +350,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // lock humidity
                 //humidityValue = 0f;
-                //humidityValue = .99f;
+                humidityValue = .99f;
                 // -------------------------------------------------------
 
                 // MountainMap [0, 1]
@@ -500,16 +500,14 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // create ocean and rivers
+                float oceanFloorLevel = SeaLevel - .0001f;
                 if (heightValue < FlatLevel)
                 {
-                    float ocean = Mathf.InverseLerp(0f, .05f, FlatLevel - heightValue);
-                    freshWaterValue = ocean;
+                    freshWaterValue = Mathf.InverseLerp(0f, .05f, FlatLevel - heightValue);
                 }
-                else
-                {
-                    heightValue = Mathf.Lerp(heightValue, SeaLevel - .0001f, freshWaterValue);
-                    //heightValue = Mathf.Lerp(heightValue, SeaLevel - .0001f, freshWaterValue * (1f - Mathf.InverseLerp(0f, .1f, bigMound)));
-                }
+
+                heightValue = Mathf.Lerp(heightValue, oceanFloorLevel, freshWaterValue);
+                
 
 
                 // -------------------------------------------------------
@@ -523,8 +521,8 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // dip
-                if(heightValue < SeaLevel - .0001f){
-                    heightValue = SeaLevel - (.0005f);
+                if(heightValue < oceanFloorLevel){
+                    heightValue = oceanFloorLevel;
                 }
 
                 // TreeMap
