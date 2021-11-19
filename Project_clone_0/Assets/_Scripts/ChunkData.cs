@@ -34,6 +34,8 @@ public class ChunkData
 
     public Dictionary<Vector2, ChunkData> neighbors;
 
+    public FillMap featureFillMap;
+
     // ----
 
     public static Vector2 up = Vector2.up;
@@ -79,6 +81,8 @@ public class ChunkData
         neighbors.Add(downRight, null);
         neighbors.Add(downLeft, null);
         FetchAllNeighbors();
+
+        featureFillMap = new FillMap();
 
         loaded = true;
     }
@@ -161,7 +165,56 @@ public class ChunkData
         GameObject.Destroy(chunk);
         GameObject.Destroy(featuresParent);
         loaded = false;
-
     }
 
 }
+
+
+public class FillMap
+{
+
+    public List<FillPoint> fillPoints;
+    public bool[,] map;
+
+
+    public FillMap()
+    {
+        fillPoints = new List<FillPoint>();
+        map = new bool[ChunkGenerator.ChunkSize, ChunkGenerator.ChunkSize];
+    }
+
+
+    public void AddFillPoint(Vector2 origin, float radius)
+    {
+        FillPoint fp = new FillPoint(origin, radius);
+        fillPoints.Add(fp);
+    }
+
+    public bool MapFilled(Vector2 position)
+    {
+        foreach(FillPoint fp in fillPoints)
+        {
+            if(Vector3.Distance(position, fp.origin) <= fp.radius)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+    public struct FillPoint
+    {
+        public Vector3 origin;
+        public float radius;
+
+        public FillPoint(Vector2 origin, float radius)
+        {
+            this.origin = origin;
+            this.radius = radius;
+        }
+    }
+}
+
+
