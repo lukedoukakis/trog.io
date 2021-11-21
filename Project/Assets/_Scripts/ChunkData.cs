@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -33,8 +34,6 @@ public class ChunkData
     public float[,] SkewHorizMap;
 
     public Dictionary<Vector2, ChunkData> neighbors;
-
-    public FillMap featureFillMap;
 
     // ----
 
@@ -81,8 +80,6 @@ public class ChunkData
         neighbors.Add(downRight, null);
         neighbors.Add(downLeft, null);
         FetchAllNeighbors();
-
-        featureFillMap = new FillMap();
 
         loaded = true;
     }
@@ -161,6 +158,7 @@ public class ChunkData
     {
         RemoveReferencesToThisAsANeighbor();
         ReleaseFeatures();
+        ChunkGenerator.instance.fillMap.RemoveFillPoints(this);
         Component.Destroy(terrainMesh);
         GameObject.Destroy(chunk);
         GameObject.Destroy(featuresParent);
@@ -184,10 +182,15 @@ public class FillMap
     }
 
 
-    public void AddFillPoint(Vector2 origin, float radius)
+    public void AddFillPoint(object identifier, Vector2 origin, float radius)
     {
-        FillPoint fp = new FillPoint(origin, radius);
+        FillPoint fp = new FillPoint(identifier, origin, radius);
         fillPoints.Add(fp);
+    }
+
+    public void RemoveFillPoints(object idendifier)
+    {
+        fillPoints = fillPoints.Where(fp => !ReferenceEquals(fp.identifier, idendifier)).ToList();
     }
 
     public bool MapFilled(Vector2 position)
@@ -206,11 +209,13 @@ public class FillMap
 
     public struct FillPoint
     {
+        public object identifier;
         public Vector3 origin;
         public float radius;
 
-        public FillPoint(Vector2 origin, float radius)
+        public FillPoint(object idendifier, Vector2 origin, float radius)
         {
+            this.identifier = idendifier;
             this.origin = origin;
             this.radius = radius;
         }

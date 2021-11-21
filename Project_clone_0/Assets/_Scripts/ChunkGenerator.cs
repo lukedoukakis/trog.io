@@ -11,9 +11,9 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 4;
-    public static float Scale = 120f * 2;
+    public static float Scale = 120f * 4f;
     public static float ElevationAmplitude = 5400f;
-    public static float MountainMapScale = 80f * 2f;
+    public static float MountainMapScale = 160f * 2f;
     public static float ElevationMapScale = 3000f;
     public static int TemperatureMapScale = 600;
     public static int HumidityMapScale = 600;
@@ -23,8 +23,8 @@ public class ChunkGenerator : MonoBehaviour
     public static float BankLevel = SeaLevel + meter;
     public static float SnowLevel = .871f;
     //public static float SnowLevel = float.MaxValue;
-    public static float GrassNormalMin = .25f;
-    public static float GrassNormalMax = .25f;
+    public static float GrassNormalMin = 0f;
+    public static float GrassNormalMax = 0f;
     public static float SnowNormal = .57f;
     public static float CaveNormal = .4f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -86,6 +86,10 @@ public class ChunkGenerator : MonoBehaviour
     public static bool humanSpawned = false;
     public static readonly float creatureDespawnTimestep = 5f;
     public static float creatureDespawnTime = 0f;
+
+
+    // fill map
+    public FillMap fillMap;
     
 
 
@@ -142,10 +146,11 @@ public class ChunkGenerator : MonoBehaviour
         Creatures = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Creatures"));
         Humans = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Humans"));
         Items = Item.Items.Values.Select(item => item.worldObjectPrefab).Where(o => o != null).ToList();
-
-        //Features = Features.OrderBy(feature => SpawnParameters.GetSpawnParameters(feature.name).loadOrder).ToList();
+        Features = Features.OrderBy(feature => SpawnParameters.GetSpawnParameters(feature.name).loadOrder).ToList();
 
         activeCreatures = new List<GameObject>();
+
+        fillMap = new FillMap();
 
     
     }
@@ -338,7 +343,6 @@ public class ChunkGenerator : MonoBehaviour
                 float bigMoundCap = .04f;
                 bigMound *= bigMoundCap;
                 bigMound *= (1f - Mathf.InverseLerp(.25f, .75f, temperatureValue));
-                //bigMound = 0f;
                 elevationValue += bigMound;
                 float maxE = Mathf.Pow(1f + .5f, .5f) - 1f;
                 float minE = Mathf.Pow(0f + .5f, .5f) - 1f;
@@ -352,15 +356,15 @@ public class ChunkGenerator : MonoBehaviour
 
                 // lock humidity
                 //humidityValue = 0f;
-                humidityValue = .99f;
+                //humidityValue = .99f;
                 // -------------------------------------------------------
 
                 // MountainMap [0, 1]
                 float mtn0 = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / MountainMapScale, (z + zOffset - Seed + .01f) / MountainMapScale);
-                float mtn1 = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / MountainMapScale, (z + zOffset - Seed + 100000.01f) / MountainMapScale);
-                float mtn2 = Mathf.PerlinNoise((x + xOffset - Seed + 200000.01f) / MountainMapScale, (z + zOffset - Seed + 200000.01f) / MountainMapScale);
+                //float mtn1 = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / MountainMapScale, (z + zOffset - Seed + 100000.01f) / MountainMapScale);
+                //float mtn2 = Mathf.PerlinNoise((x + xOffset - Seed + 200000.01f) / MountainMapScale, (z + zOffset - Seed + 200000.01f) / MountainMapScale);
 
-                mountainValue = Mathf.Min(mtn0, mtn1, mtn2);
+                mountainValue = Mathf.Min(mtn0, 1f, 1f);
                 //mountainValue = Mathf.InverseLerp(.3f, .7f, mountainValue);
                 //mountainValue = .99f;
                 //mountainValue *= .75f;
@@ -517,8 +521,9 @@ public class ChunkGenerator : MonoBehaviour
                 //posterize all land
                 if(heightValue > BankLevel)
                 {
-                    float posterizeSoftness = Mathf.Lerp(.95f, 1f, Mathf.PerlinNoise((x + xOffset + .01f) / 200f, (z + zOffset - Seed + .01f) /200f));
-                    heightValue = Posterize(BankLevel, 1f, heightValue, 60, posterizeSoftness);
+                    float posterizeSoftness = Mathf.Lerp(.95f, 1f, Mathf.InverseLerp(.45f, .55f, Mathf.PerlinNoise((x + xOffset + .01f) / 20f, (z + zOffset - Seed + .01f) /20f)));
+                    //posterizeSoftness = .9f;
+                    heightValue = Posterize(BankLevel, 1f, heightValue, 70, posterizeSoftness);
                 }
 
 
@@ -657,8 +662,8 @@ public class ChunkGenerator : MonoBehaviour
                                     randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
                                     Vector3 rawHorizontalPosition = new Vector3(x + _xOffset + skewHoriz + randomPositionOffset.x, 0f, z + _zOffset + skewHoriz + randomPositionOffset.z);
                                     Vector2 rawHorizontalPositionV2 = new Vector2(rawHorizontalPosition.x, rawHorizontalPosition.z);
-                                    //if (!cd.featureFillMap.MapFilled(rawHorizontalPositionV2))
-                                    if (true)
+                                    if (!instance.fillMap.MapFilled(rawHorizontalPositionV2))
+                                    //if (true)
                                     {
                                         ChunkData chunkAtPosition = GetChunkFromRawPosition(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.z));
                                         if (chunkAtPosition != null)
@@ -684,7 +689,7 @@ public class ChunkGenerator : MonoBehaviour
                                                     worldObject.transform.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(Vector3.up, cd.YNormalsMap[x, z]), spawnParameters.slantMagnitude);
                                                 }
                                                 worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
-                                                //cd.featureFillMap.AddFillPoint(rawHorizontalPositionV2, spawnParameters.fillRadius);
+                                                instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
                                             }
                                         }
                                     }
@@ -836,6 +841,7 @@ public class ChunkGenerator : MonoBehaviour
                 rockiness *= Mathf.InverseLerp(0f, .1f, MountainMap[x, z]);
                 rockiness *= 1f - (CalculateDesertness(temperature, humidity));
                 skewHoriz = ((rockiness + .5f) * 2f - 1f) * 18f * RockProtrusion;
+                //skewHoriz = 0f;
                 skewHorizMap[x, z] = skewHoriz;
                 TerrainVertices[i] = new Vector3(x + xOffset + skewHoriz, height, z + zOffset + skewHoriz);
                 //TerrainVertices[i] = new Vector3(x + xOffset, height, z + zOffset);

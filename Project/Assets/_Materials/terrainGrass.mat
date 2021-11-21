@@ -70,7 +70,7 @@ Material:
     - _FadeDistanceEnd: 201
     - _FadeDistanceStart: 200
     - _GrassCut: 0
-    - _GrassNormal: 0.25
+    - _GrassNormal: 0
     - _GrassSaturation: 0.2
     - _GrassShading: 1
     - _GrassThinness: 1
@@ -90,7 +90,7 @@ Material:
     - _SnowHeightCap: 4703.4
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 3
-    - _TilingN1: 69.7
+    - _TilingN1: 10
     - _TilingN2: 0.05
     - _TilingN3: 10000000
     - _UsePR: 0
@@ -100,13 +100,13 @@ Material:
     - _UseWC: 0
     - _WaterHeight: 4590.4404
     - _WindForce: 0.25
-    - _WindMovement: 500
+    - _WindMovement: 100
     - _WorldRotation: 0
     - _WorldScale: 10
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.9677934, g: 1, b: 0.8066038, a: 0}
-    - _CampOrigin: {r: 6.220713, g: 4594.845, b: -8.127805, a: 0}
+    - _CampOrigin: {r: -2104.3677, g: 4598.793, b: 18486.645, a: 0}
     - _Color: {r: 0.8850714, g: 0.9150943, b: 0.75538445, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
     - _OffsetVector: {r: 0, g: 1.47, b: 0, a: 0}
