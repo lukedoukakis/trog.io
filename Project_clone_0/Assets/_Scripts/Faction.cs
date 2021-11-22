@@ -18,6 +18,8 @@ public class Faction : MonoBehaviour
     public List<GameObject> targetedObjects; // items being pursued by members of this faction
     public bool leaderInCamp;
 
+    public Material clothingMaterial;
+
     public bool itemLogisticsHappening;
 
 
@@ -298,6 +300,7 @@ public class Faction : MonoBehaviour
         f.partyHandles = new List<EntityHandle>();
         f.ownedItems = new ItemCollection();
         f.targetedObjects = new List<GameObject>();
+        f.clothingMaterial = MaterialController.instance.GetRandomClothingMaterial();
         return f;
     }
 

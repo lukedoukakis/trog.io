@@ -531,7 +531,7 @@ public class EntityItems : EntityComponent
     // clothing
     // ---
 
-    public void EquipClothing(Item i)
+    public void EquipClothing(Item item)
     {
 
         // unequip current clothing
@@ -539,8 +539,10 @@ public class EntityItems : EntityComponent
 
         // set clothing on model
         //Debug.Log("Equipping clothing of name: " + i.nme);
-        meshParentT.Find(i.nme).gameObject.SetActive(true);
-        this.clothing = i;
+        GameObject clothing = meshParentT.Find(item.nme).gameObject;
+        clothing.GetComponent<Renderer>().sharedMaterial = entityInfo.faction.clothingMaterial;
+        clothing.SetActive(true);
+        this.clothing = item;
 
 
     }
@@ -769,6 +771,11 @@ public class EntityItems : EntityComponent
     {
         entityInfo.faction.AddItemsOwned(inventory, null, transform, 0f);
         inventory = new ItemCollection();
+    }
+
+    public void SetClothingMaterial(Material mat)
+    {
+
     }
 
 

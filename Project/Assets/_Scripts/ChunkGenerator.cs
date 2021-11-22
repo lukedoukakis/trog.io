@@ -10,7 +10,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator instance;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 7;
+    public static int ChunkRenderDistance = 4;
     public static float Scale = 120f * 4f;
     public static float ElevationAmplitude = 5400f;
     public static float MountainMapScale = 160f * .5f;
@@ -315,7 +315,7 @@ public class ChunkGenerator : MonoBehaviour
                 //temperatureValue -= 1f * (mountainValue / mtnCap);
                 // temperatureValue +=  (Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale) * 2f - 1f) * (3f * (1f - mountainValue/mtnCap));
 
-                temperatureValue = Mathf.InverseLerp(.4f, .6f, temperatureValue);
+                temperatureValue = Mathf.InverseLerp(.2f, .8f, temperatureValue);
                 temperatureValue = Mathf.Clamp01(temperatureValue);
 
                 // lock temperature
@@ -356,11 +356,11 @@ public class ChunkGenerator : MonoBehaviour
                 humidityValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / HumidityMapScale, (z + zOffset - Seed + .01f) / HumidityMapScale);
                 //humidityValue += (mountainValue / mtnCap) * .5f;
                 //humidityValue = Mathf.Clamp01(humidityValue);
-                humidityValue = Mathf.InverseLerp(.4f, .6f, humidityValue);
+                humidityValue = Mathf.InverseLerp(.2f, .8f, humidityValue);
 
                 // lock humidity
                 //humidityValue = 0f;
-                humidityValue = .99f;
+                //humidityValue = .99f;
                 // -------------------------------------------------------
 
                 // MountainMap [0, 1]
