@@ -846,70 +846,83 @@ public class EntityPhysics : EntityComponent
                 mainAnimator.SetLayerWeight(1, 1f - differenceInDegreesBetweenMovementAndFacing);
                 mainAnimator.SetLayerWeight(2, differenceInDegreesBetweenMovementAndFacing);
 
-                // grounded
-                if (isGroundedStrict && !isJumping)
-                {
-                    if(!isGroundedStrict_last)
-                    {
-                        mainAnimator.SetTrigger("Land");
-                    }
-
-                    if (isMoving)
-                    {
-                        if (isSprinting)
-                        {
-                            mainAnimator.SetBool("Sprint", true);
-                            mainAnimator.SetBool("Run", false);
-                        }
-                        else
-                        {
-                            mainAnimator.SetBool("Run", true);
-                            mainAnimator.SetBool("Sprint", false);
-                        }
-
-                        mainAnimator.SetBool("Stand", false);
-                    }
-                    else
-                    {
-                        mainAnimator.SetBool("Stand", true);
-                        mainAnimator.SetBool("Run", false);
-                        mainAnimator.SetBool("Sprint", false);
-                    }
-                }
-
-                if(isGroundedStrict && !isGroundedStrict_last)
-                {
-                    mainAnimator.SetTrigger("Fall");
-                }
-
-                if(animFlag_jump)
+                if (isInWater)
                 {
                     mainAnimator.SetBool("Stand", false);
                     mainAnimator.SetBool("Run", false);
                     mainAnimator.SetBool("Sprint", false);
-                    mainAnimator.SetTrigger("JumpTrigger");
+                    mainAnimator.SetBool("Swim", true);
                 }
+                else
+                {
+                    mainAnimator.SetBool("Swim", false);
+                    // grounded
+                    if (isGroundedStrict && !isJumping)
+                    {
+                        if (!isGroundedStrict_last)
+                        {
+                            mainAnimator.SetTrigger("Land");
+                        }
+
+                        if (isMoving)
+                        {
+                            if (isSprinting)
+                            {
+                                mainAnimator.SetBool("Sprint", true);
+                                mainAnimator.SetBool("Run", false);
+                            }
+                            else
+                            {
+                                mainAnimator.SetBool("Run", true);
+                                mainAnimator.SetBool("Sprint", false);
+                            }
+
+                            mainAnimator.SetBool("Stand", false);
+                        }
+                        else
+                        {
+                            mainAnimator.SetBool("Stand", true);
+                            mainAnimator.SetBool("Run", false);
+                            mainAnimator.SetBool("Sprint", false);
+                        }
+                    }
+
+                    if (isGroundedStrict && !isGroundedStrict_last)
+                    {
+                        mainAnimator.SetTrigger("Fall");
+                    }
+
+                    if (animFlag_jump)
+                    {
+                        mainAnimator.SetBool("Stand", false);
+                        mainAnimator.SetBool("Run", false);
+                        mainAnimator.SetBool("Sprint", false);
+                        mainAnimator.SetTrigger("JumpTrigger");
+                    }
 
 
-                mainAnimator.SetLayerWeight(8, Mathf.Min(1f, (weaponChargeTime / WEAPON_CHARGETIME_MAX)) * .25f);
+                    mainAnimator.SetLayerWeight(8, Mathf.Min(1f, (weaponChargeTime / WEAPON_CHARGETIME_MAX)) * .25f);
 
+                }
             }
+
+
         }
 
         // helper animation
-        if(helperAnimator != null)
+        if (helperAnimator != null)
         {
-            if(helperAnimator.enabled)
+            if (helperAnimator.enabled)
             {
                 float twistRight = Mathf.Min(1f, (weaponChargeTime / WEAPON_CHARGETIME_MAX));
                 helperAnimator.SetLayerWeight(1, Mathf.Min(1f, (weaponChargeTime / WEAPON_CHARGETIME_MAX)) * .25f);
             }
-            
+
         }
 
         animFlag_jump = false;
 
-    } 
+    }
 
 
     public void Move(Vector3 direction, float speed)
@@ -1052,7 +1065,7 @@ public class EntityPhysics : EntityComponent
             return false;
         }
 
-        if (Physics.Raycast(groundSense.position, Vector3.down, groundDistanceToJump, LayerMaskController.WALKABLE) && !isJumping)
+        if (!isInWater && Physics.Raycast(groundSense.position, Vector3.down, groundDistanceToJump, LayerMaskController.WALKABLE) && !isJumping)
         {
             return true;
         }
@@ -1477,7 +1490,7 @@ public class EntityPhysics : EntityComponent
     {
         float y = transform.position.y;
         float waterY = ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude;
-        bool w = y <= waterY - .5f;
+        bool w = y <= waterY - .2f;
         if (w)
         {
             if (!isInWater)
@@ -1488,7 +1501,7 @@ public class EntityPhysics : EntityComponent
             }
             ApplyFlotationForce(waterY - y);
         }
-        else if (y > waterY)
+        else
         {
             if (isInWater)
             {

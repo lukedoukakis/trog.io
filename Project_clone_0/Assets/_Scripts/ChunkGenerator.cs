@@ -10,10 +10,10 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator instance;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 4;
+    public static int ChunkRenderDistance = 7;
     public static float Scale = 120f * 4f;
     public static float ElevationAmplitude = 5400f;
-    public static float MountainMapScale = 160f * 2f;
+    public static float MountainMapScale = 160f * .5f;
     public static float ElevationMapScale = 3000f;
     public static int TemperatureMapScale = 600;
     public static int HumidityMapScale = 600;
@@ -23,8 +23,8 @@ public class ChunkGenerator : MonoBehaviour
     public static float BankLevel = SeaLevel + meter;
     public static float SnowLevel = .871f;
     //public static float SnowLevel = float.MaxValue;
-    public static float GrassNormalMin = 0f;
-    public static float GrassNormalMax = 0f;
+    public static float GrassNormalMin = .7f;
+    public static float GrassNormalMax = .7f;
     public static float SnowNormal = .57f;
     public static float CaveNormal = .4f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -75,7 +75,6 @@ public class ChunkGenerator : MonoBehaviour
     [Range(0, 1)] public float persistance;
     public float lacunarity;
     [Range(0, 1)] public float RockProtrusion;
-    public float mountainSize;
 
 
 
@@ -316,12 +315,12 @@ public class ChunkGenerator : MonoBehaviour
                 //temperatureValue -= 1f * (mountainValue / mtnCap);
                 // temperatureValue +=  (Mathf.PerlinNoise((x + xOffset + .001f) / TemperatureMapScale, (z + zOffset + .001f) / TemperatureMapScale) * 2f - 1f) * (3f * (1f - mountainValue/mtnCap));
 
-                //temperatureValue = Mathf.InverseLerp(.4f, .6f, temperatureValue);
+                temperatureValue = Mathf.InverseLerp(.4f, .6f, temperatureValue);
                 temperatureValue = Mathf.Clamp01(temperatureValue);
 
                 // lock temperature
                 //temperatureValue = .99f;
-                //temperatureValue = .25f;
+                temperatureValue = .25f;
 
 
 
@@ -330,12 +329,16 @@ public class ChunkGenerator : MonoBehaviour
 
                 // ElevationMap
 
-                float e = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / ElevationMapScale, (z + zOffset - Seed + 100000.01f) / ElevationMapScale);
-                e = Mathf.Clamp01(e);
-                elevationValue = Mathf.Pow(e + .5f, .5f) - 1f;
-                if(elevationValue > .00005f){
-                    elevationValue = .00005f;
-                }
+                // float e = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / ElevationMapScale, (z + zOffset - Seed + 100000.01f) / ElevationMapScale);
+                // e = Mathf.Clamp01(e);
+                // elevationValue = Mathf.Pow(e + .5f, .5f) - 1f;
+                // if(elevationValue > .00005f){
+                //     elevationValue = .00005f;
+                // }
+                elevationValue = Convert.ToSingle(Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / ElevationMapScale, (z + zOffset - Seed + 100000.01f) / ElevationMapScale) >= .5f);
+                elevationValue *= .00001f;
+                elevationValue -= .000005f;
+
                 float bm0 = Mathf.PerlinNoise((x + xOffset + 100000.01f) / 1600f, (z + zOffset + 100000.01f) / 1600f) * 2f - 1f;
                 float bm1 = Mathf.PerlinNoise((x + xOffset + 200000.01f) / 1600f, (z + zOffset + 200000.01f) / 1600f) * 2f - 1f;
                 float bigMound = Mathf.Min(bm0, bm1);
@@ -343,6 +346,7 @@ public class ChunkGenerator : MonoBehaviour
                 float bigMoundCap = .04f;
                 bigMound *= bigMoundCap;
                 bigMound *= (1f - Mathf.InverseLerp(.25f, .75f, temperatureValue));
+                bigMound = 0;
                 elevationValue += bigMound;
                 float maxE = Mathf.Pow(1f + .5f, .5f) - 1f;
                 float minE = Mathf.Pow(0f + .5f, .5f) - 1f;
@@ -352,29 +356,30 @@ public class ChunkGenerator : MonoBehaviour
                 humidityValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / HumidityMapScale, (z + zOffset - Seed + .01f) / HumidityMapScale);
                 //humidityValue += (mountainValue / mtnCap) * .5f;
                 //humidityValue = Mathf.Clamp01(humidityValue);
-                //humidityValue = Mathf.InverseLerp(.4f, .6f, humidityValue);
+                humidityValue = Mathf.InverseLerp(.4f, .6f, humidityValue);
 
                 // lock humidity
                 //humidityValue = 0f;
-                //humidityValue = .99f;
+                humidityValue = .99f;
                 // -------------------------------------------------------
 
                 // MountainMap [0, 1]
                 float mtn0 = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / MountainMapScale, (z + zOffset - Seed + .01f) / MountainMapScale);
-                //float mtn1 = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / MountainMapScale, (z + zOffset - Seed + 100000.01f) / MountainMapScale);
-                //float mtn2 = Mathf.PerlinNoise((x + xOffset - Seed + 200000.01f) / MountainMapScale, (z + zOffset - Seed + 200000.01f) / MountainMapScale);
+                float mtn1 = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / MountainMapScale, (z + zOffset - Seed + 100000.01f) / MountainMapScale);
+                float mtn2 = Mathf.PerlinNoise((x + xOffset - Seed + 200000.01f) / MountainMapScale, (z + zOffset - Seed + 200000.01f) / MountainMapScale);
 
                 mountainValue = Mathf.Min(mtn0, 1f, 1f);
                 //mountainValue = Mathf.InverseLerp(.3f, .7f, mountainValue);
                 //mountainValue = .99f;
                 //mountainValue *= .75f;
-                mountainValue = Mathf.Pow(mountainValue, 2f);
+                mountainValue = Mathf.Pow(mountainValue, 3f);
+                mountainValue -= .1f;
+                mountainValue = Mathf.Clamp01(mountainValue);
                 //mountainValue = Mathf.InverseLerp(0f, Mathf.Pow(.75f, 2f), mountainValue);
                 mountainValue *= Mathf.InverseLerp(minE, maxE+1f, elevationValue);
-                mountainValue *= 1f - CalculateDesertness(temperatureValue, humidityValue);
-                if(mountainValue > mountainSize){
-                    mountainValue = mountainSize;
-                }
+                //mountainValue *= 1f - CalculateDesertness(temperatureValue, humidityValue);
+                mountainValue *= 1f;
+                //mountainValue = 0f;
                 //Debug.Log(mountainValue);
 
 
@@ -417,6 +422,9 @@ public class ChunkGenerator : MonoBehaviour
 
                     // reduce fresh water value proportionally to mound height
                     //freshWaterValue *= 1f - (Mathf.InverseLerp(.25f, 1f, (bigMound / bigMoundCap)));
+
+
+                    freshWaterValue = 0f;
 
                 }
 
@@ -498,9 +506,9 @@ public class ChunkGenerator : MonoBehaviour
                         heightValue = Mathf.Lerp(heightValue, postHeight, badland);
                     }
 
-                    float duneMagnitude = meter * 4f;
-                    float duneHeightModifier = duneMagnitude * Mathf.Pow(Mathf.Abs(Mathf.Sin((x + xOffset + (30f * Mathf.PerlinNoise(0, (z + zOffset) / 60f)) + .01f) / 15f)) * -1f + 1f, 2f);
-                    heightValue += duneHeightModifier;
+                    // float duneMagnitude = meter * 4f;
+                    // float duneHeightModifier = duneMagnitude * Mathf.Pow(Mathf.Abs(Mathf.Sin((x + xOffset + (30f * Mathf.PerlinNoise(0, (z + zOffset) / 60f)) + .01f) / 15f)) * -1f + 1f, 2f);
+                    // heightValue += duneHeightModifier;
                 
                 }
 
@@ -519,12 +527,12 @@ public class ChunkGenerator : MonoBehaviour
                 // -------------------------------------------------------
 
                 //posterize all land
-                if(heightValue > BankLevel)
-                {
-                    float posterizeSoftness = Mathf.Lerp(.95f, 1f, Mathf.InverseLerp(.45f, .55f, Mathf.PerlinNoise((x + xOffset + .01f) / 20f, (z + zOffset - Seed + .01f) /20f)));
-                    //posterizeSoftness = .9f;
-                    heightValue = Posterize(BankLevel, 1f, heightValue, 70, posterizeSoftness);
-                }
+                // if(heightValue >= BankLevel)
+                // {
+                //     float posterizeSoftness = Mathf.Lerp(.95f, 1f, Mathf.InverseLerp(.45f, .55f, Mathf.PerlinNoise((x + xOffset + .01f) / 20f, (z + zOffset - Seed + .01f) /20f)));
+                //     posterizeSoftness = .9f;
+                //     heightValue = Posterize(BankLevel, 1f, heightValue, 70, posterizeSoftness);
+                // }
 
 
                 // dip
@@ -533,7 +541,23 @@ public class ChunkGenerator : MonoBehaviour
                 }
 
                 // TreeMap
-                treeValue = true;
+                float t;
+                float tScale = 500f;
+                t = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / tScale, (z + zOffset - Seed + .01f) / tScale) * 2f - 1f;
+
+                // character
+                float c = .25f;
+                rough = Mathf.PerlinNoise((x + xOffset + .01f) / 100f, (z + zOffset + .01f) / 100f);
+                t += Mathf.Max(0f, rough) * c;
+
+                // ridgify
+                t = Mathf.Abs(t);
+                t *= -1f;
+                t += 1f;
+
+                t = Mathf.Clamp01(t);
+                //Debug.Log(t);
+                treeValue = t >= .985f;
 
 
 
@@ -547,7 +571,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 TemperatureMap[x, z] = temperatureValue;
                 HumidityMap[x, z] = humidityValue;
-                MountainMap[x, z] = mountainValue / mountainSize;
+                MountainMap[x, z] = mountainValue;
                 ElevationMap[x, z] = elevationValue;
                 FreshWaterMap[x, z] = freshWaterValue;
                 WetnessMap[x, z] = wetnessValue;
@@ -621,162 +645,171 @@ public class ChunkGenerator : MonoBehaviour
             for (int x = 0; x < ChunkSize; x++)
             {
 
-                Vector3 normal = cd.YNormalsMap[x, z];
-                float skewHoriz = cd.SkewHorizMap[x, z];
-                float height = cd.HeightMap[x, z];
-                float temp = cd.TemperatureMap[x, z];
-                float humid = cd.HumidityMap[x, z];
-
-                SpawnParameters spawnParameters;
-                float placementDensity;
-                float randomDivisorOffset;
-                Vector3 randomPositionOffset, spawnPosition, spawnScale;
-                GameObject worldObject;
-                ObjectPool<GameObject> pool;
-
-                //yield return new WaitUntil(() => !cd.IsEdgeChunk());
-                //yield return new WaitForSecondsRealtime(2f);
-
-                foreach (GameObject feature in Features.Concat(Items))
+                if (!cd.TreeMap[x, z])
                 {
+                    Vector3 normal = cd.YNormalsMap[x, z];
+                    float skewHoriz = cd.SkewHorizMap[x, z];
+                    float height = cd.HeightMap[x, z];
+                    float temp = cd.TemperatureMap[x, z];
+                    float humid = cd.HumidityMap[x, z];
 
-                    // break if chunk not loaded
-                    if (cd == null || (cd.featuresParent == null)) { break; }
+                    SpawnParameters spawnParameters;
+                    float placementDensity;
+                    float randomDivisorOffset;
+                    Vector3 randomPositionOffset, spawnPosition, spawnScale;
+                    GameObject worldObject;
+                    ObjectPool<GameObject> pool;
 
-                    spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
-                    if (spawnParameters != null)
+                    //yield return new WaitUntil(() => !cd.IsEdgeChunk());
+                    //yield return new WaitForSecondsRealtime(2f);
+
+                    foreach (GameObject feature in Features.Concat(Items))
                     {
-                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, normal.y);
-                        if (placementDensity > 0)
+
+                        // break if chunk not loaded
+                        if (cd == null || (cd.featuresParent == null)) { break; }
+
+                        spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
+                        if (spawnParameters != null)
                         {
-                            randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + _xOffset + .01f) / 2f, (z + _zOffset + .01f) / 2f) * 2f - 1f);
-                            int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - placementDensity) + randomDivisorOffset);
-                            if (divisor < 1)
+                            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, normal.y);
+                            if (placementDensity > 0)
                             {
-                                divisor = 1;
-                            }
-                            if ((x + _xOffset) % divisor == 0 && (z + _zOffset) % divisor == 0)
-                            {
-                                for (int i = 0; i < spawnParameters.numberToSpawn; ++i)
+                                randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + _xOffset + .01f) / 2f, (z + _zOffset + .01f) / 2f) * 2f - 1f);
+                                int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - placementDensity) + randomDivisorOffset);
+                                if (divisor < 1)
                                 {
-                                    randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
-                                    Vector3 rawHorizontalPosition = new Vector3(x + _xOffset + skewHoriz + randomPositionOffset.x, 0f, z + _zOffset + skewHoriz + randomPositionOffset.z);
-                                    Vector2 rawHorizontalPositionV2 = new Vector2(rawHorizontalPosition.x, rawHorizontalPosition.z);
-                                    if (!instance.fillMap.MapFilled(rawHorizontalPositionV2))
-                                    //if (true)
+                                    divisor = 1;
+                                }
+                                if ((x + _xOffset) % divisor == 0 && (z + _zOffset) % divisor == 0)
+                                {
+                                    for (int i = 0; i < spawnParameters.numberToSpawn; ++i)
                                     {
-                                        ChunkData chunkAtPosition = GetChunkFromRawPosition(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.z));
-                                        if (chunkAtPosition != null)
+                                        randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
+                                        Vector3 rawHorizontalPosition = new Vector3(x + _xOffset + skewHoriz + randomPositionOffset.x, 0f, z + _zOffset + skewHoriz + randomPositionOffset.z);
+                                        Vector2 rawHorizontalPositionV2 = new Vector2(rawHorizontalPosition.x, rawHorizontalPosition.z);
+                                        //if (!instance.fillMap.MapFilled(rawHorizontalPositionV2))
+                                        if (true)
                                         {
-                                            Vector2 coordinatesInChunk = GetCoordinatesInChunk(rawHorizontalPosition);
-                                            int posChunkX = (int)coordinatesInChunk.x;
-                                            int posChunkZ = (int)coordinatesInChunk.y;
-                                            float posChunkHeight = chunkAtPosition.HeightMap[posChunkX, posChunkZ];
-                                            float posChunkSkewHoriz = chunkAtPosition.SkewHorizMap[posChunkX, posChunkZ];
-                                            float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ].y;
-                                            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, posChunkHeight, posChunkYNormal);
-                                            if (placementDensity > 0)
+                                            ChunkData chunkAtPosition = GetChunkFromRawPosition(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.z));
+                                            if (chunkAtPosition != null)
                                             {
-                                                spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.ElevationAmplitude) + Vector3.right * posChunkSkewHoriz + Vector3.forward * posChunkSkewHoriz;
-                                                spawnScale = Vector3.one * spawnParameters.scale;
-                                                pool = PoolHelper.GetPool(feature);
-                                                worldObject = pool.Get();
-                                                worldObject.transform.position = spawnPosition;
-                                                worldObject.transform.SetParent(cd.featuresParent);
-                                                worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
-                                                if (spawnParameters.slantMagnitude > 0f)
+                                                Vector2 coordinatesInChunk = GetCoordinatesInChunk(rawHorizontalPosition);
+                                                int posChunkX = (int)coordinatesInChunk.x;
+                                                int posChunkZ = (int)coordinatesInChunk.y;
+                                                if (!cd.TreeMap[posChunkX, posChunkZ])
                                                 {
-                                                    worldObject.transform.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(Vector3.up, cd.YNormalsMap[x, z]), spawnParameters.slantMagnitude);
+                                                    float posChunkHeight = chunkAtPosition.HeightMap[posChunkX, posChunkZ];
+                                                    float posChunkSkewHoriz = chunkAtPosition.SkewHorizMap[posChunkX, posChunkZ];
+                                                    float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ].y;
+                                                    placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, posChunkHeight, posChunkYNormal);
+                                                    if (placementDensity > 0)
+                                                    {
+                                                        spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.ElevationAmplitude) + Vector3.right * posChunkSkewHoriz + Vector3.forward * posChunkSkewHoriz;
+                                                        spawnScale = Vector3.one * spawnParameters.scale;
+                                                        pool = PoolHelper.GetPool(feature);
+                                                        worldObject = pool.Get();
+                                                        worldObject.transform.position = spawnPosition;
+                                                        worldObject.transform.SetParent(cd.featuresParent);
+                                                        worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
+                                                        if (spawnParameters.slantMagnitude > 0f)
+                                                        {
+                                                            worldObject.transform.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(Vector3.up, cd.YNormalsMap[x, z]), spawnParameters.slantMagnitude);
+                                                        }
+                                                        worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
+                                                        //instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
+                                                    }
                                                 }
-                                                worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
-                                                instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
+                                                
                                             }
                                         }
+
+
                                     }
-                                    
-                                    
+
+
+
+
                                 }
-                                
-
-
-
                             }
                         }
+
                     }
 
-                }
-
-                foreach (GameObject creature in Creatures)
-                {
-
-                    // break if chunk not loaded
-                    if (cd == null) { break; }
-
-                    spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
-                    if (spawnParameters != null)
+                    foreach (GameObject creature in Creatures)
                     {
-                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, normal.y);
-                        int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
-                        int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
-                        if (placementDensity > 0f)
-                        {
-                            randomDivisorOffset = 0;
-                            int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
-                            if (divisor < 1) { divisor = 1; }
-                            if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
-                            {
-                                spawnPosition = new Vector3(x + _xOffset, height * ElevationAmplitude + 10f, z + _zOffset);
-                                spawnScale = Vector3.one * spawnParameters.scale;
-                                worldObject = Utility.InstantiateSameName(creature, spawnPosition, Quaternion.identity);
-                                //pool = PoolHelper.GetPool(creature);
-                                //worldObject = pool.Get();
-                                //worldObject.transform.position = spawnPosition;
-                                worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-                                activeCreatures.Add(worldObject);
 
+                        // break if chunk not loaded
+                        if (cd == null) { break; }
+
+                        spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
+                        if (spawnParameters != null)
+                        {
+                            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, normal.y);
+                            int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
+                            int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
+                            if (placementDensity > 0f)
+                            {
+                                randomDivisorOffset = 0;
+                                int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
+                                if (divisor < 1) { divisor = 1; }
+                                if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
+                                {
+                                    spawnPosition = new Vector3(x + _xOffset, height * ElevationAmplitude + 10f, z + _zOffset);
+                                    spawnScale = Vector3.one * spawnParameters.scale;
+                                    worldObject = Utility.InstantiateSameName(creature, spawnPosition, Quaternion.identity);
+                                    //pool = PoolHelper.GetPool(creature);
+                                    //worldObject = pool.Get();
+                                    //worldObject.transform.position = spawnPosition;
+                                    worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                                    activeCreatures.Add(worldObject);
+
+                                }
                             }
                         }
+
                     }
 
-                }
-
-                foreach (GameObject human in Humans)
-                {
-
-                    // break if chunk not loaded
-                    if (cd == null) { break; }
-
-                    if(humanSpawned){ break; }
-
-                    spawnParameters = SpawnParameters.GetSpawnParameters(human.name);
-                    if (spawnParameters != null)
+                    foreach (GameObject human in Humans)
                     {
-                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, normal.y);
-                        int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, human.name.GetHashCode()) * 2f - 1f) * 50f);
-                        int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (human.name + "_").GetHashCode()) * 2f - 1f) * 50f);
-                        if (placementDensity > 0f)
+
+                        // break if chunk not loaded
+                        if (cd == null) { break; }
+
+                        if (humanSpawned) { break; }
+
+                        spawnParameters = SpawnParameters.GetSpawnParameters(human.name);
+                        if (spawnParameters != null)
                         {
-                            randomDivisorOffset = 0;
-                            int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
-                            if (divisor < 1) { divisor = 1; }
-                            if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
+                            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, normal.y);
+                            int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, human.name.GetHashCode()) * 2f - 1f) * 50f);
+                            int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (human.name + "_").GetHashCode()) * 2f - 1f) * 50f);
+                            if (placementDensity > 0f)
                             {
-                                spawnPosition = new Vector3(x + _xOffset, height * ElevationAmplitude + 10f, z + _zOffset);
-                                spawnScale = Vector3.one * spawnParameters.scale;
+                                randomDivisorOffset = 0;
+                                int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
+                                if (divisor < 1) { divisor = 1; }
+                                if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
+                                {
+                                    spawnPosition = new Vector3(x + _xOffset, height * ElevationAmplitude + 10f, z + _zOffset);
+                                    spawnScale = Vector3.one * spawnParameters.scale;
 
-                                Debug.Log("WILD NPC");
-                                instance.StartCoroutine(ClientCommand.instance.SpawnNpcIndependentWhenReady(spawnPosition, true, FactionStartingItemsTier.Weak));
-                                
-                                
-                                //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-                                //activeCreatures.Add(o);
+                                    Debug.Log("WILD NPC");
+                                    instance.StartCoroutine(ClientCommand.instance.SpawnNpcIndependentWhenReady(spawnPosition, true, FactionStartingItemsTier.Weak));
 
-                                //humanSpawned = true;
+
+                                    //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                                    //activeCreatures.Add(o);
+
+                                    //humanSpawned = true;
+                                }
                             }
                         }
-                    }
 
+                    }
                 }
+
+
 
             }
             yield return null;
@@ -837,7 +870,7 @@ public class ChunkGenerator : MonoBehaviour
                 humidity = HumidityMap[x, z];
                 rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 50f, (z + zOffset) / 50f), .5f);
                 //rockiness *= Mathf.PerlinNoise(((height) / 50f), 0f);
-                rockiness += (Mathf.PerlinNoise((x + xOffset) / 2f, (z + zOffset) / 2f) * 2f - 1f) * (.05f * (1f - MountainMap[x, z]));
+                rockiness += (Mathf.PerlinNoise((x + xOffset) / 2f, (z + zOffset) / 2f) * 2f - 1f) * .05f;
                 rockiness *= Mathf.InverseLerp(0f, .1f, MountainMap[x, z]);
                 rockiness *= 1f - (CalculateDesertness(temperature, humidity));
                 skewHoriz = ((rockiness + .5f) * 2f - 1f) * 18f * RockProtrusion;
