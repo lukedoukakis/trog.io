@@ -809,12 +809,18 @@ public class EntityBehavior : EntityComponent
         List<EntityHandle> foundHandles = new List<EntityHandle>();
         GameObject o;
         EntityHandle foundHandle;
-        foreach(Collider col in colliders){
+        foreach(Collider col in colliders)
+        {
             o = col.gameObject;
             foundHandle = o.GetComponentInParent<EntityHandle>();
-            if(foundHandle != null){
-                if(!entityInfo.faction.memberHandles.Contains(foundHandle) && (targetSpecies.Equals(Species.Any) || targetSpecies.Equals(foundHandle.entityInfo.species))){
-                    foundHandles.Add(foundHandle);
+            if(foundHandle != null)
+            {
+                if(!ReferenceEquals(foundHandle, entityHandle))
+                {
+                    if((targetSpecies.Equals(Species.Any) || targetSpecies.Equals(foundHandle.entityInfo.species)))
+                    {
+                        foundHandles.Add(foundHandle);
+                    }
                 }
             }
         }
