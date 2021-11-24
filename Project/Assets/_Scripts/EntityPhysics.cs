@@ -897,6 +897,7 @@ public class EntityPhysics : EntityComponent
                         mainAnimator.SetBool("Stand", false);
                         mainAnimator.SetBool("Run", false);
                         mainAnimator.SetBool("Sprint", false);
+
                         mainAnimator.SetTrigger("JumpTrigger");
                     }
 
