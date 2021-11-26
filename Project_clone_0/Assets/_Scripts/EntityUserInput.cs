@@ -9,8 +9,11 @@ public class EntityUserInput : EntityComponent
     //public enum InteractionType{ TakeItem, PlaceItem, }
 
     public static float DISTANCE_INTERACTABLE = 2f;
+    public static float DODGE_INPUT_TIMESTEP = .2f;
 
     public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressCrouch, pressDodge;
+    public bool pressForwardDown, pressBackDown, pressLeftDown, pressRightDown;
+    public float timeOffForward, timeOffBack, timeOffLeft, timeOffRight;
     public bool pressToggleAttackRanged;
     public float mouseX, mouseY, mouseZ;
 
@@ -39,6 +42,7 @@ public class EntityUserInput : EntityComponent
     void Start()
     {
         pressToggleAttackRanged = false;
+        timeOffForward = timeOffBack = timeOffLeft = timeOffRight = 0f;
     }
 
     
@@ -68,10 +72,16 @@ public class EntityUserInput : EntityComponent
         
     }
 
-    void HandleMovement(){
+    void HandleMovement()
+    {
 
         Vector3 oldMove = move;
         move = Vector3.zero;
+
+        pressForwardDown = Input.GetKeyDown(KeyCode.W);
+        pressBackDown = Input.GetKeyDown(KeyCode.S);
+        pressLeftDown = Input.GetKeyDown(KeyCode.A);
+        pressRightDown = Input.GetKeyDown(KeyCode.D);
 
         pressForward = Input.GetKey(KeyCode.W);
         pressBack = Input.GetKey(KeyCode.S);
@@ -79,9 +89,42 @@ public class EntityUserInput : EntityComponent
         pressRight = Input.GetKey(KeyCode.D);
         pressSprint = Input.GetKey(KeyCode.LeftShift);
         pressJump = Input.GetKey(KeyCode.Space);
-        //pressDodge = Input.GetKey(KeyCode.Space);
         pressCrouch = Input.GetKey(KeyCode.LeftControl);
         pressToggleAttackRanged = Input.GetKeyDown(KeyCode.LeftControl);
+
+        pressDodge = false;
+        if(pressForwardDown)
+        {
+            if(timeOffForward < DODGE_INPUT_TIMESTEP && pressSprint)
+            {
+                pressDodge = true;
+            }
+            timeOffForward = 0f;
+        }
+        if(pressBackDown)
+        {
+            if(timeOffBack < DODGE_INPUT_TIMESTEP && pressSprint)
+            {
+                pressDodge = true;
+            }
+            timeOffBack = 0f;
+        }
+        if(pressLeftDown)
+        {
+            if(timeOffLeft < DODGE_INPUT_TIMESTEP && pressSprint)
+            {
+                pressDodge = true;
+            }
+            timeOffLeft = 0f;
+        }
+        if(pressRightDown)
+        {
+            if(timeOffRight < DODGE_INPUT_TIMESTEP && pressSprint)
+            {
+                pressDodge = true;
+            }
+            timeOffRight = 0f;
+        }
 
 
         if (pressForward)
@@ -379,6 +422,13 @@ public class EntityUserInput : EntityComponent
             }
             HandleAttack();
             CheckInteraction();
+
+
+            float dTime = Time.deltaTime;
+            timeOffForward += dTime;
+            timeOffBack += dTime;
+            timeOffLeft += dTime;
+            timeOffRight += dTime;
         
         }
 

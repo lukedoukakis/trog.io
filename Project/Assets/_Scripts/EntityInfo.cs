@@ -128,7 +128,7 @@ public class SpeciesInfo : ScriptableObject{
                         {Item.CarcassBear, 1},
                     }
                 ),
-                Stats.InstantiateStats(1f, .75f, .1f, .5f, .4f, 1f, .75f, 1f, 1f, 1f, 1f, 10f),
+                Stats.InstantiateStats(1f, .75f, .1f, .5f, .4f, 1f, .5f, 1f, 1f, 1f, 1f, 10f),
                 IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end_end", "leg_lower_left_end_end", "", "", "arm_lower_right_end_end_end", "arm_lower_left_end_end_end", "", "", false, true, false, 3f, 10f, 8f, .7f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Timid,

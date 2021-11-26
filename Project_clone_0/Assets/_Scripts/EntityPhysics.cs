@@ -42,7 +42,7 @@ public class EntityPhysics : EntityComponent
 
     public Vector3 moveDir;
     public bool isJumping, jumpOffLeft, jumpOffRight, isSprinting;
-    public bool animFlag_jump;
+    public bool animFlag_jump, animFlag_jumpMirror;
     public bool isDodging;
     Vector3 jumpPoint;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
@@ -845,6 +845,7 @@ public class EntityPhysics : EntityComponent
 
                 mainAnimator.SetLayerWeight(1, 1f - differenceInDegreesBetweenMovementAndFacing);
                 mainAnimator.SetLayerWeight(2, differenceInDegreesBetweenMovementAndFacing);
+                mainAnimator.SetLayerWeight(6, landScrunch);
 
                 if (isInWater)
                 {
@@ -897,7 +898,7 @@ public class EntityPhysics : EntityComponent
                         mainAnimator.SetBool("Stand", false);
                         mainAnimator.SetBool("Run", false);
                         mainAnimator.SetBool("Sprint", false);
-
+                        mainAnimator.SetBool("JumpMirror", animFlag_jumpMirror);
                         mainAnimator.SetTrigger("JumpTrigger");
                     }
 
@@ -980,6 +981,7 @@ public class EntityPhysics : EntityComponent
             }
             for(int i = 0 ; i < DODGE_LASTING_TIME * 100f; ++i)
             {
+                rb.AddForce(Vector3.down * 1f, ForceMode.VelocityChange);
                 bodyDirection = Vector3.Cross(velHoriz_this, Vector3.up) * -1f;
                 entityOrientation.body.RotateAround(obstacleHeightSense.position, bodyDirection, (360f / 100f) * 1.5f);
                 yield return new WaitForSecondsRealtime(.01f);
@@ -1002,6 +1004,7 @@ public class EntityPhysics : EntityComponent
     IEnumerator _Jump(float power)
     {
         animFlag_jump = true;
+        animFlag_jumpMirror = !animFlag_jumpMirror;
         isJumping = true;
         Vector3 horVelDir = velHoriz_this.normalized;
         Vector3 rightFootForwardNess = Vector3.Project(footRight.position - transform.position, horVelDir);
@@ -1019,11 +1022,9 @@ public class EntityPhysics : EntityComponent
             jumpPoint = footLeft.position;
         }
 
-        if (groundTime <= BASE_COOLDOWN_JUMP)
-        {
-            float t = BASE_COOLDOWN_JUMP - groundTime;
-            yield return new WaitForSecondsRealtime(t);
-        }
+
+        yield return new WaitForSecondsRealtime(BASE_COOLDOWN_JUMP);
+
         Vector3 vel = rb.velocity;
         vel.y = 0f;
         rb.velocity = vel;
@@ -1523,9 +1524,9 @@ public class EntityPhysics : EntityComponent
     {
         if (groundTime < 1f - landScrunch_recoverySpeed)
         {
-            landScrunch = Mathf.Sin(Mathf.InverseLerp(0f, 1f - landScrunch_recoverySpeed, groundTime) * Mathf.PI * 1.25f);
-            float fromAirTime = Mathf.Lerp(0f, 1f, this.airTime / landScrunch_airTimeThreshhold);
-            landScrunch = Mathf.Lerp(0f, Mathf.Max(fromAirTime), landScrunch);
+            landScrunch = Mathf.Sin(Mathf.InverseLerp(0f, 1f - landScrunch_recoverySpeed, groundTime) * Mathf.PI * 1f) * .5f;
+            //float fromAirTime = Mathf.Lerp(0f, 1f, this.airTime / landScrunch_airTimeThreshhold);
+            //landScrunch = Mathf.Lerp(0f, Mathf.Max(fromAirTime), landScrunch);
         }
         else
         {
@@ -1659,6 +1660,7 @@ public class EntityPhysics : EntityComponent
         Move(moveDir, acceleration);
         CheckWater();
         CheckCrouch();
+        CheckScrunch();
         LimitSpeed();
         SetGravity();
         UpdateAnimation();
@@ -1679,6 +1681,7 @@ public class EntityPhysics : EntityComponent
         offWallTime += dTime;
         offWaterTime += dTime;
         dodgeTime += dTime;
+        groundTime = isGrounded ? groundTime += dTime : 0;
 
         if (crouch > 0f)
         {

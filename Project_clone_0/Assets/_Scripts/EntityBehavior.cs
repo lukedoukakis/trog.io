@@ -815,7 +815,7 @@ public class EntityBehavior : EntityComponent
             foundHandle = o.GetComponentInParent<EntityHandle>();
             if(foundHandle != null)
             {
-                if(!ReferenceEquals(foundHandle, entityHandle))
+                if(!ReferenceEquals(foundHandle, entityHandle) && !ReferenceEquals(foundHandle.entityInfo.faction, entityInfo.faction))
                 {
                     if((targetSpecies.Equals(Species.Any) || targetSpecies.Equals(foundHandle.entityInfo.species)))
                     {

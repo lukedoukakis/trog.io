@@ -1189,13 +1189,13 @@ AnimatorState:
   m_WriteDefaultValues: 1
   m_Mirror: 0
   m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
+  m_MirrorParameterActive: 1
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: 672d287ce6ff446409969db823aa8812, type: 2}
   m_Tag: 
   m_SpeedParameter: 
-  m_MirrorParameter: 
+  m_MirrorParameter: JumpMirror
   m_CycleOffsetParameter: 
   m_TimeParameter: LegSpeed
 --- !u!1101 &-726176149450728265
@@ -1482,6 +1482,12 @@ AnimatorController:
     m_Controller: {fileID: 0}
   - m_Name: JumpTrigger
     m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: JumpMirror
+    m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
@@ -1792,7 +1798,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Fall
-  m_Speed: 1.5
+  m_Speed: 0.75
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -490093393587898308}
@@ -1806,13 +1812,13 @@ AnimatorState:
   m_WriteDefaultValues: 1
   m_Mirror: 0
   m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
+  m_MirrorParameterActive: 1
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: 4e16012a68573a44fb8d586ba467b14b, type: 2}
   m_Tag: 
   m_SpeedParameter: 
-  m_MirrorParameter: 
+  m_MirrorParameter: JumpMirror
   m_CycleOffsetParameter: 
   m_TimeParameter: 
 --- !u!1102 &1597659730655176697
@@ -2626,7 +2632,7 @@ AnimatorStateMachine:
     m_Position: {x: -240, y: 510, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -868874907024594909}
-    m_Position: {x: 70, y: 60, z: 0}
+    m_Position: {x: 40, y: 50, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1548642008254715832}
     m_Position: {x: 40, y: 170, z: 0}
