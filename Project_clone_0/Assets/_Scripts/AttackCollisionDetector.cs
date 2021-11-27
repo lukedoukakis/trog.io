@@ -7,14 +7,16 @@ public class AttackCollisionDetector : MonoBehaviour
 
     EntityHandle ownerHandle;
     Collider thisCollider;
-    LayerMask mask;
+    LayerMask collisionMask;
+    LayerMask dealDamageMask;
     Projectile projectile;
     FixedJoint joint;
 
     void Awake()
     {
         thisCollider = GetComponent<Collider>();
-        mask = LayerMaskController.HITTABLE;
+        collisionMask = LayerMaskController.COLLIDEABLE;
+        dealDamageMask = LayerMaskController.HITTABLE;
         projectile = null;
     }
     
@@ -36,7 +38,7 @@ public class AttackCollisionDetector : MonoBehaviour
     {
         if(ownerHandle != null)
         {
-            return projectile != null || ownerHandle.entityPhysics.meleeAttackCanHit;
+            return projectile != null || ownerHandle.entityPhysics.attackCanHit;
         }
         else{
             return false;
@@ -77,29 +79,50 @@ public class AttackCollisionDetector : MonoBehaviour
         //Debug.Log("TRIGGER ENTER");
 
         GameObject otherObject = otherCollider.gameObject;
-        if (mask == (mask | (1 << otherObject.layer)))
+        if (collisionMask == (collisionMask | (1 << otherObject.layer)) || dealDamageMask == (dealDamageMask | (1 << otherObject.layer)))
         {
             //Debug.Log("Layer Approved");
+
+
+            // if entity is targeting this object
             if (CanHit())
             {
                 //Debug.Log("Can Hit");
-
-                // if entity is targeting this object
-                if(ownerHandle.entityBehavior.IsTargetedObject(otherObject))
+                if (ReferenceEquals(GameManager.instance.localPlayerHandle, ownerHandle) || ownerHandle.entityBehavior.IsTargetedObject(otherObject))
                 {
+            
                     //Debug.Log("Call OnAttackHit()");
 
-                    ownerHandle.entityPhysics.OnAttackHit(otherCollider, thisCollider.bounds.center, projectile);
-                    if (projectile != null)
+                    if (dealDamageMask == (dealDamageMask | (1 << otherObject.layer)))
+                    {
+                        ownerHandle.entityPhysics.OnAttackHit(otherCollider, thisCollider.bounds.center, projectile);
+                    }
+                    
+                    if(projectile != null)
                     {
                         AddFixedJoint(otherCollider.gameObject);
+                        //Debug.Log("PROJECTILE NULL");
                         SetProjectile(null);
                     }
+                    
                 }
-                
             }
+
+
         }
 
+    }
+
+    void Update()
+    {
+        if(projectile != null)
+        {
+            //Debug.Log("rotating projectile...");
+            GameObject worldObject = projectile.worldObject;
+            Vector3 velocity = worldObject.GetComponent<Rigidbody>().velocity;
+            worldObject.transform.LookAt(worldObject.transform.position + (velocity*10f));
+            worldObject.transform.Rotate(worldObject.transform.right * 90f);
+        }
     }
 
 

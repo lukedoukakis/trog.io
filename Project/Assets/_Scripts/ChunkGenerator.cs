@@ -11,9 +11,9 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 4;
-    public static float Scale = 120f * 4f;
+    public static float Scale = 120f * .75f;
     public static float ElevationAmplitude = 5400f;
-    public static float MountainMapScale = 160f * .5f;
+    public static float MountainMapScale = 160f * 2;
     public static float ElevationMapScale = 3000f;
     public static int TemperatureMapScale = 600;
     public static int HumidityMapScale = 600;
@@ -500,11 +500,11 @@ public class ChunkGenerator : MonoBehaviour
                 float desertness = CalculateDesertness(temperatureValue, humidityValue);
                 if(desertness > 0f)
                 {   
-                    if(heightValue > FlatLevel + meter){
-                        float postHeight = Posterize(FlatLevel + meter, 1f, heightValue, 100, .95f);
-                        float badland = desertness;
-                        heightValue = Mathf.Lerp(heightValue, postHeight, badland);
-                    }
+                    // if(heightValue > FlatLevel + meter){
+                    //     float postHeight = Posterize(FlatLevel + meter, 1f, heightValue, 100, .95f);
+                    //     float badland = desertness;
+                    //     heightValue = Mathf.Lerp(heightValue, postHeight, badland);
+                    // }
 
                     // float duneMagnitude = meter * 4f;
                     // float duneHeightModifier = duneMagnitude * Mathf.Pow(Mathf.Abs(Mathf.Sin((x + xOffset + (30f * Mathf.PerlinNoise(0, (z + zOffset) / 60f)) + .01f) / 15f)) * -1f + 1f, 2f);
@@ -529,9 +529,9 @@ public class ChunkGenerator : MonoBehaviour
                 //posterize all land
                 // if(heightValue >= BankLevel)
                 // {
-                //     float posterizeSoftness = Mathf.Lerp(.95f, 1f, Mathf.InverseLerp(.45f, .55f, Mathf.PerlinNoise((x + xOffset + .01f) / 20f, (z + zOffset - Seed + .01f) /20f)));
-                //     posterizeSoftness = .9f;
-                //     heightValue = Posterize(BankLevel, 1f, heightValue, 70, posterizeSoftness);
+                //     float posterizeSoftness = Mathf.Lerp(.98f, 1f, Mathf.InverseLerp(.45f, .55f, Mathf.PerlinNoise((x + xOffset + .01f) / 30f, (z + zOffset - Seed + .01f) / 30f)));
+                //     //posterizeSoftness = .9f;
+                //     heightValue = Posterize(BankLevel, 1f, heightValue, 50, posterizeSoftness);
                 // }
 
 

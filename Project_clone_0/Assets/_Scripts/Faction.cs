@@ -248,7 +248,7 @@ public class Faction : MonoBehaviour
 
 
         // spawn items
-        AddItemOwned(Item.ClothingTest, itemCount, null, leaderHandle.transform, 0f);
+        //AddItemOwned(Item.ClothingTest, itemCount, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.Meat, itemCount, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.Spear, itemCount / 2, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.Axe, itemCount / 2, null, leaderHandle.transform, 0f);

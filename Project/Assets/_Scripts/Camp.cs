@@ -587,6 +587,13 @@ public class Camp : MonoBehaviour
         }
     }
 
+    public static Dictionary<Item, int> ItemCapacityDict = new Dictionary<Item, int>()
+    {
+        { Item.WoodPiece, 30},
+        { Item.BonePiece, 20},
+        { Item.StoneSmall, 20},
+        { Item.Meat, 20},
+    };
 
 }
 

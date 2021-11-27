@@ -329,7 +329,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 							float awayFromSnowModifier = clamp(0, 1, invLerp(_SnowHeightCap - 30, _SnowHeightCap, UnityObjectToWorld(input[ii].objPos).y));
 							awayFromSnowModifier = 1;
 							awayFromWaterModifier = 1;
-							awayFromCampModifier = 1;
+							//awayFromCampModifier = 1;
 							float awayFromDesertnessModifier = clamp(0, 1, 1 - invLerp(.7, .75, _Desertness));
 							float heightMod = min(min(min(awayFromWaterModifier, awayFromCampModifier), awayFromSnowModifier), awayFromDesertnessModifier);
 

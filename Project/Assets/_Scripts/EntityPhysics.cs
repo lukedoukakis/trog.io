@@ -105,7 +105,7 @@ public class EntityPhysics : EntityComponent
     public bool weaponCharging;
     public float weaponChargeAmount;
     float attackHitTime;
-    public bool meleeAttackCanHit;
+    public bool attackCanHit;
     public bool attackHit;
     public float dodgeTime;
 
@@ -1259,11 +1259,11 @@ public class EntityPhysics : EntityComponent
     void BeginMeleeAttackHitTime()
     {
         attackHitTime = 0f;
-        meleeAttackCanHit = true;
+        attackCanHit = true;
     }
     void StopMeleeAttackHitTime()
     {
-        meleeAttackCanHit = false;
+        attackCanHit = false;
         if (attackHit)
         {
             attackHit = false;
@@ -1707,7 +1707,7 @@ public class EntityPhysics : EntityComponent
         {
             weaponChargeTime += dTime;
         }
-        if (meleeAttackCanHit)
+        if (attackCanHit)
         {
             //Log("Weapon can hit");
             attackHitTime += dTime;

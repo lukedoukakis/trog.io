@@ -333,7 +333,7 @@ public class EntityUserInput : EntityComponent
             string txt = "";
             switch (hoveredInteractableObject.tag){
                 case "Item" : 
-                    txt += hoveredInteractableObject.name;
+                    txt += hoveredInteractableObject.name + " (" + entityInfo.faction.GetItemCount(Item.GetItemByName(hoveredInteractableObject.name)) + ")";
                     break;
                 case "Npc" :
                     EntityHandle hoveredEntityHandle = hoveredInteractableObject.GetComponentInParent<EntityHandle>();
@@ -385,13 +385,13 @@ public class EntityUserInput : EntityComponent
                     txt += "";
                     break;
                 case "ObjectRack_Wood" :
-                    txt += "Wood";
+                    txt += "Wood (" + entityInfo.faction.GetItemCount(Item.WoodPiece) + ")";
                     break;
                 case "ObjectRack_Bone" :
-                    txt += "Animal bones";
+                    txt += "Animal bones (" + entityInfo.faction.GetItemCount(Item.BonePiece) + ")";
                     break;
                 case "ObjectRack_Stone" :
-                    txt += "Stones";
+                    txt += "Stones (" + entityInfo.faction.GetItemCount(Item.StoneSmall) + ")";
                     break;
 
                 case "Workbench" :

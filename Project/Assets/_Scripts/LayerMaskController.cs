@@ -6,6 +6,7 @@ public class LayerMaskController : MonoBehaviour
 {
 
     public static LayerMask INTERACTABLE = LayerMask.GetMask("HoverTrigger");
+    public static LayerMask COLLIDEABLE = LayerMask.GetMask("Terrain") | LayerMask.GetMask("Feature") | LayerMask.GetMask("Creature");
     public static LayerMask TERRAIN = LayerMask.GetMask("Terrain");
     public static LayerMask WATER = LayerMask.GetMask("Water");
     public static LayerMask WALKABLE = LayerMask.GetMask("Terrain", "Feature");
