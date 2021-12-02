@@ -32,17 +32,24 @@ public class Workbench : ObjectRack
 
 
     // workbench override for add objects
-    public override void AddObjects(Item item, ref int countToAdd, Transform originT, ref int newRacksCount){
+    public override void AddObjects(Item item, ref int countToAdd, Transform originT, ref int newRacksCount, bool physical)
+    {
         //Debug.Log("Workbench: AddObjects()");
+
+        camp.faction.ownedItems.RemoveItem(item, countToAdd);
         
         // do the regular thing
-        base.AddObjects(item, ref countToAdd, originT, ref newRacksCount);
+        base.AddObjects(item, ref countToAdd, originT, ref newRacksCount, true);
+
 
         itemsOnTable.Add(item);
 
         // give the player another instance of the same item from their camp, if available
         EntityItems leaderItems = camp.faction.leaderHandle.entityItems;
         camp.faction.RemoveItemOwned(item, 1, null, true, leaderItems);
+
+
+
 
         UpdateRecipes();
 

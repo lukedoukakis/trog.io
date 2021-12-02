@@ -134,30 +134,31 @@ public class ObjectRack : CampComponent
 
 
 
-    public virtual void AddObjects(Item item, ref int countToAdd, Transform originT, ref int newRacksCount){
+    public virtual void AddObjects(Item item, ref int countToAdd, Transform originT, ref int newRacksCount, bool physical)
+    {
 
         int c = countToAdd;
         for(int countAdded = 0; countAdded < c; ++countAdded){ 
-            if(!IsFull()){
+            if(!IsFull())
+            {
 
                 // if room in the rack, add the item to it
-                if(item.worldObjectPrefab == null)
-                {
-                     Debug.Log("Instantiating item, but worldObject null: " + item.nme);
-                }
                 GameObject newWorldObject = Utility.InstantiateSameName(item.worldObjectPrefab);
                 newWorldObject.GetComponent<ObjectReference>().SetObjectReference(this);
-                SetObjectOrientation(newWorldObject, originT, (OBJECT_PLACEMENT_DELAY_TIMESTEP * countAdded) + (Camp.CAMP_COMPONENT_PLACING_TIME_GAP * newRacksCount));
-                Utility.SetGlobalScale(newWorldObject.transform, Vector3.one);
-                objectsOnRack.Add(newWorldObject);
-                itemsOnRack.Add(item);
+                SetObjectOrientation(newWorldObject, originT, (OBJECT_PLACEMENT_DELAY_TIMESTEP * countAdded) + (Camp.CAMP_COMPONENT_PLACING_TIME_GAP * newRacksCount), !physical);
+                if(physical)
+                {
+                    Utility.SetGlobalScale(newWorldObject.transform, Vector3.one);
+                    objectsOnRack.Add(newWorldObject);
+                    itemsOnRack.Add(item);
+                }
                 --countToAdd;
             }
             else{
 
                 // else, call to add remaining count to other racks if onDemandPlacement is true
                 if(onDemandPlacement){
-                    camp.AddObjectsAnyRack(item, ref countToAdd, originT, ref newRacksCount);
+                    camp.AddObjectsAnyRack(item, ref countToAdd, originT, ref newRacksCount, physical);
                     break;
                 }
                 else{
@@ -201,9 +202,17 @@ public class ObjectRack : CampComponent
                         Utility.DestroyInSeconds(tempT.gameObject, delay + 5f);
                         camp.faction.AddItemOwned(item, 1, (ObjectRack)destination, tempT, delay);
                         
-                        objectsOnRack.Remove(foundObject);
-                        itemsOnRack.Remove(item);
-                        GameObject.Destroy(foundObject);
+                        if(camp.faction.GetOverflowItemCount(item) == 0)
+                        {
+                            objectsOnRack.Remove(foundObject);
+                            itemsOnRack.Remove(item);
+                            GameObject.Destroy(foundObject);
+                        }
+                        else
+                        {
+                            camp.faction.DecrementOverflowItem(item);
+                        }
+                            
 
                     }
 
@@ -227,9 +236,16 @@ public class ObjectRack : CampComponent
                 // if not moving to another location, remove and destroy the object
                 else
                 {
-                    objectsOnRack.Remove(foundObject);
-                    itemsOnRack.Remove(item);
-                    GameObject.Destroy(foundObject);
+                    if (camp.faction.GetOverflowItemCount(item) == 0 || this is Workbench)
+                    {
+                        objectsOnRack.Remove(foundObject);
+                        itemsOnRack.Remove(item);
+                        GameObject.Destroy(foundObject);
+                    }
+                    else
+                    {
+                        camp.faction.DecrementOverflowItem(item);
+                    }
                 }
 
                 --countToRemove;
@@ -261,7 +277,7 @@ public class ObjectRack : CampComponent
 
 
     // set a given object's orientation to fit properly in the rack
-    public void SetObjectOrientation(GameObject o, Transform originT, float delay)
+    public void SetObjectOrientation(GameObject o, Transform originT, float delay, bool removeAfterMovingToTarget)
     {
 
         StartCoroutine(_SetObjectOrientation(o));
@@ -304,6 +320,7 @@ public class ObjectRack : CampComponent
                     _o.transform.position = orientation.position;
                     _o.transform.rotation = orientation.rotation;
 
+
                     // set physics accordingly to anchor the object in place
                     if (allowObjectPhysics)
                     {
@@ -319,6 +336,11 @@ public class ObjectRack : CampComponent
                     }
 
                     Utility.ToggleObjectPhysics(_o, allowObjectPhysics, allowItemHoverTriggers, allowObjectPhysics, allowObjectPhysics);
+            
+                    if(removeAfterMovingToTarget)
+                    {
+                        Destroy(_o);
+                    }
 
                     break;
 

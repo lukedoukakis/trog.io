@@ -36,11 +36,11 @@ public class ItemCollection
         }
     }
 
-    public void RemoveItem(Item i, int count)
+    public void RemoveItem(Item item, int count)
     {
-        if(items.ContainsKey(i)){
-            items[i] -= count;
-            items[i] = Mathf.Max(items[i], 0);
+        if(items.ContainsKey(item)){
+            items[item] = Mathf.Max(items[item] - count, 0);
+            //Debug.Log("RemoveItem(): Removing " + count + " items");
         }
         else
         {
@@ -48,10 +48,10 @@ public class ItemCollection
         }
     }
 
-    public int GetItemCount(Item i)
+    public int GetItemCount(Item item)
     {
-        if(items.ContainsKey(i)){
-            return items[i];
+        if(items.ContainsKey(item)){
+            return items[item];
         }
         else{
             return 0;

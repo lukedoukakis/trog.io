@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 
-public enum FactionStartingItemsTier{ Nothing, Weak, Medium, Strong }
+public enum FactionStartingItemsTier{ PlayerTest, Nothing, Weak, Medium, Strong }
 
 public class Faction : MonoBehaviour
 {
@@ -19,6 +19,8 @@ public class Faction : MonoBehaviour
     public bool leaderInCamp;
 
     public Material clothingMaterial;
+
+    public Dictionary<Item, int> ItemPhysicalOverflowDict;
 
     public bool itemLogisticsHappening;
 
@@ -109,23 +111,69 @@ public class Faction : MonoBehaviour
 
         //Debug.Log("Adding item: " + item.nme);
 
+        int countOwned = GetItemCount(item);
+
+
+        int campTotalCapacity = Camp.GetItemPhysicalCapacity(item);
+        int maximumPhysicalToAdd = Mathf.Max(0, campTotalCapacity - countOwned);
+        int countToAddPhysically = Mathf.Min(count, maximumPhysicalToAdd);
+        int countToAddOverflow = count - countToAddPhysically;
+        // Debug.Log("count owned: " + countOwned);
+        // Debug.Log("camp total capacity: " + campTotalCapacity);
+        // Debug.Log("physical add: " + countToAddPhysically);
+        // Debug.Log("overflow add: " + countToAddOverflow);
+
         ownedItems.AddItem(item, count);
+
+        // if faction item count is less than camp maximum physical capacity, add the physical object to camp
 
         if (camp != null)
         {
             if (rack == null)
             {
-                ItemCollection newItems = new ItemCollection();
-                newItems.AddItem(item, count);
-                camp.AddItemsToCamp(newItems, originT);
+
+                ItemCollection newItems;
+                if(countToAddPhysically > 0)
+                {
+                    newItems = new ItemCollection();
+                    newItems.AddItem(item, countToAddPhysically);
+                    camp.AddItemsToCamp(newItems, originT, true);
+                }
+
+                if(countToAddOverflow > 0)
+                {
+                    newItems = new ItemCollection();
+                    newItems.AddItem(item, countToAddOverflow);
+                    camp.AddItemsToCamp(newItems, originT, false);
+                }
+                
             }
             else
             {
-                int zeroRacksRef = 0;
-                rack.AddObjects(item, ref count, originT, ref zeroRacksRef);
+
+                if(countToAddPhysically > 0)
+                {  
+                    int zeroRacksRef_0 = 0;
+                    rack.AddObjects(item, ref countToAddPhysically, originT, ref zeroRacksRef_0, true);
+                }
+
+                if(countToAddOverflow > 0)
+                {
+                    int zeroRacksRef_1 = 0;
+                    rack.AddObjects(item, ref countToAddOverflow, originT, ref zeroRacksRef_1, false);
+                }
+                
             }
         }
 
+        for(int i = 0; i < countToAddOverflow; ++i)
+        {
+            IncrementOverflowItem(item);
+        }
+
+    
+
+    
         itemLogisticsHappening = false;
     }
     
@@ -133,16 +181,14 @@ public class Faction : MonoBehaviour
     public void RemoveItemOwned(Item item, int count, ObjectRack rackToRemoveFrom, bool moveToAnotherPlace, object destination)
     {
 
-        bool r = true;
         if(destination != null)
         {
-            if(destination is EntityItems)
+            if(destination is EntityItems || destination is Workbench)
             {
-                r = false;
+                ownedItems.RemoveItem(item, count);
             }
         }
 
-        if(r){ ownedItems.RemoveItem(item, count); }
 
         //ownedItems.RemoveItem(item, count);
 
@@ -216,6 +262,10 @@ public class Faction : MonoBehaviour
         int itemCount;
         switch (tier)
         {
+            case FactionStartingItemsTier.PlayerTest :
+                memberCount = 0;
+                itemCount = 6;
+                break;
             case FactionStartingItemsTier.Nothing :
                 memberCount = 2;
                 itemCount = 0;
@@ -250,11 +300,46 @@ public class Faction : MonoBehaviour
         // spawn items
         //AddItemOwned(Item.ClothingTest, itemCount, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.Meat, itemCount, null, leaderHandle.transform, 0f);
-        AddItemOwned(Item.Spear, itemCount / 2, null, leaderHandle.transform, 0f);
-        AddItemOwned(Item.Axe, itemCount / 2, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.Spear, itemCount, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.Axe, itemCount, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.WoodPiece, itemCount, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.BonePiece, itemCount, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.StoneSmall, itemCount, null, leaderHandle.transform, 0f);
+    }
+
+    public void IncrementOverflowItem(Item item)
+    {
+        try
+        {
+            ItemPhysicalOverflowDict[item] += 1;
+        }
+        catch(KeyNotFoundException)
+        {
+            ItemPhysicalOverflowDict.Add(item, 1);
+        }
+    }
+    public void DecrementOverflowItem(Item item)
+    {
+        try
+        {
+            ItemPhysicalOverflowDict[item] -= 1;
+        }
+        catch(KeyNotFoundException)
+        {
+            ItemPhysicalOverflowDict[item] = 0;
+        }
+    }
+
+    public int GetOverflowItemCount(Item item)
+    {
+        try
+        {
+            return ItemPhysicalOverflowDict[item];
+        }
+        catch(KeyNotFoundException)
+        {
+            return 0;
+        }
     }
 
 
@@ -300,6 +385,7 @@ public class Faction : MonoBehaviour
         f.partyHandles = new List<EntityHandle>();
         f.ownedItems = new ItemCollection();
         f.targetedObjects = new List<GameObject>();
+        f.ItemPhysicalOverflowDict = new Dictionary<Item, int>();
         f.clothingMaterial = MaterialController.instance.GetRandomClothingMaterial();
         return f;
     }

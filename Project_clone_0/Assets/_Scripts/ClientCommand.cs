@@ -118,10 +118,10 @@ public class ClientCommand : NetworkBehaviour
 
         faction.AddStartingResources(tier);
 
-        if(ReferenceEquals(founderHandle, GameManager.instance.localPlayerHandle))
-        {
-            Testing.instance.OnFactionCreation();
-        }
+        // if(ReferenceEquals(founderHandle, GameManager.instance.localPlayerHandle))
+        // {
+        //     Testing.instance.OnFactionCreation();
+        // }
     }
 
 

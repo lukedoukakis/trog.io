@@ -48,8 +48,6 @@ public class Camp : MonoBehaviour
     public List<Transform> tribeMemberStandPositions;
 
 
-
-
     // client method to place a Camp
     public static void TryPlaceCamp(Faction faction, Transform originT)
     {
@@ -110,7 +108,7 @@ public class Camp : MonoBehaviour
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             PlaceWorkbench();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
-            AddItemsToCamp(faction.ownedItems, originT);
+            AddItemsToCamp(faction.ownedItems, originT, true);
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             //UpdateTentCount();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
@@ -398,7 +396,7 @@ public class Camp : MonoBehaviour
     }
 
 
-    public void AddItemsToCamp(ItemCollection itemsToAdd, Transform originT){
+    public void AddItemsToCamp(ItemCollection itemsToAdd, Transform originT, bool physical){
         Item item;
         int countToAdd;
         int zeroRacksRef = 0;
@@ -406,7 +404,7 @@ public class Camp : MonoBehaviour
         {
             item = kvp.Key;
             countToAdd = kvp.Value;
-            AddObjectsAnyRack(item, ref countToAdd, originT, ref zeroRacksRef);
+            AddObjectsAnyRack(item, ref countToAdd, originT, ref zeroRacksRef, physical);
         }
 
     }
@@ -427,11 +425,11 @@ public class Camp : MonoBehaviour
     }
 
 
-    public void AddObjectsAnyRack(Item item, ref int count, Transform originT, ref int newRacksCount){
+    public void AddObjectsAnyRack(Item item, ref int count, Transform originT, ref int newRacksCount, bool physical){
         List<ObjectRack> rackList = GetRackListForItemType(item.type);
         foreach(ObjectRack rack in rackList){
             if(!rack.IsFull()){
-                rack.AddObjects(item, ref count, originT, ref newRacksCount);
+                rack.AddObjects(item, ref count, originT, ref newRacksCount, physical);
                 break;
             }
         }
@@ -440,7 +438,7 @@ public class Camp : MonoBehaviour
         if(count > 0){
             ++newRacksCount;
             ObjectRack newRack = PlaceObjectRack(item.type, CAMP_COMPONENT_PLACING_TIME_GAP * newRacksCount);
-            newRack.AddObjects(item, ref count, originT, ref newRacksCount);
+            newRack.AddObjects(item, ref count, originT, ref newRacksCount, physical);
         }
     }   
 
@@ -576,6 +574,31 @@ public class Camp : MonoBehaviour
         Debug.Log("Dismantle() end");
     }
 
+
+    public static readonly Dictionary<Item, int> ItemPhysicalCapacityDict = new Dictionary<Item, int>()
+    {
+        { Item.WoodPiece, 30},
+        { Item.BonePiece, 10},
+        { Item.StoneSmall, 10},
+        { Item.Meat, 6},
+        // { Item.Axe, 6},
+        // { Item.Spear, 6}
+    };
+
+    public static int GetItemPhysicalCapacity(Item item)
+    {
+        try
+        {
+            return ItemPhysicalCapacityDict[item];
+        }
+        catch(KeyNotFoundException)
+        {
+            return int.MaxValue;
+        }
+    }
+
+    
+
     public static bool EntityIsInsideCamp(EntityHandle handle){
 
         Camp camp = handle.entityInfo.faction.camp;
@@ -587,13 +610,8 @@ public class Camp : MonoBehaviour
         }
     }
 
-    public static Dictionary<Item, int> ItemCapacityDict = new Dictionary<Item, int>()
-    {
-        { Item.WoodPiece, 30},
-        { Item.BonePiece, 20},
-        { Item.StoneSmall, 20},
-        { Item.Meat, 20},
-    };
+    
+
 
 }
 

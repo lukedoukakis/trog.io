@@ -196,13 +196,14 @@ public class EntityItems : EntityComponent
 
     // holding
 
-    public void PickUpHolding(Item item, GameObject worldObject, object attachedObject){
+    public void PickUpHolding(Item item, GameObject worldObject, object attachedObject)
+    {
 
         GameObject o;
 
         if (attachedObject is ObjectRack)
         {
-            // get rack reference from attached object and add the item to faction items with specified rack
+            // get rack reference from attached object and remove from that rack
             ObjectRack rack = (ObjectRack)attachedObject;
             rack.camp.faction.RemoveItemOwned(item, 1, rack, false, null);
 
@@ -245,7 +246,9 @@ public class EntityItems : EntityComponent
         holding_object.GetComponent<ObjectReference>().SetObjectReference(this);
     }
 
-    public void DropHolding(object targetAttachedObject){
+    public void DropHolding(object targetAttachedObject)
+    {
+        
         if(holding_item == null) { return; }
 
         //Debug.Log("Dropping");
