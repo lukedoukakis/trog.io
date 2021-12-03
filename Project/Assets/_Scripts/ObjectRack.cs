@@ -169,6 +169,7 @@ public class ObjectRack : CampComponent
 
     }
 
+
     public virtual void RemoveObjects(Item item, ref int countToRemove, bool moveToAnotherPlace, object destination)
     {
 
@@ -176,7 +177,7 @@ public class ObjectRack : CampComponent
         //Debug.Log("Removing " + countToRemove + " " + item.nme);
 
         // count the number of occurences of the item, and remove that many from the objects
-        GameObject[] matches = objectsOnRack.Where(o => o.name == item.nme).ToArray();
+        GameObject[] matches = GetObjectsOnRackThatAreItem(item);
         int occurences = matches.Length;
 
         //Debug.Log("occurences: " + occurences);
@@ -261,6 +262,15 @@ public class ObjectRack : CampComponent
         }
     }
 
+    public GameObject[] GetObjectsOnRackThatAreItem(Item item)
+    {
+        return objectsOnRack.Where(o => o.name == item.nme).ToArray();
+    }
+
+    public int GetObjectCountsOnRackThatAreItemCount(Item item)
+    {
+        return GetObjectsOnRackThatAreItem(item).Length;
+    }
 
     public void EmptyObjects(object destination)
     {

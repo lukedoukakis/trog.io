@@ -112,8 +112,6 @@ public class Faction : MonoBehaviour
         //Debug.Log("Adding item: " + item.nme);
 
         int countOwned = GetItemCount(item);
-
-
         int campTotalCapacity = Camp.GetItemPhysicalCapacity(item);
         int maximumPhysicalToAdd = Mathf.Max(0, campTotalCapacity - countOwned);
         int countToAddPhysically = Mathf.Min(count, maximumPhysicalToAdd);
@@ -122,11 +120,11 @@ public class Faction : MonoBehaviour
         // Debug.Log("camp total capacity: " + campTotalCapacity);
         // Debug.Log("physical add: " + countToAddPhysically);
         // Debug.Log("overflow add: " + countToAddOverflow);
+        // Debug.Log("");
 
         ownedItems.AddItem(item, count);
 
         // if faction item count is less than camp maximum physical capacity, add the physical object to camp
-
         if (camp != null)
         {
             if (rack == null)
@@ -183,10 +181,14 @@ public class Faction : MonoBehaviour
 
         if(destination != null)
         {
-            if(destination is EntityItems || destination is Workbench)
+            if(destination is Workbench)
             {
                 ownedItems.RemoveItem(item, count);
             }
+        }
+        else
+        {
+            ownedItems.RemoveItem(item, count);
         }
 
 
@@ -212,8 +214,11 @@ public class Faction : MonoBehaviour
     }
 
 
-    public int GetItemCount(Item item){
-        return ownedItems.GetItemCount(item);
+    public int GetItemCount(Item item)
+    {
+        int rawCount = ownedItems.GetItemCount(item);
+        int workbenchCount = camp == null ? 0 : camp.workbench.GetObjectCountsOnRackThatAreItemCount(item);
+        return rawCount - workbenchCount;
 
     }
 

@@ -581,8 +581,8 @@ public class Camp : MonoBehaviour
         { Item.BonePiece, 10},
         { Item.StoneSmall, 10},
         { Item.Meat, 6},
-        // { Item.Axe, 6},
-        // { Item.Spear, 6}
+        { Item.Axe, 6},
+        { Item.Spear, 6}
     };
 
     public static int GetItemPhysicalCapacity(Item item)

@@ -246,6 +246,7 @@ public class EntityUserInput : EntityComponent
             }
             else if (t.StartsWith("ObjectRack"))
             {
+                ObjectRack rack = (ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference();
                 if (t == "ObjectRack_Food")
                 {
                     //entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
@@ -260,18 +261,33 @@ public class EntityUserInput : EntityComponent
                 }
                 else if (t == "ObjectRack_Wood")
                 {
-                    entityInfo.faction.RemoveItemOwned(Item.WoodPiece, 1, (ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference(), true, entityItems);
-                    //entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
+                    // GameObject[] rackObjectsThatAreItem = rack.GetObjectsOnRackThatAreItem(Item.WoodPiece);
+                    // if(rackObjectsThatAreItem.Length > 0)
+                    // {
+                    //     GameObject foundObject = rackObjectsThatAreItem[rackObjectsThatAreItem.Length - 1];
+                    //     entityItems.OnObjectTake(foundObject, rack);
+                    // }        
+                    entityInfo.faction.RemoveItemOwned(Item.WoodPiece, 1, rack, true, entityItems);
                 }
                 else if (t == "ObjectRack_Bone")
                 {
-                    entityInfo.faction.RemoveItemOwned(Item.BonePiece, 1, (ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference(), true, entityItems);
-                    //entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
+                    // GameObject[] rackObjectsThatAreItem = rack.GetObjectsOnRackThatAreItem(Item.BonePiece);
+                    // if(rackObjectsThatAreItem.Length > 0)
+                    // {
+                    //     GameObject foundObject = rackObjectsThatAreItem[rackObjectsThatAreItem.Length - 1];
+                    //     entityItems.OnObjectTake(foundObject, rack);
+                    // }    
+                    entityInfo.faction.RemoveItemOwned(Item.BonePiece, 1, rack, true, entityItems);
                 }
                 else if (t == "ObjectRack_Stone")
                 {
-                    entityInfo.faction.RemoveItemOwned(Item.StoneSmall, 1, (ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference(), true, entityItems);
-                    //entityItems.DropHolding((ObjectRack)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
+                    // GameObject[] rackObjectsThatAreItem = rack.GetObjectsOnRackThatAreItem(Item.StoneSmall);
+                    // if(rackObjectsThatAreItem.Length > 0)
+                    // {
+                    //     GameObject foundObject = rackObjectsThatAreItem[rackObjectsThatAreItem.Length - 1];
+                    //     entityItems.OnObjectTake(foundObject, rack);
+                    // }    
+                    entityInfo.faction.RemoveItemOwned(Item.StoneSmall, 1, rack, true, entityItems);
                 }
                 else{
 

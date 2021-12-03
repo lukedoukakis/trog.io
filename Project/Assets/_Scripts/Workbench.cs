@@ -36,7 +36,7 @@ public class Workbench : ObjectRack
     {
         //Debug.Log("Workbench: AddObjects()");
 
-        camp.faction.ownedItems.RemoveItem(item, countToAdd);
+        //camp.faction.ownedItems.RemoveItem(item, countToAdd);
         
         // do the regular thing
         base.AddObjects(item, ref countToAdd, originT, ref newRacksCount, true);
