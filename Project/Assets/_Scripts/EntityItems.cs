@@ -292,7 +292,7 @@ public class EntityItems : EntityComponent
             {
                 if(holding_object == null)
                 {
-                    Debug.Log("Giving player item from camp");
+                    //Debug.Log("Giving player item from camp");
                     if(entityInfo.faction.GetItemCount(itemToDrop) > 0)
                     {
                         entityInfo.faction.RemoveItemOwned(itemToDrop, 1, null, true, this);

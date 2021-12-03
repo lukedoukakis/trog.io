@@ -10,6 +10,10 @@ public enum ItemType
     Any, Food, Weapon, Clothing, Wood, Bone, Stone, Feature, Misc
 }
 
+public enum ItemDamageType{
+    None, Blunt, Pierce, Slash
+};
+
 public class Item : ScriptableObject
 {
 
@@ -17,10 +21,6 @@ public class Item : ScriptableObject
     public enum ItemHoldStyle{
         Hug, UnderArm, Spear, Axe, OverShoulder, Torch
     }
-
-    public enum ItemDamageType{
-        Blunt, Pierce, Slash
-    };
 
 
     static int idCounter = 0;
@@ -92,7 +92,7 @@ public class Item : ScriptableObject
     public Stats baseStats;
     public Stats wielderStatsModifier;
     public Enum holdStyle;
-    public Enum damageType;
+    public ItemDamageType damageType;
     public ItemCollection drops;
     public CraftingRecipe craftingRecipe;
     public GameObject hitParticlesPrefab;
@@ -100,7 +100,7 @@ public class Item : ScriptableObject
     public Image image;
 
 
-    public static Item InitiailizeItem(string _nme, Enum _type, bool _isRackable, Stats _stats, Stats _wielderStatsModifier, Enum _holdStyle, Enum _damageType, ItemCollection _drops, CraftingRecipe _craftingRecipe, GameObject _hitParticlesPrefab, GameObject _worldObjectPrefab, Image _image){
+    public static Item InitiailizeItem(string _nme, Enum _type, bool _isRackable, Stats _stats, Stats _wielderStatsModifier, Enum _holdStyle, ItemDamageType _damageType, ItemCollection _drops, CraftingRecipe _craftingRecipe, GameObject _hitParticlesPrefab, GameObject _worldObjectPrefab, Image _image){
         Item item = ScriptableObject.CreateInstance<Item>();
         item.id = SetItemID(item);
         item.nme = _nme;

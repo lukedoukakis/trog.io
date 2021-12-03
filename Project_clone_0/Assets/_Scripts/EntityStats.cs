@@ -143,13 +143,13 @@ public class EntityStats : EntityComponent
             Enum armorStatType;
             switch (attackerWeapon.damageType)
             {
-                case Item.ItemDamageType.Blunt:
+                case ItemDamageType.Blunt:
                     armorStatType = Stats.StatType.ArmorBlunt;
                     break;
-                case Item.ItemDamageType.Slash:
+                case ItemDamageType.Slash:
                     armorStatType = Stats.StatType.ArmorSlash;
                     break;
-                case Item.ItemDamageType.Pierce:
+                case ItemDamageType.Pierce:
                     armorStatType = Stats.StatType.ArmorPierce;
                     break;
                 default:

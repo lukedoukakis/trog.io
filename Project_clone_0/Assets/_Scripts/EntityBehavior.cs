@@ -406,6 +406,8 @@ public class EntityBehavior : EntityComponent
 
     public void Chase(ActionParameters a)
     {
+
+        EquipOptimalWeaponForTarget(a);
     
         //Debug.Log("CHASE");
         AssertWeaponChargedStatus(true);
@@ -472,6 +474,67 @@ public class EntityBehavior : EntityComponent
             NextAction();
 
         }
+    }
+
+    public void EquipOptimalWeaponForTarget(ActionParameters ap)
+    {
+
+        if(entityItems == null || ap.targetedWorldObject == null){ return; }
+
+        // find the stats of the action parameter's target gameobject
+        Stats targetStats;
+        EntityStats targetEntityStats = ap.targetedWorldObject.GetComponent<EntityStats>();
+        if(targetEntityStats != null)
+        {
+            targetStats = targetEntityStats.combinedStats; 
+        }
+        else
+        {
+            ItemHitDetection ihd = GetComponent<ItemHitDetection>();
+            if(ihd != null)
+            {
+                targetStats = ihd.item.baseStats;
+            }
+            else
+            {
+                Item item = Item.GetItemByName(ap.targetedWorldObject.name);
+                if (item != null)
+                {
+                    targetStats = item.baseStats;
+                }
+                else
+                {
+                    Debug.Log("Couldn't find stats for targeted object");
+                    return;
+                }
+            }   
+        }
+
+        Dictionary<ItemDamageType, float> armorFromDamageTypeDict = new Dictionary<ItemDamageType, float>()
+        {
+            { ItemDamageType.Blunt, targetStats.armorBlunt },
+            { ItemDamageType.Slash, targetStats.armorSlash },
+            { ItemDamageType.Pierce, targetStats.armorPierce }
+        };
+        List<ItemDamageType> priorityDamageTypeList = new List<ItemDamageType>(armorFromDamageTypeDict.Keys);
+        priorityDamageTypeList.OrderBy(idt => armorFromDamageTypeDict[idt]);
+
+        ItemDamageType damageType_weaponEquipped = entityItems.weaponEquipped_item == null ? ItemDamageType.None : entityItems.weaponEquipped_item.damageType;
+        ItemDamageType damageType_weaponUnequipped = entityItems.weaponUnequipped_item == null ? ItemDamageType.None : entityItems.weaponUnequipped_item.damageType;
+        foreach(ItemDamageType idt in priorityDamageTypeList)
+        {
+            if(damageType_weaponEquipped == idt)
+            {
+                return;
+            }
+            else if(damageType_weaponUnequipped == idt)
+            {
+                entityItems.ToggleWeaponEquipped();
+                return;
+            }
+        }
+
+
     }
 
     void AttackRecover(ActionParameters ap){

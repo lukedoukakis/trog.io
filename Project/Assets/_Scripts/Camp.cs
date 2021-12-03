@@ -444,7 +444,12 @@ public class Camp : MonoBehaviour
 
     public void RemoveObjectsAnyRack(Item item, ref int count, bool moveToAnotherRack, object destination)
     {
+        // get rack list
         List<ObjectRack> rackList = GetRackListForItemType(item.type).Where(rack => !rack.IsEmpty()).ToList();
+
+        // filter rack list to ones that contain at least one of the target item
+        rackList = rackList.Where(rack => rack.GetObjectCountsOnRackThatAreItemCount(item) > 0).ToList();
+
         for(int i = rackList.Count - 1; i >= 0; --i){
             if(count > 0){
                 rackList[i].RemoveObjects(item, ref count, moveToAnotherRack, destination);

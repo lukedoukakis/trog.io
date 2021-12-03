@@ -1277,6 +1277,7 @@ public class EntityPhysics : EntityComponent
             GameObject targetedWorldObject = entityBehavior.activeAction.targetedWorldObject;
             if(targetedWorldObject != null)
             {
+                //entityBehavior.EquipOptimalWeaponForTarget(entityBehavior.activeAction);
                 entityOrientation.SetBodyRotationMode(entityBehavior.activeAction.bodyRotationMode, entityBehavior.activeAction.targetedWorldObject.transform);
             }
             else
