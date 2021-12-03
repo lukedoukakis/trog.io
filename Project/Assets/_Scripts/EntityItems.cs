@@ -597,7 +597,7 @@ public class EntityItems : EntityComponent
     }
 
 
-    public void ExchangeItemsWithEntity(EntityItems otherEntityItems)
+    public void ExchangeWeaponsWithEntity(EntityItems otherEntityItems)
     {
 
         //Debug.Log("EXCHANGING ITEMS");
@@ -617,40 +617,37 @@ public class EntityItems : EntityComponent
         }
         else
         {
-            if(hasHolding_thisEntity)
+            if (hasWeaponEquipped_otherEntity)
             {
-                DropHolding(otherEntityItems);
+                otherEntityItems.DropEquippedWeapon(this);
+                exchangeOccurred = true;
+            }
+            else if (hasWeaponUnequipped_otherEntity)
+            {
+                otherEntityItems.ToggleWeaponEquipped();
+                otherEntityItems.DropEquippedWeapon(this);
+                exchangeOccurred = true;
+            }
+            else if (hasHolding_otherEntity)
+            {
+                otherEntityItems.DropHolding(this);
                 exchangeOccurred = true;
             }
             else
             {
-                if(hasWeaponEquipped_otherEntity)
-                {
-                    otherEntityItems.DropEquippedWeapon(this);
-                    exchangeOccurred = true;
-                }
-                else if(hasWeaponUnequipped_otherEntity)
-                {
-                    otherEntityItems.ToggleWeaponEquipped();
-                    otherEntityItems.DropEquippedWeapon(this);
-                    exchangeOccurred = true;
-                }
-                else if (hasHolding_otherEntity)
-                {
-                    otherEntityItems.DropHolding(this);
-                    exchangeOccurred = true;
-                }
-                else
-                {
-                    // if neither entity has anything, do nothing
-                }
-
+                // if neither entity has anything, do nothing
             }
+
+            
         }
 
         if(exchangeOccurred)
         {
             OnItemsChange();
+            if(otherEntityItems.weaponEquipped_item == null && otherEntityItems.weaponUnequipped_item != null)
+            {
+                otherEntityItems.ToggleWeaponEquipped();
+            }
             otherEntityItems.OnItemsChange();
         }
         

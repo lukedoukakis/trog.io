@@ -238,7 +238,7 @@ public class EntityUserInput : EntityComponent
                 EntityHandle hoveredEntityHandle = hoveredInteractableObject.GetComponentInParent<EntityHandle>();
                 if(hoveredEntityHandle.entityInfo.faction.Equals(entityInfo.faction))
                 {
-                    entityItems.ExchangeItemsWithEntity(hoveredEntityHandle.entityItems);
+                    entityItems.ExchangeWeaponsWithEntity(hoveredEntityHandle.entityItems);
                 }
             }
             else if(t == "Bonfire"){
@@ -364,7 +364,15 @@ public class EntityUserInput : EntityComponent
                         {
                             if(hasWeaponEquipped_hoveredEntity)
                             {
-                                txt += "Trade weapons";
+                                if(hasWeaponUnequipped_hoveredEntity)
+                                {
+                                    txt += "Trade weapons";
+                                }
+                                else
+                                {
+                                    txt += "Give weapon";
+                                }
+                                
                             }
                             else
                             {
@@ -381,6 +389,10 @@ public class EntityUserInput : EntityComponent
                         else
                         {
                             if(hasWeaponEquipped_hoveredEntity)
+                            {
+                                txt += "Take Weapon";
+                            }
+                            else if(hasWeaponUnequipped_hoveredEntity)
                             {
                                 txt += "Take Weapon";
                             }
