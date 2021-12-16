@@ -320,7 +320,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // lock temperature
                 //temperatureValue = .99f;
-                temperatureValue = .25f;
+                //temperatureValue = .25f;
 
 
 
@@ -372,13 +372,13 @@ public class ChunkGenerator : MonoBehaviour
                 //mountainValue = Mathf.InverseLerp(.3f, .7f, mountainValue);
                 //mountainValue = .99f;
                 //mountainValue *= .75f;
-                mountainValue = Mathf.Pow(mountainValue, 3f);
+                mountainValue = Mathf.Pow(mountainValue, 3.5f);
                 mountainValue -= .1f;
                 mountainValue = Mathf.Clamp01(mountainValue);
                 //mountainValue = Mathf.InverseLerp(0f, Mathf.Pow(.75f, 2f), mountainValue);
                 mountainValue *= Mathf.InverseLerp(minE, maxE+1f, elevationValue);
                 //mountainValue *= 1f - CalculateDesertness(temperatureValue, humidityValue);
-                mountainValue *= 1f;
+                mountainValue *= 2f;
                 //mountainValue = 0f;
                 //Debug.Log(mountainValue);
 
@@ -391,44 +391,43 @@ public class ChunkGenerator : MonoBehaviour
 
                 // FreshWaterMap [0, 1]
 
+
+
+                float riverScale = 900f;
+
+                // main river path
+                freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
+
+                // give rivers character
+                float character = .25f;
+                rough = Mathf.PerlinNoise((x + xOffset + .01f) / 100f, (z + zOffset + .01f) / 100f);
+                freshWaterValue += Mathf.Max(0f, rough) * character;
+
+                // give rivers roughness
+                // if (freshWaterValue > .25f)
+                // {
+                //     rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
+                //     freshWaterValue += rough * .5f;
+                // }
+
+
+                // ridgify
+                freshWaterValue = Mathf.Abs(freshWaterValue);
+                freshWaterValue *= -1f;
+                freshWaterValue += 1f;
+
+                freshWaterValue = Mathf.Clamp01(freshWaterValue);
+                //Debug.Log(freshWaterValue);
+                freshWaterValue = Mathf.Pow(freshWaterValue, Mathf.Lerp(5f, 10f, CalculateDesertness(temperatureValue, humidityValue)));
+
+                // reduce fresh water value proportionally to mound height
+                //freshWaterValue *= 1f - (Mathf.InverseLerp(.25f, 1f, (bigMound / bigMoundCap)));
+
+
+                //freshWaterValue = 0f;
+
+
                 
-
-                if (true)
-                {
-                    float riverScale = 900f;
-
-                    // main river path
-                    freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
-
-                    // give rivers character
-                    float character = .25f;
-                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 100f, (z + zOffset + .01f) / 100f);
-                    freshWaterValue += Mathf.Max(0f, rough) * character;
-
-                    // give rivers roughness
-                    // if (freshWaterValue > .25f)
-                    // {
-                    //     rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
-                    //     freshWaterValue += rough * .5f;
-                    // }
-                    
-
-                    // ridgify
-                    freshWaterValue = Mathf.Abs(freshWaterValue);
-                    freshWaterValue *= -1f;
-                    freshWaterValue += 1f;
-
-                    freshWaterValue = Mathf.Clamp01(freshWaterValue);
-                    //Debug.Log(freshWaterValue);
-                    freshWaterValue = Mathf.Pow(freshWaterValue, Mathf.Lerp(1.5f, 10f, CalculateDesertness(temperatureValue, humidityValue)));
-
-                    // reduce fresh water value proportionally to mound height
-                    //freshWaterValue *= 1f - (Mathf.InverseLerp(.25f, 1f, (bigMound / bigMoundCap)));
-
-
-                    freshWaterValue = 0f;
-
-                }
 
 
 
