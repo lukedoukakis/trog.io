@@ -120,8 +120,9 @@ public class AttackCollisionDetector : MonoBehaviour
             //Debug.Log("rotating projectile...");
             GameObject worldObject = projectile.worldObject;
             Vector3 velocity = worldObject.GetComponent<Rigidbody>().velocity;
-            worldObject.transform.LookAt(worldObject.transform.position + (velocity*10f));
-            worldObject.transform.Rotate(worldObject.transform.right * 90f);
+            float velY = velocity.y;
+            Vector3 targetLookAt = worldObject.transform.position + (velocity * 10f) + Vector3.down * Mathf.Lerp(5000f, 20000f, Mathf.InverseLerp(-2f, 2f, velY) * 1f);
+            worldObject.transform.LookAt(targetLookAt);
         }
     }
 

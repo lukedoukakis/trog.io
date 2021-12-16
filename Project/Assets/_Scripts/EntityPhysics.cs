@@ -30,7 +30,7 @@ public class EntityPhysics : EntityComponent
     float distanceFromGround;
 
     public static float BASE_FORCE_JUMP = 280f;
-    public static float BASE_FORCE_THROW = 400f;
+    public static float BASE_FORCE_THROW = 250f;
     public static float BASE_ACCELERATION = 40f;
     public static float BASE_MAX_SPEED = 10f;
     public static float BASE_COOLDOWN_JUMP = .15f;
@@ -1102,12 +1102,17 @@ public class EntityPhysics : EntityComponent
 
             Vector3 throwDir = entityOrientation.body.forward + (Vector3.up * .25f);
             Rigidbody projectileRb = projectile.worldObject.GetComponent<Rigidbody>();
-            projectileRb.centerOfMass = Vector3.up * .622f;
-            projectileRb.angularDrag = 5f;
+            //projectileRb.centerOfMass = Vector3.up * .622f;
+            //projectileRb.angularDrag = 5f;
             float throwTime = .5f;
             float addforceTime = .2f;
             float force = BASE_FORCE_THROW * Mathf.Lerp(1f, 1.5f, Mathf.InverseLerp(0f, BASE_MAX_SPEED, velHoriz_this.magnitude));
             projectileRb.velocity = rb.velocity;
+
+            entityItems.weaponEquipped_item = null;
+            entityItems.weaponEquipped_object = null;
+            entityItems.SetUpdateWeaponOrientation(true);
+            entityItems.OnItemsChange();
 
             for (int i = 0; i < throwTime * 100f; ++i)
             {
@@ -1118,10 +1123,7 @@ public class EntityPhysics : EntityComponent
                 yield return new WaitForFixedUpdate();
             }
 
-            entityItems.weaponEquipped_item = null;
-            entityItems.weaponEquipped_object = null;
-            entityItems.SetUpdateWeaponOrientation(true);
-            entityItems.OnItemsChange();
+            
 
 
         }
