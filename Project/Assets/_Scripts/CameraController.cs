@@ -81,7 +81,8 @@ public class CameraController : MonoBehaviour
 
             if(!UIController.UImode){
                 posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
-                ZoomInput();
+                posModifier = .3f;
+                //ZoomInput();
             }
 
             float max = .48f;
@@ -99,7 +100,7 @@ public class CameraController : MonoBehaviour
                 posModifier = min;
             }
 
-            cameraDistance_baked = 1.5f;
+            cameraDistance_baked = 2f;
             float cameraDistance_combined = cameraDistance_baked * cameraDistance_input;
 
             followT.position = Vector3.Lerp(followT.position, playerT.position + Vector3.up * 3f * cameraDistance_combined, 22f * Time.deltaTime);
