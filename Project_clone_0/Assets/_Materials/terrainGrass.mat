@@ -90,7 +90,7 @@ Material:
     - _SnowHeightCap: 4703.4
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 3
-    - _TilingN1: 10
+    - _TilingN1: 45
     - _TilingN2: 0.05
     - _TilingN3: 10000000
     - _UsePR: 0
@@ -106,7 +106,7 @@ Material:
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.9677934, g: 1, b: 0.8066038, a: 0}
-    - _CampOrigin: {r: 101.24953, g: 4590.76, b: -43.94678, a: 0}
+    - _CampOrigin: {r: -146.16211, g: 4590.5337, b: -346.61588, a: 0}
     - _Color: {r: 0.8850714, g: 0.9150943, b: 0.75538445, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
     - _OffsetVector: {r: 0, g: 1.47, b: 0, a: 0}

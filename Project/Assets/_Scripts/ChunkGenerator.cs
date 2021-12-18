@@ -11,7 +11,7 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 6;
-    public static float Scale = 120f * .75f;
+    public static float Scale = 90f;
     public static float ElevationAmplitude = 5400f;
     public static float MountainMapScale = 160f * 3;
     public static float ElevationMapScale = 3000f;
@@ -320,7 +320,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // lock temperature
                 //temperatureValue = .99f;
-                //temperatureValue = .25f;
+                temperatureValue = .25f;
 
 
 
@@ -368,11 +368,11 @@ public class ChunkGenerator : MonoBehaviour
                 float mtn1 = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / MountainMapScale, (z + zOffset - Seed + 100000.01f) / MountainMapScale);
                 float mtn2 = Mathf.PerlinNoise((x + xOffset - Seed + 200000.01f) / MountainMapScale, (z + zOffset - Seed + 200000.01f) / MountainMapScale);
 
-                mountainValue = Mathf.Min(mtn0, 1f, 1f);
+                mountainValue = Mathf.Min(mtn0, mtn1, mtn2);
                 //mountainValue = Mathf.InverseLerp(.3f, .7f, mountainValue);
                 //mountainValue = .99f;
                 //mountainValue *= .75f;
-                mountainValue = Mathf.Pow(mountainValue, 3.5f);
+                mountainValue = Mathf.Pow(mountainValue, 4f);
                 mountainValue -= .1f;
                 mountainValue = Mathf.Clamp01(mountainValue);
                 //mountainValue = Mathf.InverseLerp(0f, Mathf.Pow(.75f, 2f), mountainValue);
@@ -517,9 +517,11 @@ public class ChunkGenerator : MonoBehaviour
 
                 // create ocean and rivers
                 float oceanFloorLevel = SeaLevel - .0001f;
-                if (heightValue < FlatLevel)
+                if (heightValue < BankLevel)
                 {
                     freshWaterValue = Mathf.InverseLerp(0f, .05f, FlatLevel - heightValue);
+                    freshWaterValue = 1f;
+
                 }
 
                 heightValue = Mathf.Lerp(heightValue, oceanFloorLevel, freshWaterValue);
@@ -538,7 +540,7 @@ public class ChunkGenerator : MonoBehaviour
                     int posterizeSteps = (int)Mathf.Lerp(50, 700, Mathf.InverseLerp(.25f, .75f, Mathf.PerlinNoise((x + xOffset + .01f) / 60f, (z + zOffset - Seed + .01f) / 60f)));
                     posterizeSteps = (int)Posterize(50, 700, posterizeSteps, 4);
                     //posterizeSteps = 700;
-                    heightValue = Posterize(BankLevel, 1f, heightValue, posterizeSteps);
+                    heightValue = Posterize(SeaLevel - meter * .5f, 1f, heightValue, posterizeSteps);
                 }
 
 
