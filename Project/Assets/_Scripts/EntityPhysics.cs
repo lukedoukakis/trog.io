@@ -1639,12 +1639,12 @@ public class EntityPhysics : EntityComponent
 
     bool IsGrounded()
     {
-        return Physics.OverlapSphere(groundSense.position, .25f, LayerMaskController.WALKABLE).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, .5f, LayerMaskController.WALKABLE).Length > 0;
     }
 
     bool IsGroundedStrict()
     {
-        return Physics.OverlapSphere(groundSense.position, .05f, LayerMaskController.WALKABLE).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, .1f, LayerMaskController.WALKABLE).Length > 0;
     }
 
 
@@ -1738,6 +1738,11 @@ public class EntityPhysics : EntityComponent
         {
             entityInfo.faction.UpdateLeaderCampStatus();
         }
+        if(isLocalPlayer)
+        {
+            CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_INSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION);
+            CameraController.current.SetLockVerticalCameraMovement(false);
+        }
         // todo: command tribe memebrs to line up to orientations
     }
 
@@ -1748,6 +1753,11 @@ public class EntityPhysics : EntityComponent
         if(entityInfo.isFactionLeader)
         {
             entityInfo.faction.UpdateLeaderCampStatus();
+        }
+        if(isLocalPlayer)
+        {
+            CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_OUTSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION);
+            CameraController.current.SetLockVerticalCameraMovement(true);
         }
         // todo: command tribe memebrs to follow
     }

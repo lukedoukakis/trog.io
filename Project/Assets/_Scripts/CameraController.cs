@@ -5,11 +5,21 @@ using Mirror;
 
 public class CameraController : MonoBehaviour
 {
+    
+
+    public static float CAMERA_DISTANCE_OUTSIDECAMP = 1.5f;
+    public static float CAMERA_DISTANCE_INSIDECAMP = .3f;
+    public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
+    public static float CAMERA_LOCK_VERTICALITY = .3f;
+
+
     public Transform playerT;
     Transform followT;
     public Transform focusT;
     public float cameraDistance_baked;
     public float cameraDistance_input;
+    public bool lockVerticalCameraMovement;
+    public IEnumerator smoothZoomCoroutine;
     
     public static CameraController current;
 
@@ -32,6 +42,8 @@ public class CameraController : MonoBehaviour
 
     void Awake(){
         current = this;
+        SetBakedCameraDistance(CAMERA_DISTANCE_OUTSIDECAMP);
+        SetLockVerticalCameraMovement(true);
     }
     // Start is called before the first frame update
     void Start()
@@ -79,9 +91,16 @@ public class CameraController : MonoBehaviour
 
             float pi = Mathf.PI;
 
-            if(!UIController.UImode){
-                posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
-                posModifier = .3f;
+            if(!UIController.UImode)
+            {
+                if(lockVerticalCameraMovement)
+                {
+                    posModifier = Mathf.Lerp(posModifier, CAMERA_LOCK_VERTICALITY, CAMERA_ZOOM_SPEED_CAMPTRANSITION * Time.deltaTime);
+                }
+                else
+                {
+                    posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
+                }
                 //ZoomInput();
             }
 
@@ -99,8 +118,6 @@ public class CameraController : MonoBehaviour
             {
                 posModifier = min;
             }
-
-            cameraDistance_baked = 2f;
             float cameraDistance_combined = cameraDistance_baked * cameraDistance_input;
 
             followT.position = Vector3.Lerp(followT.position, playerT.position + Vector3.up * 3f * cameraDistance_combined, 22f * Time.deltaTime);
@@ -138,6 +155,41 @@ public class CameraController : MonoBehaviour
     public void SetTargetOffset(Vector3 offset){
         targetOffset = offset;
         targetOffsetReached = false;
+    }
+
+    public void SetBakedCameraDistance(float targetValue)
+    {
+        cameraDistance_baked = targetValue;
+    }
+
+    public void SetBakedCameraDistanceSmooth(float targetValue, float speed)
+    {
+
+        //Debug.Log("SetBakedCameraDistanceSmooth");
+
+        if(smoothZoomCoroutine != null)
+        {
+            StopCoroutine(smoothZoomCoroutine);
+        }
+        smoothZoomCoroutine = _SetBakedCameraDistanceSmooth(targetValue, speed);
+        StartCoroutine(smoothZoomCoroutine);
+
+        IEnumerator _SetBakedCameraDistanceSmooth(float targetValue, float speed)
+        {
+            Debug.Log("_SetBakedCameraDistanceSmooth");
+            float v = cameraDistance_baked;
+            while(Mathf.Abs(v - targetValue) > .01f)
+            {
+                v = Mathf.Lerp(cameraDistance_baked, targetValue, speed * Time.deltaTime);
+                SetBakedCameraDistance(v);
+                yield return null;
+            }  
+        }
+    }
+
+    public void SetLockVerticalCameraMovement(bool targetValue)
+    {
+        lockVerticalCameraMovement = targetValue;
     }
 
 

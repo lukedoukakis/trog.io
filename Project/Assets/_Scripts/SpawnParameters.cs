@@ -77,11 +77,11 @@ public class SpawnParameters
     static Vector2 h1 = new Vector2(0f, .5f);
     static Vector2 h2 = new Vector2(.5f, 1f);
     static Vector2 hgtWater = new Vector2(ChunkGenerator.SeaLevel - ChunkGenerator.meter * .05f, ChunkGenerator.SeaLevel);
-    static Vector2 hgtBank = new Vector2(ChunkGenerator.SeaLevel, ChunkGenerator.BankLevel);
-    static Vector2 hgtWaterAndBank = new Vector2(ChunkGenerator.SeaLevel - ChunkGenerator.meter * .25f, ChunkGenerator.BankLevel);
+    static Vector2 hgtBank = new Vector2(ChunkGenerator.SeaLevel, ChunkGenerator.FlatLevel);
+    static Vector2 hgtWaterAndBank = new Vector2(ChunkGenerator.SeaLevel - ChunkGenerator.meter * .25f, ChunkGenerator.FlatLevel);
     static Vector2 hgtWaterAndAbove = new Vector2(ChunkGenerator.SeaLevel - ChunkGenerator.meter * .25f, 1f);
-    static Vector2 hgtDry = new Vector2(ChunkGenerator.BankLevel, 1f);
-    static Vector3 hgtDryNoSnow = new Vector2(ChunkGenerator.BankLevel, ChunkGenerator.SnowLevel - .005f);
+    static Vector2 hgtDry = new Vector2(ChunkGenerator.FlatLevel, 1f);
+    static Vector3 hgtDryNoSnow = new Vector2(ChunkGenerator.FlatLevel, ChunkGenerator.SnowLevel - .005f);
     static Vector3 hgtBankAndDry = new Vector2(ChunkGenerator.SeaLevel, 1f);
     static Vector2 normGrass = new Vector2(ChunkGenerator.GrassNormalMin, 1f);
     static Vector2 normCliff = new Vector2(ChunkGenerator.CaveNormal, ChunkGenerator.GrassNormalMin);

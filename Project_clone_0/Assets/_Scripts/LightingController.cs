@@ -62,7 +62,10 @@ public class LightingController : MonoBehaviour
     {
         Vector3 playerPos = GameManager.instance.localPlayer.transform.position;
         Vector3 cameraPos = Camera.main.transform.position;
-        fog.transform.position = playerPos;
+        if(fog != null)
+        {
+            fog.transform.position = cameraPos;
+        }
     }
 
     void SetCelestialBodies(float time)

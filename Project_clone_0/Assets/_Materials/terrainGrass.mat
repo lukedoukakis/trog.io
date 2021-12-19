@@ -79,12 +79,12 @@ Material:
     - _MinimumNormal: 0.8
     - _MinimumNumberStacks: 17
     - _NoisePower: 2
-    - _NumberOfStacks: 17
+    - _NumberOfStacks: 0
     - _OffsetValue: 0
     - _ProceduralDistance: 5.5
     - _ProceduralStrength: 1.5
-    - _RimMax: 0.62
-    - _RimMin: 0.661
+    - _RimMax: 0
+    - _RimMin: 0
     - _RimPower: 8
     - _SnowDepth: 0.1
     - _SnowHeightCap: 4703.4
@@ -98,7 +98,7 @@ Material:
     - _UseShadow: 1
     - _UseShadowCast: 0
     - _UseWC: 0
-    - _WaterHeight: 4590.4404
+    - _WaterHeight: 4590.0005
     - _WindForce: 0.25
     - _WindMovement: 100
     - _WorldRotation: 0
@@ -106,8 +106,8 @@ Material:
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.9677934, g: 1, b: 0.8066038, a: 0}
-    - _CampOrigin: {r: -50.65278, g: 4593.2637, b: -67.20068, a: 0}
-    - _Color: {r: 0.8850714, g: 0.9150943, b: 0.75538445, a: 1}
+    - _CampOrigin: {r: 140.32806, g: 4590, b: -87.30288, a: 0}
+    - _Color: {r: 0.7909098, g: 0.8301887, b: 0.73933786, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
     - _OffsetVector: {r: 0, g: 1.47, b: 0, a: 0}
     - _ProjectedShadowColor: {r: 0.8679245, g: 0.8679245, b: 0.8679245, a: 1}
