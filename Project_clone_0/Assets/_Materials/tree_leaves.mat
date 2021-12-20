@@ -73,6 +73,7 @@ Material:
     - Vector1_F552BBDC: 1
     - _ColorNoise: 1
     - _Desertness: 0
+    - _NumberOfShades: 2
     - _QueueControl: 0
     - _QueueOffset: 0
     - _SnowDepth: 0.1
@@ -87,7 +88,7 @@ Material:
     - Color_962802DE: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}
     - Color_B9FC0D65: {r: 1, g: 1, b: 1, a: 0}
     - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
-    - _TargetVector: {r: 87.2931, g: 4592.3623, b: 51.742573, a: 0}
+    - _TargetVector: {r: 37.4926, g: 4590.3896, b: -219.42468, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &2690161728965838367
 MonoBehaviour:

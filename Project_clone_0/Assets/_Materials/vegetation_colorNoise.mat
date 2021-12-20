@@ -68,6 +68,7 @@ Material:
     - Vector1_D2FDA34A: 1
     - Vector1_F552BBDC: 0.2
     - _ColorNoise: 1
+    - _NumberOfShades: 2
     - _QueueControl: 0
     - _QueueOffset: 0
     - _SnowDepth: 0.1
@@ -78,5 +79,5 @@ Material:
     - Color_5241E242: {r: 0, g: 0.5849056, b: 0.21709806, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.9056604, g: 0.9056604, b: 0.9056604, a: 1}
-    - _TargetVector: {r: 87.2931, g: 4592.3623, b: 51.742573, a: 0}
+    - _TargetVector: {r: 37.4926, g: 4590.3896, b: -219.42468, a: 0}
   m_BuildTextureStacks: []
