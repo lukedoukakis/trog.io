@@ -20,6 +20,7 @@ public class EntityUserInput : EntityComponent
     Transform selectionOrigin;
     Quaternion targetRot;
     public GameObject hoveredInteractableObject;
+    public GameObject lastHoveredInteractableObject;
     public List<GameObject> interactableObjects;
     bool newInteract;
 
@@ -309,23 +310,92 @@ public class EntityUserInput : EntityComponent
     }
 
 
+    public static void SetObjectHighlighted(GameObject obj, bool highlight)
+    {
+        MeshRenderer[] renderers = obj.GetComponentsInChildren<MeshRenderer>();
 
-    public void UpdateHoveredInteractable(){
+        if (highlight)
+        {
+            foreach (MeshRenderer mr in renderers)
+            {
+                List<Material> mats = new List<Material>(mr.sharedMaterials);
+                mats.Add(MaterialController.instance.selectedMaterial);
+                mr.sharedMaterials = mats.ToArray();
+            }
+        }
+
+        if (!highlight)
+        {
+            foreach (MeshRenderer mr in renderers)
+            {
+                List<Material> mats = new List<Material>(mr.sharedMaterials);
+                mats.Remove(MaterialController.instance.selectedMaterial);
+                mr.sharedMaterials = mats.ToArray();
+            }
+        }
+        
+    }
+
+
+
+
+    public static Collider GetColliderMostInFront(Collider[] contendingColliders, Transform referenceT)
+    {
+
+        Vector3 referencePos = referenceT.position;
+        float minAngle = float.MaxValue;
+        Collider bestMatch = null;
+        
+        foreach(Collider col in contendingColliders)
+        {
+            Vector3 closestPoint = col.ClosestPoint(referenceT.position);
+            float horizAngle = Vector3.Angle(referenceT.forward, closestPoint - referencePos);
+            if(horizAngle < minAngle)
+            {
+                minAngle = horizAngle;
+                bestMatch = col;
+            }
+        }
+
+        return bestMatch;
+    }
+
+    public void UpdateHoveredInteractable()
+    {
+
         Transform cameraT = Camera.main.transform;
         RaycastHit hit;
 
-        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, 100f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide)){
-        //if(Physics.SphereCast(selectionOrigin.position, .3f, entityOrientation.body.forward, out hit, 1f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
+        //if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, 100f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide)){
+        //if(Physics.SphereCast(selectionOrigin.position, 1f, transform.forward, out hit, 2f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide)){
+        Collider[] hitCols = Physics.OverlapSphere(transform.position, 1f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide);
+        if(hitCols.Length > 0)
+        {
 
+            //Collider c = hit.collider;
+            Collider c = GetColliderMostInFront(hitCols, transform);
             // set hoveredInteractableObject to parent of collider hit
-            GameObject hovered = hit.collider.transform.parent.gameObject;
+            GameObject hovered = c.transform.parent.gameObject;
             newInteract = hovered != hoveredInteractableObject;
-            hoveredInteractableObject = hovered;
+
+
+            SetObjectHighlighted(hovered, true);
+            if(lastHoveredInteractableObject != null)
+            {
+                SetObjectHighlighted(lastHoveredInteractableObject, false);
+            }
+
+            hoveredInteractableObject = lastHoveredInteractableObject = hovered;
             //Log("hovered: " + hoveredInteractableObject.name);
         }
         else{
             newInteract = true;
             hoveredInteractableObject = null;
+            if(lastHoveredInteractableObject != null)
+            {
+                SetObjectHighlighted(lastHoveredInteractableObject, false);
+                lastHoveredInteractableObject = null;
+            }
             //Log("NO HOVERED INTERACTABLE GAMEOBJECT");
         }
 

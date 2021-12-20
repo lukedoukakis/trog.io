@@ -87,7 +87,7 @@ public class EntityItems : EntityComponent
         SetUpdateWeaponOrientation(true);
 
         EquipClothing(Item.ClothingTest);
-        UnequipCurrentClothing();
+        //UnequipCurrentClothing();
     }
 
     // client method when an object is interacted with

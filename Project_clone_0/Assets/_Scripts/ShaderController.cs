@@ -47,7 +47,7 @@ public class ShaderController : MonoBehaviour
     void UpdateWaterSensitiveMaterials()
     {
         foreach(Material mat in WaterSensitiveMaterials){
-            mat.SetFloat("_WaterHeight", ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude + .1f);
+            mat.SetFloat("_WaterHeight", ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude - 100f);
         }
     }
 

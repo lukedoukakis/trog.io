@@ -13,7 +13,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
+  m_CustomRenderQueue: 2004
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -79,7 +79,7 @@ Material:
     - _MinimumNormal: 0.8
     - _MinimumNumberStacks: 17
     - _NoisePower: 2
-    - _NumberOfStacks: 0
+    - _NumberOfStacks: 17
     - _OffsetValue: 0
     - _ProceduralDistance: 5.5
     - _ProceduralStrength: 1.5
@@ -90,7 +90,7 @@ Material:
     - _SnowHeightCap: 4703.4
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 3
-    - _TilingN1: 45
+    - _TilingN1: 17.8
     - _TilingN2: 0.05
     - _TilingN3: 10000000
     - _UsePR: 0
@@ -98,7 +98,7 @@ Material:
     - _UseShadow: 1
     - _UseShadowCast: 0
     - _UseWC: 0
-    - _WaterHeight: 4589.6
+    - _WaterHeight: 4489.5005
     - _WindForce: 0.25
     - _WindMovement: 100
     - _WorldRotation: 0
@@ -106,7 +106,7 @@ Material:
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.9677934, g: 1, b: 0.8066038, a: 0}
-    - _CampOrigin: {r: -35.05199, g: 4590, b: -220.0987, a: 0}
+    - _CampOrigin: {r: -125.05199, g: 4590, b: -130.09868, a: 0}
     - _Color: {r: 0.7909098, g: 0.8301887, b: 0.73933786, a: 1}
     - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
     - _OffsetVector: {r: 0, g: 1.47, b: 0, a: 0}
