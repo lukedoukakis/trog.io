@@ -364,16 +364,25 @@ public class EntityUserInput : EntityComponent
     {
 
         Transform cameraT = Camera.main.transform;
-        RaycastHit hit;
 
-        //if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, 100f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide)){
-        //if(Physics.SphereCast(selectionOrigin.position, 1f, transform.forward, out hit, 2f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide)){
-        Collider[] hitCols = Physics.OverlapSphere(transform.position, 1f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide);
-        if(hitCols.Length > 0)
+        bool hoveredOverSomething;
+        Collider c;
+        if(entityPhysics.isInsideCamp)
+        {
+            RaycastHit hit;
+            hoveredOverSomething = Physics.Raycast(cameraT.position, cameraT.forward, out hit, 100f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide);
+            c = hoveredOverSomething ? hit.collider : null;
+        }
+        else
+        {
+            Collider[] hitCols = Physics.OverlapSphere(transform.position, 1f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide);
+            hoveredOverSomething = hitCols.Length > 0;
+            c = GetColliderMostInFront(hitCols, transform);
+        }
+
+        if(hoveredOverSomething)
         {
 
-            //Collider c = hit.collider;
-            Collider c = GetColliderMostInFront(hitCols, transform);
             // set hoveredInteractableObject to parent of collider hit
             GameObject hovered = c.transform.parent.gameObject;
             newInteract = hovered != hoveredInteractableObject;
