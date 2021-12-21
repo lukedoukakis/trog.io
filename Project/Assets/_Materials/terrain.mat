@@ -78,7 +78,7 @@ Material:
     - Vector1_124AF345: 0
     - Vector1_49092716: 1
     - Vector1_61F46C5F: 200
-    - Vector1_6756ADD4: 0.72
+    - Vector1_6756ADD4: 1.34
     - Vector1_6A3D0673: 0
     - Vector1_7EC73CB8: 0.9
     - Vector1_81EA2B5B: 0.8
@@ -111,6 +111,8 @@ Material:
     - Color_B9FC0D65: {r: 0.5660378, g: 0.51370287, b: 0.44535425, a: 0}
     - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
     - Color_EB41B935: {r: 0.735849, g: 0.67390525, b: 0.6351904, a: 1}
+    - _GrassColor: {r: 0.6317576, g: 0.6792453, b: 0.57287294, a: 0}
+    - _PlayerPosition: {r: -63.85839, g: 4589.878, b: -42.378468, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &2664279794138996905
 MonoBehaviour:

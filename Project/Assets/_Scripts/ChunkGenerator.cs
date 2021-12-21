@@ -10,7 +10,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator instance;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 3;
+    public static int ChunkRenderDistance = 4;
     public static float Scale = 90f * .5f;
     public static float ElevationAmplitude = 5400f;
     public static float MountainMapScale = 160f * .65f;
@@ -22,8 +22,8 @@ public class ChunkGenerator : MonoBehaviour
     public static float SeaLevel = FlatLevel - (meter * .5f); //0.849985f;
     public static float SnowLevel = .871f;
     //public static float SnowLevel = float.MaxValue;
-    public static float GrassNormalMin = .9f;
-    public static float GrassNormalMax = .9f;
+    public static float GrassNormalMin = .96f;
+    public static float GrassNormalMax = .96f;
     public static float SnowNormal = .57f;
     public static float CaveNormal = .4f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -133,7 +133,6 @@ public class ChunkGenerator : MonoBehaviour
 
         ChunkDataToLoad = new List<ChunkData>();
         ChunkDataLoaded = new List<ChunkData>();
-
         TerrainMesh = new Mesh();
         TerrainMeshFilter.mesh = TerrainMesh;
 

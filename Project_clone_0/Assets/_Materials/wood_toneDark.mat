@@ -146,7 +146,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - Vector1_25E0AF6F: 0.5
     - Vector1_656083AD: 1.1
+    - Vector1_7528B216: 0.3
     - _AlphaClip: 0
     - _Blend: 0
     - _BlendOp: 0
@@ -186,6 +188,7 @@ Material:
     - _Metallic3: 0
     - _Mode: 0
     - _NumLayersCount: 1
+    - _NumberOfShades: 2
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _QueueControl: 0

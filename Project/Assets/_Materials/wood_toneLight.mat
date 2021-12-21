@@ -66,7 +66,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - Vector1_25E0AF6F: 0.5
     - Vector1_656083AD: 1.1
+    - Vector1_7528B216: 0.3
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
@@ -79,6 +81,7 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
+    - _NumberOfShades: 2
     - _OcclusionStrength: 1
     - _QueueControl: 0
     - _QueueOffset: 0

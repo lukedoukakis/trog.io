@@ -14735,6 +14735,7 @@ GameObject:
   - component: {fileID: 9007509929800234093}
   - component: {fileID: 6335860569073636883}
   - component: {fileID: 3064014444464442017}
+  - component: {fileID: 8392475749434281736}
   m_Layer: 15
   m_Name: Glow
   m_TagString: Untagged
@@ -14882,6 +14883,26 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &8392475749434281736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9220087785544640312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 1
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1001 &133817022522194547
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14944,7 +14965,7 @@ PrefabInstance:
     - target: {fileID: 23064466795047070, guid: 77b95d518dd24624b9baaa072094bfcb,
         type: 3}
       propertyPath: m_Materials.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 23064466795047070, guid: 77b95d518dd24624b9baaa072094bfcb,
         type: 3}
@@ -15031,7 +15052,7 @@ PrefabInstance:
     - target: {fileID: 23755770302147048, guid: 5f8124340f58c7842a99486ec1e5d44e,
         type: 3}
       propertyPath: m_Materials.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 23755770302147048, guid: 5f8124340f58c7842a99486ec1e5d44e,
         type: 3}
@@ -15130,7 +15151,7 @@ PrefabInstance:
     - target: {fileID: 23386630350818554, guid: cc1289e65715c5542995dbb029c60e22,
         type: 3}
       propertyPath: m_Materials.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 23386630350818554, guid: cc1289e65715c5542995dbb029c60e22,
         type: 3}
@@ -15229,7 +15250,7 @@ PrefabInstance:
     - target: {fileID: 23386630350818554, guid: cc1289e65715c5542995dbb029c60e22,
         type: 3}
       propertyPath: m_Materials.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 23386630350818554, guid: cc1289e65715c5542995dbb029c60e22,
         type: 3}
@@ -15391,7 +15412,7 @@ PrefabInstance:
     - target: {fileID: 23004877244317702, guid: 776e4179c67bbce45bfe586d805ed1b1,
         type: 3}
       propertyPath: m_Materials.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 23004877244317702, guid: 776e4179c67bbce45bfe586d805ed1b1,
         type: 3}
@@ -15478,7 +15499,7 @@ PrefabInstance:
     - target: {fileID: 23837613543607214, guid: ef7f09302dcbb494fa7fa6b50de8f241,
         type: 3}
       propertyPath: m_Materials.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 23837613543607214, guid: ef7f09302dcbb494fa7fa6b50de8f241,
         type: 3}
@@ -15565,7 +15586,7 @@ PrefabInstance:
     - target: {fileID: 23159851880102630, guid: e168f5d59d0657f44aea2a71d92ef39d,
         type: 3}
       propertyPath: m_Materials.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 23159851880102630, guid: e168f5d59d0657f44aea2a71d92ef39d,
         type: 3}
@@ -15652,7 +15673,7 @@ PrefabInstance:
     - target: {fileID: 23640276114824448, guid: d0082c69565d1894b95f941dcef0abf3,
         type: 3}
       propertyPath: m_Materials.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 23640276114824448, guid: d0082c69565d1894b95f941dcef0abf3,
         type: 3}
@@ -15739,7 +15760,7 @@ PrefabInstance:
     - target: {fileID: 23383012480018898, guid: 01cc85436acdf604fb53ed65ce9a77cc,
         type: 3}
       propertyPath: m_Materials.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 23383012480018898, guid: 01cc85436acdf604fb53ed65ce9a77cc,
         type: 3}
@@ -15826,7 +15847,7 @@ PrefabInstance:
     - target: {fileID: 23959705727023904, guid: 9911d0c340ccc74449e8ecea1a7369af,
         type: 3}
       propertyPath: m_Materials.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 23959705727023904, guid: 9911d0c340ccc74449e8ecea1a7369af,
         type: 3}

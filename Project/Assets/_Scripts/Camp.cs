@@ -88,8 +88,7 @@ public class Camp : MonoBehaviour
         camp.faction.leaderHandle.entityPhysics.isInsideCamp = true;
         camp.faction.UpdateLeaderCampStatus();
 
-        // call the shader controller to update according to new origin position and radius
-        ShaderController.instance.UpdateGrassSettings(camp);
+
 
         return camp;
 
