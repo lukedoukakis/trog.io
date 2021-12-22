@@ -40,7 +40,7 @@ public class ItemCollection
     {
         if(items.ContainsKey(item)){
             items[item] = Mathf.Max(items[item] - count, 0);
-            Debug.Log("RemoveItem(): Removing " + count + " items");
+            //Debug.Log("RemoveItem(): Removing " + count + " items");
         }
         else
         {

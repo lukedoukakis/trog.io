@@ -312,11 +312,13 @@ public class EntityUserInput : EntityComponent
 
     public static void SetObjectHighlighted(GameObject obj, bool highlight)
     {
-        MeshRenderer[] renderers = obj.GetComponentsInChildren<MeshRenderer>();
+        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+        // Debug.Log(obj.name);
+        // Debug.Log(renderers.Length);
 
         if (highlight)
         {
-            foreach (MeshRenderer mr in renderers)
+            foreach (Renderer mr in renderers)
             {
                 List<Material> mats = new List<Material>(mr.sharedMaterials);
                 mats.Add(MaterialController.instance.selectedMaterial);
@@ -326,7 +328,7 @@ public class EntityUserInput : EntityComponent
 
         if (!highlight)
         {
-            foreach (MeshRenderer mr in renderers)
+            foreach (Renderer mr in renderers)
             {
                 List<Material> mats = new List<Material>(mr.sharedMaterials);
                 mats.Remove(MaterialController.instance.selectedMaterial);

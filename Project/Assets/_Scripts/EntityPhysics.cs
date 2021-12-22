@@ -1756,7 +1756,7 @@ public class EntityPhysics : EntityComponent
         }
         if(isLocalPlayer)
         {
-            CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_OUTSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION);
+            CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_OUTSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION * .25f);
             CameraController.current.SetLockVerticalCameraMovement(true);
         }
         // todo: command tribe memebrs to follow
