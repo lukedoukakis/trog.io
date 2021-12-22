@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a434a1b7d8e836941b25b34f6d33eba5, type: 2}
+  - {fileID: 2100000, guid: f29c504e354558548904366419ecffc3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -122,7 +122,7 @@ GameObject:
   - component: {fileID: 41143998885533970}
   - component: {fileID: 5965260177339738407}
   m_Layer: 13
-  m_Name: Axe
+  m_Name: AxeBone
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

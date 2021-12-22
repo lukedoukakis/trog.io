@@ -130,7 +130,7 @@ public class ActionParameters : ScriptableObject
             case "Collect Spear" :
 
                 ap.type = ActionType.Collect;
-                ap.item_target = Item.Spear;
+                ap.item_target = Item.SpearStone;
                 //Log(a.item_target.nme);
                 break;
 

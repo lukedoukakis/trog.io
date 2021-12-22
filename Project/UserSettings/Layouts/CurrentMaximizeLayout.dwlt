@@ -23,7 +23,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 32276
+  controlID: 3587
 --- !u!114 &2
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -141,7 +141,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 32277
+  controlID: 3588
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -166,7 +166,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 200}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 32242
+  controlID: 3589
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -191,7 +191,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 32243
+  controlID: 3590
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -7900,8 +7900,8 @@ MonoBehaviour:
     y: 531.2
     width: 1156
     height: 239.79999
-  m_MinSize: {x: 230, y: 250}
-  m_MaxSize: {x: 10000, y: 10000}
+  m_MinSize: {x: 231, y: 271}
+  m_MaxSize: {x: 10001, y: 10021}
   m_ActualView: {fileID: 20}
   m_Panes:
   - {fileID: 20}
@@ -7950,22 +7950,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Resources/Terrain/Humans
+    - Assets/Resources/Items/LogFir/Gameobject
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Resources/Terrain/Humans
+  - Assets/Resources/Items/LogFir/Gameobject
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\luked\Desktop\Dev\_Projects\trogio\trogio\Project
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 927}
-    m_SelectedIDs: d8830000
-    m_LastClickedID: 33752
-    m_ExpandedIDs: 000000005e83000060830000628300006483000066830000688300006a8300006c8300006e83000000ca9a3bffffff7f
+    scrollPos: {x: 0, y: 651}
+    m_SelectedIDs: bca40000
+    m_LastClickedID: 42172
+    m_ExpandedIDs: 00000000628300006483000066830000688300006a8300006c8300006e8300007083000072830000c4830000cc830000ce8300002e8400007084000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -7993,7 +7993,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000005e83000060830000628300006483000066830000688300006a8300006c8300006e83000000ca9a3bffffff7f
+    m_ExpandedIDs: 00000000628300006483000066830000688300006a8300006c8300006e8300007083000072830000cc830000ce8300002e8400007084000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -8020,22 +8020,22 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c62300008a9e0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
+      m_Name: LogFir
+      m_OriginalName: LogFir
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 0
+      m_UserData: 33316
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 11
+      m_OriginalEventType: 0
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 19}
     m_CreateAssetUtility:

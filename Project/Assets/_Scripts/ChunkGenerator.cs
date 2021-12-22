@@ -317,8 +317,8 @@ public class ChunkGenerator : MonoBehaviour
                 temperatureValue = Mathf.Clamp01(temperatureValue);
 
                 // lock temperature
-                temperatureValue = .99f;
-                //temperatureValue = .25f;
+                //temperatureValue = .99f;
+                temperatureValue = .25f;
 
 
 
@@ -356,7 +356,7 @@ public class ChunkGenerator : MonoBehaviour
                 humidityValue = Mathf.InverseLerp(.2f, .8f, humidityValue);
 
                 // lock humidity
-                humidityValue = 0f;
+                //humidityValue = 0f;
                 //humidityValue = .99f;
                 // -------------------------------------------------------
 

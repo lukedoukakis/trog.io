@@ -305,8 +305,10 @@ public class Faction : MonoBehaviour
         // spawn items
         //AddItemOwned(Item.ClothingTest, itemCount, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.Meat, itemCount, null, leaderHandle.transform, 0f);
-        AddItemOwned(Item.Spear, itemCount, null, leaderHandle.transform, 0f);
-        AddItemOwned(Item.Axe, itemCount, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.SpearStone, itemCount/2, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.AxeStone, itemCount/2, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.SpearBone, itemCount/2, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.AxeBone, itemCount/2, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.WoodPiece, itemCount, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.BonePiece, itemCount, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.StoneSmall, itemCount, null, leaderHandle.transform, 0f);
