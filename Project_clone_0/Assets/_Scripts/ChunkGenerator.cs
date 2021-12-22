@@ -11,16 +11,16 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 4;
-    public static float Scale = 90f * .5f;
+    public static float Scale = 90f * 1.5f;
     public static float ElevationAmplitude = 5400f;
-    public static float MountainMapScale = 160f * .65f;
+    public static float MountainMapScale = 104f * 3f;
     public static float ElevationMapScale = 2000f * 1f;
     public static int TemperatureMapScale = 600;
     public static int HumidityMapScale = 600;
     public static float meter = 1f / ElevationAmplitude;
     public static float FlatLevel = .85f;
     public static float SeaLevel = FlatLevel - (meter * .5f); //0.849985f;
-    public static float SnowLevel = .871f;
+    public static float SnowLevel = .868f;
     //public static float SnowLevel = float.MaxValue;
     public static float GrassNormalMin = .96f;
     public static float GrassNormalMax = .96f;
@@ -368,14 +368,15 @@ public class ChunkGenerator : MonoBehaviour
                     float mtn2 = Mathf.PerlinNoise((x + xOffset - Seed + 200000.01f) / MountainMapScale, (z + zOffset - Seed + 200000.01f) / MountainMapScale);
 
                     mountainValue = Mathf.Min(mtn0, mtn1, mtn2);
+                    mountainValue += (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 20f, (z + zOffset - Seed + .01f) / 20f) * 2f - 1f) * .1f;
                     mountainValue += (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 5f, (z + zOffset - Seed + .01f) / 5f) * 2f - 1f) * .01f;
-                    mountainValue = Mathf.InverseLerp(.43f, .57f, mountainValue);
+                    mountainValue = Mathf.InverseLerp(.25f, .75f, mountainValue);
                     //mountainValue = .99f;
                     //mountainValue *= .75f;
                     mountainValue = Mathf.Pow(mountainValue, 1f);
                     //mountainValue -= .1f;
                     //mountainValue *= 1f - CalculateDesertness(temperatureValue, humidityValue);
-                    mountainValue *= .015f;
+                    mountainValue *= .07f;
                     mountainValue *= Mathf.InverseLerp(0f, .01f, elevationValue);
                     mountainValue = Mathf.Clamp01(mountainValue);
                     //mountainValue = 0f;
