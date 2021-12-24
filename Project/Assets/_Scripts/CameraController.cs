@@ -7,7 +7,7 @@ public class CameraController : MonoBehaviour
 {
     
 
-    public static float CAMERA_DISTANCE_OUTSIDECAMP = 1.5f;
+    public static float CAMERA_DISTANCE_OUTSIDECAMP = 1.1f;
     public static float CAMERA_DISTANCE_INSIDECAMP = .3f;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
     public static float CAMERA_LOCK_VERTICALITY = .3f;

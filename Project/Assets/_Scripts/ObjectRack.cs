@@ -226,7 +226,7 @@ public class ObjectRack : CampComponent
                         Utility.DestroyInSeconds(tempT.gameObject, delay + 5f); 
                           
                         EntityItems ei = (EntityItems)destination;
-                        ei.OnObjectTake(foundObject, this, true);
+                        ei.OnObjectTake(foundObject, this);
 
 
                         //ei.OnObjectTake(foundObject, null);

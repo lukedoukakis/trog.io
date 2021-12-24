@@ -11,7 +11,7 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 3;
-    public static float Scale = 90f * 1.5f;
+    public static float Scale = 90f * .75f;
     public static float ElevationAmplitude = 5400f;
     public static float MountainMapScale = 104f * 3f;
     public static float ElevationMapScale = 2000f * 1f;
@@ -27,9 +27,9 @@ public class ChunkGenerator : MonoBehaviour
     public static float SnowNormal = .57f;
     public static float CaveNormal = .4f;
     public static bool LoadingChunks, DeloadingChunks;
-    static GameObject Chunk;
-    static GameObject Terrain;
-    static GameObject Water;
+    public static GameObject Chunk;
+    public static GameObject Terrain;
+    public static GameObject Water;
 
     public Transform playerT;
     public Vector3 playerRawPosition;
@@ -318,7 +318,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // lock temperature
                 //temperatureValue = .99f;
-                temperatureValue = .25f;
+                //temperatureValue = .25f;
 
 
 
@@ -369,14 +369,15 @@ public class ChunkGenerator : MonoBehaviour
 
                     mountainValue = Mathf.Min(mtn0, mtn1, mtn2);
                     mountainValue += (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 20f, (z + zOffset - Seed + .01f) / 20f) * 2f - 1f) * .1f;
-                    mountainValue += (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 5f, (z + zOffset - Seed + .01f) / 5f) * 2f - 1f) * .01f;
-                    mountainValue = Mathf.InverseLerp(.25f, .75f, mountainValue);
+                    //mountainValue += (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 5f, (z + zOffset - Seed + .01f) / 5f) * 2f - 1f) * .01f;
+                    mountainValue = Mathf.InverseLerp(.3f, .7f, mountainValue);
                     //mountainValue = .99f;
                     //mountainValue *= .75f;
                     mountainValue = Mathf.Pow(mountainValue, 1f);
                     //mountainValue -= .1f;
                     //mountainValue *= 1f - CalculateDesertness(temperatureValue, humidityValue);
                     mountainValue *= .07f;
+                    mountainValue *= Mathf.Lerp(.1f, 1f, Mathf.InverseLerp(.25f, .5f, 1f - temperatureValue));
                     mountainValue *= Mathf.InverseLerp(0f, .01f, elevationValue);
                     mountainValue = Mathf.Clamp01(mountainValue);
                     //mountainValue = 0f;
@@ -424,7 +425,9 @@ public class ChunkGenerator : MonoBehaviour
 
                 freshWaterValue = Mathf.Clamp01(freshWaterValue);
                 //Debug.Log(freshWaterValue);
-                freshWaterValue = Mathf.Pow(freshWaterValue, 70f);
+                freshWaterValue = Mathf.Pow(freshWaterValue, 30f);
+
+                //freshWaterValue = Posterize(0f, 1f, freshWaterValue, 4);
 
                 // reduce fresh water value proportionally to mound height
                 //freshWaterValue *= 1f - (Mathf.InverseLerp(.25f, 1f, (bigMound / bigMoundCap)));
@@ -512,7 +515,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 }
 
-                heightValue = Mathf.Lerp(heightValue, oceanFloorLevel, freshWaterValue);
+                heightValue = Mathf.Lerp(heightValue, SeaLevel - meter, freshWaterValue);
                 if(heightValue < SeaLevel - meter)
                 {
                     heightValue = SeaLevel - meter;

@@ -23,13 +23,13 @@ public class EntityPhysics : EntityComponent
     public Transform hips, head, handRight, handLeft, fingerRight, fingerLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float BASE_GROUND_DISTANCE_TO_JUMP_PLAYER = .5f;
-    public static float BASE_GROUND_DISTANCE_TO_JUMP_NPC = .5f;
+    public static float BASE_GROUND_DISTANCE_TO_JUMP_PLAYER = 2f;
+    public static float BASE_GROUND_DISTANCE_TO_JUMP_NPC = 3f;
     public static float BASE_CASTDISTANCE_WALL = 1f;
     float groundDistanceToJump;
     float distanceFromGround;
 
-    public static float BASE_FORCE_JUMP = 280f;
+    public static float BASE_FORCE_JUMP = 600f;
     public static float BASE_FORCE_THROW = 250f;
     public static float BASE_ACCELERATION = 40f;
     public static float BASE_MAX_SPEED = 10f;
@@ -165,7 +165,7 @@ public class EntityPhysics : EntityComponent
         {
             groundDistanceToJump = BASE_GROUND_DISTANCE_TO_JUMP_PLAYER;
         }
-        else if (tag == "Npc")
+        else
         {
             groundDistanceToJump = BASE_GROUND_DISTANCE_TO_JUMP_NPC;
         }
@@ -1067,10 +1067,12 @@ public class EntityPhysics : EntityComponent
             return false;
         }
 
-        if (!isInWater && Physics.Raycast(groundSense.position, Vector3.down, groundDistanceToJump, LayerMaskController.WALKABLE) && !isJumping)
+
+        if (Physics.Raycast(groundSense.position, Vector3.down, groundDistanceToJump, LayerMaskController.WALKABLE))
         {
             return true;
         }
+
 
         return false;
     }
@@ -1639,12 +1641,12 @@ public class EntityPhysics : EntityComponent
 
     bool IsGrounded()
     {
-        return Physics.OverlapSphere(groundSense.position, .5f, LayerMaskController.WALKABLE).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, 1f, LayerMaskController.WALKABLE).Length > 0;
     }
 
     bool IsGroundedStrict()
     {
-        return Physics.OverlapSphere(groundSense.position, .1f, LayerMaskController.WALKABLE).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, .5f, LayerMaskController.WALKABLE).Length > 0;
     }
 
 

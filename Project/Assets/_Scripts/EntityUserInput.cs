@@ -232,7 +232,7 @@ public class EntityUserInput : EntityComponent
         else{
             string t = hoveredInteractableObject.tag;
             if(t == "Item"){
-                entityItems.OnObjectTake(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference(), false);
+                entityItems.OnObjectTake(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
             }
             else if(t == "Npc")
             {

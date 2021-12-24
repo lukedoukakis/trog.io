@@ -91,37 +91,32 @@ public class EntityItems : EntityComponent
     }
 
     // client method when an object is interacted with
-    public void OnObjectTake(GameObject worldObject, object attachedObject, bool addToInventoryNoMatterTheType)
+    public void OnObjectTake(GameObject worldObject, object attachedObject)
     {
         Item item = Item.GetItemByName(worldObject.name);
 
-        if(addToInventoryNoMatterTheType)
-        {
-            AddToInventory(item, worldObject, false, 0f);
-        }
-        else
-        {
-            switch (item.type)
-            {
-                case ItemType.Food:
-                    PickUpHolding(item, worldObject, attachedObject);
-                    break;
-                case ItemType.Weapon:
-                    PickUpWeapon(item, worldObject, attachedObject);
-                    break;
-                case ItemType.Clothing:
-                    PickUpHolding(item, worldObject, attachedObject);
-                    EquipClothing(holding_item);
-                    ConsumeHolding(holding_item);
-                    break;
-                default:
-                    PickUpHolding(item, worldObject, attachedObject);
-                    break;
 
-            }
+        switch (item.type)
+        {
+            case ItemType.Food:
+                PickUpHolding(item, worldObject, attachedObject);
+                break;
+            case ItemType.Weapon:
+                PickUpWeapon(item, worldObject, attachedObject);
+                break;
+            case ItemType.Clothing:
+                PickUpHolding(item, worldObject, attachedObject);
+                EquipClothing(holding_item);
+                ConsumeHolding(holding_item);
+                break;
+            default:
+                PickUpHolding(item, worldObject, attachedObject);
+                break;
 
-            OnItemsChange();
         }
+
+        OnItemsChange();
+        
 
     }
 

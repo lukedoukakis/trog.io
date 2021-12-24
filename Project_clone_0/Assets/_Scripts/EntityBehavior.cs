@@ -690,17 +690,21 @@ public class EntityBehavior : EntityComponent
 
 			
 		// if obstacle in front and it's not the player object
-		if(SenseObstacle()){
+		if(SenseObstacle())
+        {
 				
 			// if obstacle can't be jumped over, navigate around it
 			if(!CanClearObstacle()){
 				TurnTowardsMostOpenPath();
 			}
-			else{	
+			else{
 				
-				// if close enough to obstacle and on the ground, jump
+				// if close enough to obstacle, attempt a jump
 				if(Mathf.Min(Mathf.Min(leftDistance, centerDistance), rightDistance) < MAX_JUMPFROM_DISTANCE){
-					if(entityPhysics.CanJump()){
+					
+                    Debug.Log("Jump Attempt");
+
+                    if(entityPhysics.CanJump() || true){
 						entityPhysics.Jump();
                         jumped = true;
 					}
@@ -732,9 +736,9 @@ public class EntityBehavior : EntityComponent
             Transform gs = entityPhysics.groundSense;
             Vector3 moveDir = entityPhysics.moveDir;
 
-            bool leftCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward + gyro.right*-2f, out leftHitInfo, SENSE_DISTANCE_OBSTACLE, LayerMaskController.WALKABLE);
-            bool centerCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward, out centerHitInfo, SENSE_DISTANCE_OBSTACLE, LayerMaskController.WALKABLE);
-            bool rightCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward + gyro.right*2f, out rightHitInfo, SENSE_DISTANCE_OBSTACLE, LayerMaskController.WALKABLE);
+            bool leftCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward + gyro.right * -4f, out leftHitInfo, SENSE_DISTANCE_OBSTACLE, LayerMaskController.WALKABLE);
+            bool centerCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward * 4f, out centerHitInfo, SENSE_DISTANCE_OBSTACLE, LayerMaskController.WALKABLE);
+            bool rightCast = Physics.Raycast(transform.position + new Vector3(0, .1f, 0), gyro.forward + gyro.right * 4f, out rightHitInfo, SENSE_DISTANCE_OBSTACLE, LayerMaskController.WALKABLE);
 
 
             // Debug.DrawRay(transform.position + new Vector3(0, .1f, 0), (gyro.forward + gyro.right*-2f).normalized*senseDistance_obstacle, Color.green, Time.deltaTime);
@@ -802,15 +806,19 @@ public class EntityBehavior : EntityComponent
                     ++hits;
                 }
             }
-            return hits >= 2;
+            return hits >= 1;
             //return false;
             
 
         }
 
-        bool CanClearObstacle(){
-            Transform ohs = entityPhysics.obstacleHeightSense;
-            return !Physics.BoxCast(ohs.position, new Vector3(entityPhysics.worldCollider.bounds.extents.x, .01f, .1f), gyro.forward, gyro.rotation, Mathf.Max(leftDistance, centerDistance, rightDistance));
+        bool CanClearObstacle()
+        {
+            //Transform ohs = entityPhysics.obstacleHeightSense;
+            //return !Physics.BoxCast(ohs.position, new Vector3(entityPhysics.worldCollider.bounds.extents.x, .01f, .1f), gyro.forward, gyro.rotation, Mathf.Max(leftDistance, centerDistance, rightDistance));
+        
+            return Mathf.Max(rightHitInfo.point.y, centerHitInfo.point.y, leftHitInfo.point.y) < entityPhysics.obstacleHeightSense.position.y;
+        
         }
 
         void TurnTowardsMostOpenPath(){
@@ -826,7 +834,7 @@ public class EntityBehavior : EntityComponent
 
     public void TakeObject(GameObject o){
         //Log("TakeObject()");
-        entityItems.OnObjectTake(o, o.GetComponent<ObjectReference>().GetObjectReference(), false);
+        entityItems.OnObjectTake(o, o.GetComponent<ObjectReference>().GetObjectReference());
     }
 
 

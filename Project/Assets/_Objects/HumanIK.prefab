@@ -1477,7 +1477,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2984405468748868804}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.691, z: -0.044}
+  m_LocalPosition: {x: 0, y: 1.631, z: -0.044}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3103,9 +3103,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.157141
-  m_Height: 1.0916823
+  m_Height: 1.2307487
   m_Direction: 1
-  m_Center: {x: -0.058727667, y: 0.6652613, z: -0.045818627}
+  m_Center: {x: -0.058727667, y: 0.59572816, z: -0.045818627}
 --- !u!95 &5683883934931145197
 Animator:
   serializedVersion: 4
@@ -3735,7 +3735,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8185230063362212279}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.033036932, y: 0.121, z: -0.020383}
+  m_LocalPosition: {x: -0.033036932, y: 0.272, z: -0.020383}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
