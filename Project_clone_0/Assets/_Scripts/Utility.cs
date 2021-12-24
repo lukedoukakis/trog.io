@@ -246,6 +246,32 @@ public class Utility : MonoBehaviour
         return UnityEngine.Random.value >= 0.5f;
     }
 
+    public IEnumerator FlyObjectToPosition(GameObject worldObject, Transform targetT, bool doFlip, bool destroyWhenDone, float delay)
+    {
+
+        yield return new WaitForSecondsRealtime(delay);
+
+        Utility.ToggleObjectPhysics(worldObject, false, false, false, false);
+
+        if (doFlip)
+        {
+            yield return StartCoroutine(FlipForTime(worldObject, 3f, 1000f, .25f));
+        }
+
+        // move object to location before destroying
+        while (Vector3.Distance(worldObject.transform.position, targetT.position) > .5f)
+        {
+            worldObject.transform.position = Vector3.Lerp(worldObject.transform.position, targetT.position, ObjectRack.OBJECT_MOVEMENT_ANIMATION_SPEED * Time.deltaTime);
+            worldObject.transform.Rotate(Vector3.right * 10f);
+            yield return null;
+        }
+
+        if(destroyWhenDone)
+        {
+            GameObject.Destroy(worldObject);
+        }
+    }
+
 }
 
 

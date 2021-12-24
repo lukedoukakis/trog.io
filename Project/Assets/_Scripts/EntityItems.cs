@@ -581,29 +581,7 @@ public class EntityItems : EntityComponent
     public void AddToInventory(Item item, GameObject worldObject, bool doFlip, float delay)
     {
         inventory.AddItem(item, 1);
-        StartCoroutine(_MoveObject());
-
-        IEnumerator _MoveObject()
-        {
-
-            yield return new WaitForSecondsRealtime(delay);
-
-            Utility.ToggleObjectPhysics(worldObject, false, false, false, false);
-
-            if(doFlip)
-            {
-                yield return StartCoroutine(Utility.FlipForTime(worldObject, .5f, 1000f, .25f));
-            }
-
-            // move object to entity location before destroying
-            while (Vector3.Distance(worldObject.transform.position, transform.position) > .5f)
-            {
-                worldObject.transform.position = Vector3.Lerp(worldObject.transform.position, transform.position, ObjectRack.OBJECT_MOVEMENT_ANIMATION_SPEED * Time.deltaTime);
-                worldObject.transform.Rotate(Vector3.right * 10f);
-                yield return null;
-            }
-            GameObject.Destroy(worldObject);
-        }
+        StartCoroutine(Utility.instance.FlyObjectToPosition(worldObject, transform, doFlip, true, delay));
     }
 
 

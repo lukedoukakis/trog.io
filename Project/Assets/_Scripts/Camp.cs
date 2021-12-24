@@ -567,6 +567,7 @@ public class Camp : MonoBehaviour
 
         // handle removal of camp components and packing of items
         CampComponent[] allCampComponents = rootT.GetComponents<CampComponent>();
+        int delayIterator = 0;
         foreach(CampComponent cp in allCampComponents)
         {
             // if camp component is an object rack, move all its items to leader's inventory
@@ -577,20 +578,19 @@ public class Camp : MonoBehaviour
                 foreach(GameObject worldObject in rack.objectsOnRack.ToArray())
                 {
                     Item item = Item.GetItemByName(worldObject.name);
-                    faction.leaderHandle.entityItems.AddToInventory(item, Utility.InstantiateSameName(worldObject, worldObject.transform.position, worldObject.transform.rotation), false, 0f);
-                    faction.RemoveItemOwned(item, 1, rack, false, null);
+                    GameObject dummyItem = Utility.InstantiateSameName(worldObject, worldObject.transform.position, worldObject.transform.rotation);
+                    Utility.SetGlobalScale(dummyItem.transform, Vector3.one);
+                    StartCoroutine(Utility.instance.FlyObjectToPosition(dummyItem, faction.leaderHandle.transform, true, true, delayIterator * (ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP * .25f)));
+                    GameObject.Destroy(worldObject);
+                    ++delayIterator;
                 }
-
-                //faction.ownedItems = new ItemCollection();
-
-
-                //rack.EmptyObjects(faction.leaderHandle.entityItems);
             }
 
             // destroy and play dismantle animation
             Utility.DestroyInSeconds(cp.worldObject, 5f);
             cp.PlayDismantleAnimation();
         }
+
 
         Utility.DestroyInSeconds(rootT.gameObject, 5f);
 
