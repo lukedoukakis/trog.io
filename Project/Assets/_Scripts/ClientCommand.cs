@@ -84,6 +84,7 @@ public class ClientCommand : NetworkBehaviour
     [Command]
     public void SpawnNpcIndependent(Vector3 position, bool createCamp, FactionStartingItemsTier factionTier)
     {
+        //Debug.Log("SpawnNpcIndependent()");
         GameObject npc = GameObject.Instantiate(npcPrefab, position, Quaternion.identity);
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
         NetworkServer.Spawn(npc, GameManager.instance.localPlayer);

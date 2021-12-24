@@ -51,7 +51,9 @@ public class Camp : MonoBehaviour
     // client method to place a Camp
     public static void TryPlaceCamp(Faction faction, Transform originT)
     {
-        if(CanPlaceCamp(originT.position)){
+        if(CanPlaceCamp(originT.position))
+        {
+            //faction.leaderHandle.entityItems.EmptyInventory();
             PlaceCamp(faction, originT);
         }
         else{
@@ -557,6 +559,12 @@ public class Camp : MonoBehaviour
         borderSphere.SetActive(false);
         Destroy(borderSphere);
 
+
+        // foreach (KeyValuePair<Item, int> kvp in faction.ownedItems.items)
+        // {
+        //     faction.RemoveItemOwned(kvp.Key, kvp.Value, null, true, faction.leaderHandle.entityItems);
+        // }
+
         // handle removal of camp components and packing of items
         CampComponent[] allCampComponents = rootT.GetComponents<CampComponent>();
         foreach(CampComponent cp in allCampComponents)
@@ -565,7 +573,18 @@ public class Camp : MonoBehaviour
             if(cp is ObjectRack)
             {
                 ObjectRack rack = (ObjectRack)cp;
-                rack.EmptyObjects(faction.leaderHandle);
+
+                foreach(GameObject worldObject in rack.objectsOnRack.ToArray())
+                {
+                    Item item = Item.GetItemByName(worldObject.name);
+                    faction.leaderHandle.entityItems.AddToInventory(item, Utility.InstantiateSameName(worldObject, worldObject.transform.position, worldObject.transform.rotation), false, 0f);
+                    faction.RemoveItemOwned(item, 1, rack, false, null);
+                }
+
+                //faction.ownedItems = new ItemCollection();
+
+
+                //rack.EmptyObjects(faction.leaderHandle.entityItems);
             }
 
             // destroy and play dismantle animation

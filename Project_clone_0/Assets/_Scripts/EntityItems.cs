@@ -91,28 +91,38 @@ public class EntityItems : EntityComponent
     }
 
     // client method when an object is interacted with
-    public void OnObjectTake(GameObject worldObject, object attachedObject)
+    public void OnObjectTake(GameObject worldObject, object attachedObject, bool addToInventoryNoMatterTheType)
     {
         Item item = Item.GetItemByName(worldObject.name);
-        switch (item.type) {
-            case ItemType.Food :
-                PickUpHolding(item, worldObject, attachedObject);
-                break;
-            case ItemType.Weapon :
-                PickUpWeapon(item, worldObject, attachedObject);
-                break;
-            case ItemType.Clothing :
-                PickUpHolding(item, worldObject, attachedObject);
-                EquipClothing(holding_item);
-                ConsumeHolding(holding_item);
-                break;
-            default:
-                PickUpHolding(item, worldObject, attachedObject);
-                break;
-            
+
+        if(addToInventoryNoMatterTheType)
+        {
+            AddToInventory(item, worldObject, false, 0f);
+        }
+        else
+        {
+            switch (item.type)
+            {
+                case ItemType.Food:
+                    PickUpHolding(item, worldObject, attachedObject);
+                    break;
+                case ItemType.Weapon:
+                    PickUpWeapon(item, worldObject, attachedObject);
+                    break;
+                case ItemType.Clothing:
+                    PickUpHolding(item, worldObject, attachedObject);
+                    EquipClothing(holding_item);
+                    ConsumeHolding(holding_item);
+                    break;
+                default:
+                    PickUpHolding(item, worldObject, attachedObject);
+                    break;
+
+            }
+
+            OnItemsChange();
         }
 
-        OnItemsChange();
     }
 
     public void OnEmptyInteract(){
@@ -770,6 +780,7 @@ public class EntityItems : EntityComponent
 
     public void EmptyInventory()
     {
+        Debug.Log("EmptyInventory()");
         entityInfo.faction.AddItemsOwned(inventory, null, transform, 0f);
         inventory = new ItemCollection();
     }

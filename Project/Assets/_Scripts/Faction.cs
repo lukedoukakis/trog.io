@@ -217,8 +217,15 @@ public class Faction : MonoBehaviour
     public int GetItemCount(Item item)
     {
         int rawCount = ownedItems.GetItemCount(item);
-        int workbenchCount = camp == null ? 0 : camp.workbench.GetObjectCountsOnRackThatAreItemCount(item);
-        return rawCount - workbenchCount;
+        int countOnWorkbench = 0;
+        if(camp != null)
+        {
+            if(camp.workbench != null)
+            {
+                countOnWorkbench = camp == null ? 0 : camp.workbench.GetObjectCountsOnRackThatAreItemCount(item);
+            }
+        }
+        return rawCount - countOnWorkbench;
 
     }
 
@@ -263,6 +270,9 @@ public class Faction : MonoBehaviour
     // add starting items (and tribe members) to faction, mainly used for spawning AI factions
     public void AddStartingResources(FactionStartingItemsTier tier)
     {
+
+        Debug.Log("AddStartingResources()");
+
         int memberCount;
         int itemCount;
         switch (tier)

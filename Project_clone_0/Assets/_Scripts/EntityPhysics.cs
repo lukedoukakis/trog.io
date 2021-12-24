@@ -1731,7 +1731,7 @@ public class EntityPhysics : EntityComponent
 
     public void OnCampBorderEnter()
     {
-        //Debug.Log("OnCampBorderCross()");
+        Debug.Log("OnCampBorderCross()");
         isInsideCamp = true;
         entityItems.EmptyInventory();
         if(entityInfo.isFactionLeader)

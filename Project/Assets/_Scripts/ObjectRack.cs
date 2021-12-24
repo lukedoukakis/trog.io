@@ -217,7 +217,7 @@ public class ObjectRack : CampComponent
 
                     }
 
-                    // if moving to an EntityItems, call the EntityItems to take the object
+                    // if moving to an EntityItems, call the EntityItems to take the object (add to inventory)
                     else if(destination is EntityItems)
                     {
                         Transform tempT = new GameObject().transform;
@@ -226,7 +226,7 @@ public class ObjectRack : CampComponent
                         Utility.DestroyInSeconds(tempT.gameObject, delay + 5f); 
                           
                         EntityItems ei = (EntityItems)destination;
-                        ei.OnObjectTake(foundObject, this);
+                        ei.OnObjectTake(foundObject, this, true);
 
 
                         //ei.OnObjectTake(foundObject, null);
@@ -276,12 +276,12 @@ public class ObjectRack : CampComponent
     {
         if(IsEmpty()){ return; }
 
-        Debug.Log("EmptyObjects():");
+        //Debug.Log("EmptyObjects():");
 
         foreach(Item item in itemsOnRack.ToArray())
         {
-            Debug.Log("------>");
-            camp.faction.RemoveItemOwned(item, 1, this, true, camp.faction.leaderHandle.entityItems);
+            //Debug.Log("------>");
+            camp.faction.RemoveItemOwned(item, 1, this, true, destination);
         }
     }
 

@@ -176,7 +176,7 @@ public class CameraController : MonoBehaviour
 
         IEnumerator _SetBakedCameraDistanceSmooth(float targetValue, float speed)
         {
-            Debug.Log("_SetBakedCameraDistanceSmooth");
+            //Debug.Log("_SetBakedCameraDistanceSmooth");
             float v = cameraDistance_baked;
             while(Mathf.Abs(v - targetValue) > .01f)
             {
