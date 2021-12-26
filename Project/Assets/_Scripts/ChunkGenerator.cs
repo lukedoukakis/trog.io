@@ -786,7 +786,7 @@ public class ChunkGenerator : MonoBehaviour
                                                         spawnScale = Vector3.one * spawnParameters.scale;
                                                         pool = PoolHelper.GetPool(feature);
                                                         worldObject = pool.Get();
-                                                        worldObject.transform.position = spawnPosition;
+                                                        worldObject.transform.position = spawnPosition + (Vector3.up * spawnParameters.heightOffset);
                                                         worldObject.transform.SetParent(cd.featuresParent);
                                                         worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
                                                         if (spawnParameters.slantMagnitude > 0f)

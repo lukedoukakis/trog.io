@@ -10,12 +10,13 @@ Material:
   m_Name: terrain
   m_Shader: {fileID: -6465566751694194690, guid: 8f40545b69be12641a46cc1ce935b7f4,
     type: 3}
-  m_ShaderKeywords: _RECEIVE_SHADOWS_OFF
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2004
-  stringTagMap: {}
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -90,11 +91,17 @@ Material:
     - Vector1_B1CE0AD9: 100
     - Vector1_C1CE9129: 0.32
     - Vector1_D5D2B22E: 100
+    - _AlphaClip: 0
+    - _Blend: 0
+    - _CastShadows: 1
     - _ColorNoise: 0
     - _ColorPosterizeSteps: 2
+    - _Cull: 2
     - _Desertness: 0
+    - _DstBlend: 0
     - _QueueControl: 1
     - _QueueOffset: 0
+    - _ReceiveShadows: 1
     - _SnowCapHeight: 0
     - _SnowDepth: 0.1
     - _SnowHeight: 4645.04
@@ -102,10 +109,16 @@ Material:
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 0.57
     - _SnowStartHeight: 0
+    - _SrcBlend: 1
+    - _Surface: 0
     - _Temperature: 0
     - _Variance: 20
     - _VarianceScale: 10
     - _WaterHeight: 4489.5005
+    - _WorkflowMode: 1
+    - _ZTest: 4
+    - _ZWrite: 1
+    - _ZWriteControl: 0
     m_Colors:
     - Color_1DD039A2: {r: 0.99056596, g: 0.9086226, b: 0.6588199, a: 0}
     - Color_20D74E1E: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}

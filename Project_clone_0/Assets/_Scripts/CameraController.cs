@@ -199,6 +199,8 @@ public class CameraController : MonoBehaviour
         if(playerT != null){
             AdjustCamera(GameManager.cameraMode);
         }
+
+        
     }
 
     void FixedUpdate()

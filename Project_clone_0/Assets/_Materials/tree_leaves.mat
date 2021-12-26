@@ -14,7 +14,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
+  m_CustomRenderQueue: 1998
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses: []
@@ -79,9 +79,9 @@ Material:
     - _Cull: 2
     - _Desertness: 0
     - _DstBlend: 0
-    - _NumberOfShades: 2
+    - _NumberOfShades: 1
     - _QueueControl: 0
-    - _QueueOffset: 0
+    - _QueueOffset: -2
     - _SnowDepth: 0.1
     - _SnowHeightCap: 4703.4
     - _SnowHeightStart: 4001.4
@@ -96,7 +96,7 @@ Material:
     - Color_1DD039A2: {r: 0.99056596, g: 0.9086226, b: 0.6588199, a: 0}
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
-    - Color_962802DE: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}
+    - Color_962802DE: {r: 0.49056602, g: 0.38134566, b: 0.38134566, a: 1}
     - Color_B9FC0D65: {r: 1, g: 1, b: 1, a: 0}
     - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
     - _TargetVector: {r: -448.9995, g: 4591.3877, b: -230.05148, a: 0}
