@@ -11,7 +11,7 @@ public class EntityUserInput : EntityComponent
     public static float DISTANCE_INTERACTABLE = 2f;
     public static float DODGE_INPUT_TIMESTEP = .2f;
 
-    public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressCrouch, pressDodge;
+    public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressWalk, pressDodge;
     public bool pressForwardDown, pressBackDown, pressLeftDown, pressRightDown;
     public float timeOffForward, timeOffBack, timeOffLeft, timeOffRight;
     public bool pressToggleAttackRanged;
@@ -88,9 +88,9 @@ public class EntityUserInput : EntityComponent
         pressBack = Input.GetKey(KeyCode.S);
         pressLeft = Input.GetKey(KeyCode.A);
         pressRight = Input.GetKey(KeyCode.D);
-        pressSprint = Input.GetKey(KeyCode.LeftShift);
+        pressSprint = Input.GetKey(KeyCode.LeftShift) && false;
         pressJump = Input.GetKey(KeyCode.Space);
-        pressCrouch = Input.GetKey(KeyCode.LeftControl);
+        pressWalk = Input.GetKey(KeyCode.LeftShift);
         pressToggleAttackRanged = Input.GetKeyDown(KeyCode.LeftControl);
 
         pressDodge = false;
@@ -153,7 +153,7 @@ public class EntityUserInput : EntityComponent
                 entityPhysics.Jump();
             }
         }
-        if(pressCrouch){
+        if(pressWalk){
             entityPhysics.OnCrouchInput();
         }
         if(pressToggleAttackRanged){

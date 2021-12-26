@@ -10,12 +10,13 @@ Material:
   m_Name: terrainGrass
   m_Shader: {fileID: -6465566751694194690, guid: 9571ac0edddefe349893820833d70aad,
     type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: _ALPHATEST_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    RenderType: TransparentCutout
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -37,8 +38,20 @@ Material:
     - Vector1_4FBC0B88: 0.5
     - Vector1_7C8CD4D6: 0.3
     - Vector1_7CCD2358: 0.1
+    - _AlphaClip: 1
+    - _Blend: 0
+    - _CastShadows: 1
+    - _Cull: 2
+    - _DstBlend: 0
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _SrcBlend: 1
+    - _Surface: 0
+    - _WorkflowMode: 1
+    - _ZTest: 4
+    - _ZWrite: 1
+    - _ZWriteControl: 0
     m_Colors:
     - Color_73685E54: {r: 0.63904184, g: 0.7264151, b: 0.61950874, a: 0}
   m_BuildTextureStacks: []

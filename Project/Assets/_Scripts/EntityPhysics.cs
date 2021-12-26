@@ -32,7 +32,7 @@ public class EntityPhysics : EntityComponent
     public static float BASE_FORCE_JUMP = 600f;
     public static float BASE_FORCE_THROW = 250f;
     public static float BASE_ACCELERATION = 40f;
-    public static float BASE_MAX_SPEED = 10f;
+    public static float BASE_MAX_SPEED = 40f;
     public static float BASE_COOLDOWN_JUMP = .15f;
     public static float WEAPON_CHARGETIME_MAX = .25f;
     public static float WEAPON_HITTIME_MAX = .25f;
@@ -41,13 +41,13 @@ public class EntityPhysics : EntityComponent
 
 
     public Vector3 moveDir;
-    public bool isJumping, jumpOffLeft, jumpOffRight, isSprinting;
+    public bool isJumping, jumpOffLeft, jumpOffRight, isSprinting, isWalking;
     public bool animFlag_jump, animFlag_jumpMirror;
     public bool isDodging;
     Vector3 jumpPoint;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
     public float acceleration;
-    public float maxSpeed_run, maxSpeed_sprint, maxSpeed_climb, maxSpeed_swim, maxSpeed_dodge;
+    public float maxSpeed_run, maxSpeed_sprint, maxSpeed_climb, maxSpeed_swim, maxSpeed_dodge, maxSpeed_walk;
 
 
 
@@ -210,6 +210,7 @@ public class EntityPhysics : EntityComponent
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * 1f;
         maxSpeed_dodge = maxSpeed_run * 4f;
+        maxSpeed_walk = maxSpeed_run * .25f;
 
         plantPosFootRight = targetFootRight.position;
         plantPosFootLeft = targetFootLeft.position;
@@ -601,7 +602,7 @@ public class EntityPhysics : EntityComponent
     public void CycleFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, ref float updateTime, bool water)
     {
 
-        float forwardReachDistance = water ? 0f : runCycle_limbForwardReachDistance * ((velHoriz_this.magnitude / maxSpeed_sprint) + (entityOrientation.bodyLean * .3f)) * Mathf.Max(.5f, (1f - changeInVelocityFactor));
+        float forwardReachDistance = water ? 0f : runCycle_limbForwardReachDistance * ((velHoriz_this.magnitude / 8f) + (entityOrientation.bodyLean * .3f)) * Mathf.Max(.5f, (1f - changeInVelocityFactor));
         plantPositionPointer = baseTransform.position + velHoriz_this.normalized * 2.2f * forwardReachDistance;
         updateTime = Mathf.Max(updateTime, 1f) - 1f;
     }
@@ -931,6 +932,7 @@ public class EntityPhysics : EntityComponent
     {
         float speedStat = speed * Stats.GetStatValue(entityStats.combinedStats, Stats.StatType.Speed);
         SetIsSprinting();
+        SetIsWalking();
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
         rb.AddForce(move * speedStat, ForceMode.Force);
 
@@ -940,16 +942,33 @@ public class EntityPhysics : EntityComponent
     {
         if(isLocalPlayer)
         {
-            isSprinting = entityUserInput.pressSprint;
+
+            isSprinting = false;
+
+            //isSprinting = entityUserInput.pressSprint;
         }
         else
         {
 
-            isSprinting = entityBehavior.urgent;
-            if(entityInfo.isFactionFollower)
-            {
-                isSprinting = isSprinting || entityInfo.faction.leaderHandle.entityPhysics.isSprinting;
-            }
+            isSprinting = false;
+
+            // isSprinting = entityBehavior.urgent;
+            // if(entityInfo.isFactionFollower)
+            // {
+            //     isSprinting = isSprinting || entityInfo.faction.leaderHandle.entityPhysics.isSprinting;
+            // }
+        }
+    }
+
+    public void SetIsWalking()
+    {
+        if(isLocalPlayer)
+        {
+            isWalking = entityUserInput.pressWalk;
+        }
+        else
+        {
+           isWalking = false;
         }
     }
 
@@ -1061,6 +1080,8 @@ public class EntityPhysics : EntityComponent
 
     public bool CanJump()
     {
+
+        return false;
 
         if (!entityInfo.speciesInfo.behaviorProfile.canJump)
         {
@@ -1574,7 +1595,19 @@ public class EntityPhysics : EntityComponent
         else
         {
 
-            max = isSprinting ? maxSpeed_sprint : maxSpeed_run;
+            if(isSprinting)
+            {
+                max = maxSpeed_sprint;
+            }
+            else if(isWalking)
+            {
+                max = maxSpeed_walk;
+            }
+            else
+            {
+                max = maxSpeed_run;
+            }
+
             if(isDodging)
             {
                 max = Mathf.Lerp(max, maxSpeed_dodge, Mathf.Sin((dodgeTime / 60f * 100f) * Mathf.PI));
@@ -1697,11 +1730,12 @@ public class EntityPhysics : EntityComponent
             crouch = 0f;
         }
 
-        if (Input.GetKeyUp(KeyCode.P))
-        {
-            acceleration *= 2f;
-            maxSpeed_run *= 2f;
-        }
+        // if (Input.GetKeyUp(KeyCode.P))
+        // {
+        //     acceleration *= 2f;
+        //     maxSpeed_run *= 2f;
+        // }
+
         if (Input.GetKeyUp(KeyCode.O))
         {
             acceleration /= 2f;
@@ -1759,7 +1793,7 @@ public class EntityPhysics : EntityComponent
         if(isLocalPlayer)
         {
             CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_OUTSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION * .25f);
-            CameraController.current.SetLockVerticalCameraMovement(true);
+            CameraController.current.SetLockVerticalCameraMovement(false);
         }
         // todo: command tribe memebrs to follow
     }

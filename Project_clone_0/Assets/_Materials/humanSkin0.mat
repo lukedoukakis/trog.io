@@ -14,7 +14,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
+  m_CustomRenderQueue: 2001
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses: []
@@ -122,11 +122,11 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _Mode: 0
-    - _NumberOfShades: 2
+    - _NumberOfShades: 4
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _QueueControl: 0
-    - _QueueOffset: 0
+    - _QueueOffset: 1
     - _ReceiveShadows: 1
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
@@ -152,12 +152,13 @@ Material:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_81DCE527: {r: 0.7264151, g: 0.58228475, b: 0.39404595, a: 0}
     - Color_962802DE: {r: 0.735849, g: 0.57518464, b: 0.37833747, a: 0}
-    - Color_EB41B935: {r: 0.6415094, g: 0.55760705, b: 0.45692417, a: 0}
+    - Color_EB41B935: {r: 0.5188679, g: 0.45391253, b: 0.41313633, a: 0}
     - _BaseColor: {r: 0.735849, g: 0.67918646, b: 0.57965463, a: 1}
     - _BaseColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
-    - _Color: {r: 0.735849, g: 0.67918646, b: 0.57965463, a: 1}
+    - _Color: {r: 0.4811321, g: 0.43867025, b: 0.36947313, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MainColor: {r: 0.7, g: 0.68, b: 0.68, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

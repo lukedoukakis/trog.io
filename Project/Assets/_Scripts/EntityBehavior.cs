@@ -694,7 +694,7 @@ public class EntityBehavior : EntityComponent
         {
 				
 			// if obstacle can't be jumped over, navigate around it
-			if(!CanClearObstacle()){
+			if(!CanClearObstacle() || true){
 				TurnTowardsMostOpenPath();
 			}
 			else{
@@ -704,7 +704,7 @@ public class EntityBehavior : EntityComponent
 					
                     Debug.Log("Jump Attempt");
 
-                    if(entityPhysics.CanJump() || true){
+                    if(entityPhysics.CanJump()){
 						entityPhysics.Jump();
                         jumped = true;
 					}

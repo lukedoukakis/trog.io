@@ -23,7 +23,7 @@ public class MaterialController : MonoBehaviour
         {
             newClothingMat = new Material(baseClothingMaterial);
             newColor = UnityEngine.Random.ColorHSV(0f, 1f, .25f, .25f, .5f, .5f);
-            newClothingMat.SetColor("_MainColor", newColor);
+            newClothingMat.SetColor("_Color", newColor);
             clothingMaterials[i] = newClothingMat;
 
         }
