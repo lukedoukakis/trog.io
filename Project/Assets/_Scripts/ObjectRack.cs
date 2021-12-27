@@ -138,7 +138,8 @@ public class ObjectRack : CampComponent
     {
 
         int c = countToAdd;
-        for(int countAdded = 0; countAdded < c; ++countAdded){ 
+        for(int countAdded = 0; countAdded < c; ++countAdded)
+        {
             if(!IsFull())
             {
 
@@ -349,6 +350,7 @@ public class ObjectRack : CampComponent
             
                     if(removeAfterMovingToTarget)
                     {
+                        //Debug.Log("SetObjectOrientation(): destroying object");
                         Destroy(_o);
                     }
 

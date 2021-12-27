@@ -209,7 +209,7 @@ public class CameraController : MonoBehaviour
             AdjustCamera(GameManager.cameraMode);
         }
 
-        UpdateRenderScale();
+        //UpdateRenderScale();
         
     }
 

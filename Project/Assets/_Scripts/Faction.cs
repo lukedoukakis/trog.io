@@ -140,6 +140,7 @@ public class Faction : MonoBehaviour
 
                 if(countToAddOverflow > 0)
                 {
+                    Debug.Log("Adding not physically... " + countToAddOverflow);
                     newItems = new ItemCollection();
                     newItems.AddItem(item, countToAddOverflow);
                     camp.AddItemsToCamp(newItems, originT, false);

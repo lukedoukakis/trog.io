@@ -109,7 +109,33 @@ public class Camp : MonoBehaviour
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             PlaceWorkbench();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
-            AddItemsToCamp(faction.ownedItems, originT, true);
+
+            // separate physical and overflow items and add them to camp
+            Item item;
+            int count;
+            ItemCollection physicalItemsToPlace = new ItemCollection();
+            ItemCollection overflowItemsToPlace = new ItemCollection();
+            foreach(KeyValuePair<Item, int> kvp in faction.ownedItems.items)
+            {
+                item = kvp.Key;
+                count = kvp.Value;
+                int countOwned = faction.GetItemCount(item);
+                Debug.Log("countOwned for " + item.nme + ": " + countOwned);
+                int campTotalCapacity = Camp.GetItemPhysicalCapacity(item);
+                int maximumPhysicalToAdd = campTotalCapacity;
+                int countToAddPhysically = Mathf.Min(count, maximumPhysicalToAdd);
+                int countToAddOverflow = count - countToAddPhysically;
+                physicalItemsToPlace.AddItem(item, countToAddPhysically);
+                overflowItemsToPlace.AddItem(item, countToAddOverflow);
+
+                if(countToAddOverflow > 0)
+                {
+                    Debug.Log("overflow add for " + item.nme + ": " + countToAddOverflow);
+                }
+            }
+            AddItemsToCamp(physicalItemsToPlace, originT, true);
+            AddItemsToCamp(overflowItemsToPlace, originT, false);
+
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             //UpdateTentCount();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
@@ -426,15 +452,21 @@ public class Camp : MonoBehaviour
     }
 
 
-    public void AddObjectsAnyRack(Item item, ref int count, Transform originT, ref int newRacksCount, bool physical){
+    public void AddObjectsAnyRack(Item item, ref int count, Transform originT, ref int newRacksCount, bool physical)
+    {
+
         List<ObjectRack> rackList = GetRackListForItemType(item.type);
-        foreach(ObjectRack rack in rackList){
-            if(!rack.IsFull()){
+
+        // if adding physical item, find the next rack with room and add
+        foreach (ObjectRack rack in rackList)
+        {
+            if (!rack.IsFull())
+            {
                 rack.AddObjects(item, ref count, originT, ref newRacksCount, physical);
                 break;
             }
         }
-
+        
         // if still objects to add, place a new rack
         if(count > 0){
             ++newRacksCount;
