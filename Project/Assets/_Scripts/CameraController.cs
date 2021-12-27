@@ -6,6 +6,7 @@ using Mirror;
 public class CameraController : MonoBehaviour
 {
     
+    public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset renderPipelineAsset;
 
     public static float CAMERA_DISTANCE_OUTSIDECAMP = 30f;
     public static float CAMERA_DISTANCE_INSIDECAMP = 30f;
@@ -18,6 +19,7 @@ public class CameraController : MonoBehaviour
     public Transform focusT;
     public float cameraDistance_baked;
     public float cameraDistance_input;
+    public float cameraDistance_total;
     public bool lockVerticalCameraMovement;
     public IEnumerator smoothZoomCoroutine;
     
@@ -42,6 +44,7 @@ public class CameraController : MonoBehaviour
 
     void Awake(){
         current = this;
+        //renderPipelineAsset = GetComponent<UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset>();
         SetBakedCameraDistance(CAMERA_DISTANCE_OUTSIDECAMP);
         SetLockVerticalCameraMovement(false);
     }
@@ -118,10 +121,10 @@ public class CameraController : MonoBehaviour
             {
                 posModifier = min;
             }
-            float cameraDistance_combined = cameraDistance_baked * cameraDistance_input;
+            cameraDistance_total = cameraDistance_baked * cameraDistance_input;
 
             followT.position = Vector3.Lerp(followT.position, playerT.position + Vector3.up * 1f, 22f * Time.deltaTime);
-            targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -1f * Mathf.Pow(cameraDistance_combined, 1f)) + (Mathf.Sin(posModifier * pi)) * Vector3.up * 1f * cameraDistance_combined, 50f * Time.deltaTime);
+            targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -1f * Mathf.Pow(cameraDistance_total, 1f)) + (Mathf.Sin(posModifier * pi)) * Vector3.up * 1f * cameraDistance_total, 50f * Time.deltaTime);
             Camera.main.transform.position = targetPos;
             targetLookAt = Vector3.Lerp(targetLookAt, followT.position, 50f * Time.deltaTime);
             Camera.main.transform.LookAt(targetLookAt);
@@ -146,7 +149,8 @@ public class CameraController : MonoBehaviour
         Camera.main.transform.position += Camera.main.transform.TransformDirection(currentOffset);
     }
 
-    void ZoomInput(){
+    void ZoomInput()
+    {
         float zoomDelta = Input.mouseScrollDelta.y * sensitivity_zoom;
         float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .05f, 1f);
         cameraDistance_input = Mathf.Lerp(cameraDistance_input, targetZoom, 40f * Time.deltaTime);
@@ -192,6 +196,11 @@ public class CameraController : MonoBehaviour
         lockVerticalCameraMovement = targetValue;
     }
 
+    void UpdateRenderScale()
+    {
+        renderPipelineAsset.renderScale = Mathf.Lerp(.25f, .25f, 1f - Mathf.InverseLerp(0f, CAMERA_DISTANCE_OUTSIDECAMP, cameraDistance_total));
+    }
+
 
     void Update()
     {
@@ -200,6 +209,7 @@ public class CameraController : MonoBehaviour
             AdjustCamera(GameManager.cameraMode);
         }
 
+        UpdateRenderScale();
         
     }
 

@@ -103,6 +103,7 @@ MonoBehaviour:
   - {fileID: -6693327405042897712}
   - {fileID: 778157662277805037}
   - {fileID: 9062760793926755196}
+  - {fileID: 2518387235433243848}
 --- !u!114 &778157662277805037
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -121,7 +122,7 @@ MonoBehaviour:
     m_Value: 0.67
   contrast:
     m_OverrideState: 0
-    m_Value: 100
+    m_Value: -2
   colorFilter:
     m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -130,7 +131,32 @@ MonoBehaviour:
     m_Value: 180
   saturation:
     m_OverrideState: 1
-    m_Value: 100
+    m_Value: 65
+--- !u!114 &2518387235433243848
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29fa0085f50d5e54f8144f766051a691, type: 3}
+  m_Name: FilmGrain
+  m_EditorClassIdentifier: 
+  active: 0
+  type:
+    m_OverrideState: 1
+    m_Value: 0
+  intensity:
+    m_OverrideState: 1
+    m_Value: 1
+  response:
+    m_OverrideState: 1
+    m_Value: 0
+  texture:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
 --- !u!114 &9062760793926755196
 MonoBehaviour:
   m_ObjectHideFlags: 3
