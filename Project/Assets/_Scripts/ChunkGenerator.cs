@@ -412,16 +412,16 @@ public class ChunkGenerator : MonoBehaviour
                 freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
 
                 // give rivers character
-                float character = .25f;
+                float character = .8f;
                 rough = Mathf.PerlinNoise((x + xOffset + .01f) / 100f, (z + zOffset + .01f) / 100f);
                 freshWaterValue += Mathf.Max(0f, rough) * character;
 
                 // give rivers roughness
-                // if (freshWaterValue > .25f)
-                // {
-                //     rough = Mathf.PerlinNoise((x + xOffset + .01f) / 1f, (z + zOffset + .01f) / 1f) * 2f - 1f;
-                //     freshWaterValue += rough * .5f;
-                // }
+                if (freshWaterValue > .25f)
+                {
+                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 3f, (z + zOffset + .01f) / 3f) * 2f - 1f;
+                    freshWaterValue += rough * .5f;
+                }
 
 
                 // ridgify
@@ -431,7 +431,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 freshWaterValue = Mathf.Clamp01(freshWaterValue);
                 //Debug.Log(freshWaterValue);
-                freshWaterValue = Mathf.Pow(freshWaterValue, 1f);
+                freshWaterValue = Mathf.Pow(freshWaterValue, 60f);
 
                 //freshWaterValue = Posterize(0f, 1f, freshWaterValue, 4);
 
@@ -439,7 +439,7 @@ public class ChunkGenerator : MonoBehaviour
                 //freshWaterValue *= 1f - (Mathf.InverseLerp(.25f, 1f, (bigMound / bigMoundCap)));
 
 
-                freshWaterValue = 0f;
+                //freshWaterValue = 0f;
 
 
                 

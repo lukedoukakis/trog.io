@@ -112,7 +112,7 @@ public class SpawnParameters
 
         // smaller plants
         {"Grass", new SpawnParameters(.5f, hgtWaterAndBank, all, all, normGrass, new Vector2(.1f, .8f), DensityCalculationType.DenserAtMinimum, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1f, 3, 0, LoadOrder.Tirtiary)},
-        {"Plant", new SpawnParameters(2f, hgtWaterAndAbove, q4, q4, new Vector2(.95f, 1f), new Vector2(.59f, .6f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1f, 1, 0, LoadOrder.Tirtiary)},
+        {"Plant", new SpawnParameters(2f, hgtWaterAndAbove, q4, q4, new Vector2(.95f, 1f), new Vector2(.29f, .3f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1f, 1, 0, LoadOrder.Tirtiary)},
         {"Reed", new SpawnParameters(.8f, hgtWaterAndBank, all, all, new Vector2(.75f, 1f), new Vector2(.05f, .2f), DensityCalculationType.DenserAtMinimum, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 4, 0, LoadOrder.Tirtiary)},
         {"Mushroom", new SpawnParameters(1.5f, hgtDryNoSnow, all, h2, new Vector2(.95f, 1f), new Vector2(.09f, .1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1f, 1, 0, LoadOrder.Tirtiary)},
         {"Bush", new SpawnParameters(.375f, hgtDryNoSnow, h1, all, new Vector2(.9f, 1f), new Vector2(.035f, .125f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtMaximum, 1f, 4, 0, LoadOrder.Secondary)},
@@ -129,7 +129,7 @@ public class SpawnParameters
     
     
         // AI faction leader
-        //{"Npc", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.1f, .1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, -1f, LoadOrder.Primary)},
+        {"Npc", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.05f, .05f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, -1f, LoadOrder.Primary)},
 
 
     
