@@ -318,7 +318,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // lock temperature
                 //temperatureValue = .99f;
-                temperatureValue = .25f;
+                //temperatureValue = .25f;
 
 
 
