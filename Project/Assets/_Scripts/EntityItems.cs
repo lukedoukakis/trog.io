@@ -87,7 +87,7 @@ public class EntityItems : EntityComponent
         SetUpdateWeaponOrientation(true);
 
         EquipClothing(Item.ClothingTest);
-        //UnequipCurrentClothing();
+        UnequipCurrentClothing();
     }
 
     // client method when an object is interacted with
@@ -106,8 +106,8 @@ public class EntityItems : EntityComponent
                 break;
             case ItemType.Clothing:
                 PickUpHolding(item, worldObject, attachedObject);
-                EquipClothing(holding_item);
-                ConsumeHolding(holding_item);
+                //EquipClothing(holding_item);
+                //ConsumeHolding(holding_item);
                 break;
             default:
                 PickUpHolding(item, worldObject, attachedObject);
@@ -360,35 +360,34 @@ public class EntityItems : EntityComponent
     }
 
 
-    // public void OnHoldingUse(){
+    public void OnHoldingUse(){
 
-    //     if(holding_item != null){
+        if(holding_item != null)
+        {
 
-    //         switch (holding_item.type) {
-    //             case Item.ItemType.Food :
-    //                 // todo: eating animation
-    //                 ConsumeHolding(holding_item);
-    //                 break;
+            Item i = holding_item;
+
+            switch (i.type)
+            {
+                case ItemType.Food :
+                    // todo: eating animation
+                    ConsumeHolding(i);
+                    break;
                 
-    //             case Item.ItemType.Clothing :
-    //                 // todo: clothing animation
-    //                 Item i = holding_item;
-    //                 EquipClothing(holding_item);
-    //                 ConsumeHolding(i);
-    //                 break;
+                case ItemType.Clothing :
+                    // todo: clothing animation
+                    EquipClothing(i);
+                    ConsumeHolding(i);
+                    break;
 
-    //             default:
-    //                 break;
+                default:
+                    break;
 
-
-    //         }
-
-
-            
-    //     }
+            }  
+        }
 
 
-    // }
+    }
 
 
 
@@ -555,7 +554,8 @@ public class EntityItems : EntityComponent
 
 
     }
-    public void UnequipCurrentClothing(){
+    public void UnequipCurrentClothing()
+    {
 
         // if a clothing is currently equipped, unequip it and add associated item to faction items
         if (clothing != null)

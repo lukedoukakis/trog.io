@@ -213,6 +213,9 @@ public class EntityUserInput : EntityComponent
         if(Input.GetKeyUp(KeyCode.F)){
             OnDropInput();
         }
+        if(Input.GetKeyUp(KeyCode.Mouse1)){
+            OnUseInput();
+        }
 
         if(Input.GetKeyUp(KeyCode.Alpha1)){
             entityItems.ToggleWeaponEquipped();
@@ -307,6 +310,11 @@ public class EntityUserInput : EntityComponent
 
     void OnDropInput(){
         entityItems.OnDropInput();
+    }
+
+    void OnUseInput()
+    {
+        entityItems.OnHoldingUse();
     }
 
 
