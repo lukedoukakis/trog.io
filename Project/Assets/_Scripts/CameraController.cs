@@ -8,10 +8,11 @@ public class CameraController : MonoBehaviour
     
     public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset renderPipelineAsset;
 
-    public static float CAMERA_DISTANCE_OUTSIDECAMP = 30f;
-    public static float CAMERA_DISTANCE_INSIDECAMP = 30f;
+    public static float CAMERA_DISTANCE_OUTSIDECAMP = 20f;
+    public static float CAMERA_DISTANCE_INSIDECAMP = 2.5f;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
-    public static float CAMERA_LOCK_VERTICALITY = .3f;
+    public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .2f;
+    public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .1f;
 
 
     public Transform playerT;
@@ -21,6 +22,7 @@ public class CameraController : MonoBehaviour
     public float cameraDistance_input;
     public float cameraDistance_total;
     public bool lockVerticalCameraMovement;
+    public float lockVerticalCameraMovement_verticality;
     public IEnumerator smoothZoomCoroutine;
     
     public static CameraController current;
@@ -46,7 +48,7 @@ public class CameraController : MonoBehaviour
         current = this;
         //renderPipelineAsset = GetComponent<UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset>();
         SetBakedCameraDistance(CAMERA_DISTANCE_OUTSIDECAMP);
-        SetLockVerticalCameraMovement(false);
+        SetLockVerticalCameraMovement(true, CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
     }
     // Start is called before the first frame update
     void Start()
@@ -98,13 +100,13 @@ public class CameraController : MonoBehaviour
             {
                 if(lockVerticalCameraMovement)
                 {
-                    posModifier = Mathf.Lerp(posModifier, CAMERA_LOCK_VERTICALITY, CAMERA_ZOOM_SPEED_CAMPTRANSITION * Time.deltaTime);
+                    posModifier = Mathf.Lerp(posModifier, lockVerticalCameraMovement_verticality, CAMERA_ZOOM_SPEED_CAMPTRANSITION * Time.deltaTime);
                 }
                 else
                 {
                     posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
                 }
-                ZoomInput();
+                //ZoomInput();
             }
 
             float max = .48f;
@@ -191,9 +193,10 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    public void SetLockVerticalCameraMovement(bool targetValue)
+    public void SetLockVerticalCameraMovement(bool targetValue, float verticality)
     {
         lockVerticalCameraMovement = targetValue;
+        lockVerticalCameraMovement_verticality = verticality;
     }
 
     void UpdateRenderScale()

@@ -32,7 +32,7 @@ public class EntityPhysics : EntityComponent
     public static float BASE_FORCE_JUMP = 600f;
     public static float BASE_FORCE_THROW = 250f;
     public static float BASE_ACCELERATION = 40f * 2f;
-    public static float BASE_MAX_SPEED = 40f;
+    public static float BASE_MAX_SPEED = 25f;
     public static float BASE_COOLDOWN_JUMP = .15f;
     public static float WEAPON_CHARGETIME_MAX = .25f;
     public static float WEAPON_HITTIME_MAX = .25f;
@@ -1081,7 +1081,7 @@ public class EntityPhysics : EntityComponent
     public bool CanJump()
     {
 
-        return false;
+        //return false;
 
         if (!entityInfo.speciesInfo.behaviorProfile.canJump)
         {
@@ -1730,11 +1730,11 @@ public class EntityPhysics : EntityComponent
             crouch = 0f;
         }
 
-        // if (Input.GetKeyUp(KeyCode.P))
-        // {
-        //     acceleration *= 2f;
-        //     maxSpeed_run *= 2f;
-        // }
+        if (Input.GetKeyUp(KeyCode.P))
+        {
+            acceleration *= 2f;
+            maxSpeed_run *= 2f;
+        }
 
         if (Input.GetKeyUp(KeyCode.O))
         {
@@ -1777,7 +1777,7 @@ public class EntityPhysics : EntityComponent
         if(isLocalPlayer)
         {
             CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_INSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION);
-            CameraController.current.SetLockVerticalCameraMovement(false);
+            CameraController.current.SetLockVerticalCameraMovement(true, CameraController.CAMERA_LOCK_VERTICALITY_INSIDECAMP);
         }
         // todo: command tribe memebrs to line up to orientations
     }
@@ -1793,7 +1793,7 @@ public class EntityPhysics : EntityComponent
         if(isLocalPlayer)
         {
             CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_OUTSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION * .25f);
-            CameraController.current.SetLockVerticalCameraMovement(false);
+            CameraController.current.SetLockVerticalCameraMovement(true, CameraController.CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
         }
         // todo: command tribe memebrs to follow
     }

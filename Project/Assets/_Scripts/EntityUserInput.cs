@@ -380,7 +380,7 @@ public class EntityUserInput : EntityComponent
         if(entityPhysics.isInsideCamp)
         {
             RaycastHit hit;
-            hoveredOverSomething = Physics.Raycast(cameraT.position, cameraT.forward, out hit, 100f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide);
+            hoveredOverSomething = Physics.Raycast(selectionOrigin.position, cameraT.forward, out hit, 100f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide);
             c = hoveredOverSomething ? hit.collider : null;
         }
         else

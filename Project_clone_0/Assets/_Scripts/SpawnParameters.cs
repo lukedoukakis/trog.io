@@ -116,8 +116,8 @@ public class SpawnParameters
         {"Reed", new SpawnParameters(.8f, hgtWaterAndBank, all, all, new Vector2(.75f, 1f), new Vector2(.05f, .2f), DensityCalculationType.DenserAtMinimum, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 4, 0, LoadOrder.Tirtiary)},
         {"Mushroom", new SpawnParameters(1.5f, hgtDryNoSnow, all, h2, new Vector2(.95f, 1f), new Vector2(.09f, .1f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1f, 1, 0, LoadOrder.Tirtiary)},
         {"Bush", new SpawnParameters(.375f, hgtDryNoSnow, h1, all, new Vector2(.9f, 1f), new Vector2(.035f, .125f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtMaximum, 1f, 4, 0, LoadOrder.Secondary)},
-        {"DeadBush", new SpawnParameters(.75f, hgtDryNoSnow, h2, h1, new Vector2(.96f, 1f), new Vector2(.15f, .15f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, 1, 0, LoadOrder.Secondary)},
-        {"Cactus", new SpawnParameters(.625f, hgtDryNoSnow, q4, q1, new Vector2(.96f, 1f), new Vector2(.049f, .05f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, 1, 0, LoadOrder.Secondary)},
+        {"DeadBush", new SpawnParameters(.75f, hgtDryNoSnow, all, h1, new Vector2(.96f, 1f), new Vector2(.15f, .15f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, 1, 0, LoadOrder.Secondary)},
+        {"Cactus", new SpawnParameters(.625f, hgtDryNoSnow, all, q1, new Vector2(.96f, 1f), new Vector2(.049f, .05f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 1, 1, 0, LoadOrder.Secondary)},
 
         // creatures
         {"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Primary)},
@@ -129,7 +129,7 @@ public class SpawnParameters
     
     
         // AI faction leader
-        {"Npc", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.05f, .05f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, -1f, LoadOrder.Primary)},
+        //{"Npc", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.01f, .01f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, -1f, LoadOrder.Primary)},
 
 
     

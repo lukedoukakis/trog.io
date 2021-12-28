@@ -318,7 +318,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // lock temperature
                 //temperatureValue = .99f;
-                //temperatureValue = .25f;
+                temperatureValue = .25f;
 
 
 
@@ -626,8 +626,8 @@ public class ChunkGenerator : MonoBehaviour
 
     public static float CalculateDesertness(float temp, float humid)
     {
-        float desertness = Mathf.Min(Mathf.InverseLerp(.75f, 1f, temp), Mathf.InverseLerp(.75f, 1f, (1f - humid)));
-        //Debug.Log(desertness);
+        //float desertness = Mathf.Min(Mathf.InverseLerp(.75f, 1f, temp), Mathf.InverseLerp(.75f, 1f, (1f - humid)));
+        float desertness = Mathf.InverseLerp(.25f, .75f, 1f - humid);
         return desertness;
     }
 
