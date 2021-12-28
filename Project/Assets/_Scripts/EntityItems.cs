@@ -86,7 +86,7 @@ public class EntityItems : EntityComponent
         SetWeaponRangedMode(false);
         SetUpdateWeaponOrientation(true);
 
-        EquipClothing(Item.PeltBear);
+        EquipClothing(Item.PeltDeer);
         //UnequipCurrentClothing();
     }
 
@@ -548,7 +548,7 @@ public class EntityItems : EntityComponent
         // set clothing on model
         //Debug.Log("Equipping clothing of name: " + i.nme);
         GameObject clothing = meshParentT.Find(item.nme).gameObject;
-        clothing.GetComponent<Renderer>().sharedMaterial = entityInfo.faction.clothingMaterial;
+        //clothing.GetComponent<Renderer>().sharedMaterial = entityInfo.faction.clothingMaterial;
         clothing.SetActive(true);
         this.clothing = item;
 

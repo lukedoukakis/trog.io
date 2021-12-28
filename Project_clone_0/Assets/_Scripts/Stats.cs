@@ -40,7 +40,7 @@ public class Stats : ScriptableObject
     public static Stats ITEM_WIELDERMODIFIER_AXEBONE = InstantiateStats(0f,0f,6f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
 
     public static Stats ITEM_WIELDERMODIFIER_PELTBEAR = InstantiateStats(0f,0f,0f,0f,0f,0f,0f,3f,0f,0f,0f,1f);
-
+    public static Stats ITEM_WIELDERMODIFIER_PELTDEER = InstantiateStats(0f,0f,0f,0f,0f,0f,0f,3f,0f,0f,0f,1f);
 
 
 
