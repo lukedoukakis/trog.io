@@ -1757,10 +1757,10 @@ public class EntityPhysics : EntityComponent
             }
         }
 
-        if(isLocalPlayer)
-        {
-            SetHeadTarget((Camera.main.transform.position + Camera.main.transform.right * 1000f) + (transform.forward * 500f));
-        }
+        // if (isLocalPlayer)
+        // {
+        //     SetHeadTarget((Camera.main.transform.position + Camera.main.transform.right * 1000f) + (transform.forward * 500f));
+        // }
 
 
     }
