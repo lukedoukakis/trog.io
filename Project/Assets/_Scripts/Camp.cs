@@ -120,7 +120,7 @@ public class Camp : MonoBehaviour
                 item = kvp.Key;
                 count = kvp.Value;
                 int countOwned = faction.GetItemCount(item);
-                Debug.Log("countOwned for " + item.nme + ": " + countOwned);
+                //Debug.Log("countOwned for " + item.nme + ": " + countOwned);
                 int campTotalCapacity = Camp.GetItemPhysicalCapacity(item);
                 int maximumPhysicalToAdd = campTotalCapacity;
                 int countToAddPhysically = Mathf.Min(count, maximumPhysicalToAdd);
@@ -128,10 +128,10 @@ public class Camp : MonoBehaviour
                 physicalItemsToPlace.AddItem(item, countToAddPhysically);
                 overflowItemsToPlace.AddItem(item, countToAddOverflow);
 
-                if(countToAddOverflow > 0)
-                {
-                    Debug.Log("overflow add for " + item.nme + ": " + countToAddOverflow);
-                }
+                // if(countToAddOverflow > 0)
+                // {
+                //     Debug.Log("overflow add for " + item.nme + ": " + countToAddOverflow);
+                // }
             }
             AddItemsToCamp(physicalItemsToPlace, originT, true);
             AddItemsToCamp(overflowItemsToPlace, originT, false);
