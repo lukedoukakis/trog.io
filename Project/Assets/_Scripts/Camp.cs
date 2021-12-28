@@ -16,7 +16,7 @@ public class Camp : MonoBehaviour
         Tent,
         Rack_Food, 
         Rack_Weapons, 
-        Rack_Clothing,
+        Rack_Pelt,
         Rack_Wood,
         Rack_Bone,
         Rack_Stone
@@ -38,7 +38,7 @@ public class Camp : MonoBehaviour
     public List<Tent> tents;
     public List<ObjectRack> racks_food;
     public List<ObjectRack> racks_weapons;
-    public List<ObjectRack> racks_clothing;
+    public List<ObjectRack> racks_pelt;
     public List<ObjectRack> racks_wood;
     public List<ObjectRack> racks_bone;
     public List<ObjectRack> racks_stone;
@@ -73,7 +73,7 @@ public class Camp : MonoBehaviour
         camp.rootT = new GameObject().transform;
         camp.racks_food = new List<ObjectRack>();
         camp.racks_weapons = new List<ObjectRack>();
-        camp.racks_clothing = new List<ObjectRack>();
+        camp.racks_pelt = new List<ObjectRack>();
         camp.racks_wood = new List<ObjectRack>();
         camp.racks_bone = new List<ObjectRack>();
         camp.racks_stone = new List<ObjectRack>();
@@ -84,7 +84,7 @@ public class Camp : MonoBehaviour
         camp.SetCampLayout(campPlacementPos, originT.rotation);
         camp.PlaceCampComponents(originT);
         camp.SetTribeMemberStandingPositions();
-        camp.racks_all = new List<List<ObjectRack>>(){ camp.racks_food, camp.racks_weapons, camp.racks_clothing, camp.racks_wood, camp.racks_bone, camp.racks_stone, new List<ObjectRack>(){camp.workbench} };
+        camp.racks_all = new List<List<ObjectRack>>(){ camp.racks_food, camp.racks_weapons, camp.racks_pelt, camp.racks_wood, camp.racks_bone, camp.racks_stone, new List<ObjectRack>(){camp.workbench} };
 
         // todo: update all memnbers in camp status from checking distance to origin
         camp.faction.leaderHandle.entityPhysics.isInsideCamp = true;
@@ -247,8 +247,8 @@ public class Camp : MonoBehaviour
             case ComponentType.Rack_Weapons :
                 search = "OrientationWeaponsRack" + racks_weapons.Count;
                 break;
-            case ComponentType.Rack_Clothing :
-                search = "OrientationClothingRack" + racks_clothing.Count;
+            case ComponentType.Rack_Pelt :
+                search = "OrientationPeltRack" + racks_pelt.Count;
                 break;
             case ComponentType.Rack_Wood :
                 search = "OrientationWoodRack" + racks_wood.Count;
@@ -353,8 +353,8 @@ public class Camp : MonoBehaviour
             case ItemType.Weapon:
                 componentType = ComponentType.Rack_Weapons;
                 break;
-            case ItemType.Clothing:
-                componentType = ComponentType.Rack_Clothing;
+            case ItemType.Pelt:
+                componentType = ComponentType.Rack_Pelt;
                 break;
             case ItemType.Wood:
                 componentType = ComponentType.Rack_Wood;
@@ -505,8 +505,8 @@ public class Camp : MonoBehaviour
             case ItemType.Weapon :
                 rackList = racks_weapons;
                 break;
-            case ItemType.Clothing :
-                rackList = racks_clothing;
+            case ItemType.Pelt :
+                rackList = racks_pelt;
                 break;
             case ItemType.Wood :
                 rackList = racks_wood;

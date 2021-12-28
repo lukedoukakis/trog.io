@@ -12,7 +12,7 @@ public class ObjectRack : CampComponent
     
     public static int RackCapacity_Food = 6;
     public static int RackCapacity_Weapons = 6;
-    public static int RackCapacity_Clothing = 6;
+    public static int RackCapacity_Pelt = 6;
     public static int RackCapacity_Wood = 30;
     public static int RackCapacity_Bone = 28;
     public static int RackCapacity_Stone = 28;
@@ -62,9 +62,9 @@ public class ObjectRack : CampComponent
                 allowLateralTranslation = false;
                 allowRotation = false;
                 break;
-            case ItemType.Clothing : 
-                this.capacity = RackCapacity_Clothing;
-                worldObjectPrefab = CampResources.PREFAB_RACK_CLOTHING;
+            case ItemType.Pelt : 
+                this.capacity = RackCapacity_Pelt;
+                worldObjectPrefab = CampResources.PREFAB_RACK_Pelt;
                 onDemandPlacement = true;
                 allowObjectPhysics = false;
                 allowItemHoverTriggers = true;

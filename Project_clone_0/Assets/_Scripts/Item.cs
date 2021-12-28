@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public enum ItemType
 {
-    Any, Food, Weapon, Clothing, Wood, Bone, Stone, Feature, Misc
+    Any, Food, Weapon, Pelt, Wood, Bone, Stone, Feature, Misc
 }
 
 public enum ItemDamageType{
@@ -43,9 +43,8 @@ public class Item : ScriptableObject
     public static Item SpearBone = InitiailizeItem("SpearBone", ItemType.Weapon, true, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_SPEARBONE, ItemHoldStyle.Spear, ItemDamageType.Pierce, ItemCollection.EmptyItemCollection, new CraftingRecipe(Item.WoodPiece, Item.WoodPiece, Item.StoneSmall), null, Resources.Load<GameObject>("Items/Weapons/SpearBone/Gameobject/SpearBone"), Resources.Load<Image>("Items/Weapons/SpearBone/Image"));
     public static Item AxeBone = InitiailizeItem("AxeBone", ItemType.Weapon, true, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_AXEBONE, ItemHoldStyle.Axe, ItemDamageType.Slash, ItemCollection.EmptyItemCollection, new CraftingRecipe(Item.WoodPiece, Item.StoneSmall, Item.StoneSmall), null, Resources.Load<GameObject>("Items/Weapons/AxeBone/Gameobject/AxeBone"), Resources.Load<Image>("Items/Weapons/AxeBone/Image"));
     public static Item CarcassBear = InitiailizeItem("CarcassBear", ItemType.Misc, false, Stats.InstantiateStats(.1f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{BonePiece, 4}, {Meat, 2}}), null, ParticleController.instance.BloodSpatter, Resources.Load<GameObject>("Items/Carcasses/CarcassBear/Gameobject/CarcassBear"), Resources.Load<Image>("Items/Carcasses/CarcassBear/Image"));
-    public static Item ClothingTest = InitiailizeItem("ClothingTest", ItemType.Clothing, true, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_TESTCLOTHING, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, null, null, Resources.Load<GameObject>("Items/Clothing/ClothingTest/Gameobject/ClothingTest"), Resources.Load<Image>("Items/Clothing/ClothingTest/Image"));
+    public static Item PeltBear = InitiailizeItem("PeltBear", ItemType.Pelt, true, Stats.NONE, Stats.ITEM_WIELDERMODIFIER_PELTBEAR, ItemHoldStyle.Torch, ItemDamageType.Blunt, ItemCollection.EmptyItemCollection, null, null, Resources.Load<GameObject>("Items/Pelt/PeltBear/Gameobject/PeltBear"), Resources.Load<Image>("Items/Pelt/PeltBear/Image"));
     public static Item LogFir = InitiailizeItem("LogFir", ItemType.Misc, false, Stats.InstantiateStats(.1f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.Hug, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{WoodPiece, 4},}), null, ParticleController.instance.TreeDebris, Resources.Load<GameObject>("Items/LogFir/Gameobject/LogFir"), Resources.Load<Image>("Items/LogFir/Image"));
-    
     public static Item Stone = InitiailizeItem("Stone", ItemType.Feature, true, Stats.InstantiateStats(3f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{StoneSmall, 5}}), null, ParticleController.instance.StoneDebris, null, null);
     public static Item Tree = InitiailizeItem("Tree", ItemType.Feature, true, Stats.InstantiateStats(3f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{LogFir, 1}}), null, ParticleController.instance.TreeDebris, null, null);
 
@@ -62,7 +61,7 @@ public class Item : ScriptableObject
         { "AxeBone", AxeBone },
         { "LogFir", LogFir },
         { "CarcassBear", CarcassBear },
-        { "ClothingTest", ClothingTest },
+        { "PeltBear", PeltBear },
         { "Meat", Meat },
         { "Stone", Stone },
         { "Tree", Tree },

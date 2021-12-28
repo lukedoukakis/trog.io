@@ -86,8 +86,8 @@ public class EntityItems : EntityComponent
         SetWeaponRangedMode(false);
         SetUpdateWeaponOrientation(true);
 
-        EquipClothing(Item.ClothingTest);
-        UnequipCurrentClothing();
+        EquipClothing(Item.PeltBear);
+        //UnequipCurrentClothing();
     }
 
     // client method when an object is interacted with
@@ -104,7 +104,7 @@ public class EntityItems : EntityComponent
             case ItemType.Weapon:
                 PickUpWeapon(item, worldObject, attachedObject);
                 break;
-            case ItemType.Clothing:
+            case ItemType.Pelt:
                 PickUpHolding(item, worldObject, attachedObject);
                 //EquipClothing(holding_item);
                 //ConsumeHolding(holding_item);
@@ -344,7 +344,7 @@ public class EntityItems : EntityComponent
         {
             slot = StatsSlot.Food;
         }
-        else if(item.type.Equals(ItemType.Clothing))
+        else if(item.type.Equals(ItemType.Pelt))
         {
             slot = StatsSlot.Clothing;
         }
@@ -374,7 +374,7 @@ public class EntityItems : EntityComponent
                     ConsumeHolding(i);
                     break;
                 
-                case ItemType.Clothing :
+                case ItemType.Pelt :
                     // todo: clothing animation
                     EquipClothing(i);
                     ConsumeHolding(i);
@@ -665,11 +665,16 @@ public class EntityItems : EntityComponent
             entityStats.SetStatsSlot(StatsSlot.Weapon, Stats.NONE);
         }
         if(weaponUnequipped_object != null){
-             Utility.IgnorePhysicsCollisions(weaponUnequipped_object.transform, weaponUnequipped_object.transform);
+            Utility.IgnorePhysicsCollisions(weaponUnequipped_object.transform, weaponUnequipped_object.transform);
             weaponUnequipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
-        if(holding_object != null){
-            Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, true);
+        if(holding_object != null)
+        {
+            Collider holdingObjectCollider = holding_object.GetComponent<Collider>();
+            if(holdingObjectCollider != null)
+            {
+                Physics.IgnoreCollision(holdingObjectCollider, entityPhysics.worldCollider, true);
+            }
             holding_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
 
