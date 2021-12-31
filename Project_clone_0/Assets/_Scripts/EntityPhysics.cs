@@ -1442,7 +1442,7 @@ public class EntityPhysics : EntityComponent
             Lunge(Utility.GetHorizontalVector(lungeDirection));
             iKTargetAnimator.enabled = true;
             iKTargetAnimator.SetTrigger("AttackSwipe");
-            yield return new WaitForSeconds(.25f);
+            yield return new WaitForSeconds(.7f);
             iKTargetAnimator.enabled = false;
             StopMeleeAttackHitTime();
         }

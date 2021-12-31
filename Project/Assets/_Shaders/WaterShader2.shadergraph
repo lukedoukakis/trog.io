@@ -3338,6 +3338,21 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "5d28ef40183d4dba82b52653045e0a92",
+    "m_Id": 2,
+    "m_DisplayName": "Out_TotalVerticalOffset",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out_TotalVerticalOffset",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
     "m_ObjectId": "5e5dc118940053838e15438355f9912f",
     "m_Id": 0,
@@ -5289,6 +5304,9 @@
         },
         {
             "m_Id": "43595177e6a0416caad86a7def5c7b76"
+        },
+        {
+            "m_Id": "5d28ef40183d4dba82b52653045e0a92"
         }
     ],
     "synonyms": [],

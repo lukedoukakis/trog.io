@@ -6,6 +6,7 @@ public class MaterialController : MonoBehaviour
 {
 
     public static MaterialController instance;
+    public Material baseFogMaterial;
     public Material baseClothingMaterial;
     public Material selectedMaterial;
     public Material[] clothingMaterials;

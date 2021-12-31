@@ -23,12 +23,13 @@ Material:
   m_Name: terrainFeature
   m_Shader: {fileID: -6465566751694194690, guid: 8f40545b69be12641a46cc1ce935b7f4,
     type: 3}
-  m_ShaderKeywords: USE_S _RTEFFECT_ON
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -191,9 +192,15 @@ Material:
     - Vector1_C1CE9129: 0.1
     - Vector1_D5D2B22E: 100
     - Vector1_F552BBDC: 1
+    - _AlphaClip: 0
+    - _Blend: 0
+    - _CastShadows: 1
     - _ColorNoise: 0
+    - _ColorPosterizeSteps: 4
     - _ColorTiling: 0.005
+    - _Cull: 2
     - _Desertness: 0
+    - _DstBlend: 0
     - _EnableHeightBlend: 1
     - _EnableInstancedPerPixelNormal: 1
     - _FadeDistanceEnd: 101
@@ -219,6 +226,7 @@ Material:
     - _ProceduralStrength: 1.5
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _ReceiveShadows: 1
     - _RimMax: 0.793
     - _RimMin: 0.794
     - _RimPower: 0.65
@@ -233,6 +241,8 @@ Material:
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 0.57
     - _SnowStartHeight: 0
+    - _SrcBlend: 1
+    - _Surface: 0
     - _Temperature: 0
     - _TilingN1: 9.36
     - _TilingN2: 0.05
@@ -245,8 +255,12 @@ Material:
     - _WaterHeight: 4590.4404
     - _WindForce: 0
     - _WindMovement: 0
+    - _WorkflowMode: 1
     - _WorldRotation: 0
     - _WorldScale: 10
+    - _ZTest: 4
+    - _ZWrite: 1
+    - _ZWriteControl: 0
     m_Colors:
     - Color_1DD039A2: {r: 0.99056596, g: 0.9086226, b: 0.6588199, a: 0}
     - Color_20D74E1E: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}

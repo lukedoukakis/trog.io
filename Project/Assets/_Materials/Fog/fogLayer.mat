@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: fogLayer1
+  m_Name: fogLayer
   m_Shader: {fileID: -6465566751694194690, guid: 7901326eb995b6a44bb114b5f0cd3893,
     type: 3}
   m_ShaderKeywords: 
@@ -98,7 +98,7 @@ Material:
     - Vector1_12B2078F: 0.05
     - Vector1_58E2BA8: 1
     - Vector1_711670F7: -0.01
-    - Vector1_B4C692DF: 0.2
+    - Vector1_B4C692DF: 0.1
     - Vector1_DCE2159D: -0.55
     - _AlphaClip: 0
     - _Blend: 0

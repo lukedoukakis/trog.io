@@ -12,6 +12,8 @@ public class LightingController : MonoBehaviour
     //public PostProcessVolume volume;
     //public ColorGrading colorGrading;
 
+    public static float FOG_DISTANCE_START_BASE = 20f;
+
     public GameObject fog;
     public GameObject sun, moon;
     public Light sunLight, moonLight;
@@ -36,6 +38,8 @@ public class LightingController : MonoBehaviour
         sunLight = sun.GetComponent<Light>();
         moonLight = moon.GetComponent<Light>();
 
+        InitFog();
+
         // initialize pp
         //volume = GetComponent<PostProcessVolume>();
         //volume.profile.TryGetSettings(out colorGrading);
@@ -56,6 +60,33 @@ public class LightingController : MonoBehaviour
 
         // pause time of day: comment out this line
         //time += Time.deltaTime;
+    }
+
+    void InitFog()
+    {
+        if(fog != null)
+        {
+            List<GameObject> fogLayers = new List<GameObject>();
+
+            int i = 0;
+            foreach(Transform t in fog.transform)
+            {
+                
+                Debug.Log("Initializing fog " + i);
+
+                fogLayers.Add(t.gameObject);
+
+                // set scale
+                t.localScale = Vector3.one * (FOG_DISTANCE_START_BASE + (i * 2f));
+
+                // set material and material properties
+                Material newFogMat = Material.Instantiate(MaterialController.instance.baseFogMaterial);
+                newFogMat.SetFloat("_FogThickness", (i + 1) + .002f);
+                t.GetComponent<MeshRenderer>().sharedMaterial = newFogMat;
+
+                ++i;
+            }
+        }
     }
 
     void SetFog(float time)

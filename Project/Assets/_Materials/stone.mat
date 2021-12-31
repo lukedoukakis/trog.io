@@ -10,11 +10,11 @@ Material:
   m_Name: stone
   m_Shader: {fileID: -6465566751694194690, guid: 21d586b92db687f40831fc51479d9060,
     type: 3}
-  m_ShaderKeywords: _GLOSSYREFLECTIONS_OFF _SPECULAR_SETUP
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2000
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses: []
@@ -130,6 +130,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _ShadingAmount: 0.18
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
     - _SnowDepth: 0.1
