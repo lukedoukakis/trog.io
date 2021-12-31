@@ -8,11 +8,11 @@ public class CameraController : MonoBehaviour
     
     public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset renderPipelineAsset;
 
-    public static float CAMERA_DISTANCE_OUTSIDECAMP = 20f;
-    public static float CAMERA_DISTANCE_INSIDECAMP = 2.5f;
+    public static float CAMERA_DISTANCE_OUTSIDECAMP = 60f;
+    public static float CAMERA_DISTANCE_INSIDECAMP = 60f;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
     public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .2f;
-    public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .16f;
+    public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .1f;
 
 
     public Transform playerT;
@@ -48,7 +48,7 @@ public class CameraController : MonoBehaviour
         current = this;
         //renderPipelineAsset = GetComponent<UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset>();
         SetBakedCameraDistance(CAMERA_DISTANCE_OUTSIDECAMP);
-        SetLockVerticalCameraMovement(true, CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
+        SetLockVerticalCameraMovement(false, CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
     }
     // Start is called before the first frame update
     void Start()
@@ -104,9 +104,15 @@ public class CameraController : MonoBehaviour
                 }
                 else
                 {
-                    posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
+
+                    // verticality from zoom
+                    posModifier = Mathf.Lerp(CAMERA_LOCK_VERTICALITY_INSIDECAMP, CAMERA_LOCK_VERTICALITY_OUTSIDECAMP, cameraDistance_input);
+
+
+                    // free verticality
+                    // posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
                 }
-                //ZoomInput();
+                ZoomInput();
             }
 
             float max = .48f;
@@ -154,7 +160,7 @@ public class CameraController : MonoBehaviour
     void ZoomInput()
     {
         float zoomDelta = Input.mouseScrollDelta.y * sensitivity_zoom;
-        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .05f, 1f);
+        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .01f, 1f);
         cameraDistance_input = Mathf.Lerp(cameraDistance_input, targetZoom, 40f * Time.deltaTime);
     }
 

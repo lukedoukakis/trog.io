@@ -1777,7 +1777,7 @@ public class EntityPhysics : EntityComponent
         if(isLocalPlayer)
         {
             CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_INSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION);
-            CameraController.current.SetLockVerticalCameraMovement(true, CameraController.CAMERA_LOCK_VERTICALITY_INSIDECAMP);
+            CameraController.current.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_INSIDECAMP);
         }
         // todo: command tribe memebrs to line up to orientations
     }
@@ -1793,7 +1793,7 @@ public class EntityPhysics : EntityComponent
         if(isLocalPlayer)
         {
             CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_OUTSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION * .25f);
-            CameraController.current.SetLockVerticalCameraMovement(true, CameraController.CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
+            CameraController.current.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
         }
         // todo: command tribe memebrs to follow
     }

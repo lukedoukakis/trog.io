@@ -356,34 +356,6 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
-                    "m_Id": "ef6479bf86e0978cb8765b63f579ea7d"
-                },
-                "m_SlotId": 0
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "f78df1d9dc75908c8725f27e90cfcc74"
-                },
-                "m_SlotId": -1721152979
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
-                    "m_Id": "f78df1d9dc75908c8725f27e90cfcc74"
-                },
-                "m_SlotId": 2
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "0e86fc78cf69558caa43f1f2c765f6e9"
-                },
-                "m_SlotId": 0
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
                     "m_Id": "f9a936b4a25eae8c922d59af95d6cac4"
                 },
                 "m_SlotId": 0
@@ -2004,33 +1976,6 @@
 
 {
     "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.Vector3MaterialSlot",
-    "m_ObjectId": "b6672abd4e7ad48dab2bf7294f71d8db",
-    "m_Id": 2,
-    "m_DisplayName": "PositionOffset",
-    "m_SlotType": 1,
-    "m_Hidden": false,
-    "m_ShaderOutputName": "PositionOffset",
-    "m_StageCapability": 3,
-    "m_Value": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0
-    },
-    "m_DefaultValue": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0
-    },
-    "m_Labels": [
-        "X",
-        "Y",
-        "Z"
-    ]
-}
-
-{
-    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "b71722d69c6ea38eb5cddc1f1d947f28",
     "m_Id": 0,
@@ -2181,6 +2126,21 @@
     "m_StageCapability": 2,
     "m_Value": 1.0,
     "m_DefaultValue": 1.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "d034ff0139e04e539651fcd477e0a3cc",
+    "m_Id": 910855248,
+    "m_DisplayName": "MaximumSurfaceNormal",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "_MaximumSurfaceNormal",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
     "m_Labels": []
 }
 
@@ -2643,23 +2603,6 @@
 
 {
     "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
-    "m_ObjectId": "f5e5fda89d725c83a3b752703b13a8be",
-    "m_Id": -1721152979,
-    "m_DisplayName": "CoveringDepth",
-    "m_SlotType": 0,
-    "m_Hidden": false,
-    "m_ShaderOutputName": "Vector1_55ABF90",
-    "m_StageCapability": 3,
-    "m_Value": 0.0,
-    "m_DefaultValue": 0.0,
-    "m_Labels": [
-        "X"
-    ]
-}
-
-{
-    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.SubGraphNode",
     "m_ObjectId": "f78df1d9dc75908c8725f27e90cfcc74",
     "m_Group": {
@@ -2684,22 +2627,19 @@
             "m_Id": "e34e259c46402d8ba971622015a1dbbe"
         },
         {
+            "m_Id": "d034ff0139e04e539651fcd477e0a3cc"
+        },
+        {
             "m_Id": "06a9c23d67de188c86d0674ead354a54"
         },
         {
             "m_Id": "c3d0b32fafdf4c858e5eb68c930dfb43"
         },
         {
-            "m_Id": "f5e5fda89d725c83a3b752703b13a8be"
-        },
-        {
             "m_Id": "7933ec30bf29a0869b9387c446bf9282"
         },
         {
             "m_Id": "4a7f95ddbdf72382817a873094b9f2f9"
-        },
-        {
-            "m_Id": "b6672abd4e7ad48dab2bf7294f71d8db"
         }
     ],
     "synonyms": [],
@@ -2716,7 +2656,8 @@
         "11bcc890-2d48-474a-94bc-32b48c915a90",
         "547e2abc-e1d8-4967-9232-a0dd4367ec0d",
         "3b6b0332-7e02-49fa-94b8-dc7a49ed79e5",
-        "6ce6d6dd-e542-4203-ba3a-2a7cf356fa5f"
+        "6ce6d6dd-e542-4203-ba3a-2a7cf356fa5f",
+        "19556c03-8b25-49c0-bf54-c20ac93f1d6c"
     ],
     "m_PropertyIds": [
         1505568418,
@@ -2724,7 +2665,8 @@
         250908490,
         363226070,
         -1721152979,
-        -1549495167
+        -1549495167,
+        910855248
     ],
     "m_Dropdowns": [],
     "m_DropdownSelectedEntries": []
