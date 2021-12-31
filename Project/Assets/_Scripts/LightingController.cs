@@ -64,7 +64,7 @@ public class LightingController : MonoBehaviour
         Vector3 cameraPos = Camera.main.transform.position;
         if(fog != null)
         {
-            fog.transform.position = cameraPos;
+            fog.transform.position = playerPos;
         }
     }
 

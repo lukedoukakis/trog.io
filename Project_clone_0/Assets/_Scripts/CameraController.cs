@@ -160,7 +160,7 @@ public class CameraController : MonoBehaviour
     void ZoomInput()
     {
         float zoomDelta = Input.mouseScrollDelta.y * sensitivity_zoom;
-        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .01f, 1f);
+        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .04f, 1f);
         cameraDistance_input = Mathf.Lerp(cameraDistance_input, targetZoom, 40f * Time.deltaTime);
     }
 
