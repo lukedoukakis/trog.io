@@ -386,6 +386,11 @@ public class EntityItems : EntityComponent
             }  
         }
 
+        else
+        {
+            UnequipCurrentClothing();
+        }
+
 
     }
 
@@ -550,6 +555,11 @@ public class EntityItems : EntityComponent
         GameObject clothing = meshParentT.Find(item.nme).gameObject;
         //clothing.GetComponent<Renderer>().sharedMaterial = entityInfo.faction.clothingMaterial;
         clothing.SetActive(true);
+
+        // apply stat modifiers
+        entityStats.SetStatsSlot(StatsSlot.Clothing, item.wielderStatsModifier);
+
+
         this.clothing = item;
 
 
@@ -561,12 +571,21 @@ public class EntityItems : EntityComponent
         if (clothing != null)
         {
 
-            entityInfo.faction.AddItemOwned(clothing, 1, null, transform, 0f);
-
             // unequip clothing on model
             meshParentT.Find(clothing.nme).gameObject.SetActive(false);
 
+            // add the removed clothing to the faction
+            PickUpHolding(clothing, Utility.InstantiateSameName(clothing.worldObjectPrefab, transform.position, Quaternion.identity), null);
+            //entityInfo.faction.AddItemOwned(clothing, 1, null, transform, 0f);
+
+
+
+            // remove stat modifiers
+            entityStats.SetStatsSlot(StatsSlot.Clothing, Stats.NONE);
+
             clothing = null;
+
+            OnItemsChange();
         }
     }
 
