@@ -160,7 +160,7 @@ public class CameraController : MonoBehaviour
     void ZoomInput()
     {
         float zoomDelta = Input.mouseScrollDelta.y * sensitivity_zoom;
-        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .04f, 1f);
+        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .2f, 1f);
         cameraDistance_input = Mathf.Lerp(cameraDistance_input, targetZoom, 40f * Time.deltaTime);
     }
 
@@ -207,7 +207,7 @@ public class CameraController : MonoBehaviour
 
     void UpdateRenderScale()
     {
-        renderPipelineAsset.renderScale = Mathf.Lerp(.25f, .25f, 1f - Mathf.InverseLerp(0f, CAMERA_DISTANCE_OUTSIDECAMP, cameraDistance_total));
+        renderPipelineAsset.renderScale = Mathf.Lerp(.25f, .5f, Mathf.InverseLerp(0f, CAMERA_DISTANCE_OUTSIDECAMP, cameraDistance_total));
     }
 
 

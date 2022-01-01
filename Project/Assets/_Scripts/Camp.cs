@@ -45,6 +45,7 @@ public class Camp : MonoBehaviour
     public List<List<ObjectRack>> racks_all;
 
 
+
     public List<Transform> tribeMemberStandPositions;
 
 
@@ -137,7 +138,10 @@ public class Camp : MonoBehaviour
             AddItemsToCamp(overflowItemsToPlace, originT, false);
 
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
-            UpdateTentCount();
+            for(int i = 0; i < faction.GetItemCount(Item.TentBearPelt) + faction.GetItemCount(Item.TentDeerPelt); ++i)
+            {
+                PlaceTent();
+            }
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
 
         }
@@ -336,6 +340,17 @@ public class Camp : MonoBehaviour
         return campComponent;
     }
 
+    public CampComponent AddCampComponentItem(Item item)
+    {
+        if(item == Item.TentBearPelt || item == Item.TentDeerPelt)
+        {
+            return PlaceTent();
+        }
+
+
+        return null;
+    }
+
 
     public ObjectRack PlaceObjectRack(Enum itemType, float delay)
     {
@@ -397,33 +412,16 @@ public class Camp : MonoBehaviour
   
     }
 
-    public void UpdateTentCount()
+    public Tent PlaceTent()
     {
-        //int properTentCount = faction.memberHandles.Count / 2;
-
-        int properTentCount = 3;
-
-        int currentTentCount = tents.Count;
-        int tentDeficit = properTentCount - currentTentCount;
-
-        if(tentDeficit > 0){
-            for(int i = 0; i < tentDeficit; ++i){
-                PlaceTent();
-            }
-        }
-        else if(tentDeficit < 0){
-            for(int i = 0; i < tentDeficit * -1; ++i){
-                //RemoveTent();
-            }
-        }
-    }
-    public void PlaceTent(){
         Tent tent = (Tent)AddCampComponent(typeof(Tent));
         tent.SetCampComponent(this);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Tent);
         tent.worldObject.transform.position = targetOrientation.position;
         tent.worldObject.transform.rotation = targetOrientation.rotation;
         this.tents.Add(tent);
+
+        return tent;
     }
 
 

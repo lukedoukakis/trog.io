@@ -124,6 +124,19 @@ public class Faction : MonoBehaviour
 
         ownedItems.AddItem(item, count);
 
+        // if item is a camp component, add it to the camp and break;
+        if(item.type.Equals(ItemType.CampComponent))
+        {
+            if (camp != null)
+            {
+                for(int i = 0; i < count; ++i)
+                {
+                    camp.AddCampComponentItem(item);
+                }
+            }
+            yield break;
+        }
+
         // if faction item count is less than camp maximum physical capacity, add the physical object to camp
         if (camp != null)
         {

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public enum ItemType
 {
-    Any, Food, Weapon, Pelt, Wood, Bone, Stone, Feature, Misc
+    Any, Food, Weapon, Pelt, Wood, Bone, Stone, Feature, CampComponent, Misc
 }
 
 public enum ItemDamageType{
@@ -48,6 +48,10 @@ public class Item : ScriptableObject
     public static Item LogFir = InitiailizeItem("LogFir", ItemType.Misc, false, Stats.InstantiateStats(.1f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.Hug, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{WoodPiece, 4},}), null, ParticleController.instance.TreeDebris, Resources.Load<GameObject>("Items/LogFir/Gameobject/LogFir"), Resources.Load<Image>("Items/LogFir/Image"));
     public static Item Stone = InitiailizeItem("Stone", ItemType.Feature, true, Stats.InstantiateStats(3f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{StoneSmall, 5}}), null, ParticleController.instance.StoneDebris, null, null);
     public static Item Tree = InitiailizeItem("Tree", ItemType.Feature, true, Stats.InstantiateStats(3f,0f,0f,0f,0f,0f,0f,0f,float.MaxValue,0f,float.MaxValue,0f), Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{WoodPiece, 4},}), null, ParticleController.instance.TreeDebris, null, null);
+    public static Item TentBearPelt = InitiailizeItem("TentBearPelt", ItemType.CampComponent, true, Stats.NONE, Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{WoodPiece, 2},{PeltBear, 1},}), new CraftingRecipe(Item.WoodPiece, Item.WoodPiece, Item.PeltBear), null, null, null);
+    public static Item TentDeerPelt = InitiailizeItem("TentDeerPelt", ItemType.CampComponent, true, Stats.NONE, Stats.NONE, ItemHoldStyle.UnderArm, ItemDamageType.Blunt, new ItemCollection(new Dictionary<Item, int>(){{WoodPiece, 2},{PeltDeer, 1},}), new CraftingRecipe(Item.WoodPiece, Item.WoodPiece, Item.PeltDeer), null, null, null);
+
+
 
     public static Dictionary<string, Item> Items = new Dictionary<string, Item>
     {
@@ -67,6 +71,8 @@ public class Item : ScriptableObject
         { "Meat", Meat },
         { "Stone", Stone },
         { "Tree", Tree },
+        { "TentBearPelt", TentBearPelt },
+        { "TentDeerPelt", TentDeerPelt },
         
         
 
