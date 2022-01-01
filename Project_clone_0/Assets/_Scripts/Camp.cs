@@ -103,7 +103,7 @@ public class Camp : MonoBehaviour
 
         IEnumerator _PlaceCampComponents()
         {
-            //ClearFeaturesFromCampRadius();
+            ClearFeaturesFromCampRadius();
             PlaceBorderSphere();
             PlaceBonfire();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
@@ -137,7 +137,7 @@ public class Camp : MonoBehaviour
             AddItemsToCamp(overflowItemsToPlace, originT, false);
 
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
-            //UpdateTentCount();
+            UpdateTentCount();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
 
         }
@@ -397,8 +397,12 @@ public class Camp : MonoBehaviour
   
     }
 
-    public void UpdateTentCount(){
-        int properTentCount = faction.memberHandles.Count / 2;
+    public void UpdateTentCount()
+    {
+        //int properTentCount = faction.memberHandles.Count / 2;
+
+        int properTentCount = 3;
+
         int currentTentCount = tents.Count;
         int tentDeficit = properTentCount - currentTentCount;
 
