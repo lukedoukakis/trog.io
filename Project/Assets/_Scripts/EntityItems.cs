@@ -777,7 +777,7 @@ public class EntityItems : EntityComponent
 
     public void EmptyInventory()
     {
-        Debug.Log("EmptyInventory()");
+        //Debug.Log("EmptyInventory()");
         entityInfo.faction.AddItemsOwned(inventory, null, transform, 0f);
         inventory = new ItemCollection();
     }

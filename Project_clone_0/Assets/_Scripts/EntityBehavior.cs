@@ -36,6 +36,7 @@ public class EntityBehavior : EntityComponent
 
     public static float REST_RATE_LOSS = (1f / LightingController.SECONDS_PER_DAY) * (10f / 9f);
     public static float REST_RATE_GAIN = REST_RATE_LOSS * 10f;
+    public static float REST_HEALTH_GAIN = REST_RATE_GAIN;
     
 
     Vector3 randomOffset;
@@ -1040,6 +1041,8 @@ public class EntityBehavior : EntityComponent
             }
         }
 
+        entityStats.ApplyHealthIncrement(REST_HEALTH_GAIN * Time.deltaTime, null);
+
     }
 
     public void UpdateRest()
@@ -1059,11 +1062,11 @@ public class EntityBehavior : EntityComponent
                     }
                 }
             }
-            
-            if(!isLocalPlayer)
-            {
-                Debug.Log("Rest level: " + rest);
-            }
+
+            // if (!isLocalPlayer)
+            // {
+            //     Debug.Log("Rest level: " + rest);
+            // }
         }
     }
 

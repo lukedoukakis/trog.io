@@ -134,6 +134,7 @@ public class Faction : MonoBehaviour
                     camp.AddCampComponentItem(item);
                 }
             }
+            itemLogisticsHappening = false;
             yield break;
         }
 
