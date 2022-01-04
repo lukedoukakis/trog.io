@@ -33,6 +33,9 @@ public class EntityBehavior : EntityComponent
 
     public static float DISTANCE_STEP_BACK = 3f;
     public static float DISTANCE_STEP_SIDE = 1f;
+
+    public static float REST_RATE_LOSS = (1f / LightingController.SECONDS_PER_DAY) * (10f / 9f);
+    public static float REST_RATE_GAIN = REST_RATE_LOSS * 10f;
     
 
     Vector3 randomOffset;
@@ -165,20 +168,24 @@ public class EntityBehavior : EntityComponent
             EntityHandle factionLeader = entityInfo.faction.leaderHandle;
 
             // if leader is in camp, rest if needed or go home if not
+            ActionParameters go;
             if(entityInfo.faction.leaderInCamp)
             {
                 bool needsSleep = rest < 1f;
                 if(needsSleep)
                 {
                     // todo: sleep action
-                    ActionParameters goRest = ActionParameters.GenerateActionParameters("Go Rest", entityHandle);
-                    InsertAction(goRest);
+                    go = ActionParameters.GenerateActionParameters("Go Rest", entityHandle);
+                    if(go.targetedWorldObject == null)
+                    {
+                        go = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
+                    }
                 }
                 else
                 {
-                    ActionParameters goHome = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
-                    InsertAction(goHome);
+                    go = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
                 }
+                InsertAction(go);
             }
             else
             {
@@ -221,6 +228,9 @@ public class EntityBehavior : EntityComponent
         Transform t = null;
         if(a.targetedWorldObject == null){ t = null; }else{ t = a.targetedWorldObject.transform; }
         entityOrientation.SetBodyRotationMode(a.bodyRotationMode, t);
+
+        //Debug.Log("EXECUTING ACTION: " + a.type.ToString());
+
         switch(a.type){
             case ActionType.Idle :
                 Idle(a);
@@ -378,6 +388,21 @@ public class EntityBehavior : EntityComponent
         while (targetT != null)
         {
             //Debug.Log(ap.offset);
+
+
+            if(ap.endCondition != null)
+            {
+                bool end = ap.endCondition();
+                if(end)
+                {
+                    //Debug.Log("END CONDITION TRUE");
+                    timer.Stop();
+                    NextAction();
+                }
+            }
+
+
+
             targetPos = targetT.position + transform.TransformDirection(ap.offset);
 
             followCondition = reverse ? Vector3.Distance(transform.position, targetPos) <= ap.distanceThreshold : ((timer.ElapsedMilliseconds / 1000f <= maxTime) && Vector3.Distance(transform.position, targetPos) > ap.distanceThreshold);
@@ -397,15 +422,23 @@ public class EntityBehavior : EntityComponent
             }
             else
             {
+                // if max time reached, next action
                 if(timer.ElapsedMilliseconds / 1000f > maxTime)
                 {
                     timer.Stop();
                     NextAction();
                 }
+
+                // if distance within a certain threshhold of the target, don't move and apply actionWhenAchieved
                 if(Vector3.Distance(transform.position, targetPos) <= ap.distanceThreshold)
                 {
                     move = Vector3.zero;
+                    if(ap.actionWhenAchieved != null)
+                    {
+                        ap.actionWhenAchieved();
+                    }
                 }
+                // else, move towards the target
                 else
                 {
                     move = GetNavigationDirection(targetPos, reverse);
@@ -426,8 +459,8 @@ public class EntityBehavior : EntityComponent
     
         //Debug.Log("CHASE");
         AssertWeaponChargedStatus(true);
-        ActionParameters goToTarget = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, a.targetedWorldObject, Vector3.zero, -1, null, null, a.maxTime, DISTANCE_THRESHOLD_MELEE_ATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true);
-        ActionParameters attackTarget = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Attack, a.targetedWorldObject, Vector3.zero, -1, null, null, -1, -1, BodyRotationMode.Target, InterruptionTier.Nothing, true);
+        ActionParameters goToTarget = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, a.targetedWorldObject, Vector3.zero, -1, null, null, a.maxTime, DISTANCE_THRESHOLD_MELEE_ATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, null);
+        ActionParameters attackTarget = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Attack, a.targetedWorldObject, Vector3.zero, -1, null, null, -1, -1, BodyRotationMode.Target, InterruptionTier.Nothing, true, null, null);
         InsertAction(attackTarget);
         InsertAction(goToTarget);
         NextAction();
@@ -475,7 +508,7 @@ public class EntityBehavior : EntityComponent
                 // execute attack
                 entityPhysics.Attack(attackType, ap.targetedWorldObject.transform);
                 timeSince_attack = 0f;
-                ActionParameters attackRecover = ActionParameters.GenerateActionParameters(entityHandle, ActionType.AttackRecover, ap.targetedWorldObject, Vector3.zero, -1, null, null, -1, -1, BodyRotationMode.Target, InterruptionTier.BeenHit, true);
+                ActionParameters attackRecover = ActionParameters.GenerateActionParameters(entityHandle, ActionType.AttackRecover, ap.targetedWorldObject, Vector3.zero, -1, null, null, -1, -1, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, null);
                 if (ap.targetedWorldObject != null)
                 {
                     InsertAction(attackRecover);
@@ -565,7 +598,7 @@ public class EntityBehavior : EntityComponent
             {
 
                 // if target is alive (hasn't been deleted), queue repeat attack
-                ActionParameters chase = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Chase, ap.targetedWorldObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_MELEE_ATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true);
+                ActionParameters chase = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Chase, ap.targetedWorldObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_MELEE_ATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, null);
                 InsertAction(chase);
 
                 // queue attack recovery actions as defined in behavior profile
@@ -596,7 +629,7 @@ public class EntityBehavior : EntityComponent
     void StepBack(ActionParameters ap)
     {
         Vector3 offset = Vector3.forward * -1f * DISTANCE_STEP_BACK;
-        ActionParameters goTo = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, ap.targetedWorldObject, offset, -1, null, null, .5f, DISTANCE_THRESHOLD_SAME_POINT, BodyRotationMode.Target, InterruptionTier.BeenHit, true);
+        ActionParameters goTo = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, ap.targetedWorldObject, offset, -1, null, null, .5f, DISTANCE_THRESHOLD_SAME_POINT, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, null);
         InsertAction(goTo);
         NextAction();
     }
@@ -604,7 +637,7 @@ public class EntityBehavior : EntityComponent
     void StepSide(ActionParameters ap)
     {
         Vector3 offset = (Utility.GetRandomBoolean() ? Vector3.right : Vector3.left) * DISTANCE_STEP_SIDE;
-        ActionParameters goTo = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, ap.targetedWorldObject, offset, -1, null, null, .5f, DISTANCE_THRESHOLD_SAME_POINT, BodyRotationMode.Target, InterruptionTier.BeenHit, true);
+        ActionParameters goTo = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, ap.targetedWorldObject, offset, -1, null, null, .5f, DISTANCE_THRESHOLD_SAME_POINT, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, null);
         InsertAction(goTo);
         NextAction();
     }
@@ -625,8 +658,8 @@ public class EntityBehavior : EntityComponent
             //Log("Collect: picking up object");
             GameObject targetWorldObject = foundObjects[0];
             entityInfo.faction.AddObjectTargeted(targetWorldObject);
-            ActionParameters goToObject = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, targetWorldObject, Vector3.zero, -1, Item.GetItemByName(targetWorldObject.name), null, -1, DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Normal, InterruptionTier.SenseDanger, false);
-            ActionParameters pickupObject = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Pickup, targetWorldObject, Vector3.zero, -1, Item.GetItemByName(targetWorldObject.name), null, -1, -1f, BodyRotationMode.Normal, InterruptionTier.Nothing, false);
+            ActionParameters goToObject = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, targetWorldObject, Vector3.zero, -1, Item.GetItemByName(targetWorldObject.name), null, -1, DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Normal, InterruptionTier.SenseDanger, false, null, null);
+            ActionParameters pickupObject = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Pickup, targetWorldObject, Vector3.zero, -1, Item.GetItemByName(targetWorldObject.name), null, -1, -1f, BodyRotationMode.Normal, InterruptionTier.Nothing, false, null, null);
             ActionParameters followPlayer = ActionParameters.GenerateActionParameters("Follow Player", entityHandle);
             InsertAction(pickupObject);
             InsertAction(goToObject);
@@ -939,7 +972,7 @@ public class EntityBehavior : EntityComponent
                     distanceAway = Vector3.Distance(transform.position, handleOther.transform.position);
                     if(distanceAway < DISTANCE_THRESHOLD_FLEE){
                         reacting = true;
-                        InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.RunFrom, handleOther.gameObject, Vector3.zero, -1, null, null, CalculateFleeTime(), DISTANCE_THRESHOLD_CHASE, BodyRotationMode.Normal, InterruptionTier.SenseDanger, true), true);
+                        InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.RunFrom, handleOther.gameObject, Vector3.zero, -1, null, null, CalculateFleeTime(), DISTANCE_THRESHOLD_CHASE, BodyRotationMode.Normal, InterruptionTier.SenseDanger, true, null, null), true);
                     }
                 }
             }
@@ -956,7 +989,7 @@ public class EntityBehavior : EntityComponent
                     distanceAway = Vector3.Distance(transform.position, handleOther.transform.position);
                     if(distanceAway < DISTANCE_THRESHOLD_STANDGROUND){
                         reacting = true;
-                        InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.Chase, sensedCreatureHandles[0].gameObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true), true);
+                        InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.Chase, sensedCreatureHandles[0].gameObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, null), true);
                     }
                 }
             }
@@ -965,7 +998,7 @@ public class EntityBehavior : EntityComponent
         // aggressive
         else if (behaviorProfile.behaviorType.Equals(BehaviorType.Aggressive)){
             reacting = true;
-            InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.Chase, sensedCreatureHandles[0].gameObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true), true);
+            InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.Chase, sensedCreatureHandles[0].gameObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, null), true);
         }
 
     }
@@ -985,6 +1018,30 @@ public class EntityBehavior : EntityComponent
         }
     }
 
+    public bool IsFullyRested()
+    {
+        return rest >= 1f;
+    }
+
+    public bool IsNotFullyRested()
+    {
+        return !IsFullyRested();
+    }
+
+    public void ApplyRest()
+    {
+        if(rest < 1f)
+        {
+            rest += REST_RATE_GAIN * Time.deltaTime;
+
+            if(rest > 1f)
+            {
+                rest = 1f;
+            }
+        }
+
+    }
+
     public void UpdateRest()
     {
 
@@ -995,12 +1052,17 @@ public class EntityBehavior : EntityComponent
             {
                 if(rest > 0f)
                 {
-                    rest -= (1f / LightingController.period) * Time.deltaTime;
+                    rest -= REST_RATE_LOSS * Time.deltaTime;
                     if(rest < 0f)
                     {
                         rest = 0f;
                     }
                 }
+            }
+            
+            if(!isLocalPlayer)
+            {
+                Debug.Log("Rest level: " + rest);
             }
         }
     }
@@ -1108,12 +1170,12 @@ public class EntityBehavior : EntityComponent
     }
 
     
-    public Transform FindOpenRestingLocation()
+    public GameObject FindOpenRestingPoint()
     {
         Tent openTent = entityInfo.faction.camp.GetOpenTent();
         if(openTent != null)
         {
-            return openTent.worldObject.transform;
+            return openTent.worldObject;
         }
         else
         {
@@ -1163,14 +1225,11 @@ public class EntityBehavior : EntityComponent
         if (!isPlayer)
         {
             UpdateBehavior();
-            //UpdateRest();
+            UpdateRest();
         }
 
         timeSince_creatureSense += Time.deltaTime;
         timeSince_attack += Time.deltaTime;
-        
-
-        UpdateRest();
 
 
         

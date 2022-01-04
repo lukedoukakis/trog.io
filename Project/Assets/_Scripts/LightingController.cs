@@ -25,7 +25,7 @@ public class LightingController : MonoBehaviour
     public Color fogColor_day, fogColor_night;
 
     // time in seconds for a full day
-    public static float period = 60f;
+    public static float SECONDS_PER_DAY = 60f;
 
 
     private void Awake()
@@ -59,7 +59,7 @@ public class LightingController : MonoBehaviour
         SetColors(time);
 
         // pause time of day: comment out this line
-        //time += Time.deltaTime;
+        time += Time.deltaTime;
     }
 
     void InitFog()
@@ -72,7 +72,7 @@ public class LightingController : MonoBehaviour
             foreach(Transform t in fog.transform)
             {
                 
-                Debug.Log("Initializing fog " + i);
+                //Debug.Log("Initializing fog " + i);
 
                 fogLayers.Add(t.gameObject);
 
@@ -101,8 +101,8 @@ public class LightingController : MonoBehaviour
 
     void SetCelestialBodies(float time)
     {
-        float sunX = Mathf.Sin(time / period);
-        float sunY = Mathf.Cos(time / period);
+        float sunX = Mathf.Sin(time / SECONDS_PER_DAY);
+        float sunY = Mathf.Cos(time / SECONDS_PER_DAY);
         Vector3 sunRot = new Vector3(sunX, sunY, 0f);
         Vector3 moonRot = new Vector3(sunX * -1f, sunY * -1f, 0f);
         sun.transform.rotation = Quaternion.LookRotation(sunRot, Vector3.up);
@@ -111,8 +111,8 @@ public class LightingController : MonoBehaviour
 
     void SetColors(float time){
 
-        darkness = (Mathf.Cos(time / period) + 1f) / 2f;
-        timeOfDay = (Mathf.Sin(time / period) + 1f) / 2f;
+        darkness = (Mathf.Cos(time / SECONDS_PER_DAY) + 1f) / 2f;
+        timeOfDay = (Mathf.Sin(time / SECONDS_PER_DAY) + 1f) / 2f;
         PolyverseSkies.timeOfDay = darkness;
         RenderSettings.fogColor = Color.Lerp(fogColor_day, fogColor_night, darkness);
 

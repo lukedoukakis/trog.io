@@ -285,7 +285,7 @@ public class Faction : MonoBehaviour
     public void AddStartingResources(FactionStartingItemsTier tier)
     {
 
-        Debug.Log("AddStartingResources()");
+        //Debug.Log("AddStartingResources()");
 
         int memberCount;
         int itemCount;

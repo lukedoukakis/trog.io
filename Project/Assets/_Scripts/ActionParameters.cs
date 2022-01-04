@@ -31,6 +31,9 @@ public class ActionParameters : ScriptableObject
     // resultant item
     public Item item_result;
 
+    // maximum time to be spent executing the action
+    public float maxTime;
+
     // distance at which we reached the target, if there is one
     public float distanceThreshold;
 
@@ -38,14 +41,17 @@ public class ActionParameters : ScriptableObject
     public BodyRotationMode bodyRotationMode;
 
     public InterruptionTier interruptionTier;
+
     // is urgent, i.e. will the entity sprint to accomplish the action etc.
     public bool urgent;
 
+    // method to be executed to check for when the action should end
+    public Func<bool> endCondition;
+    public Action actionWhenAchieved;
 
-    // maximum time to be spent executing the action
-    public float maxTime;
 
-    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, ActionType _type, GameObject _targetWorldObject, Vector3 _offset, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, BodyRotationMode _bodyRotationMode, InterruptionTier _interruptionTier, bool _urgent)
+
+    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, ActionType _type, GameObject _targetWorldObject, Vector3 _offset, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, BodyRotationMode _bodyRotationMode, InterruptionTier _interruptionTier, bool _urgent, Func<bool> _endCondition, Action _actionOnceCompleted)
     {
         ActionParameters a = ActionParameters.GenerateActionParameters();
         a.doerHandle = _doerHandle;
@@ -60,6 +66,8 @@ public class ActionParameters : ScriptableObject
         a.bodyRotationMode = _bodyRotationMode;
         a.interruptionTier = _interruptionTier;
         a.urgent = _urgent;
+        a.endCondition = _endCondition;
+        a.actionWhenAchieved = _actionOnceCompleted;
 
         return a;
     }
@@ -88,10 +96,12 @@ public class ActionParameters : ScriptableObject
             case "Go Rest" :
 
                 ap.type = ActionType.Follow;
-                ap.targetedWorldObject = doerHandle.entityBehavior.FindOpenRestingLocation().gameObject;
+                ap.targetedWorldObject = doerHandle.entityBehavior.FindOpenRestingPoint();
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
                 ap.maxTime = 1f;
                 ap.urgent = false;
+                ap.endCondition = doerHandle.entityBehavior.IsFullyRested;
+                ap.actionWhenAchieved = doerHandle.entityBehavior.ApplyRest;
                 break;
 
             case "Follow Faction Leader" :
@@ -190,6 +200,8 @@ public class ActionParameters : ScriptableObject
         ap.bodyRotationMode = BodyRotationMode.Normal;
         ap.interruptionTier = InterruptionTier.Anything;
         ap.urgent = false;
+        ap.endCondition = null;
+        ap.actionWhenAchieved = null;
         return ap;
     }
 
@@ -208,6 +220,8 @@ public class ActionParameters : ScriptableObject
         newAp.bodyRotationMode = baseAp.bodyRotationMode;
         newAp.interruptionTier = baseAp.interruptionTier;
         newAp.urgent = baseAp.urgent;
+        newAp.endCondition = baseAp.endCondition;
+        newAp.actionWhenAchieved = baseAp.actionWhenAchieved;
 
         return newAp;
     }
