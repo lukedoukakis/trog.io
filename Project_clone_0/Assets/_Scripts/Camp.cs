@@ -120,7 +120,6 @@ public class Camp : MonoBehaviour
             {
                 item = kvp.Key;
                 count = kvp.Value;
-                int countOwned = faction.GetItemCount(item);
                 //Debug.Log("countOwned for " + item.nme + ": " + countOwned);
                 int campTotalCapacity = Camp.GetItemPhysicalCapacity(item);
                 int maximumPhysicalToAdd = campTotalCapacity;
@@ -419,9 +418,22 @@ public class Camp : MonoBehaviour
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Tent);
         tent.worldObject.transform.position = targetOrientation.position;
         tent.worldObject.transform.rotation = targetOrientation.rotation;
-        this.tents.Add(tent);
+        tent.worldObject.transform.localScale = Vector3.one * UnityEngine.Random.Range(1f, 1.2f);
+        tents.Add(tent);
 
         return tent;
+    }
+
+    public Tent GetOpenTent()
+    {
+        foreach(Tent tent in tents)
+        {
+            if(tent.IsOpen())
+            {
+                return tent;
+            }
+        }
+        return null;
     }
 
 
@@ -433,7 +445,18 @@ public class Camp : MonoBehaviour
         {
             item = kvp.Key;
             countToAdd = kvp.Value;
-            AddObjectsAnyRack(item, ref countToAdd, originT, ref zeroRacksRef, physical);
+
+            if(item.type.Equals(ItemType.CampComponent))
+            {
+                for(int i = 0; i < countToAdd; ++i)
+                {
+                    AddCampComponentItem(item);
+                }
+            }
+            else
+            {
+                AddObjectsAnyRack(item, ref countToAdd, originT, ref zeroRacksRef, physical);
+            }
         }
 
     }

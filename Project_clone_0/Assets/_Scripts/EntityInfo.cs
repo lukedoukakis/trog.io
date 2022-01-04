@@ -90,7 +90,8 @@ public class SpeciesInfo : ScriptableObject{
                     new List<ActionType>(){ ActionType.StepSide },
                     .5f,
                     true,
-                    false
+                    false,
+                    true
                 ),
                 ParticleController.instance.BloodSpatter
             )
@@ -111,6 +112,7 @@ public class SpeciesInfo : ScriptableObject{
                     new List<AttackType>(){AttackType.Swipe},
                     new List<ActionType>(){ ActionType.StepSide },
                     .75f,
+                    false,
                     false,
                     false
                 ),
@@ -135,6 +137,7 @@ public class SpeciesInfo : ScriptableObject{
                     new List<AttackType>(){ AttackType.Swipe },
                     new List<ActionType>(){ },
                     .75f,
+                    false,
                     false,
                     false
                 ),
@@ -196,12 +199,12 @@ public class BehaviorProfile : ScriptableObject
     public List<ActionType> attackRecoverySequence;
     public float lungePower;
     public bool canJump;
-
     public bool domesticatable;
+    public bool requiresRest;
 
 
 
-    public static BehaviorProfile InstantiateBehaviorProfile(BehaviorType behaviorType, List<AttackType> attackTypes, List<ActionType> attackRecoverySequence, float lungePower, bool canJump, bool domesticatable)
+    public static BehaviorProfile InstantiateBehaviorProfile(BehaviorType behaviorType, List<AttackType> attackTypes, List<ActionType> attackRecoverySequence, float lungePower, bool canJump, bool domesticatable, bool requiresRest)
     {
         BehaviorProfile bp = ScriptableObject.CreateInstance<BehaviorProfile>();
         bp.behaviorType = behaviorType;
@@ -210,6 +213,7 @@ public class BehaviorProfile : ScriptableObject
         bp.lungePower = lungePower;
         bp.canJump = canJump;
         bp.domesticatable = domesticatable;
+        bp.requiresRest = requiresRest;
 
         return bp;
     }

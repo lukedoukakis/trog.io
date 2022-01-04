@@ -84,6 +84,15 @@ public class ActionParameters : ScriptableObject
                 ap.maxTime = 1f;
                 ap.urgent = false;
                 break;
+            
+            case "Go Rest" :
+
+                ap.type = ActionType.Follow;
+                ap.targetedWorldObject = doerHandle.entityBehavior.FindOpenRestingLocation().gameObject;
+                ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
+                ap.maxTime = 1f;
+                ap.urgent = false;
+                break;
 
             case "Follow Faction Leader" :
 
@@ -116,6 +125,8 @@ public class ActionParameters : ScriptableObject
                 ap.type = ActionType.Idle;
                 ap.maxTime = 5f;
                 break;
+
+            // TODO: idle until something is true
 
             case "Go To Random Nearby Spot" :
 

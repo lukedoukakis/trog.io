@@ -16,6 +16,7 @@ public class EntityBehavior : EntityComponent
     public Vector3 move;
     public bool urgent;
     public Vector3 followOffset;
+    public float rest;
 
 
     public static float RANDOM_OFFSET_RANGE = 1f;
@@ -86,6 +87,8 @@ public class EntityBehavior : EntityComponent
             {"Hands", null},
             {"Head", null }
         };
+
+        rest = 1f;
 
     }
 
@@ -160,10 +163,22 @@ public class EntityBehavior : EntityComponent
             //Debug.Log("ACTION QUEUE EMPTY");
             AssertWeaponChargedStatus(false);
             EntityHandle factionLeader = entityInfo.faction.leaderHandle;
+
+            // if leader is in camp, rest if needed or go home if not
             if(entityInfo.faction.leaderInCamp)
             {
-                ActionParameters goHome = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
-                InsertAction(goHome);
+                bool needsSleep = rest < 1f;
+                if(needsSleep)
+                {
+                    // todo: sleep action
+                    ActionParameters goRest = ActionParameters.GenerateActionParameters("Go Rest", entityHandle);
+                    InsertAction(goRest);
+                }
+                else
+                {
+                    ActionParameters goHome = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
+                    InsertAction(goHome);
+                }
             }
             else
             {
@@ -970,6 +985,26 @@ public class EntityBehavior : EntityComponent
         }
     }
 
+    public void UpdateRest()
+    {
+
+        // if entity requires rest, update rest at a rate such that it reaches 0 after24 in-game hours
+        if(behaviorProfile.requiresRest)
+        {
+            if(!entityPhysics.isInsideCamp)
+            {
+                if(rest > 0f)
+                {
+                    rest -= (1f / LightingController.period) * Time.deltaTime;
+                    if(rest < 0f)
+                    {
+                        rest = 0f;
+                    }
+                }
+            }
+        }
+    }
+
     public bool IsAtPosition(Vector3 position, float distanceThreshhold){
         return Vector3.Distance(transform.position, position) < distanceThreshhold;
     }
@@ -1072,7 +1107,19 @@ public class EntityBehavior : EntityComponent
 
     }
 
-
+    
+    public Transform FindOpenRestingLocation()
+    {
+        Tent openTent = entityInfo.faction.camp.GetOpenTent();
+        if(openTent != null)
+        {
+            return openTent.worldObject.transform;
+        }
+        else
+        {
+            return null;
+        }
+    }
 
 
     public void UpdateHomePosition(bool leaderInCamp)
@@ -1116,13 +1163,14 @@ public class EntityBehavior : EntityComponent
         if (!isPlayer)
         {
             UpdateBehavior();
+            //UpdateRest();
         }
 
         timeSince_creatureSense += Time.deltaTime;
         timeSince_attack += Time.deltaTime;
         
 
-        
+        UpdateRest();
 
 
         
