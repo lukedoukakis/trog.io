@@ -109,7 +109,7 @@ public class Camp : MonoBehaviour
             PlaceBonfire();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             PlaceWorkbench();
-            yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
+            yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP * 3f);
 
             // separate physical and overflow items and add them to camp
             Item item;

@@ -10,7 +10,8 @@ public class EntityBehavior : EntityComponent
 {
 
     public BehaviorProfile behaviorProfile;
-    public Transform homeT;
+    public Transform followPositionTransform;
+    public Tent restingTent;
     public bool isPlayer;
     public bool isAtHome;
     public Vector3 move;
@@ -75,7 +76,8 @@ public class EntityBehavior : EntityComponent
         base.Awake();
 
         isPlayer = tag == "Player";
-        homeT = new GameObject().transform;
+        followPositionTransform = new GameObject().transform;
+        SetRestingTent(null);
         followOffset = Utility.GetHorizontalVector(Utility.GetRandomVectorHorizontal(2.5f));
         actionQueue = new List<ActionParameters>();
         randomOffset = new Vector3(UnityEngine.Random.Range(RANDOM_OFFSET_RANGE*-1f, RANDOM_OFFSET_RANGE), 0f, UnityEngine.Random.Range(RANDOM_OFFSET_RANGE*-1f, 0));
@@ -1019,6 +1021,7 @@ public class EntityBehavior : EntityComponent
         }
     }
 
+
     public bool IsFullyRested()
     {
         return rest >= 1f;
@@ -1029,7 +1032,7 @@ public class EntityBehavior : EntityComponent
         return !IsFullyRested();
     }
 
-    public void ApplyRest()
+    public void OnRestFrame()
     {
         if(rest < 1f)
         {
@@ -1038,6 +1041,11 @@ public class EntityBehavior : EntityComponent
             if(rest > 1f)
             {
                 rest = 1f;
+            }
+
+            if(rest == 1f)
+            {
+                SetRestingTent(null);
             }
         }
 
@@ -1172,22 +1180,30 @@ public class EntityBehavior : EntityComponent
 
     }
 
-    
-    public GameObject FindOpenRestingPoint()
+
+    public GameObject ClaimOpenRestingTent()
     {
+
+        if(restingTent != null)
+        {
+            return restingTent.worldObject;
+        }
+
         Tent openTent = entityInfo.faction.camp.GetOpenTent();
         if(openTent != null)
         {
+            SetRestingTent(openTent);
             return openTent.worldObject;
         }
         else
         {
+            SetRestingTent(null);
             return null;
         }
     }
 
 
-    public void UpdateHomePosition(bool leaderInCamp)
+    public void UpdateFollowPosition(bool leaderInCamp)
     {
         
         //Debug.Log("updating home position");
@@ -1198,8 +1214,8 @@ public class EntityBehavior : EntityComponent
             Transform campPositionT = entityInfo.faction.camp.GetOpenTribeMemberStandPosition();
             //Debug.Log(homeT.gameObject.name);
             //Debug.Log(campPositionT.gameObject.name);
-            homeT.transform.SetParent(campPositionT);
-            homeT.transform.position = campPositionT.position;
+            followPositionTransform.SetParent(campPositionT);
+            followPositionTransform.position = campPositionT.position;
         }
         else
         {
@@ -1210,14 +1226,31 @@ public class EntityBehavior : EntityComponent
             // homeT.SetParent(directionalT);
             // homeT.position = directionalT.position;
 
-            homeT.SetParent(entityInfo.faction.leaderHandle.transform);
-            homeT.position = entityInfo.faction.leaderHandle.transform.position;
+            followPositionTransform.SetParent(entityInfo.faction.leaderHandle.transform);
+            followPositionTransform.position = entityInfo.faction.leaderHandle.transform.position;
             
 
         }
 
 
     }
+
+    public void SetRestingTent(Tent tent)
+    {
+        if(restingTent != null)
+        {
+            restingTent.RemoveOccupant(entityHandle);
+        }
+
+        if(tent != null)
+        {
+            tent.AddOccupant(entityHandle);
+        }
+
+        restingTent = tent;
+
+    }
+
 
     // Update is called once per frame
     void Update()

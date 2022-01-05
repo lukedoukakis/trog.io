@@ -31,7 +31,7 @@ public class EntityPhysics : EntityComponent
 
     public static float BASE_FORCE_JUMP = 600f;
     public static float BASE_FORCE_THROW = 250f;
-    public static float BASE_ACCELERATION = 40f * 2f;
+    public static float BASE_ACCELERATION = 40f;
     public static float BASE_MAX_SPEED = 25f;
     public static float BASE_COOLDOWN_JUMP = .15f;
     public static float WEAPON_CHARGETIME_MAX = .25f;
@@ -1081,7 +1081,7 @@ public class EntityPhysics : EntityComponent
     public bool CanJump()
     {
 
-        //return false;
+        return false;
 
         if (!entityInfo.speciesInfo.behaviorProfile.canJump)
         {

@@ -86,8 +86,8 @@ public class EntityItems : EntityComponent
         SetWeaponRangedMode(false);
         SetUpdateWeaponOrientation(true);
 
-        EquipClothing(Item.PeltDeer);
-        UnequipCurrentClothing();
+        // EquipClothing(Item.PeltDeer);
+        // UnequipCurrentClothing();
     }
 
     // client method when an object is interacted with
@@ -124,10 +124,12 @@ public class EntityItems : EntityComponent
 
     }
     public void OnDropInput(){
-        if(holding_item != null){
+        if(holding_item != null)
+        {
             DropHolding(null);
         }
-        else{
+        else
+        {
             if(weaponEquipped_item != null){
                 DropEquippedWeapon(null);
             }
@@ -306,6 +308,7 @@ public class EntityItems : EntityComponent
             }
         }
 
+        // if dropping onto nothing specified, find a rack if it's rackable, drop on ground if not
         else if (targetAttachedObject == null)
         {
             if(Camp.EntityIsInsideCamp(entityHandle) && holding_item.isRackable){

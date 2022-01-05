@@ -360,7 +360,7 @@ public class EntityUserInput : EntityComponent
         {
             Vector3 closestPoint = col.ClosestPoint(referenceT.position);
             float horizAngle = Vector3.Angle(referenceT.forward, closestPoint - referencePos);
-            if(horizAngle < minAngle)
+            if(horizAngle < minAngle && horizAngle < 45f)
             {
                 minAngle = horizAngle;
                 bestMatch = col;
@@ -386,8 +386,8 @@ public class EntityUserInput : EntityComponent
         else
         {
             Collider[] hitCols = Physics.OverlapSphere(transform.position, 1f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide);
-            hoveredOverSomething = hitCols.Length > 0;
             c = GetColliderMostInFront(hitCols, transform);
+            hoveredOverSomething = c != null;
         }
 
         if(hoveredOverSomething)

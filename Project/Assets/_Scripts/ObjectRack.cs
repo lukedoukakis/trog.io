@@ -64,7 +64,7 @@ public class ObjectRack : CampComponent
                 break;
             case ItemType.Pelt : 
                 this.capacity = RackCapacity_Pelt;
-                worldObjectPrefab = CampResources.PREFAB_RACK_Pelt;
+                worldObjectPrefab = CampResources.PREFAB_RACK_PELT;
                 onDemandPlacement = true;
                 allowObjectPhysics = false;
                 allowItemHoverTriggers = true;

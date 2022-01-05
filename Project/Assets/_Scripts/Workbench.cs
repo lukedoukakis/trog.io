@@ -144,7 +144,6 @@ public class Workbench : ObjectRack
             camp.faction.RemoveItemOwned(item, 1, this, false, null);
         }
 
-        //itemsOnTable.Clear();
 
         // Debug.Log("ConsumeRecipeItems() DONE");
         // Debug.Log("itemsOnTable count: " + itemsOnTable.Count);
@@ -185,7 +184,7 @@ public class Workbench : ObjectRack
             item = Item.GetItemByName(worldObject.name);
             camp.faction.RemoveItemOwned(item, 1, this, true, null);
         }
-        //itemsOnTable.Clear();
+        itemsOnTable.Clear();
 
         // Debug.Log("ClearTable() DONE");
         // Debug.Log("itemsOnTable count: " + itemsOnTable.Count);

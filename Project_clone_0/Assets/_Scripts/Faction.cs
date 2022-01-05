@@ -228,10 +228,16 @@ public class Faction : MonoBehaviour
 
     }
 
+    // returns total number of items owned
+    public int GetItemCountAbsolute(Item item)
+    {
+        return ownedItems.GetItemCount(item);
+    }
 
+    // returns total number of items not on workbench
     public int GetItemCount(Item item)
     {
-        int rawCount = ownedItems.GetItemCount(item);
+        int rawCount = GetItemCountAbsolute(item);
         int countOnWorkbench = 0;
         if(camp != null)
         {
@@ -241,7 +247,6 @@ public class Faction : MonoBehaviour
             }
         }
         return rawCount - countOnWorkbench;
-
     }
 
     public void RemoveItemTargeted(GameObject o){
@@ -278,7 +283,7 @@ public class Faction : MonoBehaviour
         leaderInCamp = leaderHandle.entityPhysics.isInsideCamp;
         foreach(EntityHandle partyHandle in partyHandles)
         {
-            partyHandle.entityBehavior.UpdateHomePosition(leaderInCamp);
+            partyHandle.entityBehavior.UpdateFollowPosition(leaderInCamp);
         }
     }
 
@@ -318,13 +323,6 @@ public class Faction : MonoBehaviour
                 break;
         }
 
-        // spawn tribe members
-        bool spawnWithGear = !tier.Equals(FactionStartingItemsTier.Nothing);
-        //spawnWithGear = false;
-        for(int i = 0; i < memberCount; ++i)
-        {
-            StartCoroutine(ClientCommand.instance.SpawnNpcFollowerWhenReady(leaderHandle, leaderHandle.transform.position, spawnWithGear));
-        }
 
 
         // spawn items
@@ -337,6 +335,16 @@ public class Faction : MonoBehaviour
         AddItemOwned(Item.WoodPiece, itemCount, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.BonePiece, itemCount, null, leaderHandle.transform, 0f);
         AddItemOwned(Item.StoneSmall, itemCount, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.PeltBear, itemCount/2, null, leaderHandle.transform, 0f);
+
+
+        // spawn tribe members
+        bool spawnWithGear = !tier.Equals(FactionStartingItemsTier.Nothing);
+        //spawnWithGear = false;
+        for(int i = 0; i < memberCount; ++i)
+        {
+            StartCoroutine(ClientCommand.instance.SpawnNpcFollowerWhenReady(leaderHandle, leaderHandle.transform.position, spawnWithGear));
+        }
     }
 
     public void IncrementOverflowItem(Item item)

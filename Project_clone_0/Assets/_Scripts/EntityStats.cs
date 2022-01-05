@@ -205,8 +205,8 @@ public class EntityStats : EntityComponent
 
         if(entityBehavior != null)
         {
-            entityBehavior.homeT.SetParent(null);
-            Destroy(entityBehavior.homeT.gameObject);
+            entityBehavior.followPositionTransform.SetParent(null);
+            Destroy(entityBehavior.followPositionTransform.gameObject);
         }
         if(entityItems != null)
         {

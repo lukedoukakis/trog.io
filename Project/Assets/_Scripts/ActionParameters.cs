@@ -87,7 +87,7 @@ public class ActionParameters : ScriptableObject
             case "Go Home" :
 
                 ap.type = ActionType.Follow;
-                ap.targetedWorldObject = doerHandle.entityBehavior.homeT.gameObject;
+                ap.targetedWorldObject = doerHandle.entityBehavior.followPositionTransform.gameObject;
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
                 ap.maxTime = 1f;
                 ap.urgent = false;
@@ -96,18 +96,18 @@ public class ActionParameters : ScriptableObject
             case "Go Rest" :
 
                 ap.type = ActionType.Follow;
-                ap.targetedWorldObject = doerHandle.entityBehavior.FindOpenRestingPoint();
+                ap.targetedWorldObject = doerHandle.entityBehavior.ClaimOpenRestingTent();
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
                 ap.maxTime = 1f;
                 ap.urgent = false;
                 ap.endCondition = doerHandle.entityBehavior.IsFullyRested;
-                ap.actionWhenAchieved = doerHandle.entityBehavior.ApplyRest;
+                ap.actionWhenAchieved = doerHandle.entityBehavior.OnRestFrame;
                 break;
 
             case "Follow Faction Leader" :
 
                 ap.type = ActionType.Follow;
-                ap.targetedWorldObject = doerHandle.entityBehavior.homeT.gameObject;
+                ap.targetedWorldObject = doerHandle.entityBehavior.followPositionTransform.gameObject;
                 ap.offset = ap.doerHandle.entityBehavior.followOffset;
                 ap.distanceThreshold = 2.5f;
                 ap.maxTime = 1f;
