@@ -23,16 +23,16 @@ public class EntityPhysics : EntityComponent
     public Transform hips, head, handRight, handLeft, fingerRight, fingerLeft, footRight, footLeft, toeRight, toeLeft;
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
-    public static float BASE_GROUND_DISTANCE_TO_JUMP_PLAYER = .5f;
-    public static float BASE_GROUND_DISTANCE_TO_JUMP_NPC = .5f;
+    public static float BASE_GROUND_DISTANCE_TO_JUMP_PLAYER = 2f;
+    public static float BASE_GROUND_DISTANCE_TO_JUMP_NPC = 3f;
     public static float BASE_CASTDISTANCE_WALL = 1f;
     float groundDistanceToJump;
     float distanceFromGround;
 
-    public static float BASE_FORCE_JUMP = 280f;
+    public static float BASE_FORCE_JUMP = 600f;
     public static float BASE_FORCE_THROW = 250f;
     public static float BASE_ACCELERATION = 40f;
-    public static float BASE_MAX_SPEED = 10f;
+    public static float BASE_MAX_SPEED = 25f;
     public static float BASE_COOLDOWN_JUMP = .15f;
     public static float WEAPON_CHARGETIME_MAX = .25f;
     public static float WEAPON_HITTIME_MAX = .25f;
@@ -41,13 +41,13 @@ public class EntityPhysics : EntityComponent
 
 
     public Vector3 moveDir;
-    public bool isJumping, jumpOffLeft, jumpOffRight, isSprinting;
+    public bool isJumping, jumpOffLeft, jumpOffRight, isSprinting, isWalking;
     public bool animFlag_jump, animFlag_jumpMirror;
     public bool isDodging;
     Vector3 jumpPoint;
     public float offWallTime, offWaterTime, jumpTime, airTime, groundTime;
     public float acceleration;
-    public float maxSpeed_run, maxSpeed_sprint, maxSpeed_climb, maxSpeed_swim, maxSpeed_dodge;
+    public float maxSpeed_run, maxSpeed_sprint, maxSpeed_climb, maxSpeed_swim, maxSpeed_dodge, maxSpeed_walk;
 
 
 
@@ -165,7 +165,7 @@ public class EntityPhysics : EntityComponent
         {
             groundDistanceToJump = BASE_GROUND_DISTANCE_TO_JUMP_PLAYER;
         }
-        else if (tag == "Npc")
+        else
         {
             groundDistanceToJump = BASE_GROUND_DISTANCE_TO_JUMP_NPC;
         }
@@ -210,6 +210,7 @@ public class EntityPhysics : EntityComponent
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * 1f;
         maxSpeed_dodge = maxSpeed_run * 4f;
+        maxSpeed_walk = maxSpeed_run * .25f;
 
         plantPosFootRight = targetFootRight.position;
         plantPosFootLeft = targetFootLeft.position;
@@ -601,7 +602,7 @@ public class EntityPhysics : EntityComponent
     public void CycleFootPlantPosition(Transform targetIk, Transform baseTransform, ref Vector3 plantPositionPointer, ref float updateTime, bool water)
     {
 
-        float forwardReachDistance = water ? 0f : runCycle_limbForwardReachDistance * ((velHoriz_this.magnitude / maxSpeed_sprint) + (entityOrientation.bodyLean * .3f)) * Mathf.Max(.5f, (1f - changeInVelocityFactor));
+        float forwardReachDistance = water ? 0f : runCycle_limbForwardReachDistance * ((velHoriz_this.magnitude / 8f) + (entityOrientation.bodyLean * .3f)) * Mathf.Max(.5f, (1f - changeInVelocityFactor));
         plantPositionPointer = baseTransform.position + velHoriz_this.normalized * 2.2f * forwardReachDistance;
         updateTime = Mathf.Max(updateTime, 1f) - 1f;
     }
@@ -931,6 +932,7 @@ public class EntityPhysics : EntityComponent
     {
         float speedStat = speed * Stats.GetStatValue(entityStats.combinedStats, Stats.StatType.Speed);
         SetIsSprinting();
+        SetIsWalking();
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
         rb.AddForce(move * speedStat, ForceMode.Force);
 
@@ -940,16 +942,33 @@ public class EntityPhysics : EntityComponent
     {
         if(isLocalPlayer)
         {
-            isSprinting = entityUserInput.pressSprint;
+
+            isSprinting = false;
+
+            //isSprinting = entityUserInput.pressSprint;
         }
         else
         {
 
-            isSprinting = entityBehavior.urgent;
-            if(entityInfo.isFactionFollower)
-            {
-                isSprinting = isSprinting || entityInfo.faction.leaderHandle.entityPhysics.isSprinting;
-            }
+            isSprinting = false;
+
+            // isSprinting = entityBehavior.urgent;
+            // if(entityInfo.isFactionFollower)
+            // {
+            //     isSprinting = isSprinting || entityInfo.faction.leaderHandle.entityPhysics.isSprinting;
+            // }
+        }
+    }
+
+    public void SetIsWalking()
+    {
+        if(isLocalPlayer)
+        {
+            isWalking = entityUserInput.pressWalk;
+        }
+        else
+        {
+           isWalking = false;
         }
     }
 
@@ -1062,15 +1081,19 @@ public class EntityPhysics : EntityComponent
     public bool CanJump()
     {
 
+        return false;
+
         if (!entityInfo.speciesInfo.behaviorProfile.canJump)
         {
             return false;
         }
 
-        if (!isInWater && Physics.Raycast(groundSense.position, Vector3.down, groundDistanceToJump, LayerMaskController.WALKABLE) && !isJumping)
+
+        if (Physics.Raycast(groundSense.position, Vector3.down, groundDistanceToJump, LayerMaskController.WALKABLE))
         {
             return true;
         }
+
 
         return false;
     }
@@ -1332,7 +1355,7 @@ public class EntityPhysics : EntityComponent
             {
                 if(hitObjectStats.hp > 0)
                 {
-                    ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Chase, hitObject, Vector3.zero, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, InterruptionTier.Anything, true);
+                    ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Chase, hitObject, Vector3.zero, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, InterruptionTier.Anything, true, null, null);
                     entityInfo.faction.SendPartyCommand(ap);
                 }
             }
@@ -1419,7 +1442,7 @@ public class EntityPhysics : EntityComponent
             Lunge(Utility.GetHorizontalVector(lungeDirection));
             iKTargetAnimator.enabled = true;
             iKTargetAnimator.SetTrigger("AttackSwipe");
-            yield return new WaitForSeconds(.25f);
+            yield return new WaitForSeconds(.7f);
             iKTargetAnimator.enabled = false;
             StopMeleeAttackHitTime();
         }
@@ -1572,7 +1595,19 @@ public class EntityPhysics : EntityComponent
         else
         {
 
-            max = isSprinting ? maxSpeed_sprint : maxSpeed_run;
+            if(isSprinting)
+            {
+                max = maxSpeed_sprint;
+            }
+            else if(isWalking)
+            {
+                max = maxSpeed_walk;
+            }
+            else
+            {
+                max = maxSpeed_run;
+            }
+
             if(isDodging)
             {
                 max = Mathf.Lerp(max, maxSpeed_dodge, Mathf.Sin((dodgeTime / 60f * 100f) * Mathf.PI));
@@ -1639,12 +1674,12 @@ public class EntityPhysics : EntityComponent
 
     bool IsGrounded()
     {
-        return Physics.OverlapSphere(groundSense.position, .25f, LayerMaskController.WALKABLE).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, 1f, LayerMaskController.WALKABLE).Length > 0;
     }
 
     bool IsGroundedStrict()
     {
-        return Physics.OverlapSphere(groundSense.position, .05f, LayerMaskController.WALKABLE).Length > 0;
+        return Physics.OverlapSphere(groundSense.position, .5f, LayerMaskController.WALKABLE).Length > 0;
     }
 
 
@@ -1700,6 +1735,7 @@ public class EntityPhysics : EntityComponent
             acceleration *= 2f;
             maxSpeed_run *= 2f;
         }
+
         if (Input.GetKeyUp(KeyCode.O))
         {
             acceleration /= 2f;
@@ -1721,10 +1757,10 @@ public class EntityPhysics : EntityComponent
             }
         }
 
-        if(isLocalPlayer)
-        {
-            SetHeadTarget((Camera.main.transform.position + Camera.main.transform.right * 1000f) + (transform.forward * 500f));
-        }
+        // if (isLocalPlayer)
+        // {
+        //     SetHeadTarget((Camera.main.transform.position + Camera.main.transform.right * 1000f) + (transform.forward * 500f));
+        // }
 
 
     }
@@ -1738,6 +1774,11 @@ public class EntityPhysics : EntityComponent
         {
             entityInfo.faction.UpdateLeaderCampStatus();
         }
+        if(isLocalPlayer)
+        {
+            CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_INSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION);
+            CameraController.current.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_INSIDECAMP);
+        }
         // todo: command tribe memebrs to line up to orientations
     }
 
@@ -1748,6 +1789,11 @@ public class EntityPhysics : EntityComponent
         if(entityInfo.isFactionLeader)
         {
             entityInfo.faction.UpdateLeaderCampStatus();
+        }
+        if(isLocalPlayer)
+        {
+            CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_OUTSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION * .25f);
+            CameraController.current.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
         }
         // todo: command tribe memebrs to follow
     }

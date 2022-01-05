@@ -124,6 +124,20 @@ public class Faction : MonoBehaviour
 
         ownedItems.AddItem(item, count);
 
+        // if item is a camp component, add it to the camp and break;
+        if(item.type.Equals(ItemType.CampComponent))
+        {
+            if (camp != null)
+            {
+                for(int i = 0; i < count; ++i)
+                {
+                    camp.AddCampComponentItem(item);
+                }
+            }
+            itemLogisticsHappening = false;
+            yield break;
+        }
+
         // if faction item count is less than camp maximum physical capacity, add the physical object to camp
         if (camp != null)
         {
@@ -140,6 +154,7 @@ public class Faction : MonoBehaviour
 
                 if(countToAddOverflow > 0)
                 {
+                    Debug.Log("Adding not physically... " + countToAddOverflow);
                     newItems = new ItemCollection();
                     newItems.AddItem(item, countToAddOverflow);
                     camp.AddItemsToCamp(newItems, originT, false);
@@ -213,13 +228,25 @@ public class Faction : MonoBehaviour
 
     }
 
+    // returns total number of items owned
+    public int GetItemCountAbsolute(Item item)
+    {
+        return ownedItems.GetItemCount(item);
+    }
 
+    // returns total number of items not on workbench
     public int GetItemCount(Item item)
     {
-        int rawCount = ownedItems.GetItemCount(item);
-        int workbenchCount = camp == null ? 0 : camp.workbench.GetObjectCountsOnRackThatAreItemCount(item);
-        return rawCount - workbenchCount;
-
+        int rawCount = GetItemCountAbsolute(item);
+        int countOnWorkbench = 0;
+        if(camp != null)
+        {
+            if(camp.workbench != null)
+            {
+                countOnWorkbench = camp == null ? 0 : camp.workbench.GetObjectCountsOnRackThatAreItemCount(item);
+            }
+        }
+        return rawCount - countOnWorkbench;
     }
 
     public void RemoveItemTargeted(GameObject o){
@@ -256,13 +283,16 @@ public class Faction : MonoBehaviour
         leaderInCamp = leaderHandle.entityPhysics.isInsideCamp;
         foreach(EntityHandle partyHandle in partyHandles)
         {
-            partyHandle.entityBehavior.UpdateHomePosition(leaderInCamp);
+            partyHandle.entityBehavior.UpdateFollowPosition(leaderInCamp);
         }
     }
 
     // add starting items (and tribe members) to faction, mainly used for spawning AI factions
     public void AddStartingResources(FactionStartingItemsTier tier)
     {
+
+        //Debug.Log("AddStartingResources()");
+
         int memberCount;
         int itemCount;
         switch (tier)
@@ -293,6 +323,21 @@ public class Faction : MonoBehaviour
                 break;
         }
 
+
+
+        // spawn items
+        //AddItemOwned(Item.ClothingTest, itemCount, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.Meat, itemCount, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.SpearStone, itemCount/2, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.AxeStone, itemCount/2, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.SpearBone, itemCount/2, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.AxeBone, itemCount/2, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.WoodPiece, itemCount, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.BonePiece, itemCount, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.StoneSmall, itemCount, null, leaderHandle.transform, 0f);
+        AddItemOwned(Item.PeltBear, itemCount/2, null, leaderHandle.transform, 0f);
+
+
         // spawn tribe members
         bool spawnWithGear = !tier.Equals(FactionStartingItemsTier.Nothing);
         //spawnWithGear = false;
@@ -300,16 +345,6 @@ public class Faction : MonoBehaviour
         {
             StartCoroutine(ClientCommand.instance.SpawnNpcFollowerWhenReady(leaderHandle, leaderHandle.transform.position, spawnWithGear));
         }
-
-
-        // spawn items
-        //AddItemOwned(Item.ClothingTest, itemCount, null, leaderHandle.transform, 0f);
-        AddItemOwned(Item.Meat, itemCount, null, leaderHandle.transform, 0f);
-        AddItemOwned(Item.Spear, itemCount, null, leaderHandle.transform, 0f);
-        AddItemOwned(Item.Axe, itemCount, null, leaderHandle.transform, 0f);
-        AddItemOwned(Item.WoodPiece, itemCount, null, leaderHandle.transform, 0f);
-        AddItemOwned(Item.BonePiece, itemCount, null, leaderHandle.transform, 0f);
-        AddItemOwned(Item.StoneSmall, itemCount, null, leaderHandle.transform, 0f);
     }
 
     public void IncrementOverflowItem(Item item)

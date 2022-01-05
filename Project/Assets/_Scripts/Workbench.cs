@@ -97,20 +97,31 @@ public class Workbench : ObjectRack
             // create object and consume ingredients
             Item craftedItem = currentCraftableItem;
             Transform orientation = this.worldObject_orientationParent.Find("ItemOrientationCraftedItem");
-            GameObject craftedObject = Utility.InstantiateSameName(craftedItem.worldObjectPrefab, orientation.position, Quaternion.identity);
-            Utility.ToggleObjectPhysics(craftedObject, false, false, false, false);
             ConsumeRecipeObjects();
 
-            yield return StartCoroutine(Utility.FlipForTime(craftedObject, NEW_OBJECT_CRAFT_UPWARD_TRANSLATION, NEW_OBJECT_CRAFT_FLIP_FORCE, NEW_OBJECT_CRAFT_FLIP_TIME));
-            yield return new WaitForSecondsRealtime(.1f);
-            Destroy(craftedObject);
 
-            // add to faction
-            Transform tempT = new GameObject().transform;
-            tempT.SetPositionAndRotation(craftedObject.transform.position, craftedObject.transform.rotation);
-            camp.faction.AddItemOwned(craftedItem, 1, null, tempT, 0f);
-            Utility.DestroyInSeconds(tempT.gameObject, 5f);
-            
+
+            GameObject craftedItemPrefab = craftedItem.worldObjectPrefab;
+            if (craftedItemPrefab != null)
+            {
+                GameObject craftedObject = Utility.InstantiateSameName(craftedItemPrefab, orientation.position, Quaternion.identity);
+                Utility.ToggleObjectPhysics(craftedObject, false, false, false, false);
+                yield return StartCoroutine(Utility.FlipForTime(craftedObject, NEW_OBJECT_CRAFT_UPWARD_TRANSLATION, NEW_OBJECT_CRAFT_FLIP_FORCE, NEW_OBJECT_CRAFT_FLIP_TIME));
+                yield return new WaitForSecondsRealtime(.1f);
+                Destroy(craftedObject);
+                Transform tempT = new GameObject().transform;
+                tempT.SetPositionAndRotation(craftedObject.transform.position, craftedObject.transform.rotation);
+                Utility.DestroyInSeconds(tempT.gameObject, 5f);
+
+                // add to faction
+                camp.faction.AddItemOwned(craftedItem, 1, null, tempT, 0f);
+            }
+            else
+            {
+                // add to faction
+                camp.faction.AddItemOwned(craftedItem, 1, null, orientation, 0f);
+            }
+
 
             yield return new WaitUntil( () => !camp.faction.itemLogisticsHappening);
             StockWithItemsFromRecipe(craftedItem);
@@ -133,7 +144,6 @@ public class Workbench : ObjectRack
             camp.faction.RemoveItemOwned(item, 1, this, false, null);
         }
 
-        //itemsOnTable.Clear();
 
         // Debug.Log("ConsumeRecipeItems() DONE");
         // Debug.Log("itemsOnTable count: " + itemsOnTable.Count);
@@ -174,7 +184,7 @@ public class Workbench : ObjectRack
             item = Item.GetItemByName(worldObject.name);
             camp.faction.RemoveItemOwned(item, 1, this, true, null);
         }
-        //itemsOnTable.Clear();
+        itemsOnTable.Clear();
 
         // Debug.Log("ClearTable() DONE");
         // Debug.Log("itemsOnTable count: " + itemsOnTable.Count);

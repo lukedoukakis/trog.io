@@ -20,8 +20,8 @@ public class EntityStats : EntityComponent
     public static float BASE_AMOUNT_HP = 100;
     public float BASE_AMOUNT_STAMINA = 100;
     public static float hpLossFromHit_base = 8;
-    public int hp;
-    public int stamina;
+    public float hp, maxHp;
+    public float stamina, maxStamina;
 
 
     protected override void Awake()
@@ -68,8 +68,8 @@ public class EntityStats : EntityComponent
 
     public void SetBaseHpAndStamina()
     {
-        hp = (int)(BASE_AMOUNT_HP * Stats.GetStatValue(combinedStats, Stats.StatType.Health));
-        stamina = (int)(BASE_AMOUNT_STAMINA * Stats.GetStatValue(combinedStats, Stats.StatType.Stamina));
+        maxHp = hp = (BASE_AMOUNT_HP * Stats.GetStatValue(combinedStats, Stats.StatType.Health));
+        maxStamina = stamina = (BASE_AMOUNT_STAMINA * Stats.GetStatValue(combinedStats, Stats.StatType.Stamina));
     }
 
 
@@ -170,32 +170,43 @@ public class EntityStats : EntityComponent
         
         
         // take away health
-        hp -= (int)hpLoss;
+        ApplyHealthIncrement(hpLoss * -1f, attackerHandle);
+
         // Debug.Log("Attacker Weapon Type: " + attackerWeapon.damageType.ToString());
         // Debug.Log("Armor Type: " + armorStatType.ToString());
         // Debug.Log("Armor against this type: " + armorFromWeaponType);
         // Debug.Log("DAMAGE: " + (int)hpLoss);
         //Debug.Log("HP: " + hp.ToString());
-        if(hp <= 0){
-            OnHealthEmptied(attackerHandle);
-        }
+
 
     }
 
-    void OnHealthEmptied(EntityHandle attackerHandle)
+    public void ApplyHealthIncrement(float hpAmount, EntityHandle entityThatCaused)
     {
-        Die(attackerHandle);
+        hp += hpAmount;
+        if(hp > maxHp)
+        {
+            hp = maxHp;
+        }
+        else if(hp < 0)
+        {
+            OnHealthEmptied(entityThatCaused);
+        }
+    }
+
+    void OnHealthEmptied(EntityHandle entityThatCaused)
+    {
+        Die(entityThatCaused);
     }
 
     void Die(EntityHandle attackerHandle)
     {
         //Debug.Log("DED");
 
-        // todo: death 'animation'/being destroyed visuals
         if(entityBehavior != null)
         {
-            entityBehavior.homeT.SetParent(null);
-            Destroy(entityBehavior.homeT.gameObject);
+            entityBehavior.followPositionTransform.SetParent(null);
+            Destroy(entityBehavior.followPositionTransform.gameObject);
         }
         if(entityItems != null)
         {
@@ -206,7 +217,19 @@ public class EntityStats : EntityComponent
             entityInfo.faction.RemoveMember(entityHandle);
         }
         GameObject.Destroy(this.gameObject);
-        SpawnDrops(this.transform.position, attackerHandle);
+
+        // give drops to faction leader of attacker
+        EntityHandle dropReceiverHandle;
+        Faction attackerFaction = attackerHandle.entityInfo.faction;
+        if(attackerFaction.leaderHandle != null)
+        {
+            dropReceiverHandle = attackerFaction.leaderHandle;
+        }
+        else
+        {
+            dropReceiverHandle = attackerHandle;
+        }
+        SpawnDrops(this.transform.position, dropReceiverHandle);
     }
 
 

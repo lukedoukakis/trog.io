@@ -86,43 +86,50 @@ public class EntityItems : EntityComponent
         SetWeaponRangedMode(false);
         SetUpdateWeaponOrientation(true);
 
-        EquipClothing(Item.ClothingTest);
-        UnequipCurrentClothing();
+        // EquipClothing(Item.PeltDeer);
+        // UnequipCurrentClothing();
     }
 
     // client method when an object is interacted with
     public void OnObjectTake(GameObject worldObject, object attachedObject)
     {
         Item item = Item.GetItemByName(worldObject.name);
-        switch (item.type) {
-            case ItemType.Food :
+
+
+        switch (item.type)
+        {
+            case ItemType.Food:
                 PickUpHolding(item, worldObject, attachedObject);
                 break;
-            case ItemType.Weapon :
+            case ItemType.Weapon:
                 PickUpWeapon(item, worldObject, attachedObject);
                 break;
-            case ItemType.Clothing :
+            case ItemType.Pelt:
                 PickUpHolding(item, worldObject, attachedObject);
-                EquipClothing(holding_item);
-                ConsumeHolding(holding_item);
+                //EquipClothing(holding_item);
+                //ConsumeHolding(holding_item);
                 break;
             default:
                 PickUpHolding(item, worldObject, attachedObject);
                 break;
-            
+
         }
 
         OnItemsChange();
+        
+
     }
 
     public void OnEmptyInteract(){
 
     }
     public void OnDropInput(){
-        if(holding_item != null){
+        if(holding_item != null)
+        {
             DropHolding(null);
         }
-        else{
+        else
+        {
             if(weaponEquipped_item != null){
                 DropEquippedWeapon(null);
             }
@@ -301,6 +308,7 @@ public class EntityItems : EntityComponent
             }
         }
 
+        // if dropping onto nothing specified, find a rack if it's rackable, drop on ground if not
         else if (targetAttachedObject == null)
         {
             if(Camp.EntityIsInsideCamp(entityHandle) && holding_item.isRackable){
@@ -339,7 +347,7 @@ public class EntityItems : EntityComponent
         {
             slot = StatsSlot.Food;
         }
-        else if(item.type.Equals(ItemType.Clothing))
+        else if(item.type.Equals(ItemType.Pelt))
         {
             slot = StatsSlot.Clothing;
         }
@@ -355,35 +363,39 @@ public class EntityItems : EntityComponent
     }
 
 
-    // public void OnHoldingUse(){
+    public void OnHoldingUse(){
 
-    //     if(holding_item != null){
+        if(holding_item != null)
+        {
 
-    //         switch (holding_item.type) {
-    //             case Item.ItemType.Food :
-    //                 // todo: eating animation
-    //                 ConsumeHolding(holding_item);
-    //                 break;
+            Item i = holding_item;
+
+            switch (i.type)
+            {
+                case ItemType.Food :
+                    // todo: eating animation
+                    ConsumeHolding(i);
+                    break;
                 
-    //             case Item.ItemType.Clothing :
-    //                 // todo: clothing animation
-    //                 Item i = holding_item;
-    //                 EquipClothing(holding_item);
-    //                 ConsumeHolding(i);
-    //                 break;
+                case ItemType.Pelt :
+                    // todo: clothing animation
+                    EquipClothing(i);
+                    ConsumeHolding(i);
+                    break;
 
-    //             default:
-    //                 break;
+                default:
+                    break;
+
+            }  
+        }
+
+        else
+        {
+            UnequipCurrentClothing();
+        }
 
 
-    //         }
-
-
-            
-    //     }
-
-
-    // }
+    }
 
 
 
@@ -544,24 +556,39 @@ public class EntityItems : EntityComponent
         // set clothing on model
         //Debug.Log("Equipping clothing of name: " + i.nme);
         GameObject clothing = meshParentT.Find(item.nme).gameObject;
-        clothing.GetComponent<Renderer>().sharedMaterial = entityInfo.faction.clothingMaterial;
+        //clothing.GetComponent<Renderer>().sharedMaterial = entityInfo.faction.clothingMaterial;
         clothing.SetActive(true);
+
+        // apply stat modifiers
+        entityStats.SetStatsSlot(StatsSlot.Clothing, item.wielderStatsModifier);
+
+
         this.clothing = item;
 
 
     }
-    public void UnequipCurrentClothing(){
+    public void UnequipCurrentClothing()
+    {
 
         // if a clothing is currently equipped, unequip it and add associated item to faction items
         if (clothing != null)
         {
 
-            entityInfo.faction.AddItemOwned(clothing, 1, null, transform, 0f);
-
             // unequip clothing on model
             meshParentT.Find(clothing.nme).gameObject.SetActive(false);
 
+            // add the removed clothing to the faction
+            PickUpHolding(clothing, Utility.InstantiateSameName(clothing.worldObjectPrefab, transform.position, Quaternion.identity), null);
+            //entityInfo.faction.AddItemOwned(clothing, 1, null, transform, 0f);
+
+
+
+            // remove stat modifiers
+            entityStats.SetStatsSlot(StatsSlot.Clothing, Stats.NONE);
+
             clothing = null;
+
+            OnItemsChange();
         }
     }
 
@@ -571,29 +598,7 @@ public class EntityItems : EntityComponent
     public void AddToInventory(Item item, GameObject worldObject, bool doFlip, float delay)
     {
         inventory.AddItem(item, 1);
-        StartCoroutine(_MoveObject());
-
-        IEnumerator _MoveObject()
-        {
-
-            yield return new WaitForSecondsRealtime(delay);
-
-            Utility.ToggleObjectPhysics(worldObject, false, false, false, false);
-
-            if(doFlip)
-            {
-                yield return StartCoroutine(Utility.FlipForTime(worldObject, .5f, 1000f, .25f));
-            }
-
-            // move object to entity location before destroying
-            while (Vector3.Distance(worldObject.transform.position, transform.position) > .5f)
-            {
-                worldObject.transform.position = Vector3.Lerp(worldObject.transform.position, transform.position, ObjectRack.OBJECT_MOVEMENT_ANIMATION_SPEED * Time.deltaTime);
-                worldObject.transform.Rotate(Vector3.right * 10f);
-                yield return null;
-            }
-            GameObject.Destroy(worldObject);
-        }
+        StartCoroutine(Utility.instance.FlyObjectToPosition(worldObject, transform, doFlip, true, delay));
     }
 
 
@@ -682,11 +687,16 @@ public class EntityItems : EntityComponent
             entityStats.SetStatsSlot(StatsSlot.Weapon, Stats.NONE);
         }
         if(weaponUnequipped_object != null){
-             Utility.IgnorePhysicsCollisions(weaponUnequipped_object.transform, weaponUnequipped_object.transform);
+            Utility.IgnorePhysicsCollisions(weaponUnequipped_object.transform, weaponUnequipped_object.transform);
             weaponUnequipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
-        if(holding_object != null){
-            Physics.IgnoreCollision(holding_object.GetComponent<Collider>(), entityPhysics.worldCollider, true);
+        if(holding_object != null)
+        {
+            Collider holdingObjectCollider = holding_object.GetComponent<Collider>();
+            if(holdingObjectCollider != null)
+            {
+                Physics.IgnoreCollision(holdingObjectCollider, entityPhysics.worldCollider, true);
+            }
             holding_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
 
@@ -770,6 +780,7 @@ public class EntityItems : EntityComponent
 
     public void EmptyInventory()
     {
+        //Debug.Log("EmptyInventory()");
         entityInfo.faction.AddItemsOwned(inventory, null, transform, 0f);
         inventory = new ItemCollection();
     }

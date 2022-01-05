@@ -15,7 +15,8 @@ Material:
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2000
-  stringTagMap: {}
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -40,7 +41,7 @@ Material:
     m_Floats:
     - Boolean_891C2B1B: 1
     - Vector1_24802EB: 0.2
-    - Vector1_25E0AF6F: 0.5
+    - Vector1_25E0AF6F: 0.18
     - Vector1_444F1B02: 0.5
     - Vector1_46F91617: 0.3
     - Vector1_4A3933E: 0.5
@@ -51,17 +52,28 @@ Material:
     - Vector1_D29BA90B: 10
     - Vector1_D2FDA34A: 1
     - Vector1_F552BBDC: 0.2
+    - _AlphaClip: 0
+    - _Blend: 0
+    - _CastShadows: 1
     - _ColorNoise: 0
+    - _Cull: 0
+    - _DstBlend: 0
+    - _NumberOfShades: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _SnowDepth: 0.1
     - _SnowHeightCap: 4703.4
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 0.57
+    - _SrcBlend: 1
+    - _Surface: 0
+    - _ZTest: 4
+    - _ZWrite: 1
+    - _ZWriteControl: 0
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.90588236, g: 0.90588236, b: 0.90588236, a: 1}
-    - _TargetVector: {r: 192.54247, g: 4593.491, b: -25.9078, a: 0}
+    - _TargetVector: {r: -448.9995, g: 4591.3877, b: -230.05148, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &3736427111272692503
 MonoBehaviour:

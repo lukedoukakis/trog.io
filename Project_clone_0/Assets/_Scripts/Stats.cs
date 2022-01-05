@@ -31,12 +31,17 @@ public class Stats : ScriptableObject
     
     public static Stats ITEM_WIELDERMODIFIER_MEAT = InstantiateStats(1f,1f,1f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
 
-    public static Stats ITEM_WIELDERMODIFIER_SPEAR = InstantiateStats(0f,0f,3f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
+    public static Stats ITEM_WIELDERMODIFIER_SPEARSTONE = InstantiateStats(0f,0f,3f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
 
-    public static Stats ITEM_WIELDERMODIFIER_AXE = InstantiateStats(0f,0f,3f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
+    public static Stats ITEM_WIELDERMODIFIER_AXESTONE = InstantiateStats(0f,0f,3f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
+    
+    public static Stats ITEM_WIELDERMODIFIER_SPEARBONE = InstantiateStats(0f,0f,6f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
 
-    public static Stats ITEM_WIELDERMODIFIER_TESTCLOTHING = InstantiateStats(0f,0f,0f,0f,0f,0f,0f,3f,0f,0f,0f,1f);
+    public static Stats ITEM_WIELDERMODIFIER_AXEBONE = InstantiateStats(0f,0f,6f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
 
+    public static Stats ITEM_WIELDERMODIFIER_PELTBEAR = InstantiateStats(0f,0f,2f,0f,0f,0f,0f,4f,0f,0f,0f,1f);
+
+    public static Stats ITEM_WIELDERMODIFIER_PELTDEER = InstantiateStats(0f,0f,0f,0f,.2f,0f,.15f,3f,0f,0f,0f,1f);
 
 
 

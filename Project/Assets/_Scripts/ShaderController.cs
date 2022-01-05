@@ -5,15 +5,7 @@ using UnityEngine;
 public class ShaderController : MonoBehaviour
 {
     
-    public static ShaderController instance;
-
-    [SerializeField] Material GrassMaterial;
-
-    [SerializeField] Material[] GrassNormalSensitiveMaterials;
-    [SerializeField] Material[] WaterSensitiveMaterials;
-    [SerializeField] Material[] DesertSensitiveMaterials;
-    [SerializeField] Material[] SnowSensitiveMaterials;
-    [SerializeField] Material[] FadeMaterials;
+    public static ShaderController instance;    
 
 
     void Awake()
@@ -27,53 +19,36 @@ public class ShaderController : MonoBehaviour
     void InitShaderSettings()
     {
 
-        GrassMaterial.SetFloat("_GrassNormal", ChunkGenerator.GrassNormalMin);
 
+        UpdateGrassNormalSensitiveMaterials();
         UpdateWaterSensitiveMaterials();
         UpdateSnowSensitiveMaterials();
+
     }
 
 
     void UpdateFadeMaterials()
     {
-        if(GameManager.instance.localPlayerHandle == null){ return; }
-        
-        foreach (Material mat in FadeMaterials)
-        {
-            mat.SetVector("_TargetVector", GameManager.instance.localPlayerHandle.entityPhysics.hips.position);
-        }
+        if(GameManager.instance.localPlayerHandle == null){ return; }     
+        Shader.SetGlobalVector("_TargetVector", GameManager.instance.localPlayerHandle.entityPhysics.hips.position);
     }
 
     void UpdateWaterSensitiveMaterials()
     {
-        foreach(Material mat in WaterSensitiveMaterials){
-            mat.SetFloat("_WaterHeight", ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude + .5f);
-        }
+        Shader.SetGlobalFloat("_WaterHeight", ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude - 100f);
     }
 
     void UpdateGrassNormalSensitiveMaterials()
     {
-
-        Vector3 refPosition = Camera.main.transform.position;
-        ChunkData cd = ChunkGenerator.GetChunkFromRawPosition(refPosition);
-        if(cd == null){ return; }
-
-        Vector2 coordinatesInChunk = ChunkGenerator.GetCoordinatesInChunk(refPosition);
-        float desertnessAtCoordinates = ChunkGenerator.CalculateDesertness(cd.TemperatureMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y], cd.HumidityMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y]);
-
-
-        foreach(Material mat in GrassNormalSensitiveMaterials){
-            mat.SetFloat("_GrassNormal", Mathf.Lerp(ChunkGenerator.GrassNormalMin, ChunkGenerator.GrassNormalMax, desertnessAtCoordinates));
-        }
+        Shader.SetGlobalFloat("_GrassNormal", ChunkGenerator.GrassNormal);
     }
 
     void UpdateSnowSensitiveMaterials()
     {
-        foreach(Material mat in SnowSensitiveMaterials){
-            //mat.SetFloat("_SnowMinimumSurfaceNormal", ChunkGenerator.SnowNormal);
-            mat.SetFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel - .13f) * ChunkGenerator.ElevationAmplitude);
-            mat.SetFloat("_SnowHeightCap", ChunkGenerator.SnowLevel * ChunkGenerator.ElevationAmplitude);
-        }
+        Shader.SetGlobalFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel) * ChunkGenerator.ElevationAmplitude);
+        Shader.SetGlobalFloat("_SnowHeightCap", 1f * ChunkGenerator.ElevationAmplitude);
+        Shader.SetGlobalFloat("_SnowMinimumSurfaceNormal", ChunkGenerator.SnowNormalMin);
+        Shader.SetGlobalFloat("_SnowMaximumSurfaceNormal", ChunkGenerator.SnowNormalMax);
     }
 
     void UpdateDesertSensitiveMaterials()
@@ -87,24 +62,29 @@ public class ShaderController : MonoBehaviour
         desertnessAtCoordinates = ChunkGenerator.CalculateDesertness(cd.TemperatureMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y], cd.HumidityMap[(int)coordinatesInChunk.x, (int)coordinatesInChunk.y]);
         //Debug.Log(desertnessAtCoordinates);
 
-        foreach (Material mat in DesertSensitiveMaterials)
-        {
-            mat.SetFloat("_Desertness", desertnessAtCoordinates);
-        }
+
+        Shader.SetGlobalFloat("_Desertness", desertnessAtCoordinates);
     }
 
-    public void UpdateGrassSettings(Camp camp)
+    void UpdatePlayerPositionSensitiveMaterials()
     {
-        Vector3 campOrigin = camp.origin;
-        float radius = camp.radius;
-        GrassMaterial.SetVector("_CampOrigin", campOrigin);
-        GrassMaterial.SetFloat("_CampRadius", radius);
+        if(GameManager.instance.localPlayer != null)
+        {
+            Vector3 playerPos = GameManager.instance.localPlayer.transform.position;
+            Shader.SetGlobalVector("_PlayerPosition", playerPos);
+        }   
+    }
+
+    void UpdateCameraDistanceSensitiveMaterials()
+    {
+        //Shader.SetGlobalVector("_CameraDistance", playerPos);
     }
 
     void Update()
     {
-        UpdateFadeMaterials();
-        UpdateDesertSensitiveMaterials();
-        UpdateGrassNormalSensitiveMaterials();
+        //UpdateFadeMaterials();
+        //UpdateDesertSensitiveMaterials();
+        //UpdateGrassNormalSensitiveMaterials();
+        UpdatePlayerPositionSensitiveMaterials();
     }
 }

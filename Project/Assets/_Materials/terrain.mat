@@ -10,13 +10,15 @@ Material:
   m_Name: terrain
   m_Shader: {fileID: -6465566751694194690, guid: 8f40545b69be12641a46cc1ce935b7f4,
     type: 3}
-  m_ShaderKeywords: _RECEIVE_SHADOWS_OFF
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 1998
-  stringTagMap: {}
-  disabledShaderPasses: []
+  m_CustomRenderQueue: 2004
+  stringTagMap:
+    RenderType: Opaque
+  disabledShaderPasses:
+  - SHADOWCASTER
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -46,6 +48,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - Texture2D_B8BEC1D3:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_4ba5dea7b0c4410386b3e2b8c06bf341_Texture_1:
+        m_Texture: {fileID: 2800000, guid: 4f68954c3a77f3145948b6f3c89044ba, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture2DAsset_7ED03DAC_Out_0:
@@ -78,18 +84,25 @@ Material:
     - Vector1_124AF345: 0
     - Vector1_49092716: 1
     - Vector1_61F46C5F: 200
-    - Vector1_6756ADD4: 0.47
+    - Vector1_6756ADD4: 0.5
     - Vector1_6A3D0673: 0
-    - Vector1_7EC73CB8: 0
+    - Vector1_7EC73CB8: 0.9
     - Vector1_81EA2B5B: 0.8
     - Vector1_995DB535: 1
     - Vector1_B1CE0AD9: 100
     - Vector1_C1CE9129: 0.32
     - Vector1_D5D2B22E: 100
+    - _AlphaClip: 0
+    - _Blend: 0
+    - _CastShadows: 0
     - _ColorNoise: 0
+    - _ColorPosterizeSteps: 3
+    - _Cull: 2
     - _Desertness: 0
+    - _DstBlend: 0
     - _QueueControl: 1
     - _QueueOffset: 0
+    - _ReceiveShadows: 1
     - _SnowCapHeight: 0
     - _SnowDepth: 0.1
     - _SnowHeight: 4645.04
@@ -97,20 +110,28 @@ Material:
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 0.57
     - _SnowStartHeight: 0
+    - _SrcBlend: 1
+    - _Surface: 0
     - _Temperature: 0
     - _Variance: 20
     - _VarianceScale: 10
-    - _WaterHeight: 4590.4404
+    - _WaterHeight: 4489.5005
+    - _WorkflowMode: 1
+    - _ZTest: 4
+    - _ZWrite: 1
+    - _ZWriteControl: 0
     m_Colors:
-    - Color_1DD039A2: {r: 0.99056596, g: 0.9086226, b: 0.6588199, a: 0}
+    - Color_1DD039A2: {r: 0.9056604, g: 0.86217666, b: 0.72965467, a: 0}
     - Color_20D74E1E: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
     - Color_54E7F5BD: {r: 1, g: 0.70598435, b: 0.6179246, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.7169812, g: 0.6669386, b: 0.65272343, a: 0}
     - Color_9C158BA5: {r: 0.3773585, g: 0.13349947, b: 0.13349947, a: 0}
-    - Color_B9FC0D65: {r: 0.9716981, g: 0.91281384, b: 0.8561944, a: 0}
+    - Color_B9FC0D65: {r: 0.5660378, g: 0.51370287, b: 0.44535425, a: 0}
     - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
     - Color_EB41B935: {r: 0.735849, g: 0.67390525, b: 0.6351904, a: 1}
+    - _GrassColor: {r: 0.77989167, g: 0.8113208, b: 0.6995728, a: 0}
+    - _PlayerPosition: {r: -63.85839, g: 4589.878, b: -42.378468, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &2664279794138996905
 MonoBehaviour:

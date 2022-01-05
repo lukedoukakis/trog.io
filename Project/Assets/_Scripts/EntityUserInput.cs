@@ -11,7 +11,7 @@ public class EntityUserInput : EntityComponent
     public static float DISTANCE_INTERACTABLE = 2f;
     public static float DODGE_INPUT_TIMESTEP = .2f;
 
-    public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressCrouch, pressDodge;
+    public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressWalk, pressDodge;
     public bool pressForwardDown, pressBackDown, pressLeftDown, pressRightDown;
     public float timeOffForward, timeOffBack, timeOffLeft, timeOffRight;
     public bool pressToggleAttackRanged;
@@ -20,6 +20,7 @@ public class EntityUserInput : EntityComponent
     Transform selectionOrigin;
     Quaternion targetRot;
     public GameObject hoveredInteractableObject;
+    public GameObject lastHoveredInteractableObject;
     public List<GameObject> interactableObjects;
     bool newInteract;
 
@@ -87,9 +88,9 @@ public class EntityUserInput : EntityComponent
         pressBack = Input.GetKey(KeyCode.S);
         pressLeft = Input.GetKey(KeyCode.A);
         pressRight = Input.GetKey(KeyCode.D);
-        pressSprint = Input.GetKey(KeyCode.LeftShift);
+        pressSprint = Input.GetKey(KeyCode.LeftShift) && false;
         pressJump = Input.GetKey(KeyCode.Space);
-        pressCrouch = Input.GetKey(KeyCode.LeftControl);
+        pressWalk = Input.GetKey(KeyCode.LeftShift);
         pressToggleAttackRanged = Input.GetKeyDown(KeyCode.LeftControl);
 
         pressDodge = false;
@@ -152,7 +153,7 @@ public class EntityUserInput : EntityComponent
                 entityPhysics.Jump();
             }
         }
-        if(pressCrouch){
+        if(pressWalk){
             entityPhysics.OnCrouchInput();
         }
         if(pressToggleAttackRanged){
@@ -211,6 +212,9 @@ public class EntityUserInput : EntityComponent
         }
         if(Input.GetKeyUp(KeyCode.F)){
             OnDropInput();
+        }
+        if(Input.GetKeyUp(KeyCode.Mouse1)){
+            OnUseInput();
         }
 
         if(Input.GetKeyUp(KeyCode.Alpha1)){
@@ -308,24 +312,109 @@ public class EntityUserInput : EntityComponent
         entityItems.OnDropInput();
     }
 
+    void OnUseInput()
+    {
+        entityItems.OnHoldingUse();
+    }
 
 
-    public void UpdateHoveredInteractable(){
+    public static void SetObjectHighlighted(GameObject obj, bool highlight)
+    {
+        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+        // Debug.Log(obj.name);
+        // Debug.Log(renderers.Length);
+
+        if (highlight)
+        {
+            foreach (Renderer mr in renderers)
+            {
+                List<Material> mats = new List<Material>(mr.sharedMaterials);
+                mats.Add(MaterialController.instance.selectedMaterial);
+                mr.sharedMaterials = mats.ToArray();
+            }
+        }
+
+        if (!highlight)
+        {
+            foreach (Renderer mr in renderers)
+            {
+                List<Material> mats = new List<Material>(mr.sharedMaterials);
+                mats.Remove(MaterialController.instance.selectedMaterial);
+                mr.sharedMaterials = mats.ToArray();
+            }
+        }
+        
+    }
+
+
+
+
+    public static Collider GetColliderMostInFront(Collider[] contendingColliders, Transform referenceT)
+    {
+
+        Vector3 referencePos = referenceT.position;
+        float minAngle = float.MaxValue;
+        Collider bestMatch = null;
+        
+        foreach(Collider col in contendingColliders)
+        {
+            Vector3 closestPoint = col.ClosestPoint(referenceT.position);
+            float horizAngle = Vector3.Angle(referenceT.forward, closestPoint - referencePos);
+            if(horizAngle < minAngle && horizAngle < 45f)
+            {
+                minAngle = horizAngle;
+                bestMatch = col;
+            }
+        }
+
+        return bestMatch;
+    }
+
+    public void UpdateHoveredInteractable()
+    {
+
         Transform cameraT = Camera.main.transform;
-        RaycastHit hit;
 
-        if(Physics.Raycast(cameraT.position, cameraT.forward, out hit, 100f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide)){
-        //if(Physics.SphereCast(selectionOrigin.position, .3f, entityOrientation.body.forward, out hit, 1f, LAYERMASK_INTERACTABLE, QueryTriggerInteraction.Collide)){
+        bool hoveredOverSomething;
+        Collider c;
+        if(entityPhysics.isInsideCamp && false)
+        {
+            RaycastHit hit;
+            hoveredOverSomething = Physics.Raycast(selectionOrigin.position, cameraT.forward, out hit, 100f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide);
+            c = hoveredOverSomething ? hit.collider : null;
+        }
+        else
+        {
+            Collider[] hitCols = Physics.OverlapSphere(transform.position, 1f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide);
+            c = GetColliderMostInFront(hitCols, transform);
+            hoveredOverSomething = c != null;
+        }
+
+        if(hoveredOverSomething)
+        {
 
             // set hoveredInteractableObject to parent of collider hit
-            GameObject hovered = hit.collider.transform.parent.gameObject;
+            GameObject hovered = c.transform.parent.gameObject;
             newInteract = hovered != hoveredInteractableObject;
-            hoveredInteractableObject = hovered;
+
+
+            SetObjectHighlighted(hovered, true);
+            if(lastHoveredInteractableObject != null)
+            {
+                SetObjectHighlighted(lastHoveredInteractableObject, false);
+            }
+
+            hoveredInteractableObject = lastHoveredInteractableObject = hovered;
             //Log("hovered: " + hoveredInteractableObject.name);
         }
         else{
             newInteract = true;
             hoveredInteractableObject = null;
+            if(lastHoveredInteractableObject != null)
+            {
+                SetObjectHighlighted(lastHoveredInteractableObject, false);
+                lastHoveredInteractableObject = null;
+            }
             //Log("NO HOVERED INTERACTABLE GAMEOBJECT");
         }
 

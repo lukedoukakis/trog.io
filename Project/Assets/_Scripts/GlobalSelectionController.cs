@@ -116,16 +116,16 @@ public class GlobalSelectionController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Mouse1))
         {
-            if (!mouseDown)
-            {
-                mouseDown = true;
-                if (!Input.GetKey(KeyCode.LeftControl))
-                {
-                    ClearSelected();
-                    UIController.current.ClearSelectionMenu();
-                    UIController.current.ToggleUIMode();
-                }
-            }
+            // if (!mouseDown)
+            // {
+            //     mouseDown = true;
+            //     if (!Input.GetKey(KeyCode.LeftControl))
+            //     {
+            //         ClearSelected();
+            //         UIController.current.ClearSelectionMenu();
+            //         UIController.current.ToggleUIMode();
+            //     }
+            // }
         }
         else
         {

@@ -10,13 +10,15 @@ Material:
   m_Name: antlers
   m_Shader: {fileID: -6465566751694194690, guid: 21d586b92db687f40831fc51479d9060,
     type: 3}
-  m_ShaderKeywords: _GLOSSYREFLECTIONS_OFF _SPECULAR_SETUP
+  m_ShaderKeywords: _SURFACE_TYPE_TRANSPARENT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
+  m_CustomRenderQueue: 3000
+  stringTagMap:
+    RenderType: Transparent
+  disabledShaderPasses:
+  - DepthOnly
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -95,13 +97,14 @@ Material:
     - _Blend: 0
     - _Blur: 0.5
     - _BumpScale: 1
+    - _CastShadows: 1
     - _ColorNoise: 0
     - _Cull: 2
     - _CutOff: 0.5
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _Diffuse: 1
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _EnvironmentReflections: 1
     - _FurLength: 0.5
     - _GlossMapScale: 0
@@ -109,11 +112,13 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _Mode: 0
+    - _NumberOfShades: 2
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _ShadingAmount: 0.18
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
     - _SnowDepth: 0.1
@@ -121,19 +126,21 @@ Material:
     - _SnowHeightStart: 9999999
     - _SnowMinimumSurfaceNormal: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _Surface: 0
+    - _SrcBlend: 5
+    - _Surface: 1
     - _Thickness: 0
     - _UVSec: 0
     - _WorkflowMode: 0
-    - _ZWrite: 1
+    - _ZTest: 4
+    - _ZWrite: 0
+    - _ZWriteControl: 0
     m_Colors:
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 1}
     - Color_962802DE: {r: 1, g: 0.8574853, b: 0.5424528, a: 0}
     - Color_EB41B935: {r: 0.8584906, g: 0.7111559, b: 0.5223834, a: 0}
     - _BaseColor: {r: 0.8679245, g: 0.8137069, b: 0.6673193, a: 1}
-    - _Color: {r: 0.4433962, g: 0.3559173, b: 0.21124065, a: 1}
+    - _Color: {r: 0.8301887, g: 0.7992325, b: 0.74716985, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

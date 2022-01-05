@@ -12,7 +12,7 @@ public class ObjectRack : CampComponent
     
     public static int RackCapacity_Food = 6;
     public static int RackCapacity_Weapons = 6;
-    public static int RackCapacity_Clothing = 6;
+    public static int RackCapacity_Pelt = 6;
     public static int RackCapacity_Wood = 30;
     public static int RackCapacity_Bone = 28;
     public static int RackCapacity_Stone = 28;
@@ -62,9 +62,9 @@ public class ObjectRack : CampComponent
                 allowLateralTranslation = false;
                 allowRotation = false;
                 break;
-            case ItemType.Clothing : 
-                this.capacity = RackCapacity_Clothing;
-                worldObjectPrefab = CampResources.PREFAB_RACK_CLOTHING;
+            case ItemType.Pelt : 
+                this.capacity = RackCapacity_Pelt;
+                worldObjectPrefab = CampResources.PREFAB_RACK_PELT;
                 onDemandPlacement = true;
                 allowObjectPhysics = false;
                 allowItemHoverTriggers = true;
@@ -138,7 +138,8 @@ public class ObjectRack : CampComponent
     {
 
         int c = countToAdd;
-        for(int countAdded = 0; countAdded < c; ++countAdded){ 
+        for(int countAdded = 0; countAdded < c; ++countAdded)
+        {
             if(!IsFull())
             {
 
@@ -217,7 +218,7 @@ public class ObjectRack : CampComponent
 
                     }
 
-                    // if moving to an EntityItems, call the EntityItems to take the object
+                    // if moving to an EntityItems, call the EntityItems to take the object (add to inventory)
                     else if(destination is EntityItems)
                     {
                         Transform tempT = new GameObject().transform;
@@ -276,12 +277,12 @@ public class ObjectRack : CampComponent
     {
         if(IsEmpty()){ return; }
 
-        Debug.Log("EmptyObjects():");
+        //Debug.Log("EmptyObjects():");
 
         foreach(Item item in itemsOnRack.ToArray())
         {
-            Debug.Log("------>");
-            camp.faction.RemoveItemOwned(item, 1, this, true, camp.faction.leaderHandle.entityItems);
+            //Debug.Log("------>");
+            camp.faction.RemoveItemOwned(item, 1, this, true, destination);
         }
     }
 
@@ -349,6 +350,7 @@ public class ObjectRack : CampComponent
             
                     if(removeAfterMovingToTarget)
                     {
+                        //Debug.Log("SetObjectOrientation(): destroying object");
                         Destroy(_o);
                     }
 

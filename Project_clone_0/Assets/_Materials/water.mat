@@ -23,11 +23,11 @@ Material:
   m_Name: water
   m_Shader: {fileID: -6465566751694194690, guid: ced00bbbfb8fdc3499cb61c6e8f41ded,
     type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: _SURFACE_TYPE_TRANSPARENT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2999
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -49,17 +49,30 @@ Material:
     m_Floats:
     - Vector1_1F8742C5: 0.1
     - Vector1_2A6BBFA: 1.96
-    - Vector1_7AC129F: 10
-    - Vector1_8EF4EB24: 0.1
+    - Vector1_7AC129F: 2.44
+    - Vector1_8EF4EB24: 0
     - Vector1_C50B20A7: 0.5
-    - Vector1_CCC10C7A: 0.01
+    - Vector1_CCC10C7A: 0
     - Vector1_CD9E60A1: 0.7
     - Vector1_F3FCB1E6: 5
+    - _AlphaClip: 0
+    - _Blend: 0
+    - _CastShadows: 1
+    - _Cull: 2
+    - _DstBlend: 10
     - _QueueControl: 1
     - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _SrcBlend: 5
+    - _Surface: 1
+    - _WorkflowMode: 1
+    - _ZTest: 4
+    - _ZWrite: 0
+    - _ZWriteControl: 0
     m_Colors:
     - Color_2127F07A: {r: 0.69143826, g: 0.79498374, b: 0.8018868, a: 1}
     - Color_2459B9F0: {r: 1, g: 1, b: 1, a: 1}
     - Color_39A062A3: {r: 0.5251335, g: 0.61915904, b: 0.6226415, a: 1}
     - Color_A14ACFAE: {r: 0, g: 0, b: 0, a: 0}
+    - _PlayerPosition: {r: -63.85839, g: 4589.878, b: -42.378468, a: 0}
   m_BuildTextureStacks: []

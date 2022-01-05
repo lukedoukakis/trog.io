@@ -16,7 +16,7 @@ public class Camp : MonoBehaviour
         Tent,
         Rack_Food, 
         Rack_Weapons, 
-        Rack_Clothing,
+        Rack_Pelt,
         Rack_Wood,
         Rack_Bone,
         Rack_Stone
@@ -38,11 +38,12 @@ public class Camp : MonoBehaviour
     public List<Tent> tents;
     public List<ObjectRack> racks_food;
     public List<ObjectRack> racks_weapons;
-    public List<ObjectRack> racks_clothing;
+    public List<ObjectRack> racks_pelt;
     public List<ObjectRack> racks_wood;
     public List<ObjectRack> racks_bone;
     public List<ObjectRack> racks_stone;
     public List<List<ObjectRack>> racks_all;
+
 
 
     public List<Transform> tribeMemberStandPositions;
@@ -51,7 +52,9 @@ public class Camp : MonoBehaviour
     // client method to place a Camp
     public static void TryPlaceCamp(Faction faction, Transform originT)
     {
-        if(CanPlaceCamp(originT.position)){
+        if(CanPlaceCamp(originT.position))
+        {
+            //faction.leaderHandle.entityItems.EmptyInventory();
             PlaceCamp(faction, originT);
         }
         else{
@@ -71,7 +74,7 @@ public class Camp : MonoBehaviour
         camp.rootT = new GameObject().transform;
         camp.racks_food = new List<ObjectRack>();
         camp.racks_weapons = new List<ObjectRack>();
-        camp.racks_clothing = new List<ObjectRack>();
+        camp.racks_pelt = new List<ObjectRack>();
         camp.racks_wood = new List<ObjectRack>();
         camp.racks_bone = new List<ObjectRack>();
         camp.racks_stone = new List<ObjectRack>();
@@ -82,14 +85,13 @@ public class Camp : MonoBehaviour
         camp.SetCampLayout(campPlacementPos, originT.rotation);
         camp.PlaceCampComponents(originT);
         camp.SetTribeMemberStandingPositions();
-        camp.racks_all = new List<List<ObjectRack>>(){ camp.racks_food, camp.racks_weapons, camp.racks_clothing, camp.racks_wood, camp.racks_bone, camp.racks_stone, new List<ObjectRack>(){camp.workbench} };
+        camp.racks_all = new List<List<ObjectRack>>(){ camp.racks_food, camp.racks_weapons, camp.racks_pelt, camp.racks_wood, camp.racks_bone, camp.racks_stone, new List<ObjectRack>(){camp.workbench} };
 
         // todo: update all memnbers in camp status from checking distance to origin
         camp.faction.leaderHandle.entityPhysics.isInsideCamp = true;
         camp.faction.UpdateLeaderCampStatus();
 
-        // call the shader controller to update according to new origin position and radius
-        ShaderController.instance.UpdateGrassSettings(camp);
+
 
         return camp;
 
@@ -102,15 +104,43 @@ public class Camp : MonoBehaviour
 
         IEnumerator _PlaceCampComponents()
         {
-            //ClearFeaturesFromCampRadius();
+            ClearFeaturesFromCampRadius();
             PlaceBorderSphere();
             PlaceBonfire();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
             PlaceWorkbench();
+            yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP * 3f);
+
+            // separate physical and overflow items and add them to camp
+            Item item;
+            int count;
+            ItemCollection physicalItemsToPlace = new ItemCollection();
+            ItemCollection overflowItemsToPlace = new ItemCollection();
+            foreach(KeyValuePair<Item, int> kvp in faction.ownedItems.items)
+            {
+                item = kvp.Key;
+                count = kvp.Value;
+                //Debug.Log("countOwned for " + item.nme + ": " + countOwned);
+                int campTotalCapacity = Camp.GetItemPhysicalCapacity(item);
+                int maximumPhysicalToAdd = campTotalCapacity;
+                int countToAddPhysically = Mathf.Min(count, maximumPhysicalToAdd);
+                int countToAddOverflow = count - countToAddPhysically;
+                physicalItemsToPlace.AddItem(item, countToAddPhysically);
+                overflowItemsToPlace.AddItem(item, countToAddOverflow);
+
+                // if(countToAddOverflow > 0)
+                // {
+                //     Debug.Log("overflow add for " + item.nme + ": " + countToAddOverflow);
+                // }
+            }
+            AddItemsToCamp(physicalItemsToPlace, originT, true);
+            AddItemsToCamp(overflowItemsToPlace, originT, false);
+
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
-            AddItemsToCamp(faction.ownedItems, originT, true);
-            yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
-            //UpdateTentCount();
+            for(int i = 0; i < faction.GetItemCount(Item.TentBearPelt) + faction.GetItemCount(Item.TentDeerPelt); ++i)
+            {
+                PlaceTent();
+            }
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
 
         }
@@ -220,8 +250,8 @@ public class Camp : MonoBehaviour
             case ComponentType.Rack_Weapons :
                 search = "OrientationWeaponsRack" + racks_weapons.Count;
                 break;
-            case ComponentType.Rack_Clothing :
-                search = "OrientationClothingRack" + racks_clothing.Count;
+            case ComponentType.Rack_Pelt :
+                search = "OrientationPeltRack" + racks_pelt.Count;
                 break;
             case ComponentType.Rack_Wood :
                 search = "OrientationWoodRack" + racks_wood.Count;
@@ -309,6 +339,17 @@ public class Camp : MonoBehaviour
         return campComponent;
     }
 
+    public CampComponent AddCampComponentItem(Item item)
+    {
+        if(item == Item.TentBearPelt || item == Item.TentDeerPelt)
+        {
+            return PlaceTent();
+        }
+
+
+        return null;
+    }
+
 
     public ObjectRack PlaceObjectRack(Enum itemType, float delay)
     {
@@ -326,8 +367,8 @@ public class Camp : MonoBehaviour
             case ItemType.Weapon:
                 componentType = ComponentType.Rack_Weapons;
                 break;
-            case ItemType.Clothing:
-                componentType = ComponentType.Rack_Clothing;
+            case ItemType.Pelt:
+                componentType = ComponentType.Rack_Pelt;
                 break;
             case ItemType.Wood:
                 componentType = ComponentType.Rack_Wood;
@@ -370,29 +411,29 @@ public class Camp : MonoBehaviour
   
     }
 
-    public void UpdateTentCount(){
-        int properTentCount = faction.memberHandles.Count / 2;
-        int currentTentCount = tents.Count;
-        int tentDeficit = properTentCount - currentTentCount;
-
-        if(tentDeficit > 0){
-            for(int i = 0; i < tentDeficit; ++i){
-                PlaceTent();
-            }
-        }
-        else if(tentDeficit < 0){
-            for(int i = 0; i < tentDeficit * -1; ++i){
-                //RemoveTent();
-            }
-        }
-    }
-    public void PlaceTent(){
+    public Tent PlaceTent()
+    {
         Tent tent = (Tent)AddCampComponent(typeof(Tent));
         tent.SetCampComponent(this);
         Transform targetOrientation = GetCampComponentOrientation(ComponentType.Tent);
         tent.worldObject.transform.position = targetOrientation.position;
         tent.worldObject.transform.rotation = targetOrientation.rotation;
-        this.tents.Add(tent);
+        tent.worldObject.transform.localScale = Vector3.one * UnityEngine.Random.Range(1f, 1.2f);
+        tents.Add(tent);
+
+        return tent;
+    }
+
+    public Tent GetOpenTent()
+    {
+        foreach(Tent tent in tents)
+        {
+            if(tent.IsOpen())
+            {
+                return tent;
+            }
+        }
+        return null;
     }
 
 
@@ -404,7 +445,18 @@ public class Camp : MonoBehaviour
         {
             item = kvp.Key;
             countToAdd = kvp.Value;
-            AddObjectsAnyRack(item, ref countToAdd, originT, ref zeroRacksRef, physical);
+
+            if(item.type.Equals(ItemType.CampComponent))
+            {
+                for(int i = 0; i < countToAdd; ++i)
+                {
+                    AddCampComponentItem(item);
+                }
+            }
+            else
+            {
+                AddObjectsAnyRack(item, ref countToAdd, originT, ref zeroRacksRef, physical);
+            }
         }
 
     }
@@ -425,15 +477,21 @@ public class Camp : MonoBehaviour
     }
 
 
-    public void AddObjectsAnyRack(Item item, ref int count, Transform originT, ref int newRacksCount, bool physical){
+    public void AddObjectsAnyRack(Item item, ref int count, Transform originT, ref int newRacksCount, bool physical)
+    {
+
         List<ObjectRack> rackList = GetRackListForItemType(item.type);
-        foreach(ObjectRack rack in rackList){
-            if(!rack.IsFull()){
+
+        // if adding physical item, find the next rack with room and add
+        foreach (ObjectRack rack in rackList)
+        {
+            if (!rack.IsFull())
+            {
                 rack.AddObjects(item, ref count, originT, ref newRacksCount, physical);
                 break;
             }
         }
-
+        
         // if still objects to add, place a new rack
         if(count > 0){
             ++newRacksCount;
@@ -472,8 +530,8 @@ public class Camp : MonoBehaviour
             case ItemType.Weapon :
                 rackList = racks_weapons;
                 break;
-            case ItemType.Clothing :
-                rackList = racks_clothing;
+            case ItemType.Pelt :
+                rackList = racks_pelt;
                 break;
             case ItemType.Wood :
                 rackList = racks_wood;
@@ -558,21 +616,38 @@ public class Camp : MonoBehaviour
         borderSphere.SetActive(false);
         Destroy(borderSphere);
 
+
+        // foreach (KeyValuePair<Item, int> kvp in faction.ownedItems.items)
+        // {
+        //     faction.RemoveItemOwned(kvp.Key, kvp.Value, null, true, faction.leaderHandle.entityItems);
+        // }
+
         // handle removal of camp components and packing of items
         CampComponent[] allCampComponents = rootT.GetComponents<CampComponent>();
+        int delayIterator = 0;
         foreach(CampComponent cp in allCampComponents)
         {
             // if camp component is an object rack, move all its items to leader's inventory
             if(cp is ObjectRack)
             {
                 ObjectRack rack = (ObjectRack)cp;
-                rack.EmptyObjects(faction.leaderHandle);
+
+                foreach(GameObject worldObject in rack.objectsOnRack.ToArray())
+                {
+                    Item item = Item.GetItemByName(worldObject.name);
+                    GameObject dummyItem = Utility.InstantiateSameName(worldObject, worldObject.transform.position, worldObject.transform.rotation);
+                    Utility.SetGlobalScale(dummyItem.transform, Vector3.one);
+                    StartCoroutine(Utility.instance.FlyObjectToPosition(dummyItem, faction.leaderHandle.transform, true, true, delayIterator * (ObjectRack.OBJECT_PLACEMENT_DELAY_TIMESTEP * .25f)));
+                    GameObject.Destroy(worldObject);
+                    ++delayIterator;
+                }
             }
 
             // destroy and play dismantle animation
             Utility.DestroyInSeconds(cp.worldObject, 5f);
             cp.PlayDismantleAnimation();
         }
+
 
         Utility.DestroyInSeconds(rootT.gameObject, 5f);
 
@@ -586,8 +661,8 @@ public class Camp : MonoBehaviour
         { Item.BonePiece, 10},
         { Item.StoneSmall, 10},
         { Item.Meat, 6},
-        { Item.Axe, 6},
-        { Item.Spear, 6}
+        { Item.AxeStone, 6},
+        { Item.SpearStone, 6}
     };
 
     public static int GetItemPhysicalCapacity(Item item)

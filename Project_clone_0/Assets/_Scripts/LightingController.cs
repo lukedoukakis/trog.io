@@ -12,6 +12,8 @@ public class LightingController : MonoBehaviour
     //public PostProcessVolume volume;
     //public ColorGrading colorGrading;
 
+    public static float FOG_DISTANCE_START_BASE = 40f;
+
     public GameObject fog;
     public GameObject sun, moon;
     public Light sunLight, moonLight;
@@ -23,7 +25,7 @@ public class LightingController : MonoBehaviour
     public Color fogColor_day, fogColor_night;
 
     // time in seconds for a full day
-    public static float period = 60f;
+    public static float SECONDS_PER_DAY = 60f;
 
 
     private void Awake()
@@ -35,6 +37,8 @@ public class LightingController : MonoBehaviour
         moon = GameObject.Find("Moon");
         sunLight = sun.GetComponent<Light>();
         moonLight = moon.GetComponent<Light>();
+
+        InitFog();
 
         // initialize pp
         //volume = GetComponent<PostProcessVolume>();
@@ -58,17 +62,47 @@ public class LightingController : MonoBehaviour
         //time += Time.deltaTime;
     }
 
+    void InitFog()
+    {
+        if(fog != null)
+        {
+            List<GameObject> fogLayers = new List<GameObject>();
+
+            int i = 0;
+            foreach(Transform t in fog.transform)
+            {
+                
+                //Debug.Log("Initializing fog " + i);
+
+                fogLayers.Add(t.gameObject);
+
+                // set scale
+                t.localScale = Vector3.one * (FOG_DISTANCE_START_BASE + (i * 2f));
+
+                // set material and material properties
+                Material newFogMat = Material.Instantiate(MaterialController.instance.baseFogMaterial);
+                newFogMat.SetFloat("_FogThickness", (i + 1) + .002f);
+                t.GetComponent<MeshRenderer>().sharedMaterial = newFogMat;
+
+                ++i;
+            }
+        }
+    }
+
     void SetFog(float time)
     {
         Vector3 playerPos = GameManager.instance.localPlayer.transform.position;
         Vector3 cameraPos = Camera.main.transform.position;
-        fog.transform.position = playerPos;
+        if(fog != null)
+        {
+            fog.transform.position = playerPos;
+        }
     }
 
     void SetCelestialBodies(float time)
     {
-        float sunX = Mathf.Sin(time / period);
-        float sunY = Mathf.Cos(time / period);
+        float sunX = Mathf.Sin(time / SECONDS_PER_DAY);
+        float sunY = Mathf.Cos(time / SECONDS_PER_DAY);
         Vector3 sunRot = new Vector3(sunX, sunY, 0f);
         Vector3 moonRot = new Vector3(sunX * -1f, sunY * -1f, 0f);
         sun.transform.rotation = Quaternion.LookRotation(sunRot, Vector3.up);
@@ -77,8 +111,8 @@ public class LightingController : MonoBehaviour
 
     void SetColors(float time){
 
-        darkness = (Mathf.Cos(time / period) + 1f) / 2f;
-        timeOfDay = (Mathf.Sin(time / period) + 1f) / 2f;
+        darkness = (Mathf.Cos(time / SECONDS_PER_DAY) + 1f) / 2f;
+        timeOfDay = (Mathf.Sin(time / SECONDS_PER_DAY) + 1f) / 2f;
         PolyverseSkies.timeOfDay = darkness;
         RenderSettings.fogColor = Color.Lerp(fogColor_day, fogColor_night, darkness);
 
