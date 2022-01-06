@@ -276,7 +276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2df4f1510dfdf4d8aa21f347678028, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPositionType: 2
+  targetPositionType: 3
   actionSequence: {fileID: 0}
 --- !u!1 &313302721574064545
 GameObject:
@@ -1030,7 +1030,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2df4f1510dfdf4d8aa21f347678028, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPositionType: 2
+  targetPositionType: 3
   actionSequence: {fileID: 0}
 --- !u!1 &1618903618163034300
 GameObject:
@@ -1226,7 +1226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2df4f1510dfdf4d8aa21f347678028, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPositionType: 2
+  targetPositionType: 3
   actionSequence: {fileID: 0}
 --- !u!1 &1826153859374431538
 GameObject:
@@ -1686,7 +1686,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2df4f1510dfdf4d8aa21f347678028, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPositionType: 2
+  targetPositionType: 3
   actionSequence: {fileID: 0}
 --- !u!1 &2601944098211829716
 GameObject:
@@ -1867,7 +1867,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2df4f1510dfdf4d8aa21f347678028, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPositionType: 2
+  targetPositionType: 3
   actionSequence: {fileID: 0}
 --- !u!1 &3331163331797537399
 GameObject:
@@ -2395,7 +2395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2df4f1510dfdf4d8aa21f347678028, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPositionType: 2
+  targetPositionType: 3
   actionSequence: {fileID: 0}
 --- !u!1 &3908825048232446204
 GameObject:
@@ -4772,7 +4772,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2df4f1510dfdf4d8aa21f347678028, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPositionType: 2
+  targetPositionType: 3
   actionSequence: {fileID: 0}
 --- !u!1 &7669816923940750551
 GameObject:
@@ -5843,7 +5843,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2df4f1510dfdf4d8aa21f347678028, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPositionType: 2
+  targetPositionType: 3
   actionSequence: {fileID: 0}
 --- !u!1 &9045642388943814782
 GameObject:

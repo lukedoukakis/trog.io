@@ -47,11 +47,14 @@ public class ActionParameters : ScriptableObject
 
     // method to be executed to check for when the action should end
     public Func<bool> endCondition;
+
+    // methods to be excecuted before the action begins and when it has been achieved
+    public ActionSequence actionSequenceBeforeBeginning;
     public ActionSequence actionSequenceWhenAchieved;
 
 
 
-    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, ActionType _type, GameObject _targetWorldObject, Vector3 _offset, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, BodyRotationMode _bodyRotationMode, InterruptionTier _interruptionTier, bool _urgent, Func<bool> _endCondition, ActionSequence _actionSequenceOnceCompleted)
+    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, ActionType _type, GameObject _targetWorldObject, Vector3 _offset, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, BodyRotationMode _bodyRotationMode, InterruptionTier _interruptionTier, bool _urgent, Func<bool> _endCondition, ActionSequence _actionSequenceBeforeBeginning, ActionSequence _actionSequenceOnceCompleted)
     {
         ActionParameters a = ActionParameters.GenerateActionParameters();
         a.doerHandle = _doerHandle;
@@ -67,6 +70,7 @@ public class ActionParameters : ScriptableObject
         a.interruptionTier = _interruptionTier;
         a.urgent = _urgent;
         a.endCondition = _endCondition;
+        a.actionSequenceBeforeBeginning = _actionSequenceBeforeBeginning;
         a.actionSequenceWhenAchieved = _actionSequenceOnceCompleted;
 
         return a;
@@ -91,6 +95,7 @@ public class ActionParameters : ScriptableObject
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
                 ap.maxTime = 1f;
                 ap.urgent = false;
+                ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
             
             case "Go Rest" :
@@ -101,7 +106,7 @@ public class ActionParameters : ScriptableObject
                 ap.maxTime = 1f;
                 ap.urgent = false;
                 ap.endCondition = doerHandle.entityBehavior.IsFullyRested;
-                //ap.actionSequenceWhenAchieved = ActionSequence.CreateActionSequence(doerHandle.entityBehavior.OnRestFrame);
+                ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
             case "Follow Faction Leader" :
@@ -112,6 +117,7 @@ public class ActionParameters : ScriptableObject
                 ap.distanceThreshold = 2.5f;
                 ap.maxTime = 1f;
                 ap.urgent = false;
+                ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
             case "Run From Player" :
@@ -120,6 +126,7 @@ public class ActionParameters : ScriptableObject
                 ap.targetedWorldObject = GameManager.instance.localPlayer.gameObject;
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_CHASE;
                 ap.urgent = true;
+                ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
             case "Attack Player" :
@@ -128,12 +135,14 @@ public class ActionParameters : ScriptableObject
                 ap.targetedWorldObject = GameManager.instance.localPlayer.gameObject;
                 ap.maxTime = doerHandle.entityBehavior.CalculateChaseTime();
                 ap.urgent = true;
+                ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
             case "Idle For 5 Seconds" :
 
                 ap.type = ActionType.Idle;
                 ap.maxTime = 5f;
+                ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
             // TODO: idle until something is true
@@ -146,6 +155,7 @@ public class ActionParameters : ScriptableObject
                 ap.targetedWorldObject = temp;
                 ap.maxTime = 10f;
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
+                ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
             case "Collect Spear" :
@@ -153,6 +163,7 @@ public class ActionParameters : ScriptableObject
                 ap.type = ActionType.Collect;
                 ap.item_target = Item.SpearStone;
                 //Log(a.item_target.nme);
+                ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
             case "Collect Stone" :
@@ -160,6 +171,7 @@ public class ActionParameters : ScriptableObject
                 ap.type = ActionType.Collect;
                 ap.item_target = Item.Stone;
                 //Log(a.item_target.nme);
+                ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
             case "Attack TribeMember" :
@@ -172,6 +184,7 @@ public class ActionParameters : ScriptableObject
                         ap.targetedWorldObject = h.gameObject;
                     }
                 }
+                ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 //Log(a.item_target.nme);
                 break;    
 
@@ -201,6 +214,7 @@ public class ActionParameters : ScriptableObject
         ap.interruptionTier = InterruptionTier.Anything;
         ap.urgent = false;
         ap.endCondition = null;
+        ap.actionSequenceBeforeBeginning = null;
         ap.actionSequenceWhenAchieved = null;
         return ap;
     }
@@ -221,6 +235,7 @@ public class ActionParameters : ScriptableObject
         newAp.interruptionTier = baseAp.interruptionTier;
         newAp.urgent = baseAp.urgent;
         newAp.endCondition = baseAp.endCondition;
+        newAp.actionSequenceBeforeBeginning = baseAp.actionSequenceBeforeBeginning;
         newAp.actionSequenceWhenAchieved = baseAp.actionSequenceWhenAchieved;
 
         return newAp;

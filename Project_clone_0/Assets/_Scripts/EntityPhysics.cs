@@ -974,7 +974,7 @@ public class EntityPhysics : EntityComponent
         }
         else
         {
-           isWalking = false;
+           isWalking = isInsideCamp;
         }
     }
 
@@ -986,7 +986,6 @@ public class EntityPhysics : EntityComponent
 
     public void AssertSquatting()
     {
-        Debug.Log("AssertSquatting");
         ToggleSquat(true);
     }
 
@@ -1002,7 +1001,7 @@ public class EntityPhysics : EntityComponent
     {
 
         isSquatting = !isSquatting;
-        Debug.Log(" Setting isSquatting: " + isSquatting);
+        //Debug.Log(" Setting isSquatting: " + isSquatting);
 
         if(squattingCoroutine != null)
         {
@@ -1410,7 +1409,7 @@ public class EntityPhysics : EntityComponent
             {
                 if(hitObjectStats.hp > 0)
                 {
-                    ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Chase, hitObject, Vector3.zero, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, InterruptionTier.Anything, true, null, null);
+                    ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Chase, hitObject, Vector3.zero, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, InterruptionTier.Anything, true, null, entityBehavior.entityActionSequence_AssertStanding, null);
                     entityInfo.faction.SendPartyCommand(ap);
                 }
             }

@@ -150,13 +150,13 @@ public class Camp : MonoBehaviour
     {
         tribeMemberStandPositions = layout.transform.GetComponentsInChildren<Transform>().Where(t => t.name.StartsWith("OrientationTribeMemberStandPosition")).ToList();
     }
-    public Transform GetOpenTribeMemberStandPosition()
+    public GameObject GetOpenTribeMemberStandPosition()
     {
         foreach(Transform standPosition in Utility.Shuffle(tribeMemberStandPositions))
         {
             if(standPosition.childCount < 1)
             {
-                return standPosition;
+                return standPosition.gameObject;
             }
         }
         Debug.Log("No open standing position");
@@ -590,7 +590,7 @@ public class Camp : MonoBehaviour
     void OnFoodCast(EntityHandle casterHandle, Item foodItem)
     {
         //Debug.Log("OnFoodCast()");
-        StartCoroutine(ClientCommand.instance.SpawnNpcFollowerWhenReady(casterHandle.entityInfo.faction.leaderHandle, GetOpenTribeMemberStandPosition().position, false));
+        StartCoroutine(ClientCommand.instance.SpawnNpcFollowerWhenReady(casterHandle.entityInfo.faction.leaderHandle, GetOpenTribeMemberStandPosition().transform.position, false));
         if(casterHandle.entityInfo.faction.GetItemCount(foodItem) > 0)
         {
             casterHandle.entityInfo.faction.RemoveItemOwned(foodItem, 1, null, true, casterHandle.entityItems);

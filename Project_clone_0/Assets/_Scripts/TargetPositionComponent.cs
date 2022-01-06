@@ -17,6 +17,7 @@ public class TargetPositionComponent : MonoBehaviour
     
     public TargetPositionType targetPositionType;
     public ActionSequence actionSequence;
+    EntityHandle affectedEntityHandle;
 
 
     void InitFromTargetPositionType(EntityHandle entityHandle)
@@ -48,7 +49,11 @@ public class TargetPositionComponent : MonoBehaviour
     // to be called when an entity has reached this position as a target destination
     public void OnTargetPositionReached(EntityHandle handle)
     {
-        InitFromTargetPositionType(handle);
+        if(!ReferenceEquals(handle, affectedEntityHandle))
+        {
+            affectedEntityHandle = handle;
+            InitFromTargetPositionType(affectedEntityHandle);
+        }
         actionSequence.Execute();
     }
 
