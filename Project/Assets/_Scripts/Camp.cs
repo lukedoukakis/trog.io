@@ -152,7 +152,7 @@ public class Camp : MonoBehaviour
     }
     public Transform GetOpenTribeMemberStandPosition()
     {
-        foreach(Transform standPosition in tribeMemberStandPositions)
+        foreach(Transform standPosition in Utility.Shuffle(tribeMemberStandPositions))
         {
             if(standPosition.childCount < 1)
             {

@@ -47,11 +47,11 @@ public class ActionParameters : ScriptableObject
 
     // method to be executed to check for when the action should end
     public Func<bool> endCondition;
-    public Action actionWhenAchieved;
+    public ActionSequence actionSequenceWhenAchieved;
 
 
 
-    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, ActionType _type, GameObject _targetWorldObject, Vector3 _offset, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, BodyRotationMode _bodyRotationMode, InterruptionTier _interruptionTier, bool _urgent, Func<bool> _endCondition, Action _actionOnceCompleted)
+    public static ActionParameters GenerateActionParameters(EntityHandle _doerHandle, ActionType _type, GameObject _targetWorldObject, Vector3 _offset, int _number, Item _item_target, Item _item_result, float _maxTime, float _distanceThreshold, BodyRotationMode _bodyRotationMode, InterruptionTier _interruptionTier, bool _urgent, Func<bool> _endCondition, ActionSequence _actionSequenceOnceCompleted)
     {
         ActionParameters a = ActionParameters.GenerateActionParameters();
         a.doerHandle = _doerHandle;
@@ -67,7 +67,7 @@ public class ActionParameters : ScriptableObject
         a.interruptionTier = _interruptionTier;
         a.urgent = _urgent;
         a.endCondition = _endCondition;
-        a.actionWhenAchieved = _actionOnceCompleted;
+        a.actionSequenceWhenAchieved = _actionSequenceOnceCompleted;
 
         return a;
     }
@@ -101,7 +101,7 @@ public class ActionParameters : ScriptableObject
                 ap.maxTime = 1f;
                 ap.urgent = false;
                 ap.endCondition = doerHandle.entityBehavior.IsFullyRested;
-                ap.actionWhenAchieved = doerHandle.entityBehavior.OnRestFrame;
+                //ap.actionSequenceWhenAchieved = ActionSequence.CreateActionSequence(doerHandle.entityBehavior.OnRestFrame);
                 break;
 
             case "Follow Faction Leader" :
@@ -201,7 +201,7 @@ public class ActionParameters : ScriptableObject
         ap.interruptionTier = InterruptionTier.Anything;
         ap.urgent = false;
         ap.endCondition = null;
-        ap.actionWhenAchieved = null;
+        ap.actionSequenceWhenAchieved = null;
         return ap;
     }
 
@@ -221,7 +221,7 @@ public class ActionParameters : ScriptableObject
         newAp.interruptionTier = baseAp.interruptionTier;
         newAp.urgent = baseAp.urgent;
         newAp.endCondition = baseAp.endCondition;
-        newAp.actionWhenAchieved = baseAp.actionWhenAchieved;
+        newAp.actionSequenceWhenAchieved = baseAp.actionSequenceWhenAchieved;
 
         return newAp;
     }

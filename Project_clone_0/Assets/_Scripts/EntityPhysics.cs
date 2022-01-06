@@ -978,6 +978,18 @@ public class EntityPhysics : EntityComponent
         }
     }
 
+
+    public void AssertStanding()
+    {
+        ToggleSquat(false);
+    }
+
+    public void AssertSquatting()
+    {
+        Debug.Log("AssertSquatting");
+        ToggleSquat(true);
+    }
+
     public void ToggleSquat(bool targetValue)
     {
         if(isSquatting != targetValue)

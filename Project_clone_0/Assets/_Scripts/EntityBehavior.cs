@@ -436,10 +436,15 @@ public class EntityBehavior : EntityComponent
                 if(Vector3.Distance(transform.position, targetPos) <= ap.distanceThreshold)
                 {
                     move = Vector3.zero;
-                    if(ap.actionWhenAchieved != null)
+                    TargetPositionComponent tpc = ap.targetedWorldObject.GetComponent<TargetPositionComponent>();
+                    if(tpc != null)
                     {
-                        ap.actionWhenAchieved();
+                        tpc.OnTargetPositionReached(entityHandle);
                     }
+                    // if(ap.actionSequenceWhenAchieved != null)
+                    // {
+                    //     ap.actionSequenceWhenAchieved.Execute();
+                    // }
                 }
                 // else, move towards the target
                 else
@@ -1041,7 +1046,7 @@ public class EntityBehavior : EntityComponent
         {
 
             // make sure entity is squatting down
-            entityPhysics.ToggleSquat(true);
+            entityPhysics.AssertSquatting();
 
             // increment rest
             rest += REST_RATE_GAIN * Time.deltaTime;
@@ -1057,7 +1062,7 @@ public class EntityBehavior : EntityComponent
             if(rest == 1f && entityStats.IsFullyHealed())
             {
                 SetRestingTent(null);
-                entityPhysics.ToggleSquat(false);
+                entityPhysics.AssertStanding();
             }
         }
 
