@@ -15,6 +15,8 @@ public class Workbench : ObjectRack
     public Item currentCraftableItem;          // item that will be crafted if the craft action is taken
     Transform hammerT;
 
+    bool restocking;
+
     
 
 
@@ -45,8 +47,12 @@ public class Workbench : ObjectRack
         itemsOnTable.Add(item);
 
         // give the player another instance of the same item from their camp, if available
-        EntityItems leaderItems = camp.faction.leaderHandle.entityItems;
-        camp.faction.RemoveItemOwned(item, 1, null, true, leaderItems);
+        if(!restocking && itemsOnTable.Count < 3)
+        {
+            EntityItems leaderItems = camp.faction.leaderHandle.entityItems;
+            camp.faction.RemoveItemOwned(item, 1, null, true, leaderItems);
+        }
+        
 
 
 
@@ -159,6 +165,7 @@ public class Workbench : ObjectRack
 
         // clear the table and restock with the necessary items by moving objects from any available racks in camp
         ClearTable();
+        restocking = true;
         foreach(Item recipeItem in recipe.requiredItems)
         {
             if (recipeItem != null)
@@ -169,7 +176,7 @@ public class Workbench : ObjectRack
                 }
             }
         }
-
+        restocking = false;
 
     }
 

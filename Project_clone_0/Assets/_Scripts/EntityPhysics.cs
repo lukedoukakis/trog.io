@@ -41,7 +41,7 @@ public class EntityPhysics : EntityComponent
 
 
     public Vector3 moveDir;
-    public bool isJumping, jumpOffLeft, jumpOffRight, isSprinting, isWalking;
+    public bool isJumping, jumpOffLeft, jumpOffRight, isSprinting, isWalking, isSquatting;
     public bool animFlag_jump, animFlag_jumpMirror;
     public bool isDodging;
     Vector3 jumpPoint;
@@ -54,9 +54,7 @@ public class EntityPhysics : EntityComponent
     public static float landScrunch_recoverySpeed = .75f;
     public static float landScrunch_airTimeThreshhold = 1.2f;
     public float landScrunch;
-    public static float crouchSpeed = .75f;
-    public static float crouch_airTimeThreshhold = 1.2f;
-    public float crouch;
+    public float squatMagnitude;
     public bool handFree_right, handFree_left;
     public bool isMoving, isMoving_last;
     public bool isGrounded, isGrounded_last;
@@ -69,6 +67,8 @@ public class EntityPhysics : EntityComponent
     public Vector3 velHoriz_this, velHoriz_last, velHoriz_delta;
     public float changeInVelocityFactor;
     public bool GROUNDTOUCH, WALLTOUCH, isInWater;
+
+    IEnumerator squattingCoroutine;
 
 
     // ik
@@ -130,6 +130,7 @@ public class EntityPhysics : EntityComponent
         helperAnimator = model.GetComponent<Animator>();
         gyro = Utility.FindDeepChild(this.transform, "Gyro");
         speedLimitModifier_launch = 1f;
+        squatMagnitude = 0f;
 
         ikProfile = entityInfo.speciesInfo.ikProfile;
         isQuadripedal = ikProfile.quadripedal;
@@ -846,7 +847,12 @@ public class EntityPhysics : EntityComponent
 
                 mainAnimator.SetLayerWeight(1, 1f - differenceInDegreesBetweenMovementAndFacing);
                 mainAnimator.SetLayerWeight(2, differenceInDegreesBetweenMovementAndFacing);
-                mainAnimator.SetLayerWeight(6, landScrunch);
+                mainAnimator.SetLayerWeight(6, Mathf.Max(squatMagnitude, landScrunch));
+                // if(squatMagnitude > 0f)
+                // {
+                //     Debug.Log(squatMagnitude);
+                // }
+                
 
                 if (isInWater)
                 {
@@ -970,6 +976,43 @@ public class EntityPhysics : EntityComponent
         {
            isWalking = false;
         }
+    }
+
+    public void ToggleSquat(bool targetValue)
+    {
+        if(isSquatting != targetValue)
+        {
+            ToggleSquat();
+        }
+    }
+
+    public void ToggleSquat()
+    {
+
+        isSquatting = !isSquatting;
+        Debug.Log(" Setting isSquatting: " + isSquatting);
+
+        if(squattingCoroutine != null)
+        {
+            StopCoroutine(squattingCoroutine);
+        }
+        squattingCoroutine = _ToggleSquat(isSquatting);
+        StartCoroutine(squattingCoroutine);
+
+    }
+
+    IEnumerator _ToggleSquat(bool value)
+    {
+
+        float targetMagnitude = value ? 1f : 0f;
+
+        while(Mathf.Abs(squatMagnitude - targetMagnitude) < .1f)
+        {
+            squatMagnitude = Mathf.Lerp(squatMagnitude, targetMagnitude, 20f * Time.deltaTime);
+            yield return null;
+        }
+        squatMagnitude = targetMagnitude;
+            
     }
 
     public void TryDodge()
@@ -1561,21 +1604,6 @@ public class EntityPhysics : EntityComponent
     }
 
 
-    void CheckCrouch()
-    {
-
-    }
-
-    public void OnCrouchInput()
-    {
-        crouch += crouchSpeed * Time.deltaTime;
-        if (crouch > 1f)
-        {
-            crouch = 1f;
-        }
-    }
-
-
 
 
     void LimitSpeed()
@@ -1697,7 +1725,6 @@ public class EntityPhysics : EntityComponent
         SetPhysicMaterial();
         Move(moveDir, acceleration);
         CheckWater();
-        CheckCrouch();
         CheckScrunch();
         LimitSpeed();
         SetGravity();
@@ -1720,15 +1747,6 @@ public class EntityPhysics : EntityComponent
         offWaterTime += dTime;
         dodgeTime += dTime;
         groundTime = isGrounded ? groundTime += dTime : 0;
-
-        if (crouch > 0f)
-        {
-            crouch -= (crouchSpeed / 2f) * dTime;
-        }
-        else if (crouch < 0f)
-        {
-            crouch = 0f;
-        }
 
         if (Input.GetKeyUp(KeyCode.P))
         {

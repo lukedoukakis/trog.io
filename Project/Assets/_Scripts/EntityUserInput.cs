@@ -153,9 +153,6 @@ public class EntityUserInput : EntityComponent
                 entityPhysics.Jump();
             }
         }
-        if(pressWalk){
-            entityPhysics.OnCrouchInput();
-        }
         if(pressToggleAttackRanged){
             if(!entityPhysics.weaponCharging)
             {

@@ -72,6 +72,11 @@ public class EntityStats : EntityComponent
         maxStamina = stamina = (BASE_AMOUNT_STAMINA * Stats.GetStatValue(combinedStats, Stats.StatType.Stamina));
     }
 
+    public bool IsFullyHealed()
+    {
+        return hp / maxHp >= 1f;
+    }
+
 
     void AddStatsModifier(Stats statsToAdd){
         activeStatsModifiers.Add(statsToAdd);

@@ -36,7 +36,7 @@ public class EntityBehavior : EntityComponent
     public static float DISTANCE_STEP_SIDE = 1f;
 
     public static float REST_RATE_LOSS = (1f / LightingController.SECONDS_PER_DAY) * (10f / 9f);
-    public static float REST_RATE_GAIN = REST_RATE_LOSS * 10f;
+    public static float REST_RATE_GAIN = REST_RATE_LOSS * 10f * .25f;
     public static float REST_HEALTH_GAIN = REST_RATE_GAIN;
     
 
@@ -1034,22 +1034,33 @@ public class EntityBehavior : EntityComponent
 
     public void OnRestFrame()
     {
-        if(rest < 1f)
-        {
-            rest += REST_RATE_GAIN * Time.deltaTime;
 
+        
+        // increment rest if not fully rested
+        if(rest < 1f || !entityStats.IsFullyHealed())
+        {
+
+            // make sure entity is squatting down
+            entityPhysics.ToggleSquat(true);
+
+            // increment rest
+            rest += REST_RATE_GAIN * Time.deltaTime;
             if(rest > 1f)
             {
                 rest = 1f;
             }
 
-            if(rest == 1f)
+            // increment health
+            entityStats.ApplyHealthIncrement(REST_HEALTH_GAIN * Time.deltaTime, null);
+
+            // if fully rested and healed, "exit" the tent by setting its tent reference to null, opening the tent's spot(s) to other npc's, and stand up
+            if(rest == 1f && entityStats.IsFullyHealed())
             {
                 SetRestingTent(null);
+                entityPhysics.ToggleSquat(false);
             }
         }
 
-        entityStats.ApplyHealthIncrement(REST_HEALTH_GAIN * Time.deltaTime, null);
 
     }
 
