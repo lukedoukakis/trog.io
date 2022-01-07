@@ -50,7 +50,7 @@ public class EntityUserInput : EntityComponent
 
     void ApplyMouseInput(){
 
-        float sensitivity = 5f;
+        float sensitivity = 3f;
         float smoothing = 100f * Time.deltaTime;
 
         if(GameManager.cameraMode == 0){
@@ -346,20 +346,31 @@ public class EntityUserInput : EntityComponent
 
 
 
-    public static Collider GetColliderMostInFront(Collider[] contendingColliders, Transform referenceT)
+    public static Collider GetBestColliderCandidate(Collider[] contendingColliders, Transform referenceT)
     {
 
         Vector3 referencePos = referenceT.position;
         float minAngle = float.MaxValue;
+        float minDistance = float.MaxValue;
         Collider bestMatch = null;
         
         foreach(Collider col in contendingColliders)
         {
             Vector3 closestPoint = col.ClosestPoint(referenceT.position);
             float horizAngle = Vector3.Angle(referenceT.forward, closestPoint - referencePos);
-            if(horizAngle < minAngle && horizAngle < 45f)
+
+            // by angle
+            // if((horizAngle < minAngle && horizAngle < 45f))
+            // {
+            //     minAngle = horizAngle;
+            //     bestMatch = col;
+            // }
+
+            // by distance
+            float distance = Vector3.Distance(referenceT.position, closestPoint);
+            if(distance < minDistance)
             {
-                minAngle = horizAngle;
+                minDistance = distance;
                 bestMatch = col;
             }
         }
@@ -382,8 +393,8 @@ public class EntityUserInput : EntityComponent
         }
         else
         {
-            Collider[] hitCols = Physics.OverlapSphere(transform.position, 1f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide);
-            c = GetColliderMostInFront(hitCols, transform);
+            Collider[] hitCols = Physics.OverlapSphere(selectionOrigin.position, 1f, LayerMaskController.INTERACTABLE, QueryTriggerInteraction.Collide);
+            c = GetBestColliderCandidate(hitCols, selectionOrigin.transform);
             hoveredOverSomething = c != null;
         }
 

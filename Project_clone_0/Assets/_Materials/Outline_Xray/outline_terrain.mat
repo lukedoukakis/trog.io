@@ -85,9 +85,9 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _MaximumThickness: 0
+    - _MaximumThickness: 0.4
     - _Metallic: 0
-    - _MinimumThickness: 0
+    - _MinimumThickness: 0.04
     - _OcclusionStrength: 1
     - _QueueControl: 0
     - _QueueOffset: 0

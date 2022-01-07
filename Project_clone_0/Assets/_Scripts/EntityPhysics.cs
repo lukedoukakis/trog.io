@@ -974,7 +974,7 @@ public class EntityPhysics : EntityComponent
         }
         else
         {
-           isWalking = isInsideCamp;
+           isWalking = isInsideCamp && entityInfo.faction.leaderInCamp;
         }
     }
 
@@ -1019,7 +1019,7 @@ public class EntityPhysics : EntityComponent
 
         while(Mathf.Abs(squatMagnitude - targetMagnitude) < .1f)
         {
-            squatMagnitude = Mathf.Lerp(squatMagnitude, targetMagnitude, 20f * Time.deltaTime);
+            squatMagnitude = Mathf.Lerp(squatMagnitude, targetMagnitude, 5f * Time.deltaTime);
             yield return null;
         }
         squatMagnitude = targetMagnitude;

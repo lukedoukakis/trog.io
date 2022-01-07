@@ -19,7 +19,7 @@ public class EntityOrientation : EntityComponent
     // rotation
     public Enum bodyRotationMode;
     public Transform bodyRotationTarget;
-    public static float bodyRotationSpeed_player = .035f; //.04
+    public static float bodyRotationSpeed_player = .35f; //.04
     public static float bodyRotationSpeed_ai = .01f;
     public static float leanBoundMin = -.4f;
     public static float leanBoundMax = 1.05f;
@@ -98,13 +98,14 @@ public class EntityOrientation : EntityComponent
 
             if(!entityPhysics.isHandGrab || true)
             {
-                Vector3 dirForward = transform.forward;
-                Vector3 dirMovement = entityPhysics.isMoving ? entityPhysics.velHoriz_this : dirForward;
+                Vector3 dirForwardTransform = transform.forward;
+                Vector3 dirForwardBody = body.forward;
+                Vector3 dirMovement = entityPhysics.isMoving ? entityPhysics.velHoriz_this : dirForwardBody;
                 dirMovement.y = 0f;
                 dirMovement = dirMovement.normalized;
-                Vector3 dirCombined = Vector3.Lerp(dirForward, dirMovement, 1f);
+                Vector3 dirCombined = Vector3.Lerp(dirForwardBody, dirMovement, 1f);
 
-                dirCombined += (Vector3.up * bodyLean * -1f * (1f - (Vector3.Distance(dirForward, dirMovement) / 2f)));
+                dirCombined += (Vector3.up * bodyLean * -1f * (1f - (Vector3.Distance(dirForwardTransform, dirMovement) / 2f)));
 
                 if(!entityPhysics.isDodging)
                 {

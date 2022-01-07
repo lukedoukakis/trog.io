@@ -61,7 +61,7 @@ public class ClientCommand : NetworkBehaviour
         npcInfo.faction = faction;
         npcInfo.isFactionLeader = false;
         npcInfo.isFactionFollower = true;
-        npcHandle.entityBehavior.UpdateFollowPosition(faction.leaderInCamp);
+        npcHandle.entityBehavior.ResetFollowPosition();
         NetworkServer.Spawn(npc, GameManager.instance.localPlayer);
 
         //npcHandle.entityItems.EquipClothing(Item.ClothingTest);

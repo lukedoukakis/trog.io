@@ -43,7 +43,7 @@ public class EntityHandle : EntityComponent
         
 
         // init player specific entity settings
-        transform.position = new Vector3(0f, 4720f, 0f);
+        transform.position = new Vector3(0f, ChunkGenerator.ElevationAmplitude + 50f, 0f);
 
         // start new faction with this as the leader
         StartCoroutine(ClientCommand.instance.SetNewFactionWhenReady(this, false, FactionStartingItemsTier.PlayerTest));

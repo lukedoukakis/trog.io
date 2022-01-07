@@ -283,7 +283,7 @@ public class Faction : MonoBehaviour
         leaderInCamp = leaderHandle.entityPhysics.isInsideCamp;
         foreach(EntityHandle partyHandle in partyHandles)
         {
-            partyHandle.entityBehavior.UpdateFollowPosition(leaderInCamp);
+            partyHandle.entityBehavior.ResetFollowPosition();
         }
     }
 

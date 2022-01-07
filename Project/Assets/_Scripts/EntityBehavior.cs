@@ -240,7 +240,10 @@ public class EntityBehavior : EntityComponent
         Transform t = null;
         if(ap.targetedWorldObject == null){ t = null; }else{ t = ap.targetedWorldObject.transform; }
         entityOrientation.SetBodyRotationMode(ap.bodyRotationMode, t);
-        ap.actionSequenceBeforeBeginning.Execute();
+        if(ap.actionSequenceBeforeBeginning != null)
+        {
+            ap.actionSequenceBeforeBeginning.Execute();
+        }
 
         //Debug.Log("EXECUTING ACTION: " + a.type.ToString());
 
@@ -1230,12 +1233,12 @@ public class EntityBehavior : EntityComponent
     }
 
 
-    public void UpdateFollowPosition(bool leaderInCamp)
+    public void ResetFollowPosition()
     {
         
         //Debug.Log("updating home position");
 
-        if(leaderInCamp)
+        if(entityInfo.faction.leaderInCamp)
         {
             //Debug.Log("(leader in camp)");
             Transform campPositionT = entityInfo.faction.camp.GetOpenTribeMemberStandPosition().transform;

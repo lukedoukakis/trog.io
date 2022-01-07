@@ -7,7 +7,7 @@ using System.Linq;
 public class Camp : MonoBehaviour
 {
 
-    public static float BASE_CAMP_RADIUS = 10f;
+    public static float BASE_CAMP_RADIUS = 6.3f;
     public static float CAMP_COMPONENT_PLACING_TIME_GAP = .1f;
 
     public enum ComponentType{
@@ -213,7 +213,7 @@ public class Camp : MonoBehaviour
 
     public void ClearFeaturesFromCampRadius()
     {
-        Collider[] featureCollidersInsideCamp = Physics.OverlapSphere(origin, radius, LayerMaskController.CLEAR_ON_CAMP_PLACEMENT, QueryTriggerInteraction.Collide);
+        Collider[] featureCollidersInsideCamp = Physics.OverlapSphere(origin, radius * 1.5f, LayerMaskController.CLEAR_ON_CAMP_PLACEMENT, QueryTriggerInteraction.Collide);
         foreach(Collider collider in featureCollidersInsideCamp)
         {
             if(collider != null)
