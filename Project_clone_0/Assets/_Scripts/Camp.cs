@@ -7,7 +7,7 @@ using System.Linq;
 public class Camp : MonoBehaviour
 {
 
-    public static float BASE_CAMP_RADIUS = 6.3f;
+    public static float BASE_CAMP_RADIUS = 8f;
     public static float CAMP_COMPONENT_PLACING_TIME_GAP = .1f;
 
     public enum ComponentType{

@@ -975,6 +975,10 @@ public class EntityPhysics : EntityComponent
         else
         {
            isWalking = isInsideCamp && entityInfo.faction.leaderInCamp;
+           if(entityBehavior.activeAction != null)
+           {
+               isWalking = isWalking && !entityBehavior.activeAction.urgent;
+           }
         }
     }
 

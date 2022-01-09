@@ -1258,6 +1258,7 @@ public class EntityBehavior : EntityComponent
 
             followPositionTransform.SetParent(entityInfo.faction.leaderHandle.transform);
             followPositionTransform.position = entityInfo.faction.leaderHandle.transform.position;
+            entityPhysics.AssertStanding();
             
 
         }

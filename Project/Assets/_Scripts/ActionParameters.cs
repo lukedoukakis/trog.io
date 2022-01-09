@@ -104,7 +104,7 @@ public class ActionParameters : ScriptableObject
                 ap.targetedWorldObject = doerHandle.entityBehavior.ClaimOpenRestingTent();
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
                 ap.maxTime = 1f;
-                ap.urgent = false;
+                ap.urgent = true;
                 ap.endCondition = doerHandle.entityBehavior.IsFullyRested;
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
