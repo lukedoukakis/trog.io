@@ -12,7 +12,8 @@ public class LightingController : MonoBehaviour
     //public PostProcessVolume volume;
     //public ColorGrading colorGrading;
 
-    public static float FOG_DISTANCE_START_BASE = 20f;
+    public static float FOG_DISTANCE_START_BASE = 10f;
+    public static float FOG_THICKNESS_STEP = .004f;
 
     public GameObject fog;
     public GameObject sun, moon;
@@ -25,7 +26,7 @@ public class LightingController : MonoBehaviour
     public Color fogColor_day, fogColor_night;
 
     // time in seconds for a full day
-    public static float SECONDS_PER_DAY = 60f;
+    public static float SECONDS_PER_DAY = 8f;
 
 
     private void Awake()
@@ -59,7 +60,7 @@ public class LightingController : MonoBehaviour
         SetColors(time);
 
         // pause time of day: comment out this line
-        //time += Time.deltaTime;
+        time += Time.deltaTime;
     }
 
     void InitFog()
@@ -77,11 +78,11 @@ public class LightingController : MonoBehaviour
                 fogLayers.Add(t.gameObject);
 
                 // set scale
-                t.localScale = Vector3.one * (FOG_DISTANCE_START_BASE + (i * 2f));
+                t.localScale = Vector3.one * (FOG_DISTANCE_START_BASE + (i * 1f));
 
                 // set material and material properties
                 Material newFogMat = Material.Instantiate(MaterialController.instance.baseFogMaterial);
-                newFogMat.SetFloat("_FogThickness", (i + 1) + .002f);
+                newFogMat.SetFloat("_FogThickness", (i + 1) + FOG_THICKNESS_STEP);
                 t.GetComponent<MeshRenderer>().sharedMaterial = newFogMat;
 
                 ++i;
@@ -114,7 +115,7 @@ public class LightingController : MonoBehaviour
         darkness = (Mathf.Cos(time / SECONDS_PER_DAY) + 1f) / 2f;
         timeOfDay = (Mathf.Sin(time / SECONDS_PER_DAY) + 1f) / 2f;
         PolyverseSkies.timeOfDay = darkness;
-        RenderSettings.fogColor = Color.Lerp(fogColor_day, fogColor_night, darkness);
+        //RenderSettings.fogColor = Color.Lerp(fogColor_day, fogColor_night, darkness);
 
         float sunset = Mathf.Max(0f, Mathf.Pow((((1f - timeOfDay) - .5f) * 2f), 15f));
         float sunrise = Mathf.Max(0f, Mathf.Pow((((timeOfDay) - .5f) * 2f), 5f));

@@ -41,7 +41,7 @@ Material:
     m_Floats:
     - Boolean_891C2B1B: 1
     - Vector1_24802EB: 0.2
-    - Vector1_25E0AF6F: 0.86
+    - Vector1_25E0AF6F: 1
     - Vector1_444F1B02: 0.5
     - Vector1_46F91617: 0.3
     - Vector1_4A3933E: 0.5
@@ -58,7 +58,7 @@ Material:
     - _ColorNoise: 0
     - _Cull: 0
     - _DstBlend: 0
-    - _NumberOfShades: 1
+    - _NumberOfShades: 2
     - _QueueControl: 0
     - _QueueOffset: 0
     - _SnowDepth: 0.1
