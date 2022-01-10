@@ -7,6 +7,7 @@ using System.Linq;
 public class Camp : MonoBehaviour
 {
 
+    public static float PLACEMENT_MAXIMUM_TERRAIN_HEIGHT_VARIANCE = 2f;
     public static float BASE_CAMP_RADIUS = 8f;
     public static float CAMP_COMPONENT_PLACING_TIME_GAP = .1f;
 
@@ -52,18 +53,62 @@ public class Camp : MonoBehaviour
     // client method to place a Camp
     public static void TryPlaceCamp(Faction faction, Transform originT)
     {
-        if(CanPlaceCamp(originT.position))
+        if(CanPlaceCamp(faction, originT.position))
         {
             //faction.leaderHandle.entityItems.EmptyInventory();
             PlaceCamp(faction, originT);
         }
-        else{
-            Debug.Log("Can't place camp - doesn't fit requirements");
-        }
     }
-    public static bool CanPlaceCamp(Vector3 position){
+    public static bool CanPlaceCamp(Faction faction, Vector3 position)
+    {
+
         // determine if flat enough
-        return true;
+
+        Vector3 placementPos = faction.leaderHandle.transform.position;
+        Vector2 placementPosVector2 = new Vector2(placementPos.x, placementPos.z);
+
+        Vector2 placementCoordsInChunk = ChunkGenerator.GetCoordinatesInChunk(placementPos);
+        ChunkData cd = ChunkGenerator.GetChunkFromRawPosition(placementPos);
+        float[,] heightMap = cd.HeightMap;
+
+        float highestPoint = float.MinValue;
+        float lowestPoint = float.MaxValue;
+        float height;
+        Vector2 sampleVector2 = Vector2.zero;
+        for(int z = 0; z < heightMap.GetLength(0); ++z)
+        {
+            for(int x = 0; x < heightMap.GetLength(1); ++x)
+            {
+                sampleVector2.x = x;
+                sampleVector2.y = z;
+                if(Vector2.Distance(sampleVector2, placementCoordsInChunk) <= BASE_CAMP_RADIUS)
+                {
+                    height = heightMap[x, z];
+                    if(height >= lowestPoint)
+                    {
+                        if(height > highestPoint)
+                        {
+                            highestPoint = height;
+                        }
+                    }
+                    else
+                    {
+                        lowestPoint = height;
+                    }
+                }
+            }
+
+        }
+
+        float differenceInMeters = (highestPoint - lowestPoint) / ChunkGenerator.meter;
+        bool canPlace = differenceInMeters < PLACEMENT_MAXIMUM_TERRAIN_HEIGHT_VARIANCE;
+        if(!canPlace)
+        {
+            Debug.Log("Cannot place camp - too much terrain height variance");
+        }
+
+        return canPlace;
+
     }
     public static Camp PlaceCamp(Faction faction, Transform originT)
     {        
