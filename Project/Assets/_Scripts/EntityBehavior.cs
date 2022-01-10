@@ -729,15 +729,21 @@ public class EntityBehavior : EntityComponent
 
         IEnumerator _Pickup()
         {
-            GameObject targetedObject = ap.targetedWorldObject;
-            Item targetedItem = Item.GetItemByName(targetedObject.name);
+            if (ap.targetedWorldObject != null)
+            {
+                GameObject targetedObject = ap.targetedWorldObject;
+                Item targetedItem = Item.GetItemByName(targetedObject.name);
 
-            yield return new WaitForSecondsRealtime(.25f);
-            entityItems.OnObjectTake(targetedObject, targetedObject.GetComponent<ObjectReference>().GetObjectReference());
-            yield return new WaitForSecondsRealtime(.25f);
-            
-            entityInfo.faction.RemoveItemTargeted(targetedObject);
-            
+                yield return new WaitForSecondsRealtime(.25f);
+                if (targetedObject != null)
+                {
+                    entityItems.OnObjectTake(targetedObject, targetedObject.GetComponent<ObjectReference>().GetObjectReference());
+                    yield return new WaitForSecondsRealtime(.25f);
+
+                    entityInfo.faction.RemoveItemTargeted(targetedObject);
+                }
+            }
+
             NextAction();
         }
 
@@ -950,21 +956,13 @@ public class EntityBehavior : EntityComponent
             bool matchesParameters = senseSameType ? (foundItem.type.Equals(targetItem.type)) : foundItem.Equals(targetItem);
             if (matchesParameters)
             {
-                Debug.Log(foundObject.name);
+                //Debug.Log(foundObject.name);
                 if (!entityInfo.faction.ItemIsTargetedByThisFaction(foundObject))
                 {
                     if(!(foundObject.GetComponent<ObjectReference>().GetObjectReference() is EntityItems))
                     {
                         foundObjects.Add(foundObject);
                     }
-                    else
-                    {
-                        Debug.Log("Already being held");
-                    }  
-                }
-                else
-                {
-                    Debug.Log("Already targeted");
                 }
             }
             

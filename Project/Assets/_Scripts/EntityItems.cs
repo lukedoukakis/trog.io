@@ -30,6 +30,7 @@ public class EntityItems : EntityComponent
     public Transform orientationParent;
     public Transform orientation_weaponEquipped_spear;
     public Transform orientation_weaponEquipped_axe;
+    public Transform orientation_weaponEquipped_squatting;
     public Transform orientation_weaponUnequipped;
     public Transform orientation_holding;
     public Transform basePosition_weaponEquipped_spear;
@@ -61,6 +62,7 @@ public class EntityItems : EntityComponent
         orientationParent = Utility.FindDeepChild(transform, "ItemOrientations");
         orientation_weaponEquipped_spear = orientationParent.Find("WeaponEquippedSpear");
         orientation_weaponEquipped_axe = orientationParent.Find("WeaponEquippedAxe");
+        orientation_weaponEquipped_squatting = orientationParent.Find("WeaponEquippedSquatting");
         orientation_weaponUnequipped = orientationParent.Find("WeaponUnequipped");
         orientation_holding = orientationParent.Find("Holding");
         basePosition_weaponEquipped_spear = orientationParent.Find("BasePositionAnchorWeaponEquippedSpear");
@@ -743,20 +745,29 @@ public class EntityItems : EntityComponent
                 {
                     Transform orientation_weaponEquipped;
                     Transform basePosition_weaponEquipped;
-                    if (weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Spear))
+                    if(entityPhysics.isSquatting)
                     {
-                        orientation_weaponEquipped = orientation_weaponEquipped_spear;
-                        basePosition_weaponEquipped = basePosition_weaponEquipped_spear;
-                    }
-                    else if (weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Axe))
-                    {
-                        orientation_weaponEquipped = orientation_weaponEquipped_axe;
-                        basePosition_weaponEquipped = basePosition_weaponEquipped_axe;
+                        orientation_weaponEquipped = orientation_weaponEquipped_squatting;
+                        basePosition_weaponEquipped = orientation_weaponEquipped_squatting;
                     }
                     else
                     {
-                        orientation_weaponEquipped = basePosition_weaponEquipped = null;
+                        if (weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Spear))
+                        {
+                            orientation_weaponEquipped = orientation_weaponEquipped_spear;
+                            basePosition_weaponEquipped = basePosition_weaponEquipped_spear;
+                        }
+                        else if (weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Axe))
+                        {
+                            orientation_weaponEquipped = orientation_weaponEquipped_axe;
+                            basePosition_weaponEquipped = basePosition_weaponEquipped_axe;
+                        }
+                        else
+                        {
+                            orientation_weaponEquipped = basePosition_weaponEquipped = null;
+                        }
                     }
+                    
 
                     orientation_weaponEquipped.position = basePosition_weaponEquipped.position;
                     orientation_weaponEquipped.rotation = basePosition_weaponEquipped.rotation;

@@ -137,7 +137,7 @@ public class CameraController : MonoBehaviour
             targetLookAt = Vector3.Lerp(targetLookAt, followT.position, 50f * Time.deltaTime);
             Camera.main.transform.LookAt(targetLookAt);
 
-            ApplyOffset();
+            //ApplyOffset();
 
         
         

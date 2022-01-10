@@ -12,7 +12,7 @@ public class LightingController : MonoBehaviour
     //public PostProcessVolume volume;
     //public ColorGrading colorGrading;
 
-    public static float FOG_DISTANCE_START_BASE = 10f;
+    public static float FOG_DISTANCE_START_BASE = 20f;
     public static float FOG_THICKNESS_STEP = .004f;
 
     public GameObject fog;
@@ -26,7 +26,7 @@ public class LightingController : MonoBehaviour
     public Color fogColor_day, fogColor_night;
 
     // time in seconds for a full day
-    public static float SECONDS_PER_DAY = 8f;
+    public static float SECONDS_PER_DAY = 60f;
 
 
     private void Awake()

@@ -107,7 +107,7 @@ public class ChunkGenerator : MonoBehaviour
             if(!LoadingChunks && !DeloadingChunks){
                 LoadingChunks = true;
                 DeloadingChunks = true;
-                //StartCoroutine(CallForSpawnGeneration());
+                StartCoroutine(CallForSpawnGeneration());
                 UpdateChunksToLoad();
                 StartCoroutine(LoadChunks());
                 StartCoroutine(DeloadChunks());
@@ -335,7 +335,7 @@ public class ChunkGenerator : MonoBehaviour
                 // }
                 //elevationValue = Convert.ToSingle(Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / ElevationMapScale, (z + zOffset - Seed + 100000.01f) / ElevationMapScale) >= .5f) * 2f - 1f;
                 elevationValue = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / ElevationMapScale, (z + zOffset - Seed + 100000.01f) / ElevationMapScale) * 2f - 1f;
-                elevationValue += (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 5f, (z + zOffset - Seed + .01f) / 5f) * 2f - 1f) * .01f;
+                elevationValue += (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 15f, (z + zOffset - Seed + .01f) / 15f) * 2f - 1f) * .03f;
 
                 //elevationValue = -1f;
                 float bm0 = Mathf.PerlinNoise((x + xOffset + 100000.01f) / 1600f, (z + zOffset + 100000.01f) / 1600f) * 2f - 1f;
@@ -502,7 +502,7 @@ public class ChunkGenerator : MonoBehaviour
                 heightValue = Mathf.Abs(heightValue);
                 heightValue *= -1f;
                 heightValue = Mathf.InverseLerp(ElevationAmplitude * -1f, 0f, heightValue);
-                //heightValue = Mathf.Pow(heightValue, 3f);
+                heightValue = Mathf.Pow(heightValue, 1.5f);
 
 
                 // apply MountainMap

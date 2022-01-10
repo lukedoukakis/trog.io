@@ -790,7 +790,7 @@ public class EntityPhysics : EntityComponent
 
 
         // right hand
-        if (weaponObject != null)
+        if (weaponObject != null && !isSquatting)
         {
             ikScript_handRight.enabled = true;
             handFree_right = false;
@@ -815,7 +815,7 @@ public class EntityPhysics : EntityComponent
         {
 
             // if hand is free, support right hand with holding the weapon, if equipped
-            if (!handFree_right && entityItems.weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Axe))
+            if (!handFree_right && entityItems.weaponEquipped_item.holdStyle.Equals(Item.ItemHoldStyle.Axe) && !isSquatting)
             {
                 ikScript_handLeft.enabled = true;
                 ikScript_handLeft.Target = weaponObject.transform.Find("IKTargetT_Left");
@@ -998,6 +998,7 @@ public class EntityPhysics : EntityComponent
         if(isSquatting != targetValue)
         {
             ToggleSquat();
+            UpdateIKForCarryingItems();
         }
     }
 
