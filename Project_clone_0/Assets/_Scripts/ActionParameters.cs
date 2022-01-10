@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 
-public enum ActionType{ Idle, GoTo, Follow, RunFrom, Collect, Pickup, Chase, Attack, AttackRecover, Build, Hunt, StepBack, StepSide }
+public enum ActionType{ Idle, GoTo, Follow, RunFrom, CollectItem, CollectItemSameType, CollectFromCamp, Pickup, Chase, Attack, AttackRecover, Build, Hunt, StepBack, StepSide }
 public enum InterruptionTier{ Anything, SenseDanger, BeenHit, Nothing }
 
 public class ActionParameters : ScriptableObject
@@ -110,6 +110,15 @@ public class ActionParameters : ScriptableObject
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
+            case "Find Weapon" :
+
+                ap.type = ActionType.CollectItemSameType;
+                ap.item_target = Item.SpearStone;
+                ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
+                ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
+                break;
+
+
             case "Follow Faction Leader" :
 
                 ap.type = ActionType.Follow;
@@ -161,7 +170,7 @@ public class ActionParameters : ScriptableObject
 
             case "Collect Spear" :
 
-                ap.type = ActionType.Collect;
+                ap.type = ActionType.CollectItem;
                 ap.item_target = Item.SpearStone;
                 //Log(a.item_target.nme);
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
@@ -169,7 +178,7 @@ public class ActionParameters : ScriptableObject
 
             case "Collect Stone" :
 
-                ap.type = ActionType.Collect;
+                ap.type = ActionType.CollectItem;
                 ap.item_target = Item.Stone;
                 //Log(a.item_target.nme);
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;

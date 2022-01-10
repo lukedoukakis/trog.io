@@ -185,25 +185,36 @@ public class EntityBehavior : EntityComponent
             AssertWeaponChargedStatus(false);
             EntityHandle factionLeader = entityInfo.faction.leaderHandle;
 
-            // if leader is in camp, rest if needed or go home if not
-            ActionParameters go;
+            // if leader is in camp, take action in priority:
+                // 1) rest if needed
+                // 2) find weapon
+                // 2) follow home position
+            ActionParameters actionToTake;
             if(entityInfo.faction.leaderInCamp)
             {
                 bool needsSleep = rest < 1f;
                 if(needsSleep)
                 {
                     // todo: sleep action
-                    go = ActionParameters.GenerateActionParameters("Go Rest", entityHandle);
-                    if(go.targetedWorldObject == null)
+                    actionToTake = ActionParameters.GenerateActionParameters("Go Rest", entityHandle);
+                    if(actionToTake.targetedWorldObject == null)
                     {
-                        go = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
+                        actionToTake = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
                     }
                 }
                 else
                 {
-                    go = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
+                    if((!entityItems.HasWeapon()) && (entityInfo.faction.leaderInCamp) && (entityInfo.faction.GetItemCount(ItemType.Weapon) > 0))
+                    {
+                        actionToTake = ActionParameters.GenerateActionParameters("Find Weapon", entityHandle);
+                    }
+                    else
+                    {
+                        actionToTake = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
+                    }
+                    
                 }
-                InsertAction(go);
+                InsertAction(actionToTake);
             }
             else
             {
@@ -268,8 +279,11 @@ public class EntityBehavior : EntityComponent
             case ActionType.RunFrom :
                 RunFrom(ap);
                 break;
-            case ActionType.Collect :
-                Collect(ap);
+            case ActionType.CollectItem :
+                CollectItem(ap);
+                break;
+            case ActionType.CollectItemSameType :
+                CollectItemSameType(ap);
                 break;
             case ActionType.Pickup :
                 Pickup(ap);
@@ -672,47 +686,57 @@ public class EntityBehavior : EntityComponent
     }
 
 
-    public void Collect(ActionParameters a){
+    public void CollectItem(ActionParameters ap)
+    {
 
-        Item i_target = a.item_target;
-        //Log("target name: " + i_target.nme);
+        Item targetItem = ap.item_target;
+        GameObject closestObject = FindClosestObject(targetItem, SENSE_DISTANCE_EARSHOT, false);
+        CollectFoundObject(closestObject);
+    }
 
-        List<GameObject> foundObjects = SenseSurroundingItems(i_target.type, i_target.nme, SENSE_DISTANCE_INFINITE);
-        foundObjects = foundObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
-        if(foundObjects.Count == 0){
+    public void CollectItemSameType(ActionParameters ap)
+    {
+        Item targetItem = ap.item_target;
+        GameObject closestObject = FindClosestObject(targetItem, SENSE_DISTANCE_EARSHOT, true);
+        CollectFoundObject(closestObject);
+    }
+
+
+    void CollectFoundObject(GameObject targetedObject)
+    {
+        if(targetedObject == null)
+        {
             // TODO: search in new area if nothing found
-            //Log("Collect: nothing found");
+            //Debug.Log("Collect: nothing found");
+            NextAction();
         }
         else{
             //Log("Collect: picking up object");
-            GameObject targetWorldObject = foundObjects[0];
-            entityInfo.faction.AddObjectTargeted(targetWorldObject);
-            ActionParameters goToObject = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, targetWorldObject, Vector3.zero, -1, Item.GetItemByName(targetWorldObject.name), null, -1, DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Normal, InterruptionTier.SenseDanger, false, null, entityActionSequence_AssertStanding, null);
-            ActionParameters pickupObject = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Pickup, targetWorldObject, Vector3.zero, -1, Item.GetItemByName(targetWorldObject.name), null, -1, -1f, BodyRotationMode.Normal, InterruptionTier.Nothing, false, null, entityActionSequence_AssertStanding, null);
-            ActionParameters followPlayer = ActionParameters.GenerateActionParameters("Follow Player", entityHandle);
+            entityInfo.faction.AddObjectTargeted(targetedObject);
+            ActionParameters goToObject = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, targetedObject, Vector3.zero, -1, Item.GetItemByName(targetedObject.name), null, -1, DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Normal, InterruptionTier.SenseDanger, false, null, entityActionSequence_AssertStanding, null);
+            ActionParameters pickupObject = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Pickup, targetedObject, Vector3.zero, -1, Item.GetItemByName(targetedObject.name), null, -1, -1f, BodyRotationMode.Normal, InterruptionTier.Nothing, false, null, entityActionSequence_AssertStanding, null);
             InsertAction(pickupObject);
             InsertAction(goToObject);
             NextAction();
         }
     }
 
-    public void Pickup(ActionParameters a){
+    public void Pickup(ActionParameters ap)
+    {
 
         TerminateActionLayer("Hands");
-        BeginActionLayer("Hands", a, _Pickup());
+        BeginActionLayer("Hands", ap, _Pickup());
 
-        IEnumerator _Pickup(){
-            Item i = a.item_target;
-            GameObject o = a.targetedWorldObject;
-            if(i.type.Equals(ItemType.Weapon)){
-                yield return new WaitForSecondsRealtime(.25f);
-                TakeObject(o);
-                yield return new WaitForSecondsRealtime(.25f);
-            }
-            else{
-                Faction.OnItemPickup(i, o, entityInfo.faction);
-            }
-            entityInfo.faction.RemoveItemTargeted(o);
+        IEnumerator _Pickup()
+        {
+            GameObject targetedObject = ap.targetedWorldObject;
+            Item targetedItem = Item.GetItemByName(targetedObject.name);
+
+            yield return new WaitForSecondsRealtime(.25f);
+            entityItems.OnObjectTake(targetedObject, targetedObject.GetComponent<ObjectReference>().GetObjectReference());
+            yield return new WaitForSecondsRealtime(.25f);
+            
+            entityInfo.faction.RemoveItemTargeted(targetedObject);
             
             NextAction();
         }
@@ -909,35 +933,60 @@ public class EntityBehavior : EntityComponent
         }
 	}
 
-    public void TakeObject(GameObject o){
-        //Log("TakeObject()");
-        entityItems.OnObjectTake(o, o.GetComponent<ObjectReference>().GetObjectReference());
-    }
 
-
-    public List<GameObject> SenseSurroundingItems(Enum type, string name, float distance){
-        Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMaskController.ITEM);
-       
-        //string sur = "";
+    public List<GameObject> SenseSurroundingItems(Item targetItem, float senseDistance, bool senseSameType)
+    {
+        //Collider[] colliders = Physics.OverlapSphere(transform.position, senseDistance, LayerMaskController.ITEM).Where(col => col.gameObject.tag == "Item").ToArray();
+        Collider[] colliders = Physics.OverlapSphere(transform.position, senseDistance, LayerMaskController.ITEM, QueryTriggerInteraction.Ignore);
+        
         List<GameObject> foundObjects = new List<GameObject>();
-        GameObject o;
-        Item i;
-        foreach(Collider col in colliders){
-            o = col.gameObject;
-            i = Item.GetItemByName(o.name);
-            if(type == null || i.type == type){
-                if(name == null || o.name == name){
-                    if(!entityInfo.faction.ItemIsTargetedByThisFaction(o)){  
-                        foundObjects.Add(o);
-                        //sur += o.name + ", ";
+        GameObject foundObject;
+        Item foundItem;
+        foreach(Collider col in colliders)
+        {
+            foundObject = col.gameObject;
+            foundItem = Item.GetItemByName(foundObject.name);
+
+            bool matchesParameters = senseSameType ? (foundItem.type.Equals(targetItem.type)) : foundItem.Equals(targetItem);
+            if (matchesParameters)
+            {
+                Debug.Log(foundObject.name);
+                if (!entityInfo.faction.ItemIsTargetedByThisFaction(foundObject))
+                {
+                    if(!(foundObject.GetComponent<ObjectReference>().GetObjectReference() is EntityItems))
+                    {
+                        foundObjects.Add(foundObject);
                     }
+                    else
+                    {
+                        Debug.Log("Already being held");
+                    }  
+                }
+                else
+                {
+                    Debug.Log("Already targeted");
                 }
             }
+            
         }
         //Debug.Log("Surroundings: " + sur);
 
-
         return foundObjects;
+        
+    }
+
+    public GameObject FindClosestObject(Item targetItem, float searchDistance, bool senseSameType)
+    {
+        List<GameObject> foundObjects = SenseSurroundingItems(targetItem, searchDistance, senseSameType);
+        if(foundObjects.Count > 0)
+        {
+            foundObjects = foundObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
+            return foundObjects[0];
+        }
+        else
+        {
+            return null;
+        }
         
     }
 

@@ -107,7 +107,7 @@ public class ChunkGenerator : MonoBehaviour
             if(!LoadingChunks && !DeloadingChunks){
                 LoadingChunks = true;
                 DeloadingChunks = true;
-                StartCoroutine(CallForSpawnGeneration());
+                //StartCoroutine(CallForSpawnGeneration());
                 UpdateChunksToLoad();
                 StartCoroutine(LoadChunks());
                 StartCoroutine(DeloadChunks());

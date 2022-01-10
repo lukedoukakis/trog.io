@@ -80,8 +80,14 @@ public class Item : ScriptableObject
     public static Item GetItemByName(string _nme){
 
         //Debug.Log("searching for key: " + _nme);
-
-        return Items[_nme];
+        try
+        {
+            return Items[_nme];
+        }
+        catch(KeyNotFoundException)
+        {
+            return null;
+        }
        
     }
 

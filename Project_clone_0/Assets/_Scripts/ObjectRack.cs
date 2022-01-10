@@ -26,7 +26,8 @@ public class ObjectRack : CampComponent
     public Transform worldObject_orientationParent;
     List<Transform> orientations;
     public bool onDemandPlacement;  // whether new racks can be created when this one is filled up; if false, objects cannot be placed when attempting to place on this rack
-    public bool allowObjectPhysics; // if true, physics are deactivated for objects added to the rack
+    public bool allowGravity; // if true, physics are deactivated for objects added to the rack
+    public bool allowItemPhysicalColliders; // if true, non-trigger triggers on placed items are not deactivated when placed on rack
     public bool allowItemHoverTriggers; // if true, hover triggers on placed items are not deactivated and can be grabbed individually
     public bool allowLateralTranslation;
     public bool allowRotation;
@@ -48,7 +49,8 @@ public class ObjectRack : CampComponent
                 this.capacity = RackCapacity_Food;
                 worldObjectPrefab = CampResources.PREFAB_RACK_FOOD;
                 onDemandPlacement = true;
-                allowObjectPhysics = false;
+                allowGravity = false;
+                allowItemPhysicalColliders = true;
                 allowItemHoverTriggers = true;
                 allowLateralTranslation = false;
                 allowRotation = false;
@@ -57,7 +59,8 @@ public class ObjectRack : CampComponent
                 this.capacity = RackCapacity_Weapons;
                 worldObjectPrefab = CampResources.PREFAB_RACK_WEAPONS;
                 onDemandPlacement = true;
-                allowObjectPhysics = false;
+                allowGravity = false;
+                allowItemPhysicalColliders = true;
                 allowItemHoverTriggers = true;
                 allowLateralTranslation = false;
                 allowRotation = false;
@@ -66,7 +69,8 @@ public class ObjectRack : CampComponent
                 this.capacity = RackCapacity_Pelt;
                 worldObjectPrefab = CampResources.PREFAB_RACK_PELT;
                 onDemandPlacement = true;
-                allowObjectPhysics = false;
+                allowGravity = false;
+                allowItemPhysicalColliders = true;
                 allowItemHoverTriggers = true;
                 allowLateralTranslation = false;
                 allowRotation = false;
@@ -75,7 +79,8 @@ public class ObjectRack : CampComponent
                 this.capacity = RackCapacity_Wood;
                 worldObjectPrefab = CampResources.PREFAB_RACK_WOOD;
                 onDemandPlacement = true;
-                allowObjectPhysics = true;
+                allowGravity = true;
+                allowItemPhysicalColliders = true;
                 allowItemHoverTriggers = false;
                 allowLateralTranslation = false;
                 allowRotation = false;
@@ -84,7 +89,8 @@ public class ObjectRack : CampComponent
                 this.capacity = RackCapacity_Bone;
                 worldObjectPrefab = CampResources.PREFAB_RACK_BONE;
                 onDemandPlacement = true;
-                allowObjectPhysics = true;
+                allowGravity = true;
+                allowItemPhysicalColliders = true;
                 allowItemHoverTriggers = false;
                 allowLateralTranslation = true;
                 allowRotation = true;
@@ -93,7 +99,8 @@ public class ObjectRack : CampComponent
                 this.capacity = RackCapacity_Stone;
                 worldObjectPrefab = CampResources.PREFAB_RACK_STONE;
                 onDemandPlacement = true;
-                allowObjectPhysics = true;
+                allowGravity = true;
+                allowItemPhysicalColliders = true;
                 allowItemHoverTriggers = false;
                 allowLateralTranslation = true;
                 allowRotation = true;
@@ -102,7 +109,8 @@ public class ObjectRack : CampComponent
                 this.capacity = 3;
                 worldObjectPrefab = CampResources.PREFAB_WORKBENCH;
                 onDemandPlacement = false;
-                allowObjectPhysics = false;
+                allowGravity = false;
+                allowItemPhysicalColliders = false;
                 allowItemHoverTriggers = true;
                 allowLateralTranslation = false;
                 allowRotation = false;
@@ -111,7 +119,8 @@ public class ObjectRack : CampComponent
                 this.capacity = RackCapacity_Food;
                 worldObjectPrefab = CampResources.PREFAB_RACK_FOOD;
                 onDemandPlacement = true;
-                allowObjectPhysics = false;
+                allowGravity = false;
+                allowItemPhysicalColliders = false;
                 allowItemHoverTriggers = true;
                 allowLateralTranslation = false;
                 allowRotation = false;
@@ -267,10 +276,18 @@ public class ObjectRack : CampComponent
     {
         return objectsOnRack.Where(o => o.name == item.nme).ToArray();
     }
+    public GameObject[] GetObjectsOnRackThatAreItem(Enum itemType)
+    {
+        return objectsOnRack.Where(o => Item.GetItemByName(o.name).type.Equals(itemType)).ToArray();
+    }
 
     public int GetObjectCountsOnRackThatAreItemCount(Item item)
     {
         return GetObjectsOnRackThatAreItem(item).Length;
+    }
+    public int GetObjectCountsOnRackThatAreItemCount(Enum itemType)
+    {
+        return GetObjectsOnRackThatAreItem(itemType).Length;
     }
 
     public void EmptyObjects(object destination)
@@ -333,7 +350,7 @@ public class ObjectRack : CampComponent
 
 
                     // set physics accordingly to anchor the object in place
-                    if (allowObjectPhysics)
+                    if (allowGravity)
                     {
                         Rigidbody rb = _o.GetComponent<Rigidbody>();
                         if (!allowLateralTranslation)
@@ -346,7 +363,7 @@ public class ObjectRack : CampComponent
                         }
                     }
 
-                    Utility.ToggleObjectPhysics(_o, allowObjectPhysics, allowItemHoverTriggers, allowObjectPhysics, allowObjectPhysics);
+                    Utility.ToggleObjectPhysics(_o, allowItemPhysicalColliders, allowItemHoverTriggers, allowGravity, allowGravity);
             
                     if(removeAfterMovingToTarget)
                     {

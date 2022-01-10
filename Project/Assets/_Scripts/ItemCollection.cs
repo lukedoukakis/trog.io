@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -56,6 +57,20 @@ public class ItemCollection
         else{
             return 0;
         }
+    }
+
+    public int GetItemCount(Enum itemType)
+    {
+        int count = 0;
+        foreach(KeyValuePair<Item, int> kvp in items)
+        {
+            if(kvp.Key.type.Equals(itemType))
+            {
+                count += kvp.Value;
+            }
+        }
+        return count;
+
     }
 
 

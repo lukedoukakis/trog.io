@@ -476,6 +476,28 @@ public class Camp : MonoBehaviour
         }
     }
 
+    public GameObject FindObjectInCamp(Item item)
+    {
+
+        List<ObjectRack> rackList = GetRackListForItemType(item.type);
+        foreach(ObjectRack rack in rackList)
+        {
+            if (!(rack is Workbench))
+            {
+                foreach (GameObject rackObject in rack.objectsOnRack)
+                {
+                    
+                }
+            }
+            
+        }
+
+
+
+        return null;
+
+    }
+
 
     public void AddObjectsAnyRack(Item item, ref int count, Transform originT, ref int newRacksCount, bool physical)
     {

@@ -233,6 +233,10 @@ public class Faction : MonoBehaviour
     {
         return ownedItems.GetItemCount(item);
     }
+    public int GetItemCountAbsolute(Enum itemType)
+    {
+        return ownedItems.GetItemCount(itemType);
+    }
 
     // returns total number of items not on workbench
     public int GetItemCount(Item item)
@@ -246,6 +250,22 @@ public class Faction : MonoBehaviour
                 countOnWorkbench = camp == null ? 0 : camp.workbench.GetObjectCountsOnRackThatAreItemCount(item);
             }
         }
+        return rawCount - countOnWorkbench;
+    }
+
+    public int GetItemCount(Enum itemType)
+    {
+        int rawCount = GetItemCountAbsolute(itemType);
+        int countOnWorkbench = 0;
+        if(camp != null)
+        {
+            if(camp.workbench != null)
+            {
+                countOnWorkbench = camp == null ? 0 : camp.workbench.GetObjectCountsOnRackThatAreItemCount(itemType);
+            }
+        }
+
+        Debug.Log(rawCount - countOnWorkbench);
         return rawCount - countOnWorkbench;
     }
 
@@ -271,7 +291,14 @@ public class Faction : MonoBehaviour
 
     public bool ItemIsTargetedByThisFaction(GameObject o)
     {
-        return targetedObjects.Contains(o);
+        foreach(GameObject gameObject in targetedObjects.ToArray())
+        {
+            if(ReferenceEquals(gameObject, o))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void OnPopulationChange(){

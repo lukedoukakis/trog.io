@@ -790,6 +790,11 @@ public class EntityItems : EntityComponent
 
     }
 
+    public bool HasWeapon()
+    {
+        return weaponEquipped_item != null || weaponUnequipped_item != null;
+    }
+
 
 
     // ---
