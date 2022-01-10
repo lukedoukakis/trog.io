@@ -57,6 +57,8 @@ public class EntityBehavior : EntityComponent
     public static readonly float DIRECT_ADJUST_ROTATION_SPEED = 1f;
     public static readonly float BASE_TIME_CHASE = 10f;
     public static readonly float BASE_TIME_FLEE = 10f;
+    public static readonly float HOME_RESET_TIME_MIN = 5f;
+    public static readonly float HOME_RESET_TIME_MAX = 10f;
 
 
 
@@ -70,6 +72,9 @@ public class EntityBehavior : EntityComponent
 
     // pre-established action sequences
     public ActionSequence entityActionSequence_AssertStanding, entityActionSequence_AssertSquatting;
+
+    public System.Diagnostics.Stopwatch homeResetTimer;
+    public float homeResetTime;
 
 
     protected override void Awake()
@@ -102,6 +107,9 @@ public class EntityBehavior : EntityComponent
 
         entityActionSequence_AssertStanding = ActionSequence.CreateActionSequence(entityPhysics.AssertStanding);
         entityActionSequence_AssertSquatting = ActionSequence.CreateActionSequence(entityPhysics.AssertSquatting);
+
+        homeResetTimer = new System.Diagnostics.Stopwatch();
+        ResetHomeResetTimer();
 
     }
 
@@ -445,7 +453,7 @@ public class EntityBehavior : EntityComponent
                     NextAction();
                 }
 
-                // if distance within a certain threshhold of the target, don't move and apply actionWhenAchieved
+                // if distance within a certain threshhold of the target, don't move, call target's action if it exists, and apply actionWhenAchieved
                 if(Vector3.Distance(transform.position, targetPos) <= ap.distanceThreshold)
                 {
                     move = Vector3.zero;
@@ -454,10 +462,10 @@ public class EntityBehavior : EntityComponent
                     {
                         tpc.OnTargetPositionReached(entityHandle);
                     }
-                    // if(ap.actionSequenceWhenAchieved != null)
-                    // {
-                    //     ap.actionSequenceWhenAchieved.Execute();
-                    // }
+                    if(ap.actionSequenceWhenAchieved != null)
+                    {
+                        ap.actionSequenceWhenAchieved.Execute();
+                    }
                 }
                 // else, move towards the target
                 else
@@ -1258,12 +1266,25 @@ public class EntityBehavior : EntityComponent
 
             followPositionTransform.SetParent(entityInfo.faction.leaderHandle.transform);
             followPositionTransform.position = entityInfo.faction.leaderHandle.transform.position;
-            entityPhysics.AssertStanding();
             
-
         }
 
+        entityPhysics.AssertStanding();
+    }
 
+    public void ResetFollowPositionIfReady()
+    {
+        if(homeResetTimer.ElapsedMilliseconds >= homeResetTime * 1000f)
+        {
+            ResetHomeResetTimer();
+            ResetFollowPosition();
+        }
+    }
+
+    void ResetHomeResetTimer()
+    {
+        homeResetTime = UnityEngine.Random.Range(HOME_RESET_TIME_MIN, HOME_RESET_TIME_MAX);
+        homeResetTimer.Restart();
     }
 
     public void SetRestingTent(Tent tent)

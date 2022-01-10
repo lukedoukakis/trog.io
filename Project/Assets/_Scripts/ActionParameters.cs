@@ -96,6 +96,7 @@ public class ActionParameters : ScriptableObject
                 ap.maxTime = 1f;
                 ap.urgent = false;
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
+                ap.actionSequenceWhenAchieved = ActionSequence.CreateActionSequence(doerHandle.entityBehavior.ResetFollowPositionIfReady);
                 break;
             
             case "Go Rest" :
@@ -104,7 +105,7 @@ public class ActionParameters : ScriptableObject
                 ap.targetedWorldObject = doerHandle.entityBehavior.ClaimOpenRestingTent();
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
                 ap.maxTime = 1f;
-                ap.urgent = true;
+                ap.urgent = false;
                 ap.endCondition = doerHandle.entityBehavior.IsFullyRested;
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
