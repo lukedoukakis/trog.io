@@ -20,7 +20,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float meter = 1f / ElevationAmplitude;
     public static float FlatLevel = .85f;
     public static float SeaLevel = .848f;
-    public static float SnowLevel = .9f;
+    public static float SnowLevel = .87f;
     //public static float SnowLevel = float.MaxValue;
     public static float GrassNormal = .98f;
     public static float SnowNormalMin = .9f;
@@ -79,11 +79,11 @@ public class ChunkGenerator : MonoBehaviour
 
     // features and creatures
     Transform FeaturesParent;
-    public static List<GameObject> activeCreatures;
+    public static List<GameObject> activeCPUCreatures;
     public static List<GameObject> Features, Creatures, Humans, Items;
     public static bool humanSpawned = false;
-    public static readonly float creatureDespawnTimestep = 5f;
-    public static float creatureDespawnTime = 0f;
+    public static readonly float cpuCreatureDespawnTimestep = 5f;
+    public static float cpuCreatureDespawnTime = 0f;
 
 
     // fill map
@@ -113,10 +113,10 @@ public class ChunkGenerator : MonoBehaviour
                 StartCoroutine(DeloadChunks());
             }
 
-            creatureDespawnTime += Time.deltaTime;
-            if(creatureDespawnTime >= creatureDespawnTimestep){
-                DespawnCreatures();
-                creatureDespawnTime = creatureDespawnTime - creatureDespawnTimestep;
+            cpuCreatureDespawnTime += Time.deltaTime;
+            if(cpuCreatureDespawnTime >= cpuCreatureDespawnTimestep){
+                DespawnCPUCreatures();
+                cpuCreatureDespawnTime = 0f;
             }
 
             UpdateWaterPosition();
@@ -145,7 +145,7 @@ public class ChunkGenerator : MonoBehaviour
         Items = Item.Items.Values.Select(item => item.worldObjectPrefab).Where(o => o != null).ToList();
         Features = Features.OrderBy(feature => SpawnParameters.GetSpawnParameters(feature.name).loadOrder).ToList();
 
-        activeCreatures = new List<GameObject>();
+        activeCPUCreatures = new List<GameObject>();
 
         fillMap = new FillMap();
 
@@ -318,7 +318,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // lock temperature
                 //temperatureValue = .99f;
-                temperatureValue = .25f;
+                //temperatureValue = .25f;
 
 
 
@@ -860,8 +860,7 @@ public class ChunkGenerator : MonoBehaviour
                                     //worldObject = pool.Get();
                                     //worldObject.transform.position = spawnPosition;
                                     worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-                                    activeCreatures.Add(worldObject);
-
+                                    AddActiveCPUCreature(worldObject);
                                 }
                             }
                         }
@@ -892,12 +891,11 @@ public class ChunkGenerator : MonoBehaviour
                                     spawnPosition = new Vector3(x + _xOffset, height * ElevationAmplitude + 10f, z + _zOffset);
                                     spawnScale = Vector3.one * spawnParameters.scale;
 
-                                    Debug.Log("WILD NPC");
+                                    //Debug.Log("WILD NPC");
                                     instance.StartCoroutine(ClientCommand.instance.SpawnNpcIndependentWhenReady(spawnPosition, true, FactionStartingItemsTier.Weak));
 
 
                                     //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-                                    //activeCreatures.Add(o);
 
                                     //humanSpawned = true;
                                 }
@@ -917,24 +915,47 @@ public class ChunkGenerator : MonoBehaviour
     }
 
 
-    void DespawnCreatures(){
+    void DespawnCPUCreatures()
+    {
+
+        //Debug.Log("DespawnCpuCreatures(): " + activeCPUCreatures.Count);
+
         float despawnDistance = ChunkSize * ChunkRenderDistance;
-        GameObject creature;
-        for(int i = 0; i < activeCreatures.Count; ++i){
-            creature = activeCreatures[i];
-            if(creature != null){
-                if(Vector3.Distance(playerRawPosition, activeCreatures[i].transform.position) > despawnDistance){
-                    activeCreatures.RemoveAt(i);
-                    Faction creatureFaction = creature.GetComponent<EntityInfo>().faction;
-                    if(creatureFaction != null)
+        GameObject cpuCreature;
+        EntityHandle cpuCreatureHandle;
+        for(int i = 0; i < activeCPUCreatures.Count; ++i){
+            cpuCreature = activeCPUCreatures[i];
+            if(cpuCreature != null)
+            {
+                cpuCreatureHandle = cpuCreature.GetComponent<EntityHandle>();
+                if(Vector3.Distance(playerRawPosition, activeCPUCreatures[i].transform.position) > despawnDistance)
+                {
+                    activeCPUCreatures.RemoveAt(i);
+                    Faction creatureFaction = cpuCreature.GetComponent<EntityInfo>().faction;
+                    if (creatureFaction != null)
                     {
-                        creatureFaction.DestroyFaction();
+                        // if creature's faction is a faction besides its species' base faction, and the faction is not already marked for destruction, destroy the whole faction
+                        if (!ReferenceEquals(creatureFaction, SpeciesInfo.GetSpeciesInfo(cpuCreatureHandle.entityInfo.species)) && !creatureFaction.IsMarkedForDestruction())
+                        {
+                            creatureFaction.MarkForDestruction();
+                            creatureFaction.DestroyFaction();
+                        }
+                        // else, remove only the creature from the world
+                        else
+                        {
+                            cpuCreatureHandle.RemoveFromWorld();
+                        }
                     }
-                    //GameObject.Destroy(creature);
+                    else
+                    {
+                        cpuCreatureHandle.RemoveFromWorld();
+                    }
+
+                    
                 }
             }
             else{
-                activeCreatures.RemoveAt(i);
+                activeCPUCreatures.RemoveAt(i);
             }
         }
     }
@@ -1048,6 +1069,11 @@ public class ChunkGenerator : MonoBehaviour
         Vector3 pos = playerT.position;
         pos.y = SeaLevel * ElevationAmplitude;
         Water.transform.position = pos;
+    }
+
+    public static void AddActiveCPUCreature(GameObject creature)
+    {
+        activeCPUCreatures.Add(creature);
     }
 
 

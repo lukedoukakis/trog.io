@@ -279,11 +279,11 @@ public class EntityPhysics : EntityComponent
             UpdateIKForCarryingItems();
         }
 
-        if(!isQuadripedal)
-        {
-            targetHandRight.SetParent(null);
-            targetHandLeft.SetParent(null);
-        }
+        // if(!isQuadripedal)
+        // {
+        //     targetHandRight.SetParent(null);
+        //     targetHandLeft.SetParent(null);
+        // }
 
         velHoriz_this = velHoriz_last = velHoriz_delta = Vector3.zero;
 

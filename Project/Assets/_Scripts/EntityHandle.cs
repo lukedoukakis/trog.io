@@ -70,11 +70,6 @@ public class EntityHandle : EntityComponent
         }
     }
 
-    public void DestroyEntity()
-    {
-        Destroy(this.gameObject);
-    }
-
     public void ShowTooltip(){
         tooltip = true;
         TooltipController.current.SetText(entityStats.CreateStatsList());

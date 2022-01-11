@@ -17,6 +17,7 @@ public class Faction : MonoBehaviour
     public Camp camp;
     public List<GameObject> targetedObjects; // items being pursued by members of this faction
     public bool leaderInCamp;
+    public bool markedForDestruction;
 
     public Material clothingMaterial;
 
@@ -228,6 +229,16 @@ public class Faction : MonoBehaviour
 
     }
 
+
+    public void RemoveAllItemsOwnedFromWorld()
+    {
+        Dictionary<Item, int> removeDict = new Dictionary<Item, int>(ownedItems.items);
+        foreach(KeyValuePair<Item, int> kvp in removeDict)
+        {
+            RemoveItemOwned(kvp.Key, kvp.Value, null, false, null);
+        }
+    }
+
     // returns total number of items owned
     public int GetItemCountAbsolute(Item item)
     {
@@ -265,7 +276,7 @@ public class Faction : MonoBehaviour
             }
         }
 
-        Debug.Log(rawCount - countOnWorkbench);
+        //Debug.Log(rawCount - countOnWorkbench);
         return rawCount - countOnWorkbench;
     }
 
@@ -418,27 +429,34 @@ public class Faction : MonoBehaviour
 
     public void DestroyFaction()
     {
+
         // destroy camp and all items in it
-        List<Item> items = new List<Item>(ownedItems.items.Keys);
-        List<int> counts = new List<int>(ownedItems.items.Values);
-        for(int i = 0; i < items.Count; ++i)
-        {
-            RemoveItemOwned(items[i], counts[i], null, false, null);
-        }
+        RemoveAllItemsOwnedFromWorld();
 
-        // destroy all members
-        foreach(EntityHandle memberHandle in memberHandles)
-        {
-            memberHandle.DestroyEntity();
-        }
-
+        // pack up camp
         if(camp != null)
         {
-            camp.Dismantle();
+            PackUp();
+        }
+
+        // remove all members from the world
+        foreach(EntityHandle memberHandle in memberHandles.ToArray())
+        {
+            memberHandle.RemoveFromWorld();
         }
 
         // destroy this
         Destroy(this);
+    }
+
+    public void MarkForDestruction()
+    {
+        markedForDestruction = true;
+    }
+
+    public bool IsMarkedForDestruction()
+    {
+        return markedForDestruction;
     }
 
 

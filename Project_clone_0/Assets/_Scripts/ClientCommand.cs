@@ -25,27 +25,27 @@ public class ClientCommand : NetworkBehaviour
 
     public IEnumerator SpawnNpcFollowerWhenReady(EntityHandle leaderHandle, Vector3 position, bool spawnWithGear)
     {
-        Debug.Log("SpawnNpcWhenReady() start");
+        //Debug.Log("SpawnNpcWhenReady() start");
         while (!NetworkClient.ready)
         {
             //Debug.Log("CHECKING...");
             yield return new WaitForSecondsRealtime(.05f);
         }
         SpawnNpcFollower(leaderHandle, position, spawnWithGear);
-        Debug.Log("SpawnNpcWhenReady() finished");
+        //Debug.Log("SpawnNpcWhenReady() finished");
     }
 
 
     public IEnumerator SpawnNpcIndependentWhenReady(Vector3 position, bool createCamp, FactionStartingItemsTier factionTier)
     {
-        Debug.Log("SpawnNpcWhenReady() start");
+        //Debug.Log("SpawnNpcWhenReady() start");
         while (!NetworkClient.ready)
         {
             //Debug.Log("CHECKING...");
             yield return new WaitForSecondsRealtime(.05f);
         }
         SpawnNpcIndependent(position, createCamp, factionTier);
-        Debug.Log("SpawnNpcWhenReady() finished");
+        //Debug.Log("SpawnNpcWhenReady() finished");
     }
 
 
@@ -79,6 +79,8 @@ public class ClientCommand : NetworkBehaviour
             npcHandle.entityItems.SetEquippedWeapon(weaponItem, weaponObject);
             npcHandle.entityItems.OnItemsChange();
         }
+
+        ChunkGenerator.AddActiveCPUCreature(npc);
     }
 
     [Command]
@@ -89,6 +91,8 @@ public class ClientCommand : NetworkBehaviour
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
         NetworkServer.Spawn(npc, GameManager.instance.localPlayer);
         StartCoroutine(SetNewFactionWhenReady(npcHandle, createCamp, factionTier));
+
+        ChunkGenerator.AddActiveCPUCreature(npc);
     }
 
 

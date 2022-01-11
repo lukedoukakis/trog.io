@@ -212,6 +212,9 @@ public class Utility : MonoBehaviour
 
     public static IEnumerator FlipForTime(GameObject worldObject, float upwardTranslation, float flipForce, float flipTime)
     {
+
+        if(worldObject == null){ yield break; }
+
         Vector3 targetPos = worldObject.transform.position + Vector3.up * upwardTranslation;
         float spinForce = flipForce;
         for (int i = 0; i * .01f < flipTime; ++i)
@@ -220,6 +223,7 @@ public class Utility : MonoBehaviour
             worldObject.transform.position = Vector3.Lerp(worldObject.transform.position, targetPos, 10f * Time.deltaTime);
             spinForce *= .8f;
             yield return new WaitForSecondsRealtime(.01f);
+            if(worldObject == null){ yield break; }
         }
         Quaternion targetRot = Quaternion.identity;
     }
@@ -251,19 +255,65 @@ public class Utility : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(delay);
 
+        if(worldObject == null)
+        {   
+            yield break;
+        }
+        if(targetT == null)
+        {
+            if(destroyWhenDone)
+            {
+                GameObject.Destroy(worldObject);
+            }
+            yield break;
+        }
+
+
         Utility.ToggleObjectPhysics(worldObject, false, false, false, false);
 
         if (doFlip)
         {
+
             yield return StartCoroutine(FlipForTime(worldObject, 3f, 1000f, .25f));
+
+            if (worldObject == null)
+            {
+                yield break;
+            }
+            if (targetT == null)
+            {
+                if (destroyWhenDone)
+                {
+                    GameObject.Destroy(worldObject);
+                }
+                yield break;
+            }
         }
 
         // move object to location before destroying
-        while (Vector3.Distance(worldObject.transform.position, targetT.position) > .5f)
+        Vector3 worldObjectPosition = worldObject.transform.position;
+        Vector3 targetPosition = targetT.position;
+        while (Vector3.Distance(worldObjectPosition, targetPosition) > .5f)
         {
             worldObject.transform.position = Vector3.Lerp(worldObject.transform.position, targetT.position, ObjectRack.OBJECT_MOVEMENT_ANIMATION_SPEED * Time.deltaTime);
             worldObject.transform.Rotate(Vector3.right * 10f);
             yield return null;
+
+            if (worldObject == null)
+            {
+                yield break;
+            }
+            if (targetT == null)
+            {
+                if (destroyWhenDone)
+                {
+                    GameObject.Destroy(worldObject);
+                }
+                yield break;
+            }
+
+            worldObjectPosition = worldObject.transform.position;
+            targetPosition = targetT.position;
         }
 
         if(destroyWhenDone)

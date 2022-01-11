@@ -53,6 +53,54 @@ public class EntityComponent : NetworkBehaviour
         }
     }
 
+    // called when an entity is to woosh be removed from the world
+    public void RemoveFromWorld()
+    {
+
+        //Debug.Log("RemoveFromWorld()");
+
+        // destroy any items the entity is carrying
+        if(entityItems != null)
+        {
+            if(entityItems.holding_object != null)
+            {
+                GameObject.Destroy(entityItems.holding_object);
+            }
+            if(entityItems.weaponEquipped_object != null)
+            {
+                GameObject.Destroy(entityItems.weaponEquipped_object);
+            }
+            if(entityItems.weaponUnequipped_object != null)
+            {
+                GameObject.Destroy(entityItems.weaponUnequipped_object);
+            }
+        }
+
+        // stop behavior actions and destroy follow position GameObject
+        if(entityBehavior != null)
+        {
+            entityBehavior.StopActions();
+            if(entityBehavior.followPositionTransform != null)
+            {
+                entityBehavior.followPositionTransform.SetParent(null);
+                GameObject.Destroy(entityBehavior.followPositionTransform.gameObject);
+            }
+        }
+    
+        // remove entity from faction members
+        if(entityInfo != null)
+        {
+            if(entityInfo.faction != null)
+            {
+                entityInfo.faction.RemoveMember(entityHandle);
+            }
+        }
+
+        // destroy GameObject
+        GameObject.Destroy(this.gameObject);
+
+    }
+
 
     public void Log(string msg){
         Debug.Log("Entity " + entityInfo.id + ": " + this.GetType().Name + ": " + msg);

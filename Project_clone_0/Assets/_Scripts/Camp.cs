@@ -514,7 +514,9 @@ public class Camp : MonoBehaviour
 
         Item item;
         int countToRemove;
-        foreach(KeyValuePair<Item, int> kvp in itemsToRemove.items){
+        foreach(KeyValuePair<Item, int> kvp in itemsToRemove.items)
+        {
+            //Debug.Log("Going to destroy " + kvp.Key.nme + " x " + kvp.Value);
             item = kvp.Key;
             countToRemove = kvp.Value;
             RemoveObjectsAnyRack(item, ref countToRemove, moveToAnotherRack, destination);

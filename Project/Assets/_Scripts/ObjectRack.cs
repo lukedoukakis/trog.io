@@ -251,6 +251,7 @@ public class ObjectRack : CampComponent
                     {
                         objectsOnRack.Remove(foundObject);
                         itemsOnRack.Remove(item);
+                        //Debug.Log("destroyed");
                         GameObject.Destroy(foundObject);
                     }
                     else
@@ -274,11 +275,11 @@ public class ObjectRack : CampComponent
 
     public GameObject[] GetObjectsOnRackThatAreItem(Item item)
     {
-        return objectsOnRack.Where(o => o.name == item.nme).ToArray();
+        return objectsOnRack.Where(o => o != null).Where(o => o.name == item.nme).ToArray();
     }
     public GameObject[] GetObjectsOnRackThatAreItem(Enum itemType)
     {
-        return objectsOnRack.Where(o => Item.GetItemByName(o.name).type.Equals(itemType)).ToArray();
+        return objectsOnRack.Where(o => o != null).Where(o => Item.GetItemByName(o.name).type.Equals(itemType)).ToArray();
     }
 
     public int GetObjectCountsOnRackThatAreItemCount(Item item)

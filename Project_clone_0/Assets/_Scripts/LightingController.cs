@@ -12,7 +12,7 @@ public class LightingController : MonoBehaviour
     //public PostProcessVolume volume;
     //public ColorGrading colorGrading;
 
-    public static float FOG_DISTANCE_START_BASE = 20f;
+    public static float FOG_DISTANCE_START_BASE = 60f;
     public static float FOG_THICKNESS_STEP = .004f;
 
     public GameObject fog;

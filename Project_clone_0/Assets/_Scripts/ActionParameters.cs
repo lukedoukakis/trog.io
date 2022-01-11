@@ -122,7 +122,7 @@ public class ActionParameters : ScriptableObject
             case "Follow Faction Leader" :
 
                 ap.type = ActionType.Follow;
-                ap.targetedWorldObject = doerHandle.entityBehavior.followPositionTransform.gameObject;
+                ap.targetedWorldObject = doerHandle.entityBehavior.followPositionTransform != null ? doerHandle.entityBehavior.followPositionTransform.gameObject : null;
                 ap.offset = ap.doerHandle.entityBehavior.followOffset;
                 ap.distanceThreshold = 2.5f;
                 ap.maxTime = 1f;
@@ -160,9 +160,8 @@ public class ActionParameters : ScriptableObject
             case "Go To Random Nearby Spot" :
 
                 ap.type = ActionType.GoTo;
-                GameObject temp = new GameObject();
-                temp.transform.position = Utility.GetRandomVectorOffset(doerHandle.transform.position, 10f, true);
-                ap.targetedWorldObject = temp;
+                doerHandle.entityBehavior.followPositionTransform.position = Utility.GetRandomVectorOffset(doerHandle.transform.position, 10f, true);
+                ap.targetedWorldObject = doerHandle.entityBehavior.followPositionTransform.gameObject;
                 ap.maxTime = 10f;
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;

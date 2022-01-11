@@ -208,22 +208,13 @@ public class EntityStats : EntityComponent
     {
         //Debug.Log("DED");
 
-        if(entityBehavior != null)
-        {
-            entityBehavior.followPositionTransform.SetParent(null);
-            Destroy(entityBehavior.followPositionTransform.gameObject);
-        }
+        // drop any items the entity is carrying onto the ground
         if(entityItems != null)
         {
             entityItems.DropEverything();
         }
-        if(entityInfo != null)
-        {
-            entityInfo.faction.RemoveMember(entityHandle);
-        }
-        GameObject.Destroy(this.gameObject);
 
-        // give drops to faction leader of attacker
+        // give entity drops to faction leader of attacker
         EntityHandle dropReceiverHandle;
         Faction attackerFaction = attackerHandle.entityInfo.faction;
         if(attackerFaction.leaderHandle != null)
@@ -235,6 +226,9 @@ public class EntityStats : EntityComponent
             dropReceiverHandle = attackerHandle;
         }
         SpawnDrops(this.transform.position, dropReceiverHandle);
+
+        // remove the entity from the world
+        entityHandle.RemoveFromWorld();
     }
 
 

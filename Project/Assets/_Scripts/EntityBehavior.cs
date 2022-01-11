@@ -317,6 +317,15 @@ public class EntityBehavior : EntityComponent
         urgent = ap.urgent;
     }
 
+    public void StopActions()
+    {
+        foreach(string layerName in coroutineLayers.Keys.ToArray())
+        {
+            TerminateActionLayer(layerName);
+        }
+
+    }
+
 
 
     

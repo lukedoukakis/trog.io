@@ -72,7 +72,7 @@ Material:
     - _Blend: 0
     - _CastShadows: 1
     - _ColorNoise: 1
-    - _Cull: 0
+    - _Cull: 2
     - _DstBlend: 0
     - _NumberOfShades: 2
     - _QueueControl: 0
