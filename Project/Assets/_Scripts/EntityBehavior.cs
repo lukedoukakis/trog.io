@@ -17,7 +17,6 @@ public class EntityBehavior : EntityComponent
     public Vector3 move;
     public bool urgent;
     public Vector3 followOffset;
-    public float rest;
 
 
     public static float RANDOM_OFFSET_RANGE = 1f;
@@ -35,9 +34,9 @@ public class EntityBehavior : EntityComponent
     public static float DISTANCE_STEP_BACK = 3f;
     public static float DISTANCE_STEP_SIDE = 1f;
 
-    public static float REST_RATE_LOSS = (1f / LightingController.SECONDS_PER_DAY) * (10f / 9f);
-    public static float REST_RATE_GAIN = REST_RATE_LOSS * 10f * .25f;
-    public static float REST_HEALTH_GAIN = REST_RATE_GAIN;
+    public static float STAMINA_LOSS_RATE = (1f / LightingController.SECONDS_PER_DAY) * (10f / 9f);
+    public static float STAMINA_GAIN_RATE = STAMINA_LOSS_RATE * 10f * .25f;
+    public static float HEALTH_GAIN_RATE = STAMINA_GAIN_RATE;
     
 
     Vector3 randomOffset;
@@ -102,8 +101,6 @@ public class EntityBehavior : EntityComponent
             {"Hands", null},
             {"Head", null }
         };
-
-        rest = 1f;
 
         entityActionSequence_AssertStanding = ActionSequence.CreateActionSequence(entityPhysics.AssertStanding);
         entityActionSequence_AssertSquatting = ActionSequence.CreateActionSequence(entityPhysics.AssertSquatting);
@@ -192,7 +189,7 @@ public class EntityBehavior : EntityComponent
             ActionParameters actionToTake;
             if(entityInfo.faction.leaderInCamp)
             {
-                bool needsSleep = rest < 1f;
+                bool needsSleep = entityStats.stamina < entityStats.maxStamina;
                 if(needsSleep)
                 {
                     // todo: sleep action
@@ -223,13 +220,22 @@ public class EntityBehavior : EntityComponent
             }
             
         }
-        // if not a faction follower, wander around
+        // if not a faction follower
         else
         {
-            ActionParameters goTo = ActionParameters.GenerateActionParameters("Go To Random Nearby Spot", entityHandle);
-            ActionParameters idle = ActionParameters.GenerateActionParameters("Idle For 5 Seconds", entityHandle);
-            InsertAction(goTo);
-            InsertAction(idle);
+            // if has a camp, chill in the camp
+            if(entityInfo.faction.camp != null && false)
+            {
+                ActionParameters goHome = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
+                InsertAction(goHome);
+            }
+            else
+            {
+                ActionParameters goTo = ActionParameters.GenerateActionParameters("Go To Random Nearby Spot", entityHandle);
+                ActionParameters idle = ActionParameters.GenerateActionParameters("Idle For 5 Seconds", entityHandle);
+                InsertAction(goTo);
+                InsertAction(idle);
+            }       
         }
     }
 
@@ -1103,40 +1109,25 @@ public class EntityBehavior : EntityComponent
         }
     }
 
-
-    public bool IsFullyRested()
-    {
-        return rest >= 1f;
-    }
-
-    public bool IsNotFullyRested()
-    {
-        return !IsFullyRested();
-    }
-
     public void OnRestFrame()
     {
 
         
         // increment rest if not fully rested
-        if(rest < 1f || !entityStats.IsFullyHealed())
+        if(!entityStats.IsStaminaFull() || !entityStats.IsHealthFull())
         {
 
-            // make sure entity is squatting down
+            // make sure entity is squatting
             entityPhysics.AssertSquatting();
 
-            // increment rest
-            rest += REST_RATE_GAIN * Time.deltaTime;
-            if(rest > 1f)
-            {
-                rest = 1f;
-            }
+            // increment stamina
+            entityStats.ApplyStaminaIncrement(STAMINA_GAIN_RATE * Time.deltaTime);
 
             // increment health
-            entityStats.ApplyHealthIncrement(REST_HEALTH_GAIN * Time.deltaTime, null);
+            entityStats.ApplyHealthIncrement(HEALTH_GAIN_RATE * Time.deltaTime, null);
 
             // if fully rested and healed, "exit" the tent by setting its tent reference to null, opening the tent's spot(s) to other npc's, and stand up
-            if(rest == 1f && entityStats.IsFullyHealed())
+            if(entityStats.IsStaminaFull() && entityStats.IsHealthFull())
             {
                 SetRestingTent(null);
                 entityPhysics.AssertStanding();
@@ -1146,21 +1137,17 @@ public class EntityBehavior : EntityComponent
 
     }
 
-    public void UpdateRest()
+    public void UpdateStaminaLoss()
     {
 
-        // if entity requires rest, update rest at a rate such that it reaches 0 after24 in-game hours
+        // if entity requires rest, update rest at a rate such that it reaches 0 after 24 in-game hours
         if(behaviorProfile.requiresRest)
         {
             if(!entityPhysics.isInsideCamp)
             {
-                if(rest > 0f)
+                if(entityStats.stamina > 0f)
                 {
-                    rest -= REST_RATE_LOSS * Time.deltaTime;
-                    if(rest < 0f)
-                    {
-                        rest = 0f;
-                    }
+                    entityStats.ApplyStaminaIncrement(STAMINA_LOSS_RATE * (1f / Stats.GetStatValue(entityStats.combinedStats, Stats.StatType.Stamina)) * Time.deltaTime * -1f);
                 }
             }
 
@@ -1369,7 +1356,7 @@ public class EntityBehavior : EntityComponent
         if (!isPlayer)
         {
             UpdateBehavior();
-            UpdateRest();
+            UpdateStaminaLoss();
         }
 
         timeSince_creatureSense += Time.deltaTime;

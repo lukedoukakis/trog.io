@@ -106,7 +106,7 @@ public class ActionParameters : ScriptableObject
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
                 ap.maxTime = 1f;
                 ap.urgent = false;
-                ap.endCondition = doerHandle.entityBehavior.IsFullyRested;
+                ap.endCondition = doerHandle.entityStats.IsStaminaFull;
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
@@ -117,7 +117,6 @@ public class ActionParameters : ScriptableObject
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT;
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
-
 
             case "Follow Faction Leader" :
 
