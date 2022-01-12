@@ -11,14 +11,16 @@ public class EntityHandle : EntityComponent
     public bool selected;
     public bool tooltip;
     public bool localP;
+    public EntityHealthDisplayController entityHealthDisplayController;
 
 
 
     protected override void Awake()
     {
         this.fieldName = "entityHandle";
-
         base.Awake();
+        entityHealthDisplayController = GetComponentInChildren<EntityHealthDisplayController>();
+
     }
 
     public override void OnStartLocalPlayer()
@@ -100,7 +102,7 @@ public class EntityHandle : EntityComponent
     // Update is called once per frame
     void Update()
     {
-        
+        entityHealthDisplayController.UpdateDisplay(this);
     }
     
 }
