@@ -24,6 +24,7 @@ public class CameraController : MonoBehaviour
     public bool lockVerticalCameraMovement;
     public float lockVerticalCameraMovement_verticality;
     public IEnumerator smoothZoomCoroutine;
+    public float distanceFromPlayer;
     
     public static CameraController current;
 
@@ -217,6 +218,8 @@ public class CameraController : MonoBehaviour
         if(playerT != null){
             AdjustCamera(GameManager.cameraMode);
         }
+
+        distanceFromPlayer = Vector3.Distance(Camera.main.transform.position, playerT.position);
 
         //UpdateRenderScale();
         

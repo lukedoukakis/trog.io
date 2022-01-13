@@ -58,15 +58,18 @@ Material:
     - _ColorNoise: 0
     - _Cull: 2
     - _DstBlend: 0
-    - _NumberOfShades: 2
+    - _NumberOfShades: 1
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _ShadingAttenuation: 0.5
     - _SnowDepth: 0.1
     - _SnowHeightCap: 4703.4
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 0.57
     - _SrcBlend: 1
     - _Surface: 0
+    - _WorkflowMode: 1
     - _ZTest: 4
     - _ZWrite: 1
     - _ZWriteControl: 0

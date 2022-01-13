@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4079982412955305263}
   - component: {fileID: 3422082851286279135}
   m_Layer: 10
-  m_Name: TreeFir0
+  m_Name: TreeFir 2
   m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,7 +80,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   visible: 0
-  m_AssetId: 29db29f42e5ed1e4ca90a7eef5142d76
+  m_AssetId: bd0033f95356682418bb634085f797b6
   hasSpawned: 0
 --- !u!1 &4788473774556134335
 GameObject:
@@ -122,7 +122,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4788473774556134335}
-  m_Mesh: {fileID: 4866329653167946688, guid: 1ba5bef8159445f4ea605450fd11d5ab, type: 3}
+  m_Mesh: {fileID: 6540583833775976651, guid: 61a04bd745ad25644abd538ab7568026, type: 3}
 --- !u!23 &3719132883836043030
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -206,7 +206,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6159035190584984163}
-  m_Mesh: {fileID: 5430293556371550004, guid: 1ba5bef8159445f4ea605450fd11d5ab, type: 3}
+  m_Mesh: {fileID: -4153994645300460000, guid: 61a04bd745ad25644abd538ab7568026, type: 3}
 --- !u!23 &9217919321553728029
 MeshRenderer:
   m_ObjectHideFlags: 0
