@@ -246,7 +246,7 @@ public class EntityStats : EntityComponent
         SpawnDrops(this.transform.position, dropReceiverHandle);
 
         // remove the entity from the world
-        entityHandle.RemoveFromWorld();
+        RemoveFromWorld();
     }
 
 

@@ -22,8 +22,8 @@ public class ChunkGenerator : MonoBehaviour
     public static float SeaLevel = .848f;
     public static float SnowLevel = .87f;
     //public static float SnowLevel = float.MaxValue;
-    public static float GrassNormal = .98f;
-    public static float SnowNormalMin = .9f;
+    public static float GrassNormal = .9f;
+    public static float SnowNormalMin = .8f;
     public static float SnowNormalMax = 1f;
     public static float CaveNormal = .4f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -357,7 +357,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // lock humidity
                 //humidityValue = 0f;
-                //humidityValue = .99f;
+                humidityValue = .99f;
                 // -------------------------------------------------------
 
 
@@ -502,7 +502,7 @@ public class ChunkGenerator : MonoBehaviour
                 heightValue = Mathf.Abs(heightValue);
                 heightValue *= -1f;
                 heightValue = Mathf.InverseLerp(ElevationAmplitude * -1f, 0f, heightValue);
-                heightValue = Mathf.Pow(heightValue, 1.5f);
+                //heightValue = Mathf.Pow(heightValue, 1.5f);
 
 
                 // apply MountainMap
@@ -738,9 +738,9 @@ public class ChunkGenerator : MonoBehaviour
         float _xOffset = (int)cd.coordinate.x * ChunkSize;
         float _zOffset = (int)cd.coordinate.y * ChunkSize;
 
-        for (int z = 0; z < ChunkSize; z++)
+        for (int z = 0; z < ChunkSize + 2; z++)
         {
-            for (int x = 0; x < ChunkSize; x++)
+            for (int x = 0; x < ChunkSize + 2; x++)
             {
 
                 if (!cd.TreeMap[x, z])
