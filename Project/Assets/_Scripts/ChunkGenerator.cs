@@ -502,7 +502,7 @@ public class ChunkGenerator : MonoBehaviour
                 heightValue = Mathf.Abs(heightValue);
                 heightValue *= -1f;
                 heightValue = Mathf.InverseLerp(ElevationAmplitude * -1f, 0f, heightValue);
-                //heightValue = Mathf.Pow(heightValue, 1.5f);
+                heightValue = Mathf.Pow(heightValue, .7f);
 
 
                 // apply MountainMap
