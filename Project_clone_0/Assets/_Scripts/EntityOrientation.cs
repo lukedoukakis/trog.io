@@ -92,6 +92,7 @@ public class EntityOrientation : EntityComponent
         {
             bodyLean = 0f;
         }
+        bodyLean = 0f;
 
         if(bodyRotationMode.Equals(BodyRotationMode.Normal))
         {
