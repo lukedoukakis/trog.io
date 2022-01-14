@@ -709,10 +709,10 @@ public class EntityItems : EntityComponent
 
     void UpdateCameraOffset(){
         if(weaponEquipped_item != null){
-            CameraController.current.SetTargetOffset(CameraController.current.defaultCameraOffset);
+            CameraController.instance.SetTargetOffset(CameraController.instance.defaultCameraOffset);
         }
         else{
-            CameraController.current.SetTargetOffset(CameraController.current.defaultCameraOffset);
+            CameraController.instance.SetTargetOffset(CameraController.instance.defaultCameraOffset);
         }
     }
 

@@ -29,7 +29,7 @@ public class LightingController : MonoBehaviour
     public Color fogColor_day, fogColor_night;
 
     // time in seconds for a full day
-    public static float SECONDS_PER_DAY = 60f;
+    public static float SECONDS_PER_DAY = 10f;
 
 
     private void Awake()
@@ -64,7 +64,7 @@ public class LightingController : MonoBehaviour
         UpdateRenderFog();
 
         // pause time of day: comment out this line
-        //time += Time.deltaTime;
+        time += Time.deltaTime;
     }
 
     void InitFog()
@@ -108,7 +108,7 @@ public class LightingController : MonoBehaviour
     void UpdateRenderFog()
     {
 
-        float distanceModifier = Mathf.Lerp(1f, 2f, Mathf.InverseLerp(0f, 40f, CameraController.current.distanceFromPlayer));
+        float distanceModifier = Mathf.Lerp(1f, 2f, Mathf.InverseLerp(0f, 40f, CameraController.instance.distanceFromPlayer));
 
         RenderSettings.fogStartDistance = RENDER_SETTINGS_FOG_DISTANCE_START * distanceModifier;
         RenderSettings.fogEndDistance = RENDER_SETTINGS_FOG_DISTANCE_END * distanceModifier;

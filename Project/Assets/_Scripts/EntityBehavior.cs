@@ -34,8 +34,8 @@ public class EntityBehavior : EntityComponent
     public static float DISTANCE_STEP_BACK = 3f;
     public static float DISTANCE_STEP_SIDE = 1f;
 
-    public static float STAMINA_LOSS_RATE = (1f / LightingController.SECONDS_PER_DAY) * (10f / 9f);
-    public static float STAMINA_GAIN_RATE = STAMINA_LOSS_RATE * 10f * .25f;
+    public static float STAMINA_LOSS_RATE = LightingController.SECONDS_PER_DAY * (1f / 3f);
+    public static float STAMINA_GAIN_RATE = LightingController.SECONDS_PER_DAY * (3f);
     public static float HEALTH_GAIN_RATE = STAMINA_GAIN_RATE;
     
 
@@ -1156,6 +1156,7 @@ public class EntityBehavior : EntityComponent
             //     Debug.Log("Rest level: " + rest);
             // }
         }
+        //Debug.Log(entityStats.stamina);
     }
 
     public bool IsAtPosition(Vector3 position, float distanceThreshhold){

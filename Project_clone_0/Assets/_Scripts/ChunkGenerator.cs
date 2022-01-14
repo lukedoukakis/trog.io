@@ -11,12 +11,12 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 3;
-    public static float Scale = 100f * 1.25f;
+    public static float Scale = 125f * 5f;
     public static float ElevationAmplitude = 300f;
     public static float MountainMapScale = 312f * 1f;
     public static float ElevationMapScale = 1000f;
-    public static int TemperatureMapScale = 600;
-    public static int HumidityMapScale = 600;
+    public static int TemperatureMapScale = 300;
+    public static int HumidityMapScale = 300;
     public static float meter = 1f / ElevationAmplitude;
     public static float FlatLevel = .85f;
     public static float SeaLevel = .848f;
@@ -370,7 +370,7 @@ public class ChunkGenerator : MonoBehaviour
                     float mtn2 = Mathf.PerlinNoise((x + xOffset - Seed + 200000.01f) / MountainMapScale, (z + zOffset - Seed + 200000.01f) / MountainMapScale);
 
                     mountainValue = Mathf.Min(mtn0, mtn1);
-                    mountainValue *= Mathf.Lerp(.1f, 1f, Mathf.InverseLerp(.25f, .5f, 1f - temperatureValue));
+                    mountainValue *= Mathf.Lerp(.02f, 1f, Mathf.InverseLerp(.25f, .5f, 1f - temperatureValue));
                     //mountainElev = mountainValue;
                     mountainElev = mtn0 * Mathf.Lerp(.1f, 1f, Mathf.InverseLerp(.25f, .5f, 1f - temperatureValue));
 
@@ -525,12 +525,6 @@ public class ChunkGenerator : MonoBehaviour
 
                 // create ocean and rivers
                 float oceanFloorLevel = SeaLevel - meter * 8f;
-                if (heightValue < FlatLevel)
-                {
-                    //freshWaterValue = Mathf.InverseLerp(0f, .05f, FlatLevel - heightValue);
-                    //freshWaterValue = 1f;
-
-                }
 
                 heightValue = Mathf.Lerp(heightValue, SeaLevel - meter, freshWaterValue);
                 if(heightValue < SeaLevel - meter)
@@ -575,18 +569,13 @@ public class ChunkGenerator : MonoBehaviour
                     float perlin = Mathf.PerlinNoise((x + xOffset + .01f) / postVariance, (z + zOffset - Seed + .01f) / postVariance);
                     perlin = Perlin.Noise((x + xOffset + .01f) / postVariance, (heightValue * ElevationAmplitude) * .5f, (z + zOffset - Seed + .01f) / postVariance);
 
-                    int posterizeSteps = (int)Mathf.Lerp(00, 1500, Mathf.InverseLerp(0f, 1f, perlin));
+                    int posterizeSteps = (int)Mathf.Lerp(100, 1500, Mathf.InverseLerp(0f, 1f, perlin));
                     posterizeSteps = (int)Posterize(100, 1500, posterizeSteps, 4);
+                    posterizeSteps = 10;
                     heightValue = Posterize(oceanFloorLevel, SeaLevel - meter, heightValue, posterizeSteps);
                 }
                 
                 
-
-
-                // dip
-                if(heightValue < SeaLevel - meter){
-                    //heightValue = SeaLevel - meter;
-                }
 
                 // TreeMap
                 float t;
@@ -932,7 +921,7 @@ public class ChunkGenerator : MonoBehaviour
                 {
                     activeCPUCreatures.RemoveAt(i);
                     Faction creatureFaction = cpuCreature.GetComponent<EntityInfo>().faction;
-                    if (creatureFaction != null)
+                    if (creatureFaction != null && !ReferenceEquals(creatureFaction, GameManager.instance.localPlayerHandle.entityInfo.faction))
                     {
                         // if creature's faction is a faction besides its species' base faction, and the faction is not already marked for destruction, destroy the whole faction
                         if (!ReferenceEquals(creatureFaction, SpeciesInfo.GetSpeciesInfo(cpuCreatureHandle.entityInfo.species)) && !creatureFaction.IsMarkedForDestruction())

@@ -62,6 +62,13 @@ public class Camp : MonoBehaviour
     public static bool CanPlaceCamp(Faction faction, Vector3 position)
     {
 
+        // check if features in the way
+        if(Physics.OverlapSphere(position, BASE_CAMP_RADIUS, LayerMaskController.CLEAR_ON_CAMP_PLACEMENT, QueryTriggerInteraction.Collide).Length > 0)
+        {
+            Debug.Log("Cannot place camp - features in the way");
+            return false;
+        }
+
         // determine if flat enough
 
         Vector3 placementPos = faction.leaderHandle.transform.position;
@@ -149,7 +156,7 @@ public class Camp : MonoBehaviour
 
         IEnumerator _PlaceCampComponents()
         {
-            ClearFeaturesFromCampRadius();
+            //ClearFeaturesFromCampRadius();
             PlaceBorderSphere();
             PlaceBonfire();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
@@ -258,7 +265,7 @@ public class Camp : MonoBehaviour
 
     public void ClearFeaturesFromCampRadius()
     {
-        Collider[] featureCollidersInsideCamp = Physics.OverlapSphere(origin, radius * 1.5f, LayerMaskController.CLEAR_ON_CAMP_PLACEMENT, QueryTriggerInteraction.Collide);
+        Collider[] featureCollidersInsideCamp = Physics.OverlapSphere(origin, radius, LayerMaskController.CLEAR_ON_CAMP_PLACEMENT, QueryTriggerInteraction.Collide);
         foreach(Collider collider in featureCollidersInsideCamp)
         {
             if(collider != null)

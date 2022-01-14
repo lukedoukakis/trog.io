@@ -40,8 +40,8 @@ public class EntityHandle : EntityComponent
         GameManager.instance.SetLocalPlayer(this.gameObject);
         Testing.instance.playerHandle = this.gameObject.GetComponent<EntityHandle>();
         ChunkGenerator.instance.playerT = transform;
-        CameraController.current.enabled = true;
-        CameraController.current.Init(this.transform);
+        CameraController.instance.enabled = true;
+        CameraController.instance.Init(this.transform);
         
 
         // init player specific entity settings
