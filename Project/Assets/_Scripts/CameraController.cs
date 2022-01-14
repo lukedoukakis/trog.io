@@ -216,7 +216,7 @@ public class CameraController : MonoBehaviour
     {
 
         if(playerT != null){
-            AdjustCamera(GameManager.cameraMode);
+            AdjustCamera(GameManager.GAME_SETTINGS_CAMERA_MODE);
         }
 
         distanceFromPlayer = Vector3.Distance(Camera.main.transform.position, playerT.position);

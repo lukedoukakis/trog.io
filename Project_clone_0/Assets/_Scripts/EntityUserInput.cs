@@ -53,10 +53,10 @@ public class EntityUserInput : EntityComponent
         float sensitivity = 3f;
         float smoothing = 100f * Time.deltaTime;
 
-        if(GameManager.cameraMode == 0){
+        if(GameManager.GAME_SETTINGS_CAMERA_MODE == 0){
             
         }
-        else if(GameManager.cameraMode == 1){
+        else if(GameManager.GAME_SETTINGS_CAMERA_MODE == 1){
 
             float deltaY = Input.GetAxis("Mouse X") * sensitivity * smoothing;
             mouseY = Mathf.Clamp(Mathf.Lerp(mouseY, deltaY, 1f / smoothing), mouseY - 2f, mouseY + 2f);
@@ -538,6 +538,7 @@ public class EntityUserInput : EntityComponent
     }
 
 
+
     void Update(){
 
         if(isLocalPlayer){
@@ -558,6 +559,7 @@ public class EntityUserInput : EntityComponent
         }
 
     }
+
 
     void FixedUpdate()
     {

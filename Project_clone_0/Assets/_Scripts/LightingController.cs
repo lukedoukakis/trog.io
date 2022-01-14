@@ -29,7 +29,7 @@ public class LightingController : MonoBehaviour
     public Color fogColor_day, fogColor_night;
 
     // time in seconds for a full day
-    public static float SECONDS_PER_DAY = 10f;
+    public static float SECONDS_PER_DAY = 60f;
 
 
     private void Awake()

@@ -1011,38 +1011,11 @@ public class EntityBehavior : EntityComponent
     }
 
 
-    public List<EntityHandle> SenseSurroundingCreatures(Species targetSpecies, float distance){
-
-        Collider[] colliders = Physics.OverlapSphere(transform.position, distance, LayerMaskController.CREATURE);
-        //Debug.Log("sense distance: " + distance + "... creatures found: " + colliders.Length);
-
-        List<EntityHandle> foundHandles = new List<EntityHandle>();
-        GameObject o;
-        EntityHandle foundHandle;
-        foreach(Collider col in colliders)
-        {
-            o = col.gameObject;
-            foundHandle = o.GetComponentInParent<EntityHandle>();
-            if(foundHandle != null)
-            {
-                if(!ReferenceEquals(foundHandle, entityHandle) && !ReferenceEquals(foundHandle.entityInfo.faction, entityInfo.faction))
-                {
-                    if((targetSpecies.Equals(Species.Any) || targetSpecies.Equals(foundHandle.entityInfo.species)))
-                    {
-                        foundHandles.Add(foundHandle);
-                    }
-                }
-            }
-        }
-        
-        return foundHandles;
-    }
-
     // check surroundings for creatures and act accordingly based on behavior type
     public void ReactToNearbyCreatures(BehaviorType behaviorType, out bool reacting){
 
         reacting = false;
-        List<EntityHandle> sensedCreatureHandles = SenseSurroundingCreatures(Species.Any, 30f);
+        List<EntityHandle> sensedCreatureHandles = Utility.SenseSurroundingCreatures(transform.position, Species.Any, 30f).Where(eh => !ReferenceEquals(eh, entityHandle) && !ReferenceEquals(eh.entityInfo.faction, entityInfo.faction)).ToList();
         //Debug.Log(sensedCreatureHandles.Count);
         if(sensedCreatureHandles.Count == 0){
             return;

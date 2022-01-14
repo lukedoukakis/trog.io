@@ -95,6 +95,8 @@ public class EntityHandle : EntityComponent
         GlobalSelectionController.current.OnEntityMouseExit(this);
     }
 
+    
+
 
 
 

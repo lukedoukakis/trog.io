@@ -322,6 +322,34 @@ public class Utility : MonoBehaviour
         }
     }
 
+    public static List<EntityHandle> SenseSurroundingCreatures(Vector3 position, Species targetSpecies, float distance){
+
+        Collider[] colliders = Physics.OverlapSphere(position, distance, LayerMaskController.CREATURE);
+        //Debug.Log("sense distance: " + distance + "... creatures found: " + colliders.Length);
+
+        List<EntityHandle> foundHandles = new List<EntityHandle>();
+        GameObject o;
+        EntityHandle foundHandle;
+        foreach(Collider col in colliders)
+        {
+            o = col.gameObject;
+            foundHandle = o.GetComponentInParent<EntityHandle>();
+            if(foundHandle != null)
+            {
+                if(!foundHandles.Contains(foundHandle))
+                {
+                    if ((targetSpecies.Equals(Species.Any) || targetSpecies.Equals(foundHandle.entityInfo.species)))
+                    {
+                        foundHandles.Add(foundHandle);
+                    }
+                }
+            }
+        }
+        
+        return foundHandles;
+    }
+
+
 
     public static List<T> Shuffle<T>(List<T> list)  
     {
