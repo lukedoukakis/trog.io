@@ -501,8 +501,6 @@ public class ChunkGenerator : MonoBehaviour
                 heightValue = Mathf.Lerp(heightValue, FlatLevel, freshWaterValue);
 
                 // apply ElevationMap
-                // float elevationFactor = Convert.ToSingle(elevationValue > 0) * 2f - 1f;
-                // heightValue += elevationFactor * .00005f;
                 float totalRaise = 0f;
                 totalRaise += elevationValue * meter * 1.5f;
                 //totalRaise += (mountainValue) * meter * 15f * elevationValue;
