@@ -19,7 +19,7 @@ public class ChunkGenerator : MonoBehaviour
     public static int HumidityMapScale = 300;
     public static float meter = 1f / ElevationAmplitude;
     public static float FlatLevel = .85f;
-    public static float SeaLevel = .848f;
+    public static float SeaLevel = .8495f;
     public static float SnowLevel = .87f;
     //public static float SnowLevel = float.MaxValue;
     public static float GrassNormal = .9f;
@@ -358,7 +358,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // lock humidity
                 //humidityValue = 0f;
-                humidityValue = .99f;
+                //humidityValue = .99f;
                 // -------------------------------------------------------
 
 
@@ -411,7 +411,7 @@ public class ChunkGenerator : MonoBehaviour
                     freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
 
                     // give rivers character
-                    float character = 0f;
+                    float character = .5f;
                     rough = Mathf.PerlinNoise((x + xOffset + .01f) / 100f, (z + zOffset + .01f) / 100f);
                     freshWaterValue += Mathf.Max(0f, rough) * character;
 
@@ -427,15 +427,21 @@ public class ChunkGenerator : MonoBehaviour
 
     
                     // give rivers roughness
-                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 3f, (z + zOffset + .01f) / 3f) * 2f - 1f;
-                    //freshWaterValue += rough * .025f;
+                    float roughValue, roughElev;
+                    roughValue = roughElev = Mathf.PerlinNoise((x + xOffset + .01f) / 3f, (z + zOffset + .01f) / 3f);
+                    roughValue = roughValue * 2f - 1f;
+                    roughElev *= -1f;
 
-                    freshWaterElev = Mathf.Pow(freshWaterValue, Mathf.Lerp(20f, 30f, riverWidthFactor));
-                    freshWaterElev = Mathf.InverseLerp(0f, .4f, freshWaterElev);
 
-                    freshWaterValue += rough * .01f;
-                    freshWaterValue = Mathf.Pow(freshWaterValue, Mathf.Lerp(250f, 500f, riverWidthFactor));
-                    //Debug.Log(freshWaterValue);
+                    freshWaterElev = Mathf.Pow(freshWaterValue, Mathf.Lerp(5f, 10f, riverWidthFactor));
+                    freshWaterElev = Mathf.InverseLerp(0f, .7f, freshWaterElev);
+                    freshWaterElev += roughElev * .07f;
+                    freshWaterElev = Mathf.Clamp01(freshWaterElev);
+                    
+
+                    freshWaterValue += roughValue * .01f;
+                    freshWaterValue = Mathf.Pow(freshWaterValue, Mathf.Lerp(100f, 200f, riverWidthFactor));
+                    //Debug.Log(freshWaterValue)
 
                     //freshWaterValue = Posterize(0f, 1f, freshWaterValue, 4);
 
