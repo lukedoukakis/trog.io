@@ -24,8 +24,9 @@ public class CameraController : MonoBehaviour
     public bool lockVerticalCameraMovement;
     public float lockVerticalCameraMovement_verticality;
     public IEnumerator smoothZoomCoroutine;
+    public float distanceFromPlayer;
     
-    public static CameraController current;
+    public static CameraController instance;
 
     public Vector3 defaultCameraOffset;
 
@@ -45,7 +46,7 @@ public class CameraController : MonoBehaviour
     bool targetOffsetReached;
 
     void Awake(){
-        current = this;
+        instance = this;
         //renderPipelineAsset = GetComponent<UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset>();
         SetBakedCameraDistance(CAMERA_DISTANCE_OUTSIDECAMP);
         SetLockVerticalCameraMovement(false, CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
@@ -215,8 +216,10 @@ public class CameraController : MonoBehaviour
     {
 
         if(playerT != null){
-            AdjustCamera(GameManager.cameraMode);
+            AdjustCamera(GameManager.GAME_SETTINGS_CAMERA_MODE);
         }
+
+        distanceFromPlayer = Vector3.Distance(Camera.main.transform.position, playerT.position);
 
         //UpdateRenderScale();
         

@@ -11,14 +11,16 @@ public class EntityHandle : EntityComponent
     public bool selected;
     public bool tooltip;
     public bool localP;
+    public EntityHealthDisplayController entityHealthDisplayController;
 
 
 
     protected override void Awake()
     {
         this.fieldName = "entityHandle";
-
         base.Awake();
+        entityHealthDisplayController = GetComponentInChildren<EntityHealthDisplayController>();
+
     }
 
     public override void OnStartLocalPlayer()
@@ -38,8 +40,8 @@ public class EntityHandle : EntityComponent
         GameManager.instance.SetLocalPlayer(this.gameObject);
         Testing.instance.playerHandle = this.gameObject.GetComponent<EntityHandle>();
         ChunkGenerator.instance.playerT = transform;
-        CameraController.current.enabled = true;
-        CameraController.current.Init(this.transform);
+        CameraController.instance.enabled = true;
+        CameraController.instance.Init(this.transform);
         
 
         // init player specific entity settings
@@ -93,6 +95,8 @@ public class EntityHandle : EntityComponent
         GlobalSelectionController.current.OnEntityMouseExit(this);
     }
 
+    
+
 
 
 
@@ -100,7 +104,7 @@ public class EntityHandle : EntityComponent
     // Update is called once per frame
     void Update()
     {
-        
+        entityHealthDisplayController.UpdateDisplay(this);
     }
     
 }

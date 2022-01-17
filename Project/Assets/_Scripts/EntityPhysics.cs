@@ -1237,7 +1237,7 @@ public class EntityPhysics : EntityComponent
         }
     }
 
-    void OnWeaponAttack(Transform target)
+    void OnWeaponAttack(Transform guaranteedHitTarget)
     {
         Item weapon = entityItems.weaponEquipped_item;
 
@@ -1249,29 +1249,46 @@ public class EntityPhysics : EntityComponent
         if (weaponChargeTime == 0f)
         {
             OnWeaponChargeBegin(weapon, ranged);
+            StartWeaponAttackAnimation(charging, weapon, ranged);
         }
         else
         {
-            OnWeaponRelease(weapon, ranged);
+            if(weaponChargeTime > .5f)
+            {
+                OnWeaponRelease(weapon, ranged, guaranteedHitTarget);
+                StartWeaponAttackAnimation(charging, weapon, ranged);
+            }
         }
 
-        StartWeaponAttackAnimation(charging, weapon, ranged);
+
 
     }
     void OnWeaponChargeBegin(Item weapon, bool ranged)
     {
         weaponCharging = true;
         weaponChargeAmount = .001f;
-        entityOrientation.SetBodyRotationMode(BodyRotationMode.Target, null);
+        //entityOrientation.SetBodyRotationMode(BodyRotationMode.Target, null);
     }
-    void OnWeaponRelease(Item weapon, bool ranged)
+    void OnWeaponRelease(Item weapon, bool ranged, Transform guaranteedHitTarget)
     {
         weaponCharging = false;
         weaponChargeAmount = Mathf.InverseLerp(0f, WEAPON_CHARGETIME_MAX, weaponChargeTime);
         weaponChargeTime = 0f;
         if (!ranged)
         {
-            BeginMeleeAttackHitTime();
+            if(guaranteedHitTarget != null)
+            {
+                Collider col = guaranteedHitTarget.GetComponentInChildren<Collider>();
+                if (col == null){ col = guaranteedHitTarget.GetComponentInParent<Collider>(); }
+
+                OnAttackHit(col, guaranteedHitTarget.position, null);
+            }
+            else
+            {
+                BeginMeleeAttackHitTime();
+            }
+
+
             // Vector3 lungeDir = IsMoving() ? velHoriz_this : transform.forward;
             // Lunge(lungeDir);
         }
@@ -1412,7 +1429,7 @@ public class EntityPhysics : EntityComponent
         {
             if(hitObjectStats != null)
             {
-                if(hitObjectStats.hp > 0)
+                if(hitObjectStats.health > 0)
                 {
                     ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Chase, hitObject, Vector3.zero, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, InterruptionTier.Anything, true, null, entityBehavior.entityActionSequence_AssertStanding, null);
                     entityInfo.faction.SendPartyCommand(ap);
@@ -1478,6 +1495,7 @@ public class EntityPhysics : EntityComponent
         Destroy(j);
         entityItems.ToggleItemOrientationUpdate(true);
     }
+
 
     public void OnWeaponHitRemove()
     {
@@ -1810,8 +1828,8 @@ public class EntityPhysics : EntityComponent
         }
         if(isLocalPlayer)
         {
-            CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_INSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION);
-            CameraController.current.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_INSIDECAMP);
+            CameraController.instance.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_INSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION);
+            CameraController.instance.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_INSIDECAMP);
         }
         // todo: command tribe memebrs to line up to orientations
     }
@@ -1826,8 +1844,8 @@ public class EntityPhysics : EntityComponent
         }
         if(isLocalPlayer)
         {
-            CameraController.current.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_OUTSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION * .25f);
-            CameraController.current.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
+            CameraController.instance.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_OUTSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION * .25f);
+            CameraController.instance.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
         }
         // todo: command tribe memebrs to follow
     }

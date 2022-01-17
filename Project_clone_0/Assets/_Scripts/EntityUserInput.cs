@@ -11,6 +11,13 @@ public class EntityUserInput : EntityComponent
     public static float DISTANCE_INTERACTABLE = 2f;
     public static float DODGE_INPUT_TIMESTEP = .2f;
 
+
+    static float AUTO_SENSE_DISTANCE_FEATURE = 1f;
+    static float AUTO_SENSE_DISTANCE_CREATURE = 5f;
+    static float AUTO_ATTACK_DISTANCE_FEATURE = 1f;
+    static float AUTO_ATTACK_DISTANCE_CREATURE = 5f;
+
+
     public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressWalk, pressDodge;
     public bool pressForwardDown, pressBackDown, pressLeftDown, pressRightDown;
     public float timeOffForward, timeOffBack, timeOffLeft, timeOffRight;
@@ -27,6 +34,10 @@ public class EntityUserInput : EntityComponent
 
 
 
+    List<GameObject> nearbyFeatures, attackDistanceFeatures;
+    List<EntityHandle> nearbyCreatures, nearbyDangerousCreatures, attackDistanceCreatures;
+
+
     public Vector3 move;
 
     protected override void Awake()
@@ -37,6 +48,7 @@ public class EntityUserInput : EntityComponent
         base.Awake();
 
         selectionOrigin = Utility.FindDeepChild(transform, "SelectionOrigin");
+
     }
 
 
@@ -53,10 +65,10 @@ public class EntityUserInput : EntityComponent
         float sensitivity = 3f;
         float smoothing = 100f * Time.deltaTime;
 
-        if(GameManager.cameraMode == 0){
+        if(GameManager.GAME_SETTINGS_CAMERA_MODE == 0){
             
         }
-        else if(GameManager.cameraMode == 1){
+        else if(GameManager.GAME_SETTINGS_CAMERA_MODE == 1){
 
             float deltaY = Input.GetAxis("Mouse X") * sensitivity * smoothing;
             mouseY = Mathf.Clamp(Mathf.Lerp(mouseY, deltaY, 1f / smoothing), mouseY - 2f, mouseY + 2f);
@@ -181,9 +193,9 @@ public class EntityUserInput : EntityComponent
         ApplyMouseInput();
     }
 
-    void HandleAttack(){
+    void HandleManualAttack(){
         if(Input.GetKeyDown(KeyCode.Mouse0)){
-            if(entityItems.weaponEquipped_item != null || true)
+            if(entityItems.weaponEquipped_item != null)
             {
                 entityPhysics.Attack(AttackType.Weapon, null);
             }
@@ -199,6 +211,64 @@ public class EntityUserInput : EntityComponent
                 entityPhysics.Attack(AttackType.Weapon, null);
             }
         }
+    }
+
+    void HandleAutoAttack()
+    {
+        Transform targetAutoAttackTransform = GetAutoAttackTransform();
+        if(targetAutoAttackTransform != null)
+        {
+            entityOrientation.SetBodyRotationMode(BodyRotationMode.Target, targetAutoAttackTransform);
+            if(entityItems.weaponEquipped_item != null)
+            {
+                entityPhysics.Attack(AttackType.Weapon, targetAutoAttackTransform);
+            }
+            //Debug.Log(targetAutoAttackTransform.name);
+        }
+        else
+        {
+            entityOrientation.SetBodyRotationMode(BodyRotationMode.Normal, null);
+        }
+    }
+
+
+    Transform GetAutoAttackTransform()
+    {
+
+        if(nearbyCreatures.Count > 0)
+        {
+            if(nearbyDangerousCreatures.Count > 0)
+            {
+                return nearbyDangerousCreatures.OrderBy(entityHandle => Vector3.Distance(transform.position, entityHandle.transform.position)).ToList()[0].transform;
+            }
+
+            if(attackDistanceCreatures.Count > 0)
+            {
+                return attackDistanceCreatures.OrderBy(entityHandle => Vector3.Distance(transform.position, entityHandle.transform.position)).ToList()[0].transform;
+            }
+        }
+
+        if(attackDistanceFeatures.Count > 0)
+        {
+            return attackDistanceFeatures.OrderBy(worldObject => Vector3.Distance(transform.position, worldObject.transform.position)).ToList()[0].transform;
+        }
+
+        return null;
+    }
+
+    void UpdateAutoSense()
+    {
+
+        // features
+        nearbyFeatures = Utility.SenseSurroundingFeatures(transform.position, null, AUTO_SENSE_DISTANCE_FEATURE);
+        attackDistanceFeatures = nearbyFeatures.Where(gameObject => Vector3.Distance(transform.position, gameObject.transform.position) < AUTO_ATTACK_DISTANCE_FEATURE).ToList();
+
+        // creatures
+        nearbyCreatures = Utility.SenseSurroundingCreatures(transform.position, Species.Any, AUTO_SENSE_DISTANCE_FEATURE);
+        nearbyCreatures.Remove(entityHandle);
+        nearbyDangerousCreatures = nearbyCreatures.Where(entityHandle => entityHandle.entityInfo.speciesInfo.behaviorProfile.behaviorType.Equals(BehaviorType.Aggressive) || entityHandle.entityInfo.speciesInfo.behaviorProfile.behaviorType.Equals(BehaviorType.Steadfast)).ToList();
+        attackDistanceCreatures = nearbyCreatures.Where(entityHandle => Vector3.Distance(transform.position, entityHandle.transform.position) < AUTO_ATTACK_DISTANCE_CREATURE).ToList();
+
     }
 
 
@@ -538,6 +608,7 @@ public class EntityUserInput : EntityComponent
     }
 
 
+
     void Update(){
 
         if(isLocalPlayer){
@@ -545,7 +616,15 @@ public class EntityUserInput : EntityComponent
             if(!UIController.UImode){
                 HandleRotation();
             }
-            HandleAttack();
+            if(GameManager.GAME_SETTINGS_AUTO_ATTACK)
+            {
+                HandleAutoAttack();
+            }
+            else
+            {
+                HandleManualAttack();
+            }
+        
             CheckInteraction();
 
 
@@ -559,11 +638,17 @@ public class EntityUserInput : EntityComponent
 
     }
 
+
+
     void FixedUpdate()
     {
         entityPhysics.moveDir = move;
 
         UpdateHoveredInteractable();
+        if(GameManager.GAME_SETTINGS_AUTO_ATTACK)
+        {
+            UpdateAutoSense();
+        }
     }
 
 

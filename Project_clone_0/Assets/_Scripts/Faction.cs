@@ -425,6 +425,7 @@ public class Faction : MonoBehaviour
     public void PackUp()
     {
         camp.Dismantle();
+        UpdateLeaderCampStatus();
     }
 
     public void DestroyFaction()

@@ -322,6 +322,56 @@ public class Utility : MonoBehaviour
         }
     }
 
+    public static List<EntityHandle> SenseSurroundingCreatures(Vector3 position, Species targetSpecies, float distance){
+
+        Collider[] colliders = Physics.OverlapSphere(position, distance, LayerMaskController.CREATURE);
+        //Debug.Log("sense distance: " + distance + "... creatures found: " + colliders.Length);
+
+        List<EntityHandle> foundHandles = new List<EntityHandle>();
+        GameObject o;
+        EntityHandle foundHandle;
+        foreach(Collider col in colliders)
+        {
+            o = col.gameObject;
+            foundHandle = o.GetComponentInParent<EntityHandle>();
+            if(foundHandle != null)
+            {
+                if(!foundHandles.Contains(foundHandle))
+                {
+                    if ((targetSpecies.Equals(Species.Any) || targetSpecies.Equals(foundHandle.entityInfo.species)))
+                    {
+                        foundHandles.Add(foundHandle);
+                    }
+                }
+            }
+        }
+        
+        return foundHandles;
+    }
+
+
+    public static List<GameObject> SenseSurroundingFeatures(Vector3 position, string featureName, float distance)
+    {
+        Collider[] colliders = Physics.OverlapSphere(position, distance, LayerMaskController.FEATURE);
+        //Debug.Log("sense distance: " + distance + "... creatures found: " + colliders.Length);
+
+        List<GameObject> foundGameObjects = new List<GameObject>();
+        GameObject o;
+        foreach(Collider col in colliders)
+        {
+            o = col.gameObject;
+            if (!foundGameObjects.Contains(o))
+            {
+                if (featureName == null || featureName == o.name)
+                {
+                    foundGameObjects.Add(o);
+                }
+            }  
+        }
+        return foundGameObjects;
+    }
+
+
 
     public static List<T> Shuffle<T>(List<T> list)  
     {

@@ -53,14 +53,26 @@ public class Camp : MonoBehaviour
     // client method to place a Camp
     public static void TryPlaceCamp(Faction faction, Transform originT)
     {
-        if(CanPlaceCamp(faction, originT.position))
+        bool isPlayerCamp = ReferenceEquals(faction.leaderHandle, GameManager.instance.localPlayerHandle);
+        if(CanPlaceCamp(faction, originT.position, isPlayerCamp))
         {
             //faction.leaderHandle.entityItems.EmptyInventory();
-            PlaceCamp(faction, originT);
+            PlaceCamp(faction, originT, isPlayerCamp);
         }
     }
-    public static bool CanPlaceCamp(Faction faction, Vector3 position)
+    public static bool CanPlaceCamp(Faction faction, Vector3 position, bool featuresBlockPlacement)
     {
+
+        if (featuresBlockPlacement)
+        {
+            // check if features in the way
+            if (Physics.OverlapSphere(position, BASE_CAMP_RADIUS, LayerMaskController.CLEAR_ON_CAMP_PLACEMENT, QueryTriggerInteraction.Collide).Length > 0)
+            {
+                Debug.Log("Cannot place camp - features in the way");
+                return false;
+            }
+        }
+
 
         // determine if flat enough
 
@@ -110,8 +122,8 @@ public class Camp : MonoBehaviour
         return canPlace;
 
     }
-    public static Camp PlaceCamp(Faction faction, Transform originT)
-    {        
+    public static Camp PlaceCamp(Faction faction, Transform originT, bool isPlayerCamp)
+    {
 
         Camp camp = GameManager.instance.gameObject.AddComponent<Camp>();
         faction.camp = camp;
@@ -124,6 +136,10 @@ public class Camp : MonoBehaviour
         camp.racks_bone = new List<ObjectRack>();
         camp.racks_stone = new List<ObjectRack>();
         camp.tents = new List<Tent>();
+        if(!isPlayerCamp)
+        {
+            camp.ClearFeaturesFromCampRadius();
+        }
         Vector3 campPlacementPos = originT.position + originT.forward * 2f;
         camp.SetOrigin(campPlacementPos);
         camp.UpdateRadius(faction.memberHandles.Count);
@@ -149,7 +165,7 @@ public class Camp : MonoBehaviour
 
         IEnumerator _PlaceCampComponents()
         {
-            ClearFeaturesFromCampRadius();
+    
             PlaceBorderSphere();
             PlaceBonfire();
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
@@ -258,7 +274,7 @@ public class Camp : MonoBehaviour
 
     public void ClearFeaturesFromCampRadius()
     {
-        Collider[] featureCollidersInsideCamp = Physics.OverlapSphere(origin, radius * 1.5f, LayerMaskController.CLEAR_ON_CAMP_PLACEMENT, QueryTriggerInteraction.Collide);
+        Collider[] featureCollidersInsideCamp = Physics.OverlapSphere(origin, radius, LayerMaskController.CLEAR_ON_CAMP_PLACEMENT, QueryTriggerInteraction.Collide);
         foreach(Collider collider in featureCollidersInsideCamp)
         {
             if(collider != null)

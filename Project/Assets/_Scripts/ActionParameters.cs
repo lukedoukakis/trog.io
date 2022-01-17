@@ -106,7 +106,7 @@ public class ActionParameters : ScriptableObject
                 ap.distanceThreshold = EntityBehavior.DISTANCE_THRESHOLD_SAME_POINT;
                 ap.maxTime = 1f;
                 ap.urgent = false;
-                ap.endCondition = doerHandle.entityBehavior.IsFullyRested;
+                ap.endCondition = doerHandle.entityStats.IsStaminaFull;
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
@@ -118,13 +118,12 @@ public class ActionParameters : ScriptableObject
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
-
             case "Follow Faction Leader" :
 
                 ap.type = ActionType.Follow;
                 ap.targetedWorldObject = doerHandle.entityBehavior.followPositionTransform != null ? doerHandle.entityBehavior.followPositionTransform.gameObject : null;
                 ap.offset = ap.doerHandle.entityBehavior.followOffset;
-                ap.distanceThreshold = 2.5f;
+                ap.distanceThreshold = 8f;
                 ap.maxTime = 1f;
                 ap.urgent = false;
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;

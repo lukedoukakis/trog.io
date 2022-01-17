@@ -14,17 +14,18 @@ public class GameManager : MonoBehaviour
 
 
     // options
-    public static int cameraMode = 1;
-    public static int startingTribeMembers = 2;
+    public static int GAME_SETTINGS_CAMERA_MODE = 1;
+    public static bool GAME_SETTINGS_AUTO_ATTACK = true;
 
 
 
-    void Awake(){
+    void Awake()
+    {
         instance = this;
-
     }
 
-    public void SetLocalPlayer(GameObject o){
+    public void SetLocalPlayer(GameObject o)
+    {
         localPlayer = o;
         localPlayerHandle = o.GetComponent<EntityHandle>();
     }

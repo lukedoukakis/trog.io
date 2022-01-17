@@ -20,7 +20,7 @@ public class EntityStats : EntityComponent
     public static float BASE_AMOUNT_HP = 100;
     public float BASE_AMOUNT_STAMINA = 100;
     public static float hpLossFromHit_base = 8;
-    public float hp, maxHp;
+    public float health, maxHealth;
     public float stamina, maxStamina;
 
 
@@ -68,13 +68,18 @@ public class EntityStats : EntityComponent
 
     public void SetBaseHpAndStamina()
     {
-        maxHp = hp = (BASE_AMOUNT_HP * Stats.GetStatValue(combinedStats, Stats.StatType.Health));
-        maxStamina = stamina = (BASE_AMOUNT_STAMINA * Stats.GetStatValue(combinedStats, Stats.StatType.Stamina));
+        maxHealth = health = (BASE_AMOUNT_HP * Stats.GetStatValue(combinedStats, Stats.StatType.Health));
+        maxStamina = stamina = BASE_AMOUNT_STAMINA;
     }
 
-    public bool IsFullyHealed()
+    public bool IsHealthFull()
     {
-        return hp / maxHp >= 1f;
+        return health >= maxHealth;
+    }
+
+    public bool IsStaminaFull()
+    {
+        return stamina >= maxStamina;
     }
 
 
@@ -186,16 +191,29 @@ public class EntityStats : EntityComponent
 
     }
 
-    public void ApplyHealthIncrement(float hpAmount, EntityHandle entityThatCaused)
+    public void ApplyHealthIncrement(float amount, EntityHandle entityThatCaused)
     {
-        hp += hpAmount;
-        if(hp > maxHp)
+        health += amount;
+        if(health > maxHealth)
         {
-            hp = maxHp;
+            health = maxHealth;
         }
-        else if(hp < 0)
+        else if(health <= 0)
         {
             OnHealthEmptied(entityThatCaused);
+        }
+    }
+
+    public void ApplyStaminaIncrement(float amount)
+    {
+        stamina += amount;
+        if(stamina > maxStamina)
+        {
+            stamina = maxStamina;
+        }
+        else if(stamina < 0)
+        {
+            stamina = 0;
         }
     }
 
@@ -228,7 +246,7 @@ public class EntityStats : EntityComponent
         SpawnDrops(this.transform.position, dropReceiverHandle);
 
         // remove the entity from the world
-        entityHandle.RemoveFromWorld();
+        RemoveFromWorld();
     }
 
 
