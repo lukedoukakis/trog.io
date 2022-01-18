@@ -44,9 +44,7 @@ public class EntityBehavior : EntityComponent
 
     // sensing and movement parameters
     public float timeSince_creatureSense;
-    public float timeSince_attack;
     public static readonly float BASE_TIMESTEP_CREATURESENSE = 1f;
-    public static readonly float BASE_TIMESTEP_ATTACK = 1f;
     public static readonly float SENSE_DISTANCE_OBSTACLE = 3f;
     public static readonly float SENSE_DISTANCE_IMMEDIATE = 1f;
     public static readonly float SENSE_DISTANCE_SEARCH = 150f;
@@ -179,7 +177,7 @@ public class EntityBehavior : EntityComponent
         if (entityInfo.isFactionFollower)
         {
             //Debug.Log("ACTION QUEUE EMPTY");
-            AssertWeaponChargedStatus(false);
+            entityPhysics.AssertWeaponChargedStatus(false);
             EntityHandle factionLeader = entityInfo.faction.leaderHandle;
 
             // if leader is in camp, take action in priority:
@@ -516,7 +514,7 @@ public class EntityBehavior : EntityComponent
         EquipOptimalWeaponForTarget(a);
     
         //Debug.Log("CHASE");
-        AssertWeaponChargedStatus(true);
+        entityPhysics.AssertWeaponChargedStatus(true);
         ActionParameters goToTarget = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, a.targetedWorldObject, Vector3.zero, -1, null, null, a.maxTime, DISTANCE_THRESHOLD_MELEE_ATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, entityActionSequence_AssertStanding, null);
         ActionParameters attackTarget = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Attack, a.targetedWorldObject, Vector3.zero, -1, null, null, -1, -1, BodyRotationMode.Target, InterruptionTier.Nothing, true, null, entityActionSequence_AssertStanding, null);
         InsertAction(attackTarget);
@@ -544,7 +542,7 @@ public class EntityBehavior : EntityComponent
 
             //Debug.Log("ATTACK");
 
-            AssertWeaponChargedStatus(true);
+            entityPhysics.AssertWeaponChargedStatus(true);
 
             // choose attack type
             List<AttackType> attackTypes = behaviorProfile.attackTypes;
@@ -559,13 +557,12 @@ public class EntityBehavior : EntityComponent
             }
 
             move = Vector3.zero;
-            yield return new WaitForSecondsRealtime(CalculateTimeUntilCanAttack());
+            yield return new WaitForSecondsRealtime(entityPhysics.CalculateTimeUntilCanAttack());
 
             if (ap.targetedWorldObject != null)
             {
                 // execute attack
-                entityPhysics.Attack(attackType, ap.targetedWorldObject.transform);
-                timeSince_attack = 0f;
+                entityPhysics.Attack(attackType, ap.targetedWorldObject.transform, .25f);
                 ActionParameters attackRecover = ActionParameters.GenerateActionParameters(entityHandle, ActionType.AttackRecover, ap.targetedWorldObject, Vector3.zero, -1, null, null, -1, -1, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, entityActionSequence_AssertStanding, null);
                 if (ap.targetedWorldObject != null)
                 {
@@ -574,7 +571,7 @@ public class EntityBehavior : EntityComponent
             }
             else
             {
-                AssertWeaponChargedStatus(false);
+                entityPhysics.AssertWeaponChargedStatus(false);
             }
 
             NextAction();
@@ -668,7 +665,7 @@ public class EntityBehavior : EntityComponent
                     InsertAction(newAp);
                 }
 
-                AssertWeaponChargedStatus(true);
+                entityPhysics.AssertWeaponChargedStatus(true);
 
                 NextAction();
                 yield return null;
@@ -676,7 +673,7 @@ public class EntityBehavior : EntityComponent
             }
             else{
                 //Debug.Log("target is null");
-                AssertWeaponChargedStatus(false);
+                entityPhysics.AssertWeaponChargedStatus(false);
                 ClearActionQueue();
                 NextAction();
             }
@@ -1067,20 +1064,6 @@ public class EntityBehavior : EntityComponent
 
     }
 
-    public void AssertWeaponChargedStatus(bool targetChargedValue)
-    {
-        if (entityItems != null)
-        {
-            if (entityItems.weaponEquipped_item != null)
-            {
-                if(entityPhysics.weaponCharging != targetChargedValue)
-                {
-                    entityPhysics.Attack(AttackType.Weapon, null);
-                    timeSince_attack = 0f;
-                }
-            }
-        }
-    }
 
     public void OnRestFrame()
     {
@@ -1142,16 +1125,6 @@ public class EntityBehavior : EntityComponent
 
     public float CalculateFleeTime(){
         return BASE_TIME_FLEE * entityStats.combinedStats.stamina;
-    }
-
-    public float CalculateAttackCooldownTime()
-    {
-        return BASE_TIMESTEP_ATTACK * entityStats.combinedStats.attackSpeed;
-    }
-
-    public float CalculateTimeUntilCanAttack()
-    {
-        return CalculateAttackCooldownTime() - timeSince_attack;
     }
 
     bool WithinActiveDistance(){
@@ -1334,7 +1307,6 @@ public class EntityBehavior : EntityComponent
         }
 
         timeSince_creatureSense += Time.deltaTime;
-        timeSince_attack += Time.deltaTime;
 
 
         

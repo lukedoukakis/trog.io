@@ -95,7 +95,7 @@ public class AttackCollisionDetector : MonoBehaviour
 
                     if (dealDamageMask == (dealDamageMask | (1 << otherObject.layer)))
                     {
-                        ownerHandle.entityPhysics.OnAttackHit(otherCollider, thisCollider.bounds.center, projectile);
+                        ownerHandle.entityPhysics.OnAttackHit(otherCollider, thisCollider.bounds.center, projectile, 0f);
                     }
                     
                     if(projectile != null)

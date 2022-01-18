@@ -6,6 +6,7 @@ public class EntityHitDetection : EntityComponent
 {
     
     [SerializeField] public Species species;
+    public bool isInitialized;
 
 
     protected override void Awake()
@@ -15,20 +16,31 @@ public class EntityHitDetection : EntityComponent
         base.Awake();
     }
 
-    public void OnHit(EntityHandle attackerHandle, Vector3 hitPoint, Projectile projectile, bool instantKill){
 
+    void Init()
+    {
         // add and set up info and stats if they don't exist
-        if(entityInfo == null){
-            entityInfo = gameObject.AddComponent<EntityInfo>();
-            entityInfo.species = species;
-            entityInfo.Init();
-            entityStats = gameObject.AddComponent<EntityStats>();
-            //entityStats.FindAndSetEntityReferences();
+        entityInfo = gameObject.AddComponent<EntityInfo>();
+        entityInfo.species = species;
+        entityInfo.Init();
+        entityStats = gameObject.AddComponent<EntityStats>();
+        //entityStats.FindAndSetEntityReferences();
+    }
+
+    public void OnHit(EntityHandle attackerHandle, Vector3 hitPoint, Projectile projectile, bool instantKill)
+    {
+
+        if(!isInitialized)
+        {
+            Init();
         }
 
-
+        
         // take damage from the hit
-        entityStats.TakeDamage(attackerHandle, projectile, instantKill);
+        if(entityStats != null)
+        {
+            entityStats.TakeDamage(attackerHandle, projectile, instantKill);
+        }
 
         // play particles
         GameObject particlesPrefab = SpeciesInfo.GetSpeciesInfo(species).onHitParticlesPrefab;

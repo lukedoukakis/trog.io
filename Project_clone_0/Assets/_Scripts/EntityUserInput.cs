@@ -197,18 +197,12 @@ public class EntityUserInput : EntityComponent
         if(Input.GetKeyDown(KeyCode.Mouse0)){
             if(entityItems.weaponEquipped_item != null)
             {
-                entityPhysics.Attack(AttackType.Weapon, null);
+                entityPhysics.TryAttack(AttackType.Weapon, null, 0f);
             }
             else
             {
                 List<AttackType> nonWeaponAttacks = entityInfo.speciesInfo.behaviorProfile.attackTypes.Where(attackType => !attackType.Equals(AttackType.Weapon)).ToList();
-                entityPhysics.Attack(nonWeaponAttacks[UnityEngine.Random.Range(0, nonWeaponAttacks.Count)], null);
-            }
-        }
-        else if(Input.GetKeyUp(KeyCode.Mouse0)){
-            if(entityItems.weaponEquipped_item != null || true)
-            {
-                entityPhysics.Attack(AttackType.Weapon, null);
+                entityPhysics.TryAttack(nonWeaponAttacks[UnityEngine.Random.Range(0, nonWeaponAttacks.Count)], null, 0f);
             }
         }
     }
@@ -221,7 +215,8 @@ public class EntityUserInput : EntityComponent
             entityOrientation.SetBodyRotationMode(BodyRotationMode.Target, targetAutoAttackTransform);
             if(entityItems.weaponEquipped_item != null)
             {
-                entityPhysics.Attack(AttackType.Weapon, targetAutoAttackTransform);
+                entityPhysics.TryAttack(AttackType.Weapon, targetAutoAttackTransform, .25f);
+                //entityPhysics.TryAttack(AttackType.Weapon, null);
             }
             //Debug.Log(targetAutoAttackTransform.name);
         }
@@ -259,13 +254,53 @@ public class EntityUserInput : EntityComponent
     void UpdateAutoSense()
     {
 
-        // features
-        nearbyFeatures = Utility.SenseSurroundingFeatures(transform.position, null, AUTO_SENSE_DISTANCE_FEATURE);
-        attackDistanceFeatures = nearbyFeatures.Where(gameObject => Vector3.Distance(transform.position, gameObject.transform.position) < AUTO_ATTACK_DISTANCE_FEATURE).ToList();
+        if(entityItems != null && entityItems.weaponEquipped_item != null)
+        {
+            // get nearby features
+            nearbyFeatures = Utility.SenseSurroundingFeatures(transform.position, null, AUTO_SENSE_DISTANCE_FEATURE);
 
-        // creatures
+            // remove features where calculated damage from currently equipped weapon would be nearly zero
+            foreach(GameObject feature in nearbyFeatures)
+            {
+                ItemHitDetection ihd = feature.GetComponentInParent<ItemHitDetection>();
+                if(ihd != null)
+                {
+                    if(!ihd.isInitialized)
+                    {
+                        ihd.Init();
+                    }
+                    if(ihd.stats == null)
+                    {
+                        Debug.Log("STATS NULL");
+                    }
+                    if(Stats.CalculateDamage(ihd.stats, entityStats, entityItems.weaponEquipped_item) < .01f)
+                    {
+                        nearbyFeatures.Remove(feature);
+                    }
+                }
+                else
+                {
+                    nearbyFeatures.Remove(feature);
+                }
+            }
+
+            // set attack distance features from nearby features within range
+            attackDistanceFeatures = nearbyFeatures.Where(gameObject => Vector3.Distance(transform.position, gameObject.transform.position) < AUTO_ATTACK_DISTANCE_FEATURE).ToList(); 
+        }
+        else
+        {
+            nearbyFeatures = new List<GameObject>();
+            attackDistanceFeatures = new List<GameObject>();
+        }
+
+
+        // get nearby creatures
         nearbyCreatures = Utility.SenseSurroundingCreatures(transform.position, Species.Any, AUTO_SENSE_DISTANCE_FEATURE).Where(entityHandle => !ReferenceEquals(entityHandle.entityInfo.faction, entityInfo.faction)).ToList();
+        
+        // set nearby dangerous creatures from nearby creatures who have certain behavior type
         nearbyDangerousCreatures = nearbyCreatures.Where(entityHandle => entityHandle.entityInfo.speciesInfo.behaviorProfile.behaviorType.Equals(BehaviorType.Aggressive) || entityHandle.entityInfo.speciesInfo.behaviorProfile.behaviorType.Equals(BehaviorType.Steadfast)).ToList();
+        
+        // set attack distance creatures from nearby creatures within range
         attackDistanceCreatures = nearbyCreatures.Where(entityHandle => Vector3.Distance(transform.position, entityHandle.transform.position) < AUTO_ATTACK_DISTANCE_CREATURE).ToList();
 
     }

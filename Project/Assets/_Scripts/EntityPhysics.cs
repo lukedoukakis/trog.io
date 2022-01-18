@@ -34,6 +34,7 @@ public class EntityPhysics : EntityComponent
     public static float BASE_ACCELERATION = 40f;
     public static float BASE_MAX_SPEED = 25f;
     public static float BASE_COOLDOWN_JUMP = .15f;
+    public static float BASE_TIMESTEP_ATTACK = 1f;
     public static float WEAPON_CHARGETIME_MAX = .25f;
     public static float WEAPON_HITTIME_MAX = .25f;
     public static float BASE_COOLDOWN_DODGE = .5f;
@@ -106,6 +107,7 @@ public class EntityPhysics : EntityComponent
     public float weaponChargeAmount;
     float attackHitTime;
     public bool attackCanHit;
+    public float timeSince_attack;
     public bool attackHit;
     public float dodgeTime;
 
@@ -1213,52 +1215,73 @@ public class EntityPhysics : EntityComponent
 
     }
 
+    public void AssertWeaponChargedStatus(bool targetChargedValue)
+    {
+        if (entityItems != null)
+        {
+            if (entityItems.weaponEquipped_item != null)
+            {
+                if(entityPhysics.weaponCharging != targetChargedValue)
+                {
+                    entityPhysics.Attack(AttackType.Weapon, null, 0f);
+                    timeSince_attack = 0f;
+                }
+            }
+        }
+    }
 
-    public void Attack(AttackType attackType, Transform target)
+
+    public void TryAttack(AttackType attackType, Transform guaranteedHitTarget, float guaranteedHitTargetDelay)
+    {
+        if(CalculateTimeUntilCanAttack() <= 0f)
+        {
+            Attack(attackType, guaranteedHitTarget, guaranteedHitTargetDelay);
+        }
+    }
+
+    public void Attack(AttackType attackType, Transform guaranteedHitTarget, float guaranteedHitTargetDelay)
     {
 
         switch (attackType)
         {
             case (AttackType.Weapon):
-                OnWeaponAttack(target);
+                OnWeaponAttack(guaranteedHitTarget, guaranteedHitTargetDelay);
                 break;
             case (AttackType.Bite):
-                AttackBite(target);
+                AttackBite(guaranteedHitTarget);
                 break;
             case (AttackType.Swipe):
-                AttackSwipe(target);
+                AttackSwipe(guaranteedHitTarget);
                 break;
             case (AttackType.HeadButt):
-                AttackHeadButt(target);
+                AttackHeadButt(guaranteedHitTarget);
                 break;
             case (AttackType.Stomp):
-                AttackStomp(target);
+                AttackStomp(guaranteedHitTarget);
                 break;
         }
+
     }
 
-    void OnWeaponAttack(Transform guaranteedHitTarget)
+    void OnWeaponAttack(Transform guaranteedHitTarget, float guaranteedHitTargetDelay)
     {
         Item weapon = entityItems.weaponEquipped_item;
 
         if(weapon == null){ return; }
 
         bool ranged = entityItems.rangedMode;
-        bool charging = weaponChargeTime == 0f;
-
-        if (weaponChargeTime == 0f)
+        bool charge = (weaponChargeTime <= 0f);
+        if (weaponChargeTime <= 0f)
         {
             OnWeaponChargeBegin(weapon, ranged);
-            StartWeaponAttackAnimation(charging, weapon, ranged);
         }
         else
         {
-            if(weaponChargeTime > .5f)
-            {
-                OnWeaponRelease(weapon, ranged, guaranteedHitTarget);
-                StartWeaponAttackAnimation(charging, weapon, ranged);
-            }
+            OnWeaponRelease(weapon, ranged, guaranteedHitTarget, guaranteedHitTargetDelay);
+            timeSince_attack = 0f;
+            //AssertWeaponChargedStatus(false);
         }
+        StartWeaponAttackAnimation(charge, weapon, ranged);
 
 
 
@@ -1269,7 +1292,7 @@ public class EntityPhysics : EntityComponent
         weaponChargeAmount = .001f;
         //entityOrientation.SetBodyRotationMode(BodyRotationMode.Target, null);
     }
-    void OnWeaponRelease(Item weapon, bool ranged, Transform guaranteedHitTarget)
+    void OnWeaponRelease(Item weapon, bool ranged, Transform guaranteedHitTarget, float guaranteedHitTargetDelay)
     {
         weaponCharging = false;
         weaponChargeAmount = Mathf.InverseLerp(0f, WEAPON_CHARGETIME_MAX, weaponChargeTime);
@@ -1281,7 +1304,7 @@ public class EntityPhysics : EntityComponent
                 Collider col = guaranteedHitTarget.GetComponentInChildren<Collider>();
                 if (col == null){ col = guaranteedHitTarget.GetComponentInParent<Collider>(); }
 
-                OnAttackHit(col, guaranteedHitTarget.position, null);
+                StartCoroutine(OnAttackHit(col, guaranteedHitTarget.position, null, .25f));
             }
             else
             {
@@ -1292,11 +1315,15 @@ public class EntityPhysics : EntityComponent
             // Vector3 lungeDir = IsMoving() ? velHoriz_this : transform.forward;
             // Lunge(lungeDir);
         }
-        if (weapon.holdStyle.Equals(Item.ItemHoldStyle.Spear) && ranged)
+        else
         {
-            // if ranged mode and using spear, launch the weapon
-            ThrowWeapon(true);
+            if (weapon.holdStyle.Equals(Item.ItemHoldStyle.Spear))
+            {
+                // if ranged mode and using spear, launch the weapon
+                ThrowWeapon(true);
+            }
         }
+    
     }
 
     void StartWeaponAttackAnimation(bool charging, Item weapon, bool ranged)
@@ -1387,7 +1414,7 @@ public class EntityPhysics : EntityComponent
             }
         }
     }
-    public void OnAttackHit(Collider collider, Vector3 hitPoint, Projectile projectile)
+    public IEnumerator OnAttackHit(Collider collider, Vector3 hitPoint, Projectile projectile, float delay)
     {
         GameObject hitObject = collider.gameObject;
         EntityStats hitObjectStats = null;
@@ -1398,6 +1425,7 @@ public class EntityPhysics : EntityComponent
             EntityHitDetection ehd = collider.gameObject.GetComponentInParent<EntityHitDetection>();
             if(ehd != null)
             {
+                yield return new WaitForSecondsRealtime(delay);
                 ehd.OnHit(this.entityHandle, hitPoint, projectile, false);
                 hitObjectStats = ehd.entityStats;
             }
@@ -1406,6 +1434,7 @@ public class EntityPhysics : EntityComponent
                 ItemHitDetection ihd = collider.gameObject.GetComponentInParent<ItemHitDetection>();
                 if (ihd != null)
                 {
+                    yield return new WaitForSecondsRealtime(delay);
                     ihd.OnHit(this.entityHandle, hitPoint, projectile);
                     hitObjectStats = ihd.stats;
                 }
@@ -1437,10 +1466,10 @@ public class EntityPhysics : EntityComponent
             }
         }
 
-
-
-
+        yield return null;
     }
+
+
     IEnumerator FixWeaponPosition(GameObject weapon, Transform targetT, float time)
     {
 
@@ -1505,6 +1534,7 @@ public class EntityPhysics : EntityComponent
     void AttackBite(Transform target)
     {
         // todo: bite attack
+        timeSince_attack = 0f;
     }
 
     void AttackSwipe(Transform target)
@@ -1515,6 +1545,7 @@ public class EntityPhysics : EntityComponent
         IEnumerator _AttackSwipe()
         {
             BeginMeleeAttackHitTime();
+            timeSince_attack = 0f;
             Vector3 lungeDirection = target != null ? target.position - transform.position : velHoriz_this;
             Lunge(Utility.GetHorizontalVector(lungeDirection));
             iKTargetAnimator.enabled = true;
@@ -1529,11 +1560,13 @@ public class EntityPhysics : EntityComponent
     void AttackHeadButt(Transform target)
     {
         // todo: head butt attack
+        timeSince_attack = 0f;
     }
 
     void AttackStomp(Transform target)
     {
         // todo: stomp attack
+        timeSince_attack = 0f;
     }
 
 
@@ -1744,6 +1777,49 @@ public class EntityPhysics : EntityComponent
         return Physics.OverlapSphere(groundSense.position, .5f, LayerMaskController.WALKABLE).Length > 0;
     }
 
+    public void OnCampBorderEnter()
+    {
+        //Debug.Log("OnCampBorderCross()");
+        isInsideCamp = true;
+        entityItems.EmptyInventory();
+        if(entityInfo.isFactionLeader)
+        {
+            entityInfo.faction.UpdateLeaderCampStatus();
+        }
+        if(isLocalPlayer)
+        {
+            CameraController.instance.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_INSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION);
+            CameraController.instance.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_INSIDECAMP);
+        }
+        // todo: command tribe memebrs to line up to orientations
+    }
+
+    public void OnCampBorderExit()
+    {
+        //Debug.Log("OnCampBorderCross()");
+        isInsideCamp = false;
+        if(entityInfo.isFactionLeader)
+        {
+            entityInfo.faction.UpdateLeaderCampStatus();
+        }
+        if(isLocalPlayer)
+        {
+            CameraController.instance.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_OUTSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION * .25f);
+            CameraController.instance.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
+        }
+        // todo: command tribe memebrs to follow
+    }
+
+    public float CalculateAttackCooldownTime()
+    {
+        return BASE_TIMESTEP_ATTACK * entityStats.combinedStats.attackSpeed;
+    }
+
+    public float CalculateTimeUntilCanAttack()
+    {
+        return CalculateAttackCooldownTime() - timeSince_attack;
+    }
+
 
     void FixedUpdate()
     {
@@ -1781,6 +1857,7 @@ public class EntityPhysics : EntityComponent
         offWaterTime += dTime;
         dodgeTime += dTime;
         groundTime = isGrounded ? groundTime += dTime : 0;
+        timeSince_attack += Time.deltaTime;
 
         if (Input.GetKeyUp(KeyCode.P))
         {
@@ -1815,39 +1892,6 @@ public class EntityPhysics : EntityComponent
         // }
 
 
-    }
-
-    public void OnCampBorderEnter()
-    {
-        //Debug.Log("OnCampBorderCross()");
-        isInsideCamp = true;
-        entityItems.EmptyInventory();
-        if(entityInfo.isFactionLeader)
-        {
-            entityInfo.faction.UpdateLeaderCampStatus();
-        }
-        if(isLocalPlayer)
-        {
-            CameraController.instance.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_INSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION);
-            CameraController.instance.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_INSIDECAMP);
-        }
-        // todo: command tribe memebrs to line up to orientations
-    }
-
-    public void OnCampBorderExit()
-    {
-        //Debug.Log("OnCampBorderCross()");
-        isInsideCamp = false;
-        if(entityInfo.isFactionLeader)
-        {
-            entityInfo.faction.UpdateLeaderCampStatus();
-        }
-        if(isLocalPlayer)
-        {
-            CameraController.instance.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_OUTSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION * .25f);
-            CameraController.instance.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
-        }
-        // todo: command tribe memebrs to follow
     }
 
 

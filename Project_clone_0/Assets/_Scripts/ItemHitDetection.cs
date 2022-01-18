@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,27 +11,43 @@ public class ItemHitDetection : MonoBehaviour
     public Item item;
     public EntityStats stats;
 
+    public bool isInitialized;
 
 
-    void Awake(){
+
+    void Awake()
+    {
         item = Item.GetItemByName(itemNme);
     }
 
-    public void OnHit(EntityHandle attackerHandle, Vector3 hitPoint, Projectile projectile){
 
+    public void Init()
+    {
         // add and set up info and stats if they don't exist
-        if(stats == null){
-            stats = gameObject.AddComponent<EntityStats>();
-            stats.SetStatsSlot(StatsSlot.Base, item.baseStats);
-            stats.SetBaseHpAndStamina();
-            stats.drops = item.drops;
-            //Debug.Log("Item: " + item.nme);
-            //Debug.Log("drops null?: " + item.drops.items == null);
+        stats = gameObject.AddComponent<EntityStats>();
+        stats.SetStatsSlot(StatsSlot.Base, item.baseStats);
+        stats.SetBaseHpAndStamina();
+        stats.drops = item.drops;
+        //Debug.Log("Item: " + item.nme);
+        //Debug.Log("drops null?: " + item.drops.items == null);
+
+        isInitialized = true;
+        
+    }
+
+    public void OnHit(EntityHandle attackerHandle, Vector3 hitPoint, Projectile projectile)
+    {
+
+        if(!isInitialized)
+        {
+            Init();
         }
 
-
         // take damage from the hit
-        stats.TakeDamage(attackerHandle, projectile, false);
+        if(stats != null)
+        {
+            stats.TakeDamage(attackerHandle, projectile, false);
+        }
 
         // play particles
         GameObject particlesPrefab = item.hitParticlesPrefab;
@@ -44,9 +61,14 @@ public class ItemHitDetection : MonoBehaviour
             Utility.DestroyInSeconds(particleObj, 1f);
         }
 
-        // shake
-        Shake();
+        try
+        {
+            // shake
+            Shake();
+        }
+        catch(NullReferenceException){}
 
+        
 
     }
 
