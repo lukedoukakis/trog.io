@@ -82,7 +82,7 @@ public class SpeciesInfo : ScriptableObject{
 
                     }
                 ),
-                Stats.InstantiateStats(1f,1f,1f,.7f,.38f,1f,.5f,1f,1f,1f,1f,1f),
+                Stats.InstantiateStats(1f,1f,1f,.7f,.38f,1f,.7f,1f,1f,1f,1f,1f),
                 IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", true, false, true, 3f, 8f, 2f, .5f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Steadfast,

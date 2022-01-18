@@ -511,14 +511,18 @@ public class EntityBehavior : EntityComponent
     public void Chase(ActionParameters a)
     {
 
-        EquipOptimalWeaponForTarget(a);
-    
-        //Debug.Log("CHASE");
-        entityPhysics.AssertWeaponChargedStatus(true);
-        ActionParameters goToTarget = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, a.targetedWorldObject, Vector3.zero, -1, null, null, a.maxTime, DISTANCE_THRESHOLD_MELEE_ATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, entityActionSequence_AssertStanding, null);
-        ActionParameters attackTarget = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Attack, a.targetedWorldObject, Vector3.zero, -1, null, null, -1, -1, BodyRotationMode.Target, InterruptionTier.Nothing, true, null, entityActionSequence_AssertStanding, null);
-        InsertAction(attackTarget);
-        InsertAction(goToTarget);
+        bool hasOptimalWeaponType = EquipOptimalWeaponForTarget(a);
+
+        if(hasOptimalWeaponType)
+        {
+            //Debug.Log("CHASE");
+            entityPhysics.AssertWeaponChargedStatus(true);
+            ActionParameters goToTarget = ActionParameters.GenerateActionParameters(entityHandle, ActionType.GoTo, a.targetedWorldObject, Vector3.zero, -1, null, null, a.maxTime, DISTANCE_THRESHOLD_MELEE_ATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, entityActionSequence_AssertStanding, null);
+            ActionParameters attackTarget = ActionParameters.GenerateActionParameters(entityHandle, ActionType.Attack, a.targetedWorldObject, Vector3.zero, -1, null, null, -1, -1, BodyRotationMode.Target, InterruptionTier.Nothing, true, null, entityActionSequence_AssertStanding, null);
+            InsertAction(attackTarget);
+            InsertAction(goToTarget);
+        }
+        
         NextAction();
     }
 
@@ -579,63 +583,93 @@ public class EntityBehavior : EntityComponent
         }
     }
 
-    public void EquipOptimalWeaponForTarget(ActionParameters ap)
+    public bool EquipOptimalWeaponForTarget(ActionParameters ap)
     {
 
-        if(entityItems == null || ap.targetedWorldObject == null){ return; }
 
-        // find the stats of the action parameter's target gameobject
-        Stats targetStats;
-        EntityStats targetEntityStats = ap.targetedWorldObject.GetComponent<EntityStats>();
-        if(targetEntityStats != null)
+        if (ap.targetedWorldObject == null)
         {
-            targetStats = targetEntityStats.combinedStats; 
+            return false;
         }
-        else
+
+        // if entity has a weapon
+        if (entityItems != null && entityItems.HasWeapon())
         {
-            ItemHitDetection ihd = GetComponent<ItemHitDetection>();
-            if(ihd != null)
+            // find the stats of the action parameter's target gameobject
+            Stats targetStats;
+            EntityStats targetEntityStats = ap.targetedWorldObject.GetComponent<EntityStats>();
+            if (targetEntityStats != null)
             {
-                targetStats = ihd.item.baseStats;
+                targetStats = targetEntityStats.combinedStats;
             }
             else
             {
-                Item item = Item.GetItemByName(ap.targetedWorldObject.name);
-                if (item != null)
+                ItemHitDetection ihd = GetComponent<ItemHitDetection>();
+                if (ihd != null)
                 {
-                    targetStats = item.baseStats;
+                    targetStats = ihd.item.baseStats;
                 }
                 else
                 {
-                    Debug.Log("Couldn't find stats for targeted object");
-                    return;
+                    Item item = Item.GetItemByName(ap.targetedWorldObject.name);
+                    if (item != null)
+                    {
+                        targetStats = item.baseStats;
+                    }
+                    else
+                    {
+                        Debug.Log("Couldn't find stats for targeted object");
+                        return false;
+                    }
                 }
-            }   
+            }
+
+            float equippedWeaponDamageMagnitude = 0f;
+            float unequippedWeaponDamageMagnitude = 0f;
+            if(entityItems.weaponEquipped_item != null)
+            {
+                equippedWeaponDamageMagnitude = Stats.CalculateWeaponDamageMagnitude(targetStats, entityItems.weaponEquipped_item);
+            }
+            if(entityItems.weaponUnequipped_item != null)
+            {
+                unequippedWeaponDamageMagnitude = Stats.CalculateWeaponDamageMagnitude(targetStats, entityItems.weaponUnequipped_item);
+            }
+
+            if(equippedWeaponDamageMagnitude < .01f)
+            {
+                if(unequippedWeaponDamageMagnitude < .01f)
+                {
+                    return false;
+                }
+                else
+                {
+                    entityItems.ToggleWeaponEquipped();
+                    return true;
+                }
+            }
+            else
+            {
+                if(equippedWeaponDamageMagnitude >= unequippedWeaponDamageMagnitude)
+                {
+                    return true;
+                }
+                else
+                {
+                    entityItems.ToggleWeaponEquipped();
+                    return true;
+                }
+            }
+
         }
 
-        Dictionary<ItemDamageType, float> armorFromDamageTypeDict = new Dictionary<ItemDamageType, float>()
+        // otherwise, return true if has other attacks besides wewapon attack, false otherwise
+        else
         {
-            { ItemDamageType.Blunt, targetStats.armorBlunt },
-            { ItemDamageType.Slash, targetStats.armorSlash },
-            { ItemDamageType.Pierce, targetStats.armorPierce }
-        };
-        List<ItemDamageType> priorityDamageTypeList = new List<ItemDamageType>(armorFromDamageTypeDict.Keys);
-        priorityDamageTypeList.OrderBy(idt => armorFromDamageTypeDict[idt]);
-
-        ItemDamageType damageType_weaponEquipped = entityItems.weaponEquipped_item == null ? ItemDamageType.None : entityItems.weaponEquipped_item.damageType;
-        ItemDamageType damageType_weaponUnequipped = entityItems.weaponUnequipped_item == null ? ItemDamageType.None : entityItems.weaponUnequipped_item.damageType;
-        foreach(ItemDamageType idt in priorityDamageTypeList)
-        {
-            if(damageType_weaponEquipped == idt)
-            {
-                return;
-            }
-            else if(damageType_weaponUnequipped == idt)
-            {
-                entityItems.ToggleWeaponEquipped();
-                return;
-            }
+            List<AttackType> attackTypes = new List<AttackType>(entityInfo.speciesInfo.behaviorProfile.attackTypes);
+            attackTypes.Remove(AttackType.Weapon);
+            return (attackTypes.Count > 0);
         }
+
 
 
     }

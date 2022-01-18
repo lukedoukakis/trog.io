@@ -31,13 +31,13 @@ public class Stats : ScriptableObject
     
     public static Stats ITEM_WIELDERMODIFIER_MEAT = InstantiateStats(1f,1f,1f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
 
-    public static Stats ITEM_WIELDERMODIFIER_SPEARSTONE = InstantiateStats(0f,0f,3f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
+    public static Stats ITEM_WIELDERMODIFIER_SPEARSTONE = InstantiateStats(0f,0f,3f,0f,-.1f,0f,0f,0f,0f,0f,0f,0f);
 
-    public static Stats ITEM_WIELDERMODIFIER_AXESTONE = InstantiateStats(0f,0f,3f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
+    public static Stats ITEM_WIELDERMODIFIER_AXESTONE = InstantiateStats(0f,0f,3f,0f,-.1f,0f,0f,0f,0f,0f,0f,0f);
     
-    public static Stats ITEM_WIELDERMODIFIER_SPEARBONE = InstantiateStats(0f,0f,6f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
+    public static Stats ITEM_WIELDERMODIFIER_SPEARBONE = InstantiateStats(0f,0f,6f,0f,-.1f,0f,0f,0f,0f,0f,0f,0f);
 
-    public static Stats ITEM_WIELDERMODIFIER_AXEBONE = InstantiateStats(0f,0f,6f,0f,0f,0f,0f,0f,0f,0f,0f,0f);
+    public static Stats ITEM_WIELDERMODIFIER_AXEBONE = InstantiateStats(0f,0f,6f,0f,-.1f,0f,0f,0f,0f,0f,0f,0f);
 
     public static Stats ITEM_WIELDERMODIFIER_PELTBEAR = InstantiateStats(0f,0f,2f,0f,0f,0f,0f,4f,0f,0f,0f,1f);
 
@@ -166,12 +166,39 @@ public class Stats : ScriptableObject
     }
 
 
-    public static float CalculateDamage(EntityStats receiverEntityStats, EntityStats attackerStats, Item attackerWeapon)
+    public static float CalculateDamage(Stats receiverStats, EntityStats attackerEntityStats, Item attackerWeapon)
     {
-        float attackerAttack = GetStatValue(attackerStats.combinedStats, Stats.StatType.Attack);
-        float receiverArmorBase = GetStatValue(receiverEntityStats.combinedStats, Stats.StatType.ArmorBase);
+        
+        float attackerAttack = GetStatValue(attackerEntityStats.combinedStats, Stats.StatType.Attack);
+        float receiverArmorBase = GetStatValue(receiverStats, Stats.StatType.ArmorBase);
+        float armorFromWeaponType = GetArmorFromWeaponType(receiverStats, attackerWeapon);
+
+        float hpLoss = EntityStats.BASE_HP_LOSS_FROM_HIT;
+        hpLoss *= attackerAttack;
+        hpLoss *= 1f / Mathf.Max(receiverArmorBase, 1f);
+        hpLoss *= 1f / Mathf.Max(armorFromWeaponType, 1f);
+
+        return hpLoss;
+    }
+
+    public static float CalculateWeaponDamageMagnitude(Stats receiverStats, Item weapon)
+    {
+        float weaponAttack = GetStatValue(weapon.wielderStatsModifier, Stats.StatType.Attack);
+        float receiverArmorBase = GetStatValue(receiverStats, Stats.StatType.ArmorBase);
+        float armorFromWeaponType = GetArmorFromWeaponType(receiverStats, weapon);
+
+        float damageMagnitude = weaponAttack;
+        damageMagnitude *= 1f / Mathf.Max(receiverArmorBase, 1f);
+        damageMagnitude *= 1f / Mathf.Max(armorFromWeaponType, 1f);
+
+        return damageMagnitude;
+    }
+
+
+    public static float GetArmorFromWeaponType(Stats receiverStats, Item attackingWeapon)
+    {
         Enum armorStatType;
-        switch (attackerWeapon.damageType)
+        switch (attackingWeapon.damageType)
         {
             case ItemDamageType.Blunt:
                 armorStatType = Stats.StatType.ArmorBlunt;
@@ -186,14 +213,8 @@ public class Stats : ScriptableObject
                 armorStatType = Stats.StatType.ArmorBase;
                 break;
         }
-        float armorFromWeaponType = Stats.GetStatValue(receiverEntityStats.combinedStats, armorStatType);
 
-        float hpLoss = EntityStats.BASE_HP_LOSS_FROM_HIT;
-        hpLoss *= attackerAttack;
-        hpLoss *= 1f / Mathf.Max(receiverArmorBase, 1f);
-        hpLoss *= 1f / Mathf.Max(armorFromWeaponType, 1f);
-
-        return hpLoss;
+        return Stats.GetStatValue(receiverStats, armorStatType);
     }
 
 

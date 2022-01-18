@@ -273,7 +273,7 @@ public class EntityUserInput : EntityComponent
                     {
                         Debug.Log("STATS NULL");
                     }
-                    if(Stats.CalculateDamage(ihd.stats, entityStats, entityItems.weaponEquipped_item) < .01f)
+                    if(Stats.CalculateDamage(ihd.stats.combinedStats, entityStats, entityItems.weaponEquipped_item) < .01f)
                     {
                         nearbyFeatures.Remove(feature);
                     }

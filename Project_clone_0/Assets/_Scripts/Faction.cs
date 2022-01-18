@@ -40,9 +40,11 @@ public class Faction : MonoBehaviour
         }
         //Debug.Log("Commands sent!");
     }
-    public void SendPartyCommand(ActionParameters ap)
+
+
+    public void SendPartyCommand(ActionParameters ap, List<EntityHandle> specifiedHandles)
     {
-        foreach(EntityHandle commandeeHandle in partyHandles.ToArray()){
+        foreach(EntityHandle commandeeHandle in specifiedHandles.ToArray()){
             //Debug.Log("party member do shit");
             if(commandeeHandle != null)
             {
@@ -52,6 +54,12 @@ public class Faction : MonoBehaviour
             }
         }
     }
+
+    public void SendPartyCommandToAll(ActionParameters ap)
+    {
+        SendPartyCommand(ap, partyHandles);
+    }
+
 
     public void SendIndividualCommand(EntityHandle calleeHandle, string command, Vector3 callPosition)
     {

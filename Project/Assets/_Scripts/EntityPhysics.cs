@@ -1461,7 +1461,7 @@ public class EntityPhysics : EntityComponent
                 if(hitObjectStats.health > 0)
                 {
                     ActionParameters ap = ActionParameters.GenerateActionParameters(null, ActionType.Chase, hitObject, Vector3.zero, -1, null, null, -1, EntityBehavior.DISTANCE_THRESHOLD_SAME_SPOT, BodyRotationMode.Target, InterruptionTier.Anything, true, null, entityBehavior.entityActionSequence_AssertStanding, null);
-                    entityInfo.faction.SendPartyCommand(ap);
+                    entityInfo.faction.SendPartyCommandToAll(ap);
                 }
             }
         }

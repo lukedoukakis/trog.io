@@ -149,7 +149,7 @@ public class EntityStats : EntityComponent
         float hpLoss;
         if (!instantKill)
         {
-            hpLoss = Stats.CalculateDamage(entityStats, attackerHandle.entityStats, attackerWeapon);
+            hpLoss = Stats.CalculateDamage(entityStats.combinedStats, attackerHandle.entityStats, attackerWeapon);
         }
         else
         {
