@@ -19,7 +19,7 @@ public class EntityStats : EntityComponent
 
     public static float BASE_AMOUNT_HP = 100;
     public float BASE_AMOUNT_STAMINA = 100;
-    public static float hpLossFromHit_base = 8;
+    public static float BASE_HP_LOSS_FROM_HIT = 8;
     public float health, maxHealth;
     public float stamina, maxStamina;
 
@@ -149,29 +149,7 @@ public class EntityStats : EntityComponent
         float hpLoss;
         if (!instantKill)
         {
-            float armorBase = Stats.GetStatValue(this.combinedStats, Stats.StatType.ArmorBase);
-            Enum armorStatType;
-            switch (attackerWeapon.damageType)
-            {
-                case ItemDamageType.Blunt:
-                    armorStatType = Stats.StatType.ArmorBlunt;
-                    break;
-                case ItemDamageType.Slash:
-                    armorStatType = Stats.StatType.ArmorSlash;
-                    break;
-                case ItemDamageType.Pierce:
-                    armorStatType = Stats.StatType.ArmorPierce;
-                    break;
-                default:
-                    armorStatType = Stats.StatType.ArmorBase;
-                    break;
-            }
-            float armorFromWeaponType = Stats.GetStatValue(this.combinedStats, armorStatType);
-
-            hpLoss = hpLossFromHit_base;
-            hpLoss *= attackerAttack;
-            hpLoss *= 1f / Mathf.Max(armorBase, 1f);
-            hpLoss *= 1f / Mathf.Max(armorFromWeaponType, 1f);
+            hpLoss = Stats.CalculateDamage(entityStats, attackerHandle.entityStats, attackerWeapon);
         }
         else
         {

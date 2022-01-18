@@ -165,6 +165,38 @@ public class Stats : ScriptableObject
 
     }
 
+
+    public static float CalculateDamage(EntityStats receiverEntityStats, EntityStats attackerStats, Item attackerWeapon)
+    {
+        float attackerAttack = GetStatValue(attackerStats.combinedStats, Stats.StatType.Attack);
+        float receiverArmorBase = GetStatValue(receiverEntityStats.combinedStats, Stats.StatType.ArmorBase);
+        Enum armorStatType;
+        switch (attackerWeapon.damageType)
+        {
+            case ItemDamageType.Blunt:
+                armorStatType = Stats.StatType.ArmorBlunt;
+                break;
+            case ItemDamageType.Slash:
+                armorStatType = Stats.StatType.ArmorSlash;
+                break;
+            case ItemDamageType.Pierce:
+                armorStatType = Stats.StatType.ArmorPierce;
+                break;
+            default:
+                armorStatType = Stats.StatType.ArmorBase;
+                break;
+        }
+        float armorFromWeaponType = Stats.GetStatValue(receiverEntityStats.combinedStats, armorStatType);
+
+        float hpLoss = EntityStats.BASE_HP_LOSS_FROM_HIT;
+        hpLoss *= attackerAttack;
+        hpLoss *= 1f / Mathf.Max(receiverArmorBase, 1f);
+        hpLoss *= 1f / Mathf.Max(armorFromWeaponType, 1f);
+
+        return hpLoss;
+    }
+
+
     public static Stats InstantiateStats(float health, float stamina, float attack, float attackSpeed, float speed, float swim, float agility, float armorBase, float armorBlunt, float armorSlash, float armorPierce, float coldResist){
         Stats stats = ScriptableObject.CreateInstance<Stats>();
         stats.health = health;

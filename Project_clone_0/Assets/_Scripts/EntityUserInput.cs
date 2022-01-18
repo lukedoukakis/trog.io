@@ -264,8 +264,7 @@ public class EntityUserInput : EntityComponent
         attackDistanceFeatures = nearbyFeatures.Where(gameObject => Vector3.Distance(transform.position, gameObject.transform.position) < AUTO_ATTACK_DISTANCE_FEATURE).ToList();
 
         // creatures
-        nearbyCreatures = Utility.SenseSurroundingCreatures(transform.position, Species.Any, AUTO_SENSE_DISTANCE_FEATURE);
-        nearbyCreatures.Remove(entityHandle);
+        nearbyCreatures = Utility.SenseSurroundingCreatures(transform.position, Species.Any, AUTO_SENSE_DISTANCE_FEATURE).Where(entityHandle => !ReferenceEquals(entityHandle.entityInfo.faction, entityInfo.faction)).ToList();
         nearbyDangerousCreatures = nearbyCreatures.Where(entityHandle => entityHandle.entityInfo.speciesInfo.behaviorProfile.behaviorType.Equals(BehaviorType.Aggressive) || entityHandle.entityInfo.speciesInfo.behaviorProfile.behaviorType.Equals(BehaviorType.Steadfast)).ToList();
         attackDistanceCreatures = nearbyCreatures.Where(entityHandle => Vector3.Distance(transform.position, entityHandle.transform.position) < AUTO_ATTACK_DISTANCE_CREATURE).ToList();
 
