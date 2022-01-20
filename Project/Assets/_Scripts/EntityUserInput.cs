@@ -13,7 +13,7 @@ public class EntityUserInput : EntityComponent
 
 
     static float AUTO_SENSE_DISTANCE_FEATURE = 1f;
-    static float AUTO_SENSE_DISTANCE_CREATURE = 5f;
+    static float AUTO_SENSE_DISTANCE_CREATURE = 15f;
     static float AUTO_ATTACK_DISTANCE_FEATURE = 1f;
     static float AUTO_ATTACK_DISTANCE_CREATURE = 5f;
 

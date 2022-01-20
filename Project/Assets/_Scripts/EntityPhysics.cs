@@ -1301,8 +1301,8 @@ public class EntityPhysics : EntityComponent
         {
             if(guaranteedHitTarget != null)
             {
-                Collider col = guaranteedHitTarget.GetComponentInChildren<Collider>();
-                if (col == null){ col = guaranteedHitTarget.GetComponentInParent<Collider>(); }
+                Collider col = guaranteedHitTarget.GetComponentsInChildren<Collider>().Where(col => !col.isTrigger).First();
+                if (col == null){ col = guaranteedHitTarget.GetComponentsInParent<Collider>().Where(col => !col.isTrigger).First(); }
 
                 StartCoroutine(OnAttackHit(col, guaranteedHitTarget.position, null, .25f));
             }
@@ -1325,6 +1325,7 @@ public class EntityPhysics : EntityComponent
         }
     
     }
+
 
     void StartWeaponAttackAnimation(bool charging, Item weapon, bool ranged)
     {
@@ -1451,6 +1452,7 @@ public class EntityPhysics : EntityComponent
         
 
             StopMeleeAttackHitTime();
+            AssertWeaponChargedStatus(false);
         }
        
         // if faction leader and hit object is still not destroyed, call members to attack the same object

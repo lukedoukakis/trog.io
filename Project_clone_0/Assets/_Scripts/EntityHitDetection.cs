@@ -25,10 +25,20 @@ public class EntityHitDetection : EntityComponent
         entityInfo.Init();
         entityStats = gameObject.AddComponent<EntityStats>();
         //entityStats.FindAndSetEntityReferences();
+
+        isInitialized = true;
     }
 
     public void OnHit(EntityHandle attackerHandle, Vector3 hitPoint, Projectile projectile, bool instantKill)
     {
+
+
+        if (ReferenceEquals(entityHandle, GameManager.instance.localPlayerHandle) && Testing.instance.godMode)
+        {
+            return;
+        }
+
+        Debug.Log("EntityHitDetection: OnHit()");
 
         if(!isInitialized)
         {
@@ -40,6 +50,10 @@ public class EntityHitDetection : EntityComponent
         if(entityStats != null)
         {
             entityStats.TakeDamage(attackerHandle, projectile, instantKill);
+        }
+        else
+        {
+            Debug.Log("entityStats is null");
         }
 
         // play particles

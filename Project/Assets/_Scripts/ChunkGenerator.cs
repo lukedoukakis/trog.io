@@ -608,7 +608,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // completely flatten terrain
-                //heightValue = FlatLevel + .001f;
+                heightValue = FlatLevel + .001f;
 
 
 

@@ -122,12 +122,8 @@ public class EntityStats : EntityComponent
     }
 
 
-    public void TakeDamage(EntityHandle attackerHandle, Projectile projectile, bool instantKill){
-
-        // if (isLocalPlayer && Testing.instance.godMode)
-        // {
-        //     return;
-        // }
+    public void TakeDamage(EntityHandle attackerHandle, Projectile projectile, bool instantKill)
+    {
 
         // get attacker's relevant stats and (if applicable) weapon
         Stats attackerStats;
@@ -155,8 +151,7 @@ public class EntityStats : EntityComponent
         {
             hpLoss = float.MaxValue;
         }
-        
-        
+
         // take away health
         ApplyHealthIncrement(hpLoss * -1f, attackerHandle);
 
