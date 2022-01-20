@@ -31,6 +31,7 @@ public class Camp : MonoBehaviour
     public float radius;
     public GameObject layout;
     GameObject borderSphere;
+    public bool placingCampComponents;
 
 
     // camp components
@@ -165,6 +166,7 @@ public class Camp : MonoBehaviour
 
         IEnumerator _PlaceCampComponents()
         {
+            placingCampComponents = true;
     
             PlaceBorderSphere();
             PlaceBonfire();
@@ -183,26 +185,24 @@ public class Camp : MonoBehaviour
                 count = kvp.Value;
                 //Debug.Log("countOwned for " + item.nme + ": " + countOwned);
                 int campTotalCapacity = Camp.GetItemPhysicalCapacity(item);
-                int maximumPhysicalToAdd = campTotalCapacity;
-                int countToAddPhysically = Mathf.Min(count, maximumPhysicalToAdd);
+                int maximumPhysicalCanAdd = campTotalCapacity;
+                int countToAddPhysically = Mathf.Min(count, maximumPhysicalCanAdd);
                 int countToAddOverflow = count - countToAddPhysically;
                 physicalItemsToPlace.AddItem(item, countToAddPhysically);
                 overflowItemsToPlace.AddItem(item, countToAddOverflow);
 
-                // if(countToAddOverflow > 0)
-                // {
-                //     Debug.Log("overflow add for " + item.nme + ": " + countToAddOverflow);
-                // }
             }
             AddItemsToCamp(physicalItemsToPlace, originT, true);
             AddItemsToCamp(overflowItemsToPlace, originT, false);
 
             yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
-            for(int i = 0; i < faction.GetItemCount(Item.TentBearPelt) + faction.GetItemCount(Item.TentDeerPelt); ++i)
-            {
-                PlaceTent();
-            }
-            yield return new WaitForSecondsRealtime(CAMP_COMPONENT_PLACING_TIME_GAP);
+            // for(int i = 0; i < faction.GetItemCount(Item.TentBearPelt) + faction.GetItemCount(Item.TentDeerPelt); ++i)
+            // {
+            //     PlaceTent();
+            // }
+
+
+            placingCampComponents = false;
 
         }
     }
@@ -745,9 +745,9 @@ public class Camp : MonoBehaviour
         { Item.WoodPiece, 30},
         { Item.BonePiece, 10},
         { Item.StoneSmall, 10},
-        { Item.Meat, 6},
-        { Item.AxeStone, 6},
-        { Item.SpearStone, 6}
+        { Item.Meat, 5},
+        { Item.AxeStone, 5},
+        { Item.SpearStone, 5}
     };
 
     public static int GetItemPhysicalCapacity(Item item)

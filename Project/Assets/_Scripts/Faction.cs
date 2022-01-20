@@ -112,6 +112,12 @@ public class Faction : MonoBehaviour
     }
     IEnumerator _AddItemOwned(Item item, int count, ObjectRack rack, Transform originT, float delay)
     {
+
+
+        if(camp != null)
+        {
+            yield return new WaitUntil(() => !camp.placingCampComponents);
+        }
         
         itemLogisticsHappening = true;
 
@@ -125,11 +131,11 @@ public class Faction : MonoBehaviour
         int maximumPhysicalToAdd = Mathf.Max(0, campTotalCapacity - countOwned);
         int countToAddPhysically = Mathf.Min(count, maximumPhysicalToAdd);
         int countToAddOverflow = count - countToAddPhysically;
-        // Debug.Log("count owned: " + countOwned);
-        // Debug.Log("camp total capacity: " + campTotalCapacity);
-        // Debug.Log("physical add: " + countToAddPhysically);
-        // Debug.Log("overflow add: " + countToAddOverflow);
-        // Debug.Log("");
+        Debug.Log("count owned: " + countOwned);
+        Debug.Log("camp total capacity: " + campTotalCapacity);
+        Debug.Log("physical add: " + countToAddPhysically);
+        Debug.Log("overflow add: " + countToAddOverflow);
+        Debug.Log("");
 
         ownedItems.AddItem(item, count);
 

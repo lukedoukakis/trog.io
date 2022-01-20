@@ -260,7 +260,7 @@ public class EntityUserInput : EntityComponent
             nearbyFeatures = Utility.SenseSurroundingFeatures(transform.position, null, AUTO_SENSE_DISTANCE_FEATURE);
 
             // remove features where calculated damage from currently equipped weapon would be nearly zero
-            foreach(GameObject feature in nearbyFeatures)
+            foreach(GameObject feature in nearbyFeatures.ToArray())
             {
                 ItemHitDetection ihd = feature.GetComponentInParent<ItemHitDetection>();
                 if(ihd != null)
