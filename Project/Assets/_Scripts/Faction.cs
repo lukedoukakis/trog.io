@@ -333,6 +333,7 @@ public class Faction : MonoBehaviour
     public void UpdateLeaderCampStatus()
     {
         leaderInCamp = leaderHandle.entityPhysics.isInsideCamp;
+        leaderHandle.entityBehavior.ResetFollowPosition();
         foreach(EntityHandle partyHandle in partyHandles)
         {
             partyHandle.entityBehavior.ResetFollowPosition();

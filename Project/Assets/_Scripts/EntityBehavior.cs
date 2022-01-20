@@ -222,8 +222,9 @@ public class EntityBehavior : EntityComponent
         else
         {
             // if has a camp, chill in the camp
-            if(entityInfo.faction.camp != null && false)
+            if(entityInfo.faction.camp != null)
             {
+                Debug.Log("Go Home");
                 ActionParameters goHome = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
                 InsertAction(goHome);
             }

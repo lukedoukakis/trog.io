@@ -107,7 +107,7 @@ public class ChunkGenerator : MonoBehaviour
             if(!LoadingChunks && !DeloadingChunks){
                 LoadingChunks = true;
                 DeloadingChunks = true;
-                //StartCoroutine(CallForSpawnGeneration());
+                StartCoroutine(CallForSpawnGeneration());
                 UpdateChunksToLoad();
                 StartCoroutine(LoadChunks());
                 StartCoroutine(DeloadChunks());
@@ -813,6 +813,10 @@ public class ChunkGenerator : MonoBehaviour
                                                             worldObject.transform.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(Vector3.up, cd.YNormalsMap[x, z]), spawnParameters.slantMagnitude);
                                                         }
                                                         worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
+                                                        if(worldObject.transform.GetComponent<Rigidbody>() != null)
+                                                        {
+                                                            Utility.ToggleObjectPhysics(worldObject, true, true, false, false);
+                                                        }
                                                         //instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
                                                     }
                                                 }
