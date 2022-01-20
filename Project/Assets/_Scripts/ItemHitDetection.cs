@@ -75,7 +75,10 @@ public class ItemHitDetection : MonoBehaviour
     void Shake()
     {
 
-        StartCoroutine(_Shake());
+        try{
+            StartCoroutine(_Shake());
+        }
+        catch(NullReferenceException){}
 
         IEnumerator _Shake()
         {

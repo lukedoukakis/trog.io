@@ -38,7 +38,7 @@ public class EntityHitDetection : EntityComponent
             return;
         }
 
-        Debug.Log("EntityHitDetection: OnHit()");
+        //Debug.Log("EntityHitDetection: OnHit()");
 
         if(!isInitialized)
         {

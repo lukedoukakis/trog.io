@@ -224,7 +224,7 @@ public class EntityBehavior : EntityComponent
             // if has a camp, chill in the camp
             if(entityInfo.faction.camp != null)
             {
-                Debug.Log("Go Home");
+                //Debug.Log("Go Home");
                 ActionParameters goHome = ActionParameters.GenerateActionParameters("Go Home", entityHandle);
                 InsertAction(goHome);
             }
@@ -598,7 +598,7 @@ public class EntityBehavior : EntityComponent
         {
             // find the stats of the action parameter's target gameobject
             Stats targetStats;
-            EntityStats targetEntityStats = ap.targetedWorldObject.GetComponent<EntityStats>();
+            EntityStats targetEntityStats = ap.targetedWorldObject.GetComponentInParent<EntityStats>();
             if (targetEntityStats != null)
             {
                 targetStats = targetEntityStats.combinedStats;
@@ -619,7 +619,7 @@ public class EntityBehavior : EntityComponent
                     }
                     else
                     {
-                        Debug.Log("Couldn't find stats for targeted object");
+                        Debug.Log("Couldn't find stats for targeted object: " + ap.targetedWorldObject.name);
                         return false;
                     }
                 }
@@ -1085,6 +1085,13 @@ public class EntityBehavior : EntityComponent
                     distanceAway = Vector3.Distance(transform.position, handleOther.transform.position);
                     if(distanceAway < DISTANCE_THRESHOLD_STANDGROUND){
                         reacting = true;
+                        // if(entityInfo.faction != null && entityInfo.faction != entityInfo.speciesInfo.baseFaction)
+                        // {
+                        //     foreach(EntityHandle handle in entityInfo.faction.partyHandles)
+                        //     {
+                        //         handle.entityBehavior.InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(handle, ActionType.Chase, sensedCreatureHandles[0].gameObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, entityActionSequence_AssertStanding, null), true);
+                        //     }
+                        // }
                         InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.Chase, sensedCreatureHandles[0].gameObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, entityActionSequence_AssertStanding, null), true);
                     }
                 }
@@ -1213,14 +1220,20 @@ public class EntityBehavior : EntityComponent
 
     void HandleIndependentBehavior()
     {
-        bool reactingToSensedCreature;
-        HandleCreatureSense(out reactingToSensedCreature);
+        if(!activeAction.interruptionTier.Equals(InterruptionTier.SenseDanger))
+        {
+            bool reactingToSensedCreature;
+            HandleCreatureSense(out reactingToSensedCreature);
+        }
     }
 
     void HandleFollowerBehavior()
     {
-        bool reactingToSensedCreature;
-        HandleCreatureSense(out reactingToSensedCreature);
+        if(!activeAction.interruptionTier.Equals(InterruptionTier.SenseDanger))
+        {
+            bool reactingToSensedCreature;
+            HandleCreatureSense(out reactingToSensedCreature);
+        }
     }
 
 

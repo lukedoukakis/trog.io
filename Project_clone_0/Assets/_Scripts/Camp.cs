@@ -694,7 +694,7 @@ public class Camp : MonoBehaviour
     public void Dismantle()
     {
 
-        Debug.Log("Dismantle() start");
+        //Debug.Log("Dismantle() start");
 
         // handle inside camp status (set to outside)
         faction.leaderHandle.entityPhysics.OnCampBorderExit();
