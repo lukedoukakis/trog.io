@@ -32,7 +32,7 @@ public class EntityPhysics : EntityComponent
     public static float BASE_FORCE_JUMP = 600f;
     public static float BASE_FORCE_THROW = 250f;
     public static float BASE_ACCELERATION = 40f;
-    public static float BASE_MAX_SPEED = 25f;
+    public static float BASE_MAX_SPEED = 12.5f;
     public static float BASE_COOLDOWN_JUMP = .15f;
     public static float BASE_TIMESTEP_ATTACK = 1f;
     public static float WEAPON_CHARGETIME_MAX = .25f;
@@ -976,11 +976,13 @@ public class EntityPhysics : EntityComponent
         }
         else
         {
-           isWalking = isInsideCamp && entityInfo.faction.leaderInCamp;
-           if(entityBehavior.activeAction != null)
-           {
-               isWalking = isWalking && !entityBehavior.activeAction.urgent;
-           }
+        //    isWalking = isInsideCamp && entityInfo.faction.leaderInCamp;
+        //    if(entityBehavior.activeAction != null)
+        //    {
+        //        isWalking = isWalking && !entityBehavior.activeAction.urgent;
+        //    }
+
+        isWalking = false;
         }
     }
 
@@ -997,7 +999,7 @@ public class EntityPhysics : EntityComponent
 
     public void ToggleSquat(bool targetValue)
     {
-        if(isSquatting != targetValue)
+        if(isSquatting != targetValue && ikProfile.useAnimationMovement)
         {
             ToggleSquat();
             UpdateIKForCarryingItems();
@@ -1009,6 +1011,11 @@ public class EntityPhysics : EntityComponent
 
         isSquatting = !isSquatting;
         //Debug.Log(" Setting isSquatting: " + isSquatting);
+
+        if(isSquatting && !ikProfile.useAnimationMovement)
+        {
+            
+        }
 
         if(squattingCoroutine != null)
         {
@@ -1456,7 +1463,7 @@ public class EntityPhysics : EntityComponent
         }
        
         // if faction leader and hit object is still not destroyed, call members to attack the same object
-        if(entityInfo.isFactionLeader)
+        if(entityInfo.IsFactionLeader())
         {
             if(hitObjectStats != null)
             {
@@ -1784,7 +1791,7 @@ public class EntityPhysics : EntityComponent
         //Debug.Log("OnCampBorderCross()");
         isInsideCamp = true;
         entityItems.EmptyInventory();
-        if(entityInfo.isFactionLeader)
+        if(entityInfo.IsFactionLeader())
         {
             entityInfo.faction.UpdateLeaderCampStatus();
         }
@@ -1800,7 +1807,7 @@ public class EntityPhysics : EntityComponent
     {
         //Debug.Log("OnCampBorderCross()");
         isInsideCamp = false;
-        if(entityInfo.isFactionLeader)
+        if(entityInfo.IsFactionLeader())
         {
             entityInfo.faction.UpdateLeaderCampStatus();
         }

@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 
 
+public enum FactionRole{ Leader, Follower }
 public enum FactionStartingItemsTier{ PlayerTest, Nothing, Weak, Medium, Strong }
 
 public class Faction : MonoBehaviour
@@ -67,9 +68,25 @@ public class Faction : MonoBehaviour
     }
 
 
-    public void AddMember(EntityHandle newMemberHandle, bool addToparty)
+    // transfer leader status to new leader
+    public void SetLeader(EntityHandle newLeaderHandle)
     {
-        newMemberHandle.entityInfo.faction = this;
+        if(leaderHandle != null)
+        {
+            leaderHandle.entityInfo.SetFactionRole(FactionRole.Follower);
+        }
+        newLeaderHandle.entityInfo.SetFactionRole(FactionRole.Leader);
+        leaderHandle = newLeaderHandle;
+    }
+
+
+    public void AddMember(EntityHandle newMemberHandle, FactionRole factionRole, bool addToparty)
+    {
+
+        EntityInfo newMemberInfo = newMemberHandle.entityInfo;
+
+        newMemberInfo.faction = this;
+        newMemberInfo.SetFactionRole(factionRole);
         memberHandles.Add(newMemberHandle);
         if(addToparty)
         {

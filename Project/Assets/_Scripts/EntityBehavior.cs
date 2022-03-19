@@ -174,7 +174,7 @@ public class EntityBehavior : EntityComponent
         //Debug.Log("ACTION QUEUE EMPTY");
 
         // if is a faction follower, go home or follower leader depending on where they are
-        if (entityInfo.isFactionFollower)
+        if (!entityInfo.IsFactionLeader())
         {
             //Debug.Log("ACTION QUEUE EMPTY");
             entityPhysics.AssertWeaponChargedStatus(false);
@@ -1205,14 +1205,14 @@ public class EntityBehavior : EntityComponent
 
     void UpdateBehavior()
     {
-        if(entityInfo.isFactionFollower)
+        if(!entityInfo.IsFactionLeader())
         {
             // follow leader behavior
             HandleFollowerBehavior();
         }
         else
         {
-            // wild behavior
+            // leader behavior
             HandleIndependentBehavior();
         }
     }

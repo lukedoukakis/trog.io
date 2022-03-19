@@ -84,7 +84,7 @@ GameObject:
   - component: {fileID: 8069827555116078493}
   - component: {fileID: 5176456060878539918}
   - component: {fileID: 905915180885855587}
-  - component: {fileID: 5522565663618146216}
+  - component: {fileID: -5710489385986086236}
   - component: {fileID: 2947814671508615466}
   - component: {fileID: 5656550286591847306}
   - component: {fileID: 4510218948483313081}
@@ -160,6 +160,7 @@ MonoBehaviour:
   selected: 0
   tooltip: 0
   localP: 0
+  entityHealthDisplayController: {fileID: 0}
 --- !u!114 &8069827555116078486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,8 +190,7 @@ MonoBehaviour:
   nickname: Player
   species: 1
   faction: {fileID: 0}
-  isFactionLeader: 0
-  isFactionFollower: 0
+  factionRole: 0
   speciesInfo: {fileID: 0}
 --- !u!114 &8069827555116078485
 MonoBehaviour:
@@ -219,8 +219,10 @@ MonoBehaviour:
   entityUserInput: {fileID: 0}
   combinedStats: {fileID: 0}
   BASE_AMOUNT_STAMINA: 100
-  hp: 0
+  health: 0
+  maxHealth: 0
   stamina: 0
+  maxStamina: 0
 --- !u!114 &8069827555116078490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,16 +249,19 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   behaviorProfile: {fileID: 0}
-  homeT: {fileID: 0}
+  followPositionTransform: {fileID: 0}
+  restingTent: {fileID: 0}
   isPlayer: 0
   isAtHome: 0
   move: {x: 0, y: 0, z: 0}
   urgent: 0
   followOffset: {x: 0, y: 0, z: 0}
   timeSince_creatureSense: 0
-  timeSince_attack: 0
   activeAction: {fileID: 0}
   actionQueue: []
+  entityActionSequence_AssertStanding: {fileID: 0}
+  entityActionSequence_AssertSquatting: {fileID: 0}
+  homeResetTime: 0
 --- !u!114 &8069827555116078489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,6 +355,7 @@ MonoBehaviour:
   jumpOffRight: 0
   isSprinting: 0
   isWalking: 0
+  isSquatting: 0
   animFlag_jump: 0
   animFlag_jumpMirror: 0
   isDodging: 0
@@ -366,7 +372,7 @@ MonoBehaviour:
   maxSpeed_dodge: 0
   maxSpeed_walk: 0
   landScrunch: 0
-  crouch: 0
+  squatMagnitude: 0
   handFree_right: 0
   handFree_left: 0
   isMoving: 0
@@ -442,6 +448,7 @@ MonoBehaviour:
   weaponCharging: 0
   weaponChargeAmount: 0
   attackCanHit: 0
+  timeSince_attack: 0
   attackHit: 0
   dodgeTime: 0
 --- !u!114 &8069827555116078495
@@ -508,6 +515,7 @@ MonoBehaviour:
   orientationParent: {fileID: 0}
   orientation_weaponEquipped_spear: {fileID: 0}
   orientation_weaponEquipped_axe: {fileID: 0}
+  orientation_weaponEquipped_squatting: {fileID: 0}
   orientation_weaponUnequipped: {fileID: 0}
   orientation_holding: {fileID: 0}
   basePosition_weaponEquipped_spear: {fileID: 0}
@@ -601,6 +609,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   species: 1
+  isInitialized: 0
 --- !u!114 &905915180885855587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -626,7 +635,7 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
---- !u!114 &5522565663618146216
+--- !u!114 &-5710489385986086236
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

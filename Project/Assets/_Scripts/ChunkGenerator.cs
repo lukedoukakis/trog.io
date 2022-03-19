@@ -11,8 +11,8 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 3;
-    public static float Scale = 125f * 2f;
-    public static float ElevationAmplitude = 300f;
+    public static float Scale = 250f * 2f;
+    public static float ElevationAmplitude = 300f * 2f;
     public static float MountainMapScale = 312f * 1f;
     public static float ElevationMapScale = 1000f;
     public static int TemperatureMapScale = 300;
@@ -393,7 +393,7 @@ public class ChunkGenerator : MonoBehaviour
                     mountainValue = 0f;
                 }
 
-                //mountainValue = 1f;
+                //mountainValue = .5f;
 
 
 
@@ -403,7 +403,7 @@ public class ChunkGenerator : MonoBehaviour
                 // FreshWaterMap [0, 1]
 
                 float freshWaterElev = 0f;
-                if (true)
+                if (false)
                 {
                     float riverScale = 500f;
 
@@ -446,8 +446,6 @@ public class ChunkGenerator : MonoBehaviour
                     //freshWaterValue = Posterize(0f, 1f, freshWaterValue, 4);
 
 
-                    //freshWaterValue = 0f;
-
                 }
                 else
                 {
@@ -485,6 +483,10 @@ public class ChunkGenerator : MonoBehaviour
 
                 // HeightMap
 
+                // heightValue = Mathf.PerlinNoise((x + xOffset + .01f) / Scale, (z + zOffset - Seed + .01f) / Scale);
+                // heightValue = Mathf.Lerp(FlatLevel, 1f, heightValue);
+
+
                 heightValue = 0f;
                 float amplitude = 1;
                 float frequency = 1;
@@ -498,12 +500,11 @@ public class ChunkGenerator : MonoBehaviour
                     frequency *= lacunarity;
                 }
 
-                heightValue *= (ElevationAmplitude * Mathf.PerlinNoise(((x + xOffset) / Scale), ((z + zOffset) / Scale)));
-
+        
                 //ABS and INVERT, and normalize value
                 heightValue = Mathf.Abs(heightValue);
                 heightValue *= -1f;
-                heightValue = Mathf.InverseLerp(ElevationAmplitude * -1f, 0f, heightValue);
+                heightValue = Mathf.InverseLerp(-1f, 0f, heightValue);
                 //heightValue = Mathf.Pow(heightValue, .7f);
 
 
@@ -514,8 +515,7 @@ public class ChunkGenerator : MonoBehaviour
                 }
                 else
                 {
-                    float flat = (1f - mountainValue);
-                    heightValue = Mathf.Lerp(heightValue, FlatLevel, flat);
+                    heightValue = Mathf.Lerp(heightValue, FlatLevel, 1f - mountainValue);
                 }
 
                 // decrease height fluctuation from fresh water map
@@ -608,7 +608,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // completely flatten terrain
-                heightValue = FlatLevel + .001f;
+                //heightValue = FlatLevel + .001f;
 
 
 

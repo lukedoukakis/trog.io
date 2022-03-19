@@ -90,16 +90,17 @@ public class ItemHitDetection : MonoBehaviour
             for(int i = 0; i < steps; ++i)
             {
                 Vector3 targetPos = originalLocation + Utility.GetRandomVector(displacement);
-                while(Vector3.Distance(transform.position, targetPos) > .1f)
+                while(Vector3.Distance(transform.position, targetPos) > .1f && this != null)
                 {
                     transform.position = Vector3.Lerp(transform.position, targetPos, shakeSpeed * Time.deltaTime);
                     yield return null;
                 }
                 displacement *= .85f;
             }
-            while(Vector3.Distance(transform.position, originalLocation) > .02f)
+            while(Vector3.Distance(transform.position, originalLocation) > .02f && this != null)
             {
                 transform.position = Vector3.Lerp(transform.position, originalLocation, shakeSpeed * Time.deltaTime);
+                yield return null;
             }
             transform.position = originalLocation;
         }

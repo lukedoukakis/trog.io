@@ -84,7 +84,7 @@ public class ShaderController : MonoBehaviour
     void UpdateDistanceDrop()
     {
         //float magnitude = Mathf.Lerp(.25f, 1f, 1f - Mathf.InverseLerp(0f, 40f, CameraController.instance.distanceFromPlayer));
-        float magnitude = 1f;
+        float magnitude = 0f;
         Shader.SetGlobalFloat("_DistanceDropMagnitude", magnitude);
     }
 

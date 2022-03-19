@@ -59,8 +59,6 @@ public class ClientCommand : NetworkBehaviour
         EntityInfo npcInfo = npcHandle.entityInfo;
         npcInfo.name = "tribemember";
         npcInfo.faction = faction;
-        npcInfo.isFactionLeader = false;
-        npcInfo.isFactionFollower = true;
         npcHandle.entityBehavior.ResetFollowPosition();
         NetworkServer.Spawn(npc, GameManager.instance.localPlayer);
 
@@ -70,7 +68,7 @@ public class ClientCommand : NetworkBehaviour
         {
             Utility.IgnorePhysicsCollisions(npcHandle.transform, factionMemberHandle.transform);
         }
-        faction.AddMember(npcHandle, true);
+        faction.AddMember(npcHandle, FactionRole.Follower, true);
 
         if(spawnWithGear)
         {
@@ -116,10 +114,8 @@ public class ClientCommand : NetworkBehaviour
         //Debug.Log("SETTING FACTION");
         Faction faction = Faction.InstantiateFaction("Faction " + (Random.Range(0, int.MaxValue)).ToString());
         faction.leaderHandle = founderHandle;
-        faction.AddMember(founderHandle, false);
+        faction.AddMember(founderHandle, FactionRole.Leader, false);
         founderHandle.entityInfo.faction = faction;
-        founderHandle.entityInfo.isFactionLeader = true;
-        founderHandle.entityInfo.isFactionFollower = false;
 
         faction.AddStartingResources(tier);
 

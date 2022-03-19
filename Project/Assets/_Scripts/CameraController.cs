@@ -8,14 +8,14 @@ public class CameraController : MonoBehaviour
     
     public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset renderPipelineAsset;
 
-    public static float CAMERA_DISTANCE_OUTSIDECAMP = 60f;
-    public static float CAMERA_DISTANCE_INSIDECAMP = 60f;
+    public static float CAMERA_DISTANCE_OUTSIDECAMP = 30f;
+    public static float CAMERA_DISTANCE_INSIDECAMP = 30f;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
     public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .2f;
     public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .2f;
 
 
-    public Transform playerT;
+    public Transform playerTransform;
     Transform followT;
     public Transform focusT;
     public float cameraDistance_baked;
@@ -57,9 +57,10 @@ public class CameraController : MonoBehaviour
         SetTargetOffset(defaultCameraOffset);
     }
 
-    public void Init(Transform t){
-        playerT = t;
-        followT = GameObject.Instantiate(new GameObject(), playerT.position, Quaternion.identity).transform;
+    public void Init(Transform t)
+    {
+        SetPlayerTransform(t);
+        followT = GameObject.Instantiate(new GameObject(), playerTransform.position, Quaternion.identity).transform;
         Application.targetFrameRate = -1;
         QualitySettings.vSyncCount = 1;
         float[] cullDistances = new float[32];
@@ -71,6 +72,11 @@ public class CameraController : MonoBehaviour
         posModifier = 0f;
         cameraDistance_input = 1f;
         //RandomSpawn();
+    }
+
+    public void SetPlayerTransform(Transform t)
+    {
+        playerTransform = t;
     }
 
 
@@ -86,7 +92,7 @@ public class CameraController : MonoBehaviour
                 ZoomInput();
             }
 
-            Vector3 targetPos = playerT.position + (Vector3.forward * -6f) + (Vector3.up * 4f);
+            Vector3 targetPos = playerTransform.position + (Vector3.forward * -6f) + (Vector3.up * 4f);
             Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPos, 50f * Time.deltaTime);
             Camera.main.transform.rotation = Quaternion.Euler(new Vector3(30f, 0f, 0f));
         }
@@ -132,8 +138,8 @@ public class CameraController : MonoBehaviour
             }
             cameraDistance_total = cameraDistance_baked * cameraDistance_input;
 
-            followT.position = Vector3.Lerp(followT.position, playerT.position + Vector3.up * 1f, 22f * Time.deltaTime);
-            targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(posModifier * pi) * playerT.forward * -1f * Mathf.Pow(cameraDistance_total, 1f)) + (Mathf.Sin(posModifier * pi)) * Vector3.up * 1f * cameraDistance_total, 50f * Time.deltaTime);
+            followT.position = Vector3.Lerp(followT.position, playerTransform.position + Vector3.up * 1f, 22f * Time.deltaTime);
+            targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(posModifier * pi) * playerTransform.forward * -1f * Mathf.Pow(cameraDistance_total, 1f)) + (Mathf.Sin(posModifier * pi)) * Vector3.up * 1f * cameraDistance_total, 50f * Time.deltaTime);
             Camera.main.transform.position = targetPos;
             targetLookAt = Vector3.Lerp(targetLookAt, followT.position, 50f * Time.deltaTime);
             Camera.main.transform.LookAt(targetLookAt);
@@ -215,11 +221,11 @@ public class CameraController : MonoBehaviour
     void Update()
     {
 
-        if(playerT != null){
+        if(playerTransform != null){
             AdjustCamera(GameManager.GAME_SETTINGS_CAMERA_MODE);
         }
 
-        distanceFromPlayer = Vector3.Distance(Camera.main.transform.position, playerT.position);
+        distanceFromPlayer = Vector3.Distance(Camera.main.transform.position, playerTransform.position);
 
         //UpdateRenderScale();
         

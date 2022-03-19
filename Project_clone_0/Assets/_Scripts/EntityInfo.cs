@@ -16,8 +16,7 @@ public class EntityInfo : EntityComponent
     public string nickname;
     public Species species;
     public Faction faction;
-    public bool isFactionLeader;
-    public bool isFactionFollower;
+    public FactionRole factionRole;
     public SpeciesInfo speciesInfo;
 
 
@@ -36,10 +35,19 @@ public class EntityInfo : EntityComponent
         if(species != Species.Any){
             speciesInfo = SpeciesInfo.GetSpeciesInfo(species);
             faction = speciesInfo.baseFaction;
-            isFactionLeader = false;
-            isFactionFollower = false;
+            faction.AddMember(entityHandle, FactionRole.Leader, false);
         }
         FindAndSetEntityReferences();
+    }
+
+    public void SetFactionRole(FactionRole role)
+    {
+        factionRole = role;
+    }
+
+    public bool IsFactionLeader()
+    {
+        return factionRole == FactionRole.Leader;
     }
 
 }
@@ -83,7 +91,7 @@ public class SpeciesInfo : ScriptableObject{
                     }
                 ),
                 Stats.InstantiateStats(1f,1f,1f,.7f,.38f,1f,.7f,1f,1f,1f,1f,1f),
-                IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", true, false, true, 3f, 8f, 2f, .5f),
+                IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", false, false, true, 3f, 8f, 2f, .5f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Aggressive,
                     new List<AttackType>(){AttackType.Weapon},
