@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 114389023734901772}
   - component: {fileID: 114389023734901775}
   - component: {fileID: 114389023734901769}
+  - component: {fileID: 3666985061874744695}
   - component: {fileID: -3559509913535453237}
   - component: {fileID: -501043152616888623}
   - component: {fileID: 2862668722696777771}
@@ -41,9 +42,11 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3662222652384918156}
   - {fileID: 8957971331447657194}
+  - {fileID: 5315079673949311263}
   - {fileID: 4506302677164184991}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -58,7 +61,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 1
-  m_AngularDrag: 1
+  m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
@@ -94,6 +97,7 @@ MonoBehaviour:
   selected: 0
   tooltip: 0
   localP: 0
+  entityHealthDisplayController: {fileID: 0}
 --- !u!114 &114389023734901760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121,10 +125,10 @@ MonoBehaviour:
   entityUserInput: {fileID: 0}
   id: 0
   nickname: bob
+  isAPlayer: 0
   species: 1
   faction: {fileID: 0}
-  isFactionLeader: 0
-  isFactionFollower: 0
+  factionRole: 0
   speciesInfo: {fileID: 0}
 --- !u!114 &114389023734901763
 MonoBehaviour:
@@ -153,8 +157,10 @@ MonoBehaviour:
   entityUserInput: {fileID: 0}
   combinedStats: {fileID: 0}
   BASE_AMOUNT_STAMINA: 100
-  hp: 0
+  health: 0
+  maxHealth: 0
   stamina: 0
+  maxStamina: 0
 --- !u!114 &114389023734901762
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,16 +187,19 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   behaviorProfile: {fileID: 0}
-  homeT: {fileID: 0}
+  followPositionTransform: {fileID: 0}
+  restingTent: {fileID: 0}
   isPlayer: 0
   isAtHome: 0
   move: {x: 0, y: 0, z: 0}
   urgent: 0
   followOffset: {x: 0, y: 0, z: 0}
   timeSince_creatureSense: 0
-  timeSince_attack: 0
   activeAction: {fileID: 0}
   actionQueue: []
+  entityActionSequence_AssertStanding: {fileID: 0}
+  entityActionSequence_AssertSquatting: {fileID: 0}
+  homeResetTime: 0
 --- !u!114 &114389023734901773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -283,6 +292,10 @@ MonoBehaviour:
   jumpOffLeft: 0
   jumpOffRight: 0
   isSprinting: 0
+  isWalking: 0
+  isSquatting: 0
+  animFlag_jump: 0
+  animFlag_jumpMirror: 0
   isDodging: 0
   offWallTime: 0
   offWaterTime: 0
@@ -295,13 +308,17 @@ MonoBehaviour:
   maxSpeed_climb: 0
   maxSpeed_swim: 0
   maxSpeed_dodge: 0
+  maxSpeed_walk: 0
   landScrunch: 0
-  crouch: 0
+  squatMagnitude: 0
   handFree_right: 0
   handFree_left: 0
   isMoving: 0
+  isMoving_last: 0
   isGrounded: 0
+  isGrounded_last: 0
   isGroundedStrict: 0
+  isGroundedStrict_last: 0
   isInsideCamp: 0
   isHandGrab: 0
   speedLimitModifier_launch: 0
@@ -368,7 +385,8 @@ MonoBehaviour:
   weaponChargeTime: 0
   weaponCharging: 0
   weaponChargeAmount: 0
-  meleeAttackCanHit: 0
+  attackCanHit: 0
+  timeSince_attack: 0
   attackHit: 0
   dodgeTime: 0
 --- !u!114 &114389023734901775
@@ -435,12 +453,62 @@ MonoBehaviour:
   orientationParent: {fileID: 0}
   orientation_weaponEquipped_spear: {fileID: 0}
   orientation_weaponEquipped_axe: {fileID: 0}
+  orientation_weaponEquipped_squatting: {fileID: 0}
   orientation_weaponUnequipped: {fileID: 0}
   orientation_holding: {fileID: 0}
   basePosition_weaponEquipped_spear: {fileID: 0}
   basePosition_weaponEquipped_axe: {fileID: 0}
   basePosition_holding: {fileID: 0}
   itemOrientationAnimator: {fileID: 0}
+--- !u!114 &3666985061874744695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114389023734901768}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 728d9af2f6600d84793f54db102301fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  entityHandle: {fileID: 0}
+  entityInfo: {fileID: 0}
+  entityStats: {fileID: 0}
+  entityBehavior: {fileID: 0}
+  entityOrientation: {fileID: 0}
+  entityPhysics: {fileID: 0}
+  entityStatus: {fileID: 0}
+  entityItems: {fileID: 0}
+  entityActionRecorder: {fileID: 0}
+  entityHitDetection: {fileID: 0}
+  entityUserInput: {fileID: 0}
+  pressForward: 0
+  pressBack: 0
+  pressLeft: 0
+  pressRight: 0
+  pressSprint: 0
+  pressJump: 0
+  pressWalk: 0
+  pressDodge: 0
+  pressForwardDown: 0
+  pressBackDown: 0
+  pressLeftDown: 0
+  pressRightDown: 0
+  timeOffForward: 0
+  timeOffBack: 0
+  timeOffLeft: 0
+  timeOffRight: 0
+  pressToggleAttackRanged: 0
+  mouseX: 0
+  mouseY: 0
+  mouseZ: 0
+  hoveredInteractableObject: {fileID: 0}
+  lastHoveredInteractableObject: {fileID: 0}
+  interactableObjects: []
+  move: {x: 0, y: 0, z: 0}
 --- !u!114 &-3559509913535453237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -467,6 +535,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   species: 1
+  isInitialized: 0
 --- !u!114 &-501043152616888623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -507,7 +576,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   visible: 0
-  m_AssetId: 
+  m_AssetId: ecdabe89fafca274cba17e8fc03ba9c7
   hasSpawned: 0
 --- !u!114 &4026186526722097221
 MonoBehaviour:
@@ -524,12 +593,20 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   clientAuthority: 0
-  localPositionSensitivity: 0.01
-  localRotationSensitivity: 0.01
-  localScaleSensitivity: 0.01
-  compressRotation: 0
-  interpolateScale: 1
+  sendInterval: 0.05
+  syncPosition: 1
+  syncRotation: 1
   syncScale: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  bufferTimeMultiplier: 1
+  bufferSizeLimit: 64
+  catchupThreshold: 4
+  catchupMultiplier: 0.1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
 --- !u!114 &-5512500607254942701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -545,12 +622,20 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   clientAuthority: 0
-  localPositionSensitivity: 0.01
-  localRotationSensitivity: 0.01
-  localScaleSensitivity: 0.01
-  compressRotation: 0
-  interpolateScale: 1
+  sendInterval: 0.05
+  syncPosition: 1
+  syncRotation: 1
   syncScale: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  bufferTimeMultiplier: 1
+  bufferSizeLimit: 64
+  catchupThreshold: 4
+  catchupMultiplier: 0.1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   target: {fileID: 8957971331447657194}
 --- !u!114 &-8185568002921169946
 MonoBehaviour:
@@ -600,9 +685,10 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 114389023734901764}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1996816139399043782
 GameObject:
@@ -631,6 +717,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.53893, y: 0.68037, z: 0.53893}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 114389023734901764}
   m_RootOrder: 0
@@ -648,6 +735,37 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.4372313, y: 1.8943145, z: 0.9778439}
   m_Center: {x: -0.15594861, y: 0.9456832, z: -0.36741194}
+--- !u!1 &7853354896775961823
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5315079673949311263}
+  m_Layer: 12
+  m_Name: SelectionOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5315079673949311263
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7853354896775961823}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.79, z: 0.019}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 114389023734901764}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5110113100560732133
 PrefabInstance:
   m_ObjectHideFlags: 0

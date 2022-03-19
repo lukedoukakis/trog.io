@@ -96,7 +96,7 @@ public class LightingController : MonoBehaviour
 
     void SetFog(float time)
     {
-        Vector3 playerPos = GameManager.instance.localPlayer.transform.position;
+        Vector3 playerPos = ClientCommand.instance.clientPlayerCharacter.transform.position;
         Vector3 cameraPos = Camera.main.transform.position;
         if(fog != null)
         {

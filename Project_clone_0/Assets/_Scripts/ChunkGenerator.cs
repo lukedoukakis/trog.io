@@ -31,7 +31,7 @@ public class ChunkGenerator : MonoBehaviour
     public static GameObject Terrain;
     public static GameObject Water;
 
-    public Transform playerT;
+    public Transform playerTransform;
     public Vector3 playerRawPosition;
     public Vector2 playerChunkCoordinate;
 
@@ -102,7 +102,7 @@ public class ChunkGenerator : MonoBehaviour
 
     private void Update()
     {
-        if (playerT != null)
+        if (playerTransform != null)
         {
             if(!LoadingChunks && !DeloadingChunks){
                 LoadingChunks = true;
@@ -152,6 +152,14 @@ public class ChunkGenerator : MonoBehaviour
     
     }
 
+
+    public void SetPlayerTransform(Transform t)
+    {
+        Debug.Log("Setting playerTransform: " + t);
+        playerTransform = t;
+    }
+
+
     IEnumerator CallForSpawnGeneration()
     {
         foreach (ChunkData loadedCd in ChunkDataLoaded.ToArray())
@@ -172,7 +180,7 @@ public class ChunkGenerator : MonoBehaviour
     {
 
 
-        playerRawPosition = playerT.position;
+        playerRawPosition = playerTransform.position;
         playerChunkCoordinate = GetChunkCoordinate(playerRawPosition);
         Vector2 currentChunkCoord = new Vector2((int)playerChunkCoordinate.x, (int)playerChunkCoordinate.y);
 
@@ -219,7 +227,7 @@ public class ChunkGenerator : MonoBehaviour
     {
 
         IEnumerator load;
-        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(GetChunkCoordinate(playerT.position), c.coordinate)).ToArray())
+        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(GetChunkCoordinate(playerTransform.position), c.coordinate)).ToArray())
         {
             if (!cd.loaded)
             {
@@ -227,7 +235,7 @@ public class ChunkGenerator : MonoBehaviour
                 yield return StartCoroutine(load);
                 ChunkDataLoaded.Add(cd);
             }
-            if(GetChunkCoordinate(playerT.position) != playerChunkCoordinate){
+            if(GetChunkCoordinate(playerTransform.position) != playerChunkCoordinate){
                 break;
             }
         }
@@ -934,7 +942,7 @@ public class ChunkGenerator : MonoBehaviour
                 {
                     activeCPUCreatures.RemoveAt(i);
                     Faction creatureFaction = cpuCreature.GetComponent<EntityInfo>().faction;
-                    if (creatureFaction != null && !ReferenceEquals(creatureFaction, GameManager.instance.localPlayerHandle.entityInfo.faction))
+                    if (creatureFaction != null && !ReferenceEquals(creatureFaction, ClientCommand.instance.clientPlayerCharacterHandle.entityInfo.faction))
                     {
                         // if creature's faction is a faction besides its species' base faction, and the faction is not already marked for destruction, destroy the whole faction
                         if (!ReferenceEquals(creatureFaction, SpeciesInfo.GetSpeciesInfo(cpuCreatureHandle.entityInfo.species)) && !creatureFaction.IsMarkedForDestruction())
@@ -1068,7 +1076,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
     void UpdateWaterPosition(){
-        Vector3 pos = playerT.position;
+        Vector3 pos = playerTransform.position;
         pos.y = SeaLevel * ElevationAmplitude;
         Water.transform.position = pos;
     }

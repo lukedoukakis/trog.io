@@ -1149,7 +1149,7 @@ public class EntityBehavior : EntityComponent
                 }
             }
 
-            // if (!isLocalPlayer)
+            // if (!(IsClientPlayer())
             // {
             //     Debug.Log("Rest level: " + rest);
             // }
@@ -1170,7 +1170,7 @@ public class EntityBehavior : EntityComponent
     }
 
     bool WithinActiveDistance(){
-        return Vector3.Distance(GameManager.instance.localPlayer.transform.position, transform.position) <= DISTANCE_THRESHOLD_ACTIVE;
+        return Vector3.Distance(ClientCommand.instance.clientPlayerCharacter.transform.position, transform.position) <= DISTANCE_THRESHOLD_ACTIVE;
     }
 
     public bool IsTargetedObject(GameObject otherObject)

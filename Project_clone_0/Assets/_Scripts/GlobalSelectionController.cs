@@ -58,9 +58,9 @@ public class GlobalSelectionController : MonoBehaviour
 
     public void SelectAllPlayerFactionMembers(){
         ClearSelected();
-        Faction f = GameManager.instance.localPlayer.GetComponent<EntityHandle>().entityInfo.faction;
+        Faction f = ClientCommand.instance.clientPlayerCharacterHandle.entityInfo.faction;
         foreach(EntityHandle handle in f.memberHandles){
-            if(handle != GameManager.instance.localPlayer.GetComponent<EntityHandle>()){
+            if(!ReferenceEquals(handle, ClientCommand.instance.clientPlayerCharacterHandle)){
                 AddToSelecting(handle);
             }
         }

@@ -80,11 +80,9 @@ GameObject:
   - component: {fileID: 8069827555116078488}
   - component: {fileID: 8069827555116078495}
   - component: {fileID: 8069827555116078480}
-  - component: {fileID: 8069827555116078494}
   - component: {fileID: 8069827555116078493}
   - component: {fileID: 5176456060878539918}
   - component: {fileID: 905915180885855587}
-  - component: {fileID: -5710489385986086236}
   - component: {fileID: 2947814671508615466}
   - component: {fileID: 5656550286591847306}
   - component: {fileID: 4510218948483313081}
@@ -188,6 +186,7 @@ MonoBehaviour:
   entityUserInput: {fileID: 0}
   id: 0
   nickname: Player
+  isAPlayer: 0
   species: 1
   faction: {fileID: 0}
   factionRole: 0
@@ -522,18 +521,6 @@ MonoBehaviour:
   basePosition_weaponEquipped_axe: {fileID: 0}
   basePosition_holding: {fileID: 0}
   itemOrientationAnimator: {fileID: 0}
---- !u!114 &8069827555116078494
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8069827555116078467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b39692344f0998b4ab2c964ace74a66c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8069827555116078493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -635,21 +622,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
---- !u!114 &-5710489385986086236
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8069827555116078467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b6b30ed41c0ca74a9b1ee1b542728a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  npcPrefab: {fileID: 0}
 --- !u!114 &2947814671508615466
 MonoBehaviour:
   m_ObjectHideFlags: 0

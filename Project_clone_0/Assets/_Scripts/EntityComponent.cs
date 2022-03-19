@@ -102,15 +102,15 @@ public class EntityComponent : NetworkBehaviour
                     fac.SetLeader(fac.memberHandles[0]);
 
                     // if this is the player, transfer player status to the new leader
-                    if(ReferenceEquals(entityHandle, GameManager.instance.localPlayerHandle))
+                    if(IsClientPlayerCharacter())
                     {
-                        GameManager.instance.TransferPlayerStatus(newLeaderHandle);
+                        ClientCommand.instance.SetAsPlayer(newLeaderHandle.gameObject);
                     }
                 }
                 else
                 {
                     // no members to assign as faction leader, so faction dies
-                    fac.DestroyFaction();
+                    //fac.DestroyFaction();
                 }
             }
         }
@@ -118,6 +118,12 @@ public class EntityComponent : NetworkBehaviour
         // destroy GameObject
         GameObject.Destroy(this.gameObject);
 
+    }
+
+
+    public bool IsClientPlayerCharacter()
+    {
+        return ReferenceEquals(this.gameObject, ClientCommand.instance.clientPlayerCharacter);
     }
 
 

@@ -14,6 +14,7 @@ public class EntityInfo : EntityComponent
 
     public int id;
     public string nickname;
+    public bool isAPlayer;
     public Species species;
     public Faction faction;
     public FactionRole factionRole;

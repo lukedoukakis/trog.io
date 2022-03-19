@@ -50,17 +50,8 @@ public class CameraController : MonoBehaviour
         //renderPipelineAsset = GetComponent<UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset>();
         SetBakedCameraDistance(CAMERA_DISTANCE_OUTSIDECAMP);
         SetLockVerticalCameraMovement(false, CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        SetTargetOffset(defaultCameraOffset);
-    }
 
-    public void Init(Transform t)
-    {
-        SetPlayerTransform(t);
-        followT = GameObject.Instantiate(new GameObject(), playerTransform.position, Quaternion.identity).transform;
+        followT = GameObject.Instantiate(new GameObject()).transform;
         Application.targetFrameRate = -1;
         QualitySettings.vSyncCount = 1;
         float[] cullDistances = new float[32];
@@ -72,6 +63,13 @@ public class CameraController : MonoBehaviour
         posModifier = 0f;
         cameraDistance_input = 1f;
         //RandomSpawn();
+
+
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+        SetTargetOffset(defaultCameraOffset);
     }
 
     public void SetPlayerTransform(Transform t)

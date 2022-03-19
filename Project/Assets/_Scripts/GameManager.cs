@@ -8,8 +8,6 @@ public class GameManager : MonoBehaviour
 
     public static GameManager instance;
     public int gameId;
-    public GameObject localPlayer;
-    public EntityHandle localPlayerHandle;
 
 
 
@@ -24,23 +22,7 @@ public class GameManager : MonoBehaviour
         instance = this;
     }
 
-    public void SetLocalPlayer(GameObject obj)
-    {
-        localPlayer = obj;
-        localPlayerHandle = obj.GetComponent<EntityHandle>();
-    }
 
-    public void TransferPlayerStatus(EntityHandle newPlayerHandle)
-    {
-        SetLocalPlayer(newPlayerHandle.gameObject);
-        CameraController.instance.SetPlayerTransform(newPlayerHandle.transform);
-
-        // handle components
-        EntityUserInput eui = gameObject.AddComponent<EntityUserInput>();
-        ClientCommand cc = gameObject.AddComponent<ClientCommand>();
-
-
-    }
 
 
 

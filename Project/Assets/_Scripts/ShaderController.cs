@@ -5,7 +5,8 @@ using UnityEngine;
 public class ShaderController : MonoBehaviour
 {
     
-    public static ShaderController instance;    
+    public static ShaderController instance;
+    [SerializeField] float distanceDropMagnitude;
 
 
     void Awake()
@@ -30,8 +31,8 @@ public class ShaderController : MonoBehaviour
 
     void UpdateFadeMaterials()
     {
-        if(GameManager.instance.localPlayerHandle == null){ return; }     
-        Shader.SetGlobalVector("_TargetVector", GameManager.instance.localPlayerHandle.entityPhysics.hips.position);
+        if(ClientCommand.instance.clientPlayerCharacterHandle == null){ return; }     
+        Shader.SetGlobalVector("_TargetVector", ClientCommand.instance.clientPlayerCharacterHandle.entityPhysics.hips.position);
     }
 
     void UpdateWaterSensitiveMaterials()
@@ -69,9 +70,9 @@ public class ShaderController : MonoBehaviour
 
     void UpdatePlayerPositionSensitiveMaterials()
     {
-        if(GameManager.instance.localPlayer != null)
+        if(ClientCommand.instance.clientPlayerCharacter != null)
         {
-            Vector3 playerPos = GameManager.instance.localPlayer.transform.position;
+            Vector3 playerPos = ClientCommand.instance.clientPlayerCharacter.transform.position;
             Shader.SetGlobalVector("_PlayerPosition", playerPos);
         }   
     }
@@ -84,8 +85,7 @@ public class ShaderController : MonoBehaviour
     void UpdateDistanceDrop()
     {
         //float magnitude = Mathf.Lerp(.25f, 1f, 1f - Mathf.InverseLerp(0f, 40f, CameraController.instance.distanceFromPlayer));
-        float magnitude = 0f;
-        Shader.SetGlobalFloat("_DistanceDropMagnitude", magnitude);
+        Shader.SetGlobalFloat("_DistanceDropMagnitude", distanceDropMagnitude);
     }
 
     void Update()

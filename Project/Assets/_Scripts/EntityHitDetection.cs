@@ -33,7 +33,7 @@ public class EntityHitDetection : EntityComponent
     {
 
 
-        if (ReferenceEquals(entityHandle, GameManager.instance.localPlayerHandle) && Testing.instance.godMode)
+        if (ReferenceEquals(entityHandle, ClientCommand.instance.clientPlayerCharacterHandle) && Testing.instance.godMode)
         {
             return;
         }

@@ -23,38 +23,6 @@ public class EntityHandle : EntityComponent
 
     }
 
-    public override void OnStartLocalPlayer()
-    {
-        base.OnStartLocalPlayer();
-        
-        if(isLocalPlayer){
-            localP = true;
-            InitAsLocalPlayer();
-        }
-    }
-
-    public void InitAsLocalPlayer()
-    {
-
-        // set global variables
-        GameManager.instance.SetLocalPlayer(this.gameObject);
-        Testing.instance.playerHandle = this.gameObject.GetComponent<EntityHandle>();
-        ChunkGenerator.instance.playerT = transform;
-        CameraController.instance.enabled = true;
-        CameraController.instance.Init(this.transform);
-        
-
-        // init player specific entity settings
-        transform.position = new Vector3(0f, ChunkGenerator.ElevationAmplitude + 50f, 0f);
-
-        // start new faction with this as the leader
-        StartCoroutine(ClientCommand.instance.SetNewFactionWhenReady(this, false, FactionStartingItemsTier.PlayerTest));
-
-
-        UIController.current.SetUIMode(false);
-
-    }
-
 
     public void SetSelecting(bool b){
         selecting = b;

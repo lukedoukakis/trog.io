@@ -54,7 +54,7 @@ public class Camp : MonoBehaviour
     // client method to place a Camp
     public static void TryPlaceCamp(Faction faction, Transform originT)
     {
-        bool isPlayerCamp = ReferenceEquals(faction.leaderHandle, GameManager.instance.localPlayerHandle);
+        bool isPlayerCamp = ReferenceEquals(faction.leaderHandle, ClientCommand.instance.clientPlayerCharacterHandle);
         if(CanPlaceCamp(faction, originT.position, isPlayerCamp))
         {
             //faction.leaderHandle.entityItems.EmptyInventory();
@@ -736,7 +736,7 @@ public class Camp : MonoBehaviour
 
         Utility.DestroyInSeconds(rootT.gameObject, 5f);
 
-        Debug.Log("Dismantle() end");
+        //Debug.Log("Dismantle() end");
     }
 
 

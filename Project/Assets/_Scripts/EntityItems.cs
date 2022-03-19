@@ -297,7 +297,7 @@ public class EntityItems : EntityComponent
             holding_object = null;
             takerItems.PickUpHolding(itemToDrop, worldObjectToDrop, this);
             // if is player and if no equipped weapon, give one from camp
-            if(isLocalPlayer)
+            if(IsClientPlayerCharacter())
             {
                 if(holding_object == null)
                 {
@@ -427,7 +427,7 @@ public class EntityItems : EntityComponent
             weaponEquipped_object = null;
             takerItems.PickUpWeapon(itemToDrop, worldObjectToDrop, this);
             // if is player and if no equipped weapon, give one from camp
-            if(isLocalPlayer)
+            if(IsClientPlayerCharacter())
             {
                 if(weaponEquipped_item == null)
                 {
@@ -702,7 +702,7 @@ public class EntityItems : EntityComponent
             holding_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
         }
 
-        if(isLocalPlayer){
+        if(IsClientPlayerCharacter()){
             UpdateCameraOffset();
         }
     }

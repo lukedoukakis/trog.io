@@ -84,7 +84,7 @@ public class EntityOrientation : EntityComponent
     void UpdateBodyRotation()
     {
 
-        if (isLocalPlayer && !entityPhysics.isInWater)
+        if (IsClientPlayerCharacter() && !entityPhysics.isInWater)
         {
             bodyLean = Mathf.InverseLerp(leanBoundMin, leanBoundMax, Mathf.Sin(Camera.main.transform.rotation.eulerAngles.x * Mathf.Deg2Rad)) * 2f - 1f + .2f;
         }

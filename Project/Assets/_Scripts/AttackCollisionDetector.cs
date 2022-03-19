@@ -88,7 +88,7 @@ public class AttackCollisionDetector : MonoBehaviour
             if (CanHit())
             {
                 //Debug.Log("Can Hit");
-                if (ReferenceEquals(GameManager.instance.localPlayerHandle, ownerHandle) || ownerHandle.entityBehavior.IsTargetedObject(otherObject))
+                if (ReferenceEquals(ClientCommand.instance.clientPlayerCharacterHandle, ownerHandle) || ownerHandle.entityBehavior.IsTargetedObject(otherObject))
                 {
             
                     //Debug.Log("Call OnAttackHit()");

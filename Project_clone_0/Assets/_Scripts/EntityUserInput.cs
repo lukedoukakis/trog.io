@@ -645,7 +645,9 @@ public class EntityUserInput : EntityComponent
 
     void Update(){
 
-        if(isLocalPlayer){
+        if(IsClientPlayerCharacter())
+        {
+
             HandleMovement();
             if(!UIController.UImode){
                 HandleRotation();

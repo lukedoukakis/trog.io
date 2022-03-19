@@ -948,7 +948,7 @@ public class EntityPhysics : EntityComponent
 
     void SetIsSprinting()
     {
-        if(isLocalPlayer)
+        if(IsClientPlayerCharacter())
         {
 
             isSprinting = false;
@@ -970,7 +970,7 @@ public class EntityPhysics : EntityComponent
 
     public void SetIsWalking()
     {
-        if(isLocalPlayer)
+        if(IsClientPlayerCharacter())
         {
             isWalking = entityUserInput.pressWalk;
         }
@@ -1404,7 +1404,7 @@ public class EntityPhysics : EntityComponent
         {
             attackHit = false;
         }
-        if (isLocalPlayer)
+        if (IsClientPlayerCharacter())
         {
             entityOrientation.SetBodyRotationMode(BodyRotationMode.Normal, null);
         }
@@ -1449,7 +1449,7 @@ public class EntityPhysics : EntityComponent
             }
 
             // apply fixed weapon position effect if applicable
-            if(isLocalPlayer)
+            if(IsClientPlayerCharacter())
             {
                 if (entityItems != null)
                 {
@@ -1795,7 +1795,7 @@ public class EntityPhysics : EntityComponent
         {
             entityInfo.faction.UpdateLeaderCampStatus();
         }
-        if(isLocalPlayer)
+        if(IsClientPlayerCharacter())
         {
             CameraController.instance.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_INSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION);
             CameraController.instance.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_INSIDECAMP);
@@ -1811,7 +1811,7 @@ public class EntityPhysics : EntityComponent
         {
             entityInfo.faction.UpdateLeaderCampStatus();
         }
-        if(isLocalPlayer)
+        if(IsClientPlayerCharacter())
         {
             CameraController.instance.SetBakedCameraDistanceSmooth(CameraController.CAMERA_DISTANCE_OUTSIDECAMP, CameraController.CAMERA_ZOOM_SPEED_CAMPTRANSITION * .25f);
             CameraController.instance.SetLockVerticalCameraMovement(false, CameraController.CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
@@ -1895,7 +1895,7 @@ public class EntityPhysics : EntityComponent
             }
         }
 
-        // if (isLocalPlayer)
+        // if ((IsClientPlayer())
         // {
         //     SetHeadTarget((Camera.main.transform.position + Camera.main.transform.right * 1000f) + (transform.forward * 500f));
         // }
