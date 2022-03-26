@@ -413,7 +413,7 @@ public class Faction : MonoBehaviour
         //spawnWithGear = false;
         for(int i = 0; i < memberCount; ++i)
         {
-            StartCoroutine(ClientCommand.instance.SpawnNpcFollowerWhenReady(leaderHandle, leaderHandle.transform.position, spawnWithGear));
+            StartCoroutine(ClientCommand.instance.SpawnCharacterAsFollowerWhenReady(leaderHandle, leaderHandle.transform.position, spawnWithGear));
         }
     }
 

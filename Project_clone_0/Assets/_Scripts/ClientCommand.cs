@@ -15,12 +15,12 @@ public class ClientCommand : NetworkBehaviour
     public GameObject clientPlayerCharacter;
     public EntityHandle clientPlayerCharacterHandle;
 
-    GameObject npcPrefab;
+    GameObject characterPrefab;
 
     void Awake()
     {
         instance = this;
-        npcPrefab = Resources.Load<GameObject>("Terrain/Humans/Npc");
+        characterPrefab = Resources.Load<GameObject>("Terrain/Humans/Character");
     }
 
 
@@ -45,12 +45,12 @@ public class ClientCommand : NetworkBehaviour
     void CmdSpawnPlayerCharacter(GameObject playerClientObject)
     {
 
-        GameObject p = GameObject.Instantiate(npcPrefab);
+        GameObject p = GameObject.Instantiate(characterPrefab);
         EntityHandle pHandle = p.GetComponent<EntityHandle>();
         p.transform.position = new Vector3(0f, ChunkGenerator.ElevationAmplitude + 50f, 0f);
 
         ClientCommand pcc = playerClientObject.GetComponent<ClientCommand>();
-        Debug.Log(pcc);
+        //Debug.Log(pcc);
         pcc.clientPlayerCharacter = p;
         pcc.clientPlayerCharacterHandle = pHandle;
 
@@ -82,15 +82,15 @@ public class ClientCommand : NetworkBehaviour
     }
 
 
-    public IEnumerator SpawnNpcFollowerWhenReady(EntityHandle leaderHandle, Vector3 position, bool spawnWithGear)
+    public IEnumerator SpawnCharacterAsFollowerWhenReady(EntityHandle leaderHandle, Vector3 position, bool spawnWithGear)
     {
         yield return new WaitUntil(() => NetworkClient.ready);
-        CmdSpawnNpcFollower(leaderHandle, position, spawnWithGear);
+        CmdSpawnCharacterAsFollower(leaderHandle, position, spawnWithGear);
     }
     [Command]
-    public void CmdSpawnNpcFollower(EntityHandle leaderHandle, Vector3 position, bool spawnWithGear)
+    public void CmdSpawnCharacterAsFollower(EntityHandle leaderHandle, Vector3 position, bool spawnWithGear)
     {
-        GameObject npc = GameObject.Instantiate(npcPrefab, position, Quaternion.identity);
+        GameObject npc = GameObject.Instantiate(characterPrefab, position, Quaternion.identity);
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
         Faction faction = leaderHandle.entityInfo.faction;
         EntityInfo npcInfo = npcHandle.entityInfo;
@@ -119,16 +119,16 @@ public class ClientCommand : NetworkBehaviour
     }
 
 
-    public IEnumerator SpawnNpcIndependentWhenReady(Vector3 position, bool createCamp, FactionStartingItemsTier factionTier)
+    public IEnumerator SpawnCharacterAsLeaderWhenReady(Vector3 position, bool createCamp, FactionStartingItemsTier factionTier)
     {
         yield return new WaitUntil(() => NetworkClient.ready);
-        CmdSpawnNpcIndependent(position, createCamp, factionTier);
+        CmdSpawnCharacterAsLeader(position, createCamp, factionTier);
     }
     [Command]
-    public void CmdSpawnNpcIndependent(Vector3 position, bool createCamp, FactionStartingItemsTier factionTier)
+    public void CmdSpawnCharacterAsLeader(Vector3 position, bool createCamp, FactionStartingItemsTier factionTier)
     {
         //Debug.Log("SpawnNpcIndependent()");
-        GameObject npc = GameObject.Instantiate(npcPrefab, position, Quaternion.identity);
+        GameObject npc = GameObject.Instantiate(characterPrefab, position, Quaternion.identity);
         EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
         NetworkServer.Spawn(npc);
         StartCoroutine(SetNewFactionWhenReady(npcHandle, createCamp, factionTier));

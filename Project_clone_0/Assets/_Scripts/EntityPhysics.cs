@@ -1434,7 +1434,8 @@ public class EntityPhysics : EntityComponent
             if(ehd != null)
             {
                 yield return new WaitForSecondsRealtime(delay);
-                ehd.OnHit(this.entityHandle, hitPoint, projectile, false);
+                Item weapon = this.entityItems == null ? Item.None : this.entityItems.weaponEquipped_item;
+                ehd.OnHit(this.entityHandle, weapon, hitPoint, projectile, false);
                 hitObjectStats = ehd.entityStats;
             }
             else
@@ -1443,7 +1444,8 @@ public class EntityPhysics : EntityComponent
                 if (ihd != null)
                 {
                     yield return new WaitForSecondsRealtime(delay);
-                    ihd.OnHit(this.entityHandle, hitPoint, projectile);
+                    Item weapon = this.entityItems == null ? Item.None : this.entityItems.weaponEquipped_item;
+                    ihd.OnHit(this.entityHandle, weapon, hitPoint, projectile);
                     hitObjectStats = ihd.stats;
                 }
             }
@@ -1453,7 +1455,7 @@ public class EntityPhysics : EntityComponent
             {
                 if (entityItems != null)
                 {
-                    //StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
+                    StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
                 }
             }
         

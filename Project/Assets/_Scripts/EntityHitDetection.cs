@@ -29,7 +29,7 @@ public class EntityHitDetection : EntityComponent
         isInitialized = true;
     }
 
-    public void OnHit(EntityHandle attackerHandle, Vector3 hitPoint, Projectile projectile, bool instantKill)
+    public void OnHit(EntityHandle attackerHandle, Item weapon, Vector3 hitPoint, Projectile projectile, bool instantKill)
     {
 
 
@@ -49,7 +49,7 @@ public class EntityHitDetection : EntityComponent
         // take damage from the hit
         if(entityStats != null)
         {
-            entityStats.TakeDamage(attackerHandle, projectile, instantKill);
+            entityStats.TakeDamage(attackerHandle, weapon, projectile, instantKill);
         }
         else
         {

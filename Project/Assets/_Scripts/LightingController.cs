@@ -64,7 +64,7 @@ public class LightingController : MonoBehaviour
         UpdateRenderFog();
 
         // pause time of day: comment out this line
-        time += Time.deltaTime;
+        //time += Time.deltaTime;
     }
 
     void InitFog()

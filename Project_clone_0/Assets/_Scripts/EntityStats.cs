@@ -122,16 +122,13 @@ public class EntityStats : EntityComponent
     }
 
 
-    public void TakeDamage(EntityHandle attackerHandle, Projectile projectile, bool instantKill)
+    public void TakeDamage(EntityHandle attackerHandle, Item attackerWeapon, Projectile projectile, bool instantKill)
     {
 
         // get attacker's relevant stats and (if applicable) weapon
         Stats attackerStats;
-        Item attackerWeapon;
         if(projectile == null)
         {
-            EntityItems attackerItems = attackerHandle.entityItems;
-            attackerWeapon = attackerItems == null ? Item.None : attackerItems.weaponEquipped_item;
             attackerStats = attackerHandle.entityStats.combinedStats;
         }
         else

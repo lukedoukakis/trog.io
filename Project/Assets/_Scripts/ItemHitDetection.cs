@@ -35,7 +35,7 @@ public class ItemHitDetection : MonoBehaviour
         
     }
 
-    public void OnHit(EntityHandle attackerHandle, Vector3 hitPoint, Projectile projectile)
+    public void OnHit(EntityHandle attackerHandle, Item attackerWeapon, Vector3 hitPoint, Projectile projectile)
     {
 
         if(!isInitialized)
@@ -46,7 +46,7 @@ public class ItemHitDetection : MonoBehaviour
         // take damage from the hit
         if(stats != null)
         {
-            stats.TakeDamage(attackerHandle, projectile, false);
+            stats.TakeDamage(attackerHandle, attackerWeapon, projectile, false);
         }
 
         // play particles
@@ -78,7 +78,7 @@ public class ItemHitDetection : MonoBehaviour
         try{
             StartCoroutine(_Shake());
         }
-        catch(NullReferenceException){}
+        catch(Exception){}
 
         IEnumerator _Shake()
         {
