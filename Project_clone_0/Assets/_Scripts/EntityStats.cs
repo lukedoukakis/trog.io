@@ -136,7 +136,6 @@ public class EntityStats : EntityComponent
             attackerStats = projectile.stats;
             attackerWeapon = projectile.item;
         }
-        float attackerAttack = Stats.GetStatValue(attackerStats, Stats.StatType.Attack);
 
         // calculate damage
         float hpLoss;
@@ -163,7 +162,7 @@ public class EntityStats : EntityComponent
 
     public void ApplyHealthIncrement(float amount, EntityHandle entityThatCaused)
     {
-        health += amount;
+        health += amount; 
         if(health > maxHealth)
         {
             health = maxHealth;

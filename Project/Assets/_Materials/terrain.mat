@@ -14,7 +14,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2004
+  m_CustomRenderQueue: 2000
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses:
@@ -84,7 +84,7 @@ Material:
     - Vector1_124AF345: 0
     - Vector1_49092716: 1
     - Vector1_61F46C5F: 200
-    - Vector1_6756ADD4: 1.48
+    - Vector1_6756ADD4: 0.9
     - Vector1_6A3D0673: 0
     - Vector1_7EC73CB8: 0.9
     - Vector1_81EA2B5B: 0.8
@@ -100,12 +100,12 @@ Material:
     - _Cull: 2
     - _Desertness: 0
     - _DstBlend: 0
-    - _NumberOfShades: 8
+    - _NumberOfShades: 4
     - _QueueControl: 1
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _RockToGrassPosterizationSteps: 8
-    - _ShadingAttenuation: 0.15
+    - _RockToGrassPosterizationSteps: 2
+    - _ShadingAttenuation: 0
     - _SnowCapHeight: 0
     - _SnowDepth: 0.1
     - _SnowHeight: 4645.04
@@ -124,16 +124,16 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
-    - Color_1DD039A2: {r: 1, g: 0.95722306, b: 0.6264151, a: 0}
+    - Color_1DD039A2: {r: 0.8396226, g: 0.7904104, b: 0.41585082, a: 0}
     - Color_20D74E1E: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
     - Color_54E7F5BD: {r: 1, g: 0.70598435, b: 0.6179246, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.7169812, g: 0.6669386, b: 0.65272343, a: 0}
     - Color_9C158BA5: {r: 0.3773585, g: 0.13349947, b: 0.13349947, a: 0}
-    - Color_B9FC0D65: {r: 0.990566, g: 0.7992768, b: 0.68592024, a: 0}
+    - Color_B9FC0D65: {r: 0.8207547, g: 0.5977875, b: 0.36779103, a: 0}
     - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
     - Color_EB41B935: {r: 0.735849, g: 0.67390525, b: 0.6351904, a: 1}
-    - _GrassColor: {r: 0.7529412, g: 0.9137255, b: 0.78039217, a: 0}
+    - _GrassColor: {r: 0.58686364, g: 0.7924528, b: 0.62069476, a: 0}
     - _PlayerPosition: {r: -63.85839, g: 4589.878, b: -42.378468, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &2664279794138996905

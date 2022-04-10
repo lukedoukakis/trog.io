@@ -97,7 +97,7 @@ Material:
     m_Ints: []
     m_Floats:
     - Vector1_656083AD: 1.1
-    - Vector1_D19216B2: 0.01
+    - Vector1_D19216B2: 0
     - _AlphaClip: 0
     - _Blend: 0
     - _BlendOp: 0
@@ -126,9 +126,9 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _MaximumThickness: 0.1
+    - _MaximumThickness: 0
     - _Metallic: 0
-    - _MinimumThickness: 0.1
+    - _MinimumThickness: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02

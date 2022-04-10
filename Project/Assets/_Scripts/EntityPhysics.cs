@@ -24,7 +24,7 @@ public class EntityPhysics : EntityComponent
     public Transform groundSense, wallSense, waterSense, obstacleHeightSense, kneeHeightT;
     public RaycastHit groundInfo, wallInfo, waterInfo;
     public static float BASE_GROUND_DISTANCE_TO_JUMP_PLAYER = 2f;
-    public static float BASE_GROUND_DISTANCE_TO_JUMP_NPC = 3f;
+    public static float BASE_GROUND_DISTANCE_TO_JUMP_NONPLAYER = 3f;
     public static float BASE_CASTDISTANCE_WALL = 1f;
     float groundDistanceToJump;
     float distanceFromGround;
@@ -164,13 +164,13 @@ public class EntityPhysics : EntityComponent
         wallSense = Utility.FindDeepChild(transform, "WallSense");
         waterSense = Utility.FindDeepChild(transform, "WaterSense");
         kneeHeightT = Utility.FindDeepChild(transform, "KneeHeight");
-        if (tag == "Player")
+        if (IsClientPlayerCharacter())
         {
             groundDistanceToJump = BASE_GROUND_DISTANCE_TO_JUMP_PLAYER;
         }
         else
         {
-            groundDistanceToJump = BASE_GROUND_DISTANCE_TO_JUMP_NPC;
+            groundDistanceToJump = BASE_GROUND_DISTANCE_TO_JUMP_NONPLAYER;
         }
 
         ikEnabled = isQuadripedal;

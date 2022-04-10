@@ -11,18 +11,18 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 3;
-    public static float Scale = 250f * 1f;
+    public static float Scale = 250f * .5f;
     public static float ElevationAmplitude = 300f * 1f;
-    public static float MountainMapScale = 312f * 2f;
-    public static float ElevationMapScale = 1000f;
+    public static float MountainMapScale = 312f * .75f;
+    public static float ElevationMapScale = 1000f * .25f;
     public static int TemperatureMapScale = 300;
     public static int HumidityMapScale = 300;
     public static float meter = 1f / ElevationAmplitude;
     public static float FlatLevel = .85f;
     public static float SeaLevel = .8495f;
-    public static float SnowLevel = .91f;
+    public static float SnowLevel = .86f;
     //public static float SnowLevel = float.MaxValue;
-    public static float GrassNormal = .99f;
+    public static float GrassNormal = .8f;
     public static float SnowNormalMin = .8f;
     public static float SnowNormalMax = 1f;
     public static float CaveNormal = .4f;
@@ -371,14 +371,16 @@ public class ChunkGenerator : MonoBehaviour
                 if (elevationValueWithRoughness > 0f)
                 {
 
-                    mountainValue = Mathf.Min(mtn0, 1);
+                    mountainValue = Mathf.Min(mtn0, mtn1);
+                    mountainValue *= Mathf.Lerp(.05f, 1f, Mathf.InverseLerp(0f, .2f, elevationValueWithRoughness));
+
                     mountainValue *= Mathf.Lerp(.02f, 1f, Mathf.InverseLerp(.25f, .5f, 1f - temperatureValue));
                     mountainElev = mtn0 * Mathf.Lerp(.1f, 1f, Mathf.InverseLerp(.25f, .5f, 1f - temperatureValue));
 
             
                     //mountainValue = Mathf.InverseLerp(.25f, .75f, mountainValue);
 
-                    //mountainValue = Mathf.Pow(mountainValue, 1.5f);
+                    //mountainValue = Mathf.Pow(mountainValue, 1.25f);
                     //mountainValue *= 1f - CalculateDesertness(temperatureValue, humidityValue);
 
                     //mountainValue *= Mathf.InverseLerp(0f, .35f, elevationValue);
@@ -404,7 +406,7 @@ public class ChunkGenerator : MonoBehaviour
                 // FreshWaterMap [0, 1]
 
                 float freshWaterElev = 0f;
-                if (false)
+                if (true)
                 {
                     float riverScale = 500f;
 
@@ -413,7 +415,7 @@ public class ChunkGenerator : MonoBehaviour
 
                     // give rivers character
                     float character = .5f;
-                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 100f, (z + zOffset + .01f) / 100f);
+                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 75f, (z + zOffset + .01f) / 75f);
                     freshWaterValue += Mathf.Max(0f, rough) * character;
 
                     float riverWidthFactor = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 200f, (z + zOffset - Seed + .01f) / 200f);
@@ -448,10 +450,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 }
-                else
-                {
-                    freshWaterValue = 0f;
-                }
+                
 
 
                 
@@ -529,7 +528,7 @@ public class ChunkGenerator : MonoBehaviour
                 // apply ElevationMap
                 float totalRaise = 0f;
                 totalRaise += elevationValueWithRoughness * meter * 1.5f * (1f - (freshWaterElev * Convert.ToSingle(elevationValueWithRoughness > 0f)));
-                totalRaise += (mountainElev) * meter * 20f * elevationValueWithRoughness * (1f - freshWaterElev);
+                totalRaise += mountainElev * meter * 20f * elevationValueWithRoughness * (1f - freshWaterElev);
                 //totalRaise += (mountainValue) * meter * 15f * elevationValue;
                 heightValue += totalRaise;
 
@@ -545,37 +544,42 @@ public class ChunkGenerator : MonoBehaviour
 
                 // -------------------------------------------------------
 
-                // //posterize all land
+                //posterize all land
                 if (heightValue >= FlatLevel)
                 {
 
-                    // badland effect in deserts
-                    float desertness = CalculateDesertness(temperatureValue, humidityValue);
-                    if (desertness > 0f)
-                    {
-                        if (heightValue > FlatLevel)
-                        {
-                            float postHeight = Posterize(FlatLevel + meter, 1f, heightValue, 500);
-                            heightValue = Mathf.Lerp(heightValue, postHeight, desertness);
-                        }
-                    }
+                    // // badland effect in deserts
+                    // float desertness = CalculateDesertness(temperatureValue, humidityValue);
+                    // if (desertness > 0f && false)
+                    // {
+                    //     if (heightValue > FlatLevel)
+                    //     {
+                    //         float postHeight = Posterize(FlatLevel + meter, 1f, heightValue, 500);
+                    //         heightValue = Mathf.Lerp(heightValue, postHeight, desertness);
+                    //     }
+                    // }
 
-                    // non desert posterize
-                    else
-                    {
+                    // // non desert posterize
+                    // else
+                    // {
 
-                        // float postVariance = 70f;
-                        // int stepsMin = 4;
-                        // int stepsMax = 12;
-                        // int stepSteps = 100;
+                    //     float postVariance = 16f;
+                    //     int stepsMin = 4;
+                    //     int stepsMax = 6;
+                    //     int stepSteps = 6;
 
-                        // int posterizeSteps = (int)Mathf.Lerp(stepsMin, stepsMax, Mathf.InverseLerp(0f, 1f, (Perlin.Noise((x + xOffset + .01f) / postVariance, (heightValue * ElevationAmplitude / postVariance), (z + zOffset - Seed + .01f) / postVariance)) + 1f) / 2f);
-                        // posterizeSteps = (int)Posterize(stepsMin, stepsMax, posterizeSteps, stepSteps);
+                    //     float perlin = (Perlin.Noise((x + xOffset + .01f) / postVariance, (heightValue * ElevationAmplitude / postVariance), (z + zOffset - Seed + .01f) / postVariance) + 1f) / 2f;
+                    //     //perlin += ((Mathf.PerlinNoise((x + xOffset + .01f) / 5f, (z + zOffset - Seed + .01f) / postVariance) * 2f - 1f) * .1f);
 
-                        // heightValue = Posterize(FlatLevel, 1f, heightValue, posterizeSteps);
+                    //     int posterizeSteps = (int)Mathf.Lerp(stepsMin, stepsMax, Mathf.InverseLerp(0f, 1f, perlin));
+                    //     //posterizeSteps = (int)Posterize(stepsMin, stepsMax, posterizeSteps, stepSteps);
 
-                        heightValue = PosterizeSoft(FlatLevel, 1f, heightValue, 2);
-                    }
+                    //     heightValue = PosterizeSoft(FlatLevel, 1f, heightValue, 6);
+
+
+                    //     // consistent posterize
+                    //     //heightValue = PosterizeSoft(FlatLevel, 1f, heightValue, 5);
+                    // }
 
                 }
                 else
@@ -616,7 +620,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // completely flatten terrain
-                //heightValue = FlatLevel + .001f;
+                heightValue = FlatLevel + .001f;
 
 
 
@@ -904,7 +908,7 @@ public class ChunkGenerator : MonoBehaviour
                                     spawnScale = Vector3.one * spawnParameters.scale;
 
                                     //Debug.Log("WILD NPC");
-                                    instance.StartCoroutine(ClientCommand.instance.SpawnCharacterAsLeaderWhenReady(spawnPosition, true, FactionStartingItemsTier.Weak));
+                                    instance.StartCoroutine(ClientCommand.instance.SpawnCharacterAsLeaderWhenReady(spawnPosition, true, FactionStartingItemsTier.One));
 
 
                                     //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);

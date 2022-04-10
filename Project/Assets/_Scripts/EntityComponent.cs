@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using Mirror;
 using System.Reflection;
+using System.Linq;
 
 public class EntityComponent : NetworkBehaviour
 {
@@ -86,32 +87,39 @@ public class EntityComponent : NetworkBehaviour
                 GameObject.Destroy(entityBehavior.followPositionTransform.gameObject);
             }
         }
-    
+
         // handle faction stuff
-        if(entityInfo != null)
+        if (entityInfo != null)
         {
             Faction fac = entityInfo.faction;
-            if(fac != null)
+            if (fac != null)
             {
-                // remove from faction and set a new leader if a candidate is available
-                fac.RemoveMember(entityHandle);
-                EntityHandle newLeaderHandle = fac.memberHandles.Count > 0 ? fac.memberHandles[0] : null;
-                if(newLeaderHandle != null)
+                if (entityInfo.IsFactionLeader())
                 {
-                    // set leader status to the oldest faction member
-                    fac.SetLeader(fac.memberHandles[0]);
-
-                    // if this is the player, transfer player status to the new leader
-                    if(IsClientPlayerCharacter())
+                    // if faction leader, assign a new leader
+                    EntityHandle[] otherMembers = fac.memberHandles.Where(h => !ReferenceEquals(h, entityHandle)).ToArray();
+                    EntityHandle newLeaderHandle = otherMembers.Length > 0 ? otherMembers[0] : null;
+                    if (newLeaderHandle != null)
                     {
-                        ClientCommand.instance.SetAsPlayer(newLeaderHandle.gameObject);
+                        // set leader status to the oldest faction member
+                        fac.SetLeader(newLeaderHandle);
+
+                        // if this is the player, transfer player status to the new leader
+                        if (IsClientPlayerCharacter())
+                        {
+                            ClientCommand.instance.SetAsPlayer(newLeaderHandle.gameObject);
+                        }
+                    }
+                    else
+                    {
+                        // no members to assign as faction leader, so faction dies
+                        //fac.DestroyFaction();
                     }
                 }
-                else
-                {
-                    // no members to assign as faction leader, so faction dies
-                    //fac.DestroyFaction();
-                }
+
+                // remove this memberm from the faction
+                fac.RemoveMember(entityHandle);
+
             }
         }
 

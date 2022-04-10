@@ -63,6 +63,7 @@ MonoBehaviour:
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
   species: 0
+  isInitialized: 0
 --- !u!33 &8832917353157146673
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -92,7 +93,6 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 1bec88393444f3a42a38c1379f7fbdd8, type: 2}
-  - {fileID: 2100000, guid: 7dd68dce44e9fda458b7ed7f6e6f379e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

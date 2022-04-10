@@ -6,7 +6,6 @@ public class EntityHitDetection : EntityComponent
 {
     
     [SerializeField] public Species species;
-    public bool isInitialized;
 
 
     protected override void Awake()
@@ -14,19 +13,6 @@ public class EntityHitDetection : EntityComponent
         this.fieldName = "entityHitDetection";
 
         base.Awake();
-    }
-
-
-    void Init()
-    {
-        // add and set up info and stats if they don't exist
-        entityInfo = gameObject.AddComponent<EntityInfo>();
-        entityInfo.species = species;
-        entityInfo.Init();
-        entityStats = gameObject.AddComponent<EntityStats>();
-        //entityStats.FindAndSetEntityReferences();
-
-        isInitialized = true;
     }
 
     public void OnHit(EntityHandle attackerHandle, Item weapon, Vector3 hitPoint, Projectile projectile, bool instantKill)
@@ -39,11 +25,6 @@ public class EntityHitDetection : EntityComponent
         }
 
         //Debug.Log("EntityHitDetection: OnHit()");
-
-        if(!isInitialized)
-        {
-            Init();
-        }
 
         
         // take damage from the hit

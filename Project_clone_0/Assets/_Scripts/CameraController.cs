@@ -8,11 +8,11 @@ public class CameraController : MonoBehaviour
     
     public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset renderPipelineAsset;
 
-    public static float CAMERA_DISTANCE_OUTSIDECAMP = 30f;
+    public static float CAMERA_DISTANCE_OUTSIDECAMP = 60f;
     public static float CAMERA_DISTANCE_INSIDECAMP = 30f;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
     public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .2f;
-    public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .2f;
+    public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .1f;
 
 
     public Transform playerTransform;

@@ -54,11 +54,11 @@ public class Camp : MonoBehaviour
     // client method to place a Camp
     public static void TryPlaceCamp(Faction faction, Transform originT)
     {
-        bool isPlayerCamp = ReferenceEquals(faction.leaderHandle, ClientCommand.instance.clientPlayerCharacterHandle);
-        if(CanPlaceCamp(faction, originT.position, isPlayerCamp))
+        bool featuresBlockPlacement = ReferenceEquals(faction.leaderHandle, ClientCommand.instance.clientPlayerCharacterHandle) && false;
+        if(CanPlaceCamp(faction, originT.position, false))
         {
             //faction.leaderHandle.entityItems.EmptyInventory();
-            PlaceCamp(faction, originT, isPlayerCamp);
+            PlaceCamp(faction, originT, featuresBlockPlacement);
         }
     }
     public static bool CanPlaceCamp(Faction faction, Vector3 position, bool featuresBlockPlacement)
@@ -123,7 +123,7 @@ public class Camp : MonoBehaviour
         return canPlace;
 
     }
-    public static Camp PlaceCamp(Faction faction, Transform originT, bool isPlayerCamp)
+    public static Camp PlaceCamp(Faction faction, Transform originT, bool featuresBlockPlacement)
     {
 
         Camp camp = GameManager.instance.gameObject.AddComponent<Camp>();
@@ -137,7 +137,7 @@ public class Camp : MonoBehaviour
         camp.racks_bone = new List<ObjectRack>();
         camp.racks_stone = new List<ObjectRack>();
         camp.tents = new List<Tent>();
-        if(!isPlayerCamp)
+        if(!featuresBlockPlacement)
         {
             camp.ClearFeaturesFromCampRadius();
         }
@@ -279,15 +279,15 @@ public class Camp : MonoBehaviour
         {
             if(collider != null)
             {
-                // ItemHitDetection ihd = collider.gameObject.GetComponent<ItemHitDetection>();
-                // if(ihd != null)
-                // {
-                //     ihd.OnHit(faction.memberHandles[0], collider.transform.position, null);
-                // }
-                // else
-                // {
-                //     Destroy(collider.gameObject);
-                // }
+                ItemHitDetection ihd = collider.gameObject.GetComponent<ItemHitDetection>();
+                if(ihd != null)
+                {
+                    ihd.OnHit(faction.memberHandles[0], null, collider.transform.position, null);
+                }
+                else
+                {
+                    Destroy(collider.gameObject);
+                }
 
                 Destroy(collider.gameObject);
             }

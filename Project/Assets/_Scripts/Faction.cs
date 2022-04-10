@@ -5,7 +5,7 @@ using System;
 
 
 public enum FactionRole{ Leader, Follower }
-public enum FactionStartingItemsTier{ PlayerTest, Nothing, Weak, Medium, Strong }
+public enum FactionStartingItemsTier{ PlayerTest, Nothing, One, Weak, Medium, Strong }
 
 public class Faction : MonoBehaviour
 {
@@ -374,6 +374,10 @@ public class Faction : MonoBehaviour
             case FactionStartingItemsTier.Nothing :
                 memberCount = 2;
                 itemCount = 0;
+                break;
+            case FactionStartingItemsTier.One :
+                memberCount = 1;
+                itemCount = 2;
                 break;
             case FactionStartingItemsTier.Weak :
                 memberCount = 5;

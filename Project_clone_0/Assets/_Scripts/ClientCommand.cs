@@ -78,6 +78,8 @@ public class ClientCommand : NetworkBehaviour
         Testing.instance.playerHandle = clientPlayerCharacterHandle;
         ChunkGenerator.instance.SetPlayerTransform(newPlayer.transform);
         CameraController.instance.SetPlayerTransform(newPlayer.transform);
+        //CameraController.instance.SetPlayerTransform(clientPlayerCharacterHandle.entityOrientation.body);
+
         UIController.current.SetUIMode(false);
     }
 
@@ -90,32 +92,32 @@ public class ClientCommand : NetworkBehaviour
     [Command]
     public void CmdSpawnCharacterAsFollower(EntityHandle leaderHandle, Vector3 position, bool spawnWithGear)
     {
-        GameObject npc = GameObject.Instantiate(characterPrefab, position, Quaternion.identity);
-        EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
+        GameObject character = GameObject.Instantiate(characterPrefab, position, Quaternion.identity);
+        EntityHandle characterHandle = character.GetComponent<EntityHandle>();
         Faction faction = leaderHandle.entityInfo.faction;
-        EntityInfo npcInfo = npcHandle.entityInfo;
-        npcInfo.name = "tribemember";
-        npcInfo.faction = faction;
-        npcHandle.entityBehavior.ResetFollowPosition();
-        NetworkServer.Spawn(npc);
+        EntityInfo characterInfo = characterHandle.entityInfo;
+        characterInfo.name = "tribemember";
+        characterInfo.faction = faction;
+        characterHandle.entityBehavior.ResetFollowPosition();
+        NetworkServer.Spawn(character);
 
         //npcHandle.entityItems.EquipClothing(Item.ClothingTest);
 
         foreach (EntityHandle factionMemberHandle in faction.memberHandles)
         {
-            Utility.IgnorePhysicsCollisions(npcHandle.transform, factionMemberHandle.transform);
+            Utility.IgnorePhysicsCollisions(characterHandle.transform, factionMemberHandle.transform);
         }
-        faction.AddMember(npcHandle, FactionRole.Follower, true);
+        faction.AddMember(characterHandle, FactionRole.Follower, true);
 
         if(spawnWithGear)
         {
             Item weaponItem = Item.GetRandomItem(ItemType.Weapon);
-            GameObject weaponObject = Utility.InstantiateSameName(weaponItem.worldObjectPrefab, npcHandle.transform.position + Vector3.up * 20f, Quaternion.identity);
-            npcHandle.entityItems.SetEquippedWeapon(weaponItem, weaponObject);
-            npcHandle.entityItems.OnItemsChange();
+            GameObject weaponObject = Utility.InstantiateSameName(weaponItem.worldObjectPrefab, characterHandle.transform.position + Vector3.up * 20f, Quaternion.identity);
+            characterHandle.entityItems.SetEquippedWeapon(weaponItem, weaponObject);
+            characterHandle.entityItems.OnItemsChange();
         }
 
-        ChunkGenerator.AddActiveCPUCreature(npc);
+        ChunkGenerator.AddActiveCPUCreature(character);
     }
 
 
@@ -127,13 +129,12 @@ public class ClientCommand : NetworkBehaviour
     [Command]
     public void CmdSpawnCharacterAsLeader(Vector3 position, bool createCamp, FactionStartingItemsTier factionTier)
     {
-        //Debug.Log("SpawnNpcIndependent()");
-        GameObject npc = GameObject.Instantiate(characterPrefab, position, Quaternion.identity);
-        EntityHandle npcHandle = npc.GetComponent<EntityHandle>();
-        NetworkServer.Spawn(npc);
-        StartCoroutine(SetNewFactionWhenReady(npcHandle, createCamp, factionTier));
+        GameObject character = GameObject.Instantiate(characterPrefab, position, Quaternion.identity);
+        EntityHandle characterHandle = character.GetComponent<EntityHandle>();
+        NetworkServer.Spawn(character);
+        StartCoroutine(SetNewFactionWhenReady(characterHandle, createCamp, factionTier));
 
-        ChunkGenerator.AddActiveCPUCreature(npc);
+        ChunkGenerator.AddActiveCPUCreature(character);
     }
 
 
