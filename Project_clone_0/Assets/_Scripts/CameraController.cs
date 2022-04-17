@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using System;
 
 public class CameraController : MonoBehaviour
 {
@@ -42,7 +43,7 @@ public class CameraController : MonoBehaviour
 
     Vector3 targetPos;
     Vector3 targetLookAt;
-    float posModifier;
+    float verticalityModifier;
     Vector3 targetOffset;
     Vector3 currentOffset;
     bool targetOffsetReached;
@@ -51,6 +52,7 @@ public class CameraController : MonoBehaviour
         instance = this;
         //renderPipelineAsset = GetComponent<UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset>();
         SetBakedCameraDistance(CAMERA_DISTANCE_OUTSIDECAMP);
+        //ShaderController.instance.SetDistanceDrop(ShaderController.DISTANCE_DROP_MIN);
         SetLockVerticalCameraMovement(false, CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
         Camera.main.fieldOfView = CAMERA_TARGET_FOV;
 
@@ -63,7 +65,7 @@ public class CameraController : MonoBehaviour
         cullDistances[12] = cullDistance_creature;
         cullDistances[13] = cullDistance_item;
         Camera.main.layerCullDistances = cullDistances;
-        posModifier = 0f;
+        verticalityModifier = 0f;
         cameraDistance_input = 1f;
         //RandomSpawn();
 
@@ -80,76 +82,78 @@ public class CameraController : MonoBehaviour
         playerTransform = t;
     }
 
+    public void UpdateCamera()
+    {
+        float pi = Mathf.PI;
 
-    public void AdjustCamera(int mode){
 
-        // static camera
-        if (mode == 0)
+        if (lockVerticalCameraMovement)
         {
+            verticalityModifier = Mathf.Lerp(verticalityModifier, lockVerticalCameraMovement_verticality, CAMERA_ZOOM_SPEED_CAMPTRANSITION * Time.deltaTime);
+        }
+        else
+        {
+            // verticality from zoom
+            verticalityModifier = Mathf.Lerp(CAMERA_LOCK_VERTICALITY_INSIDECAMP, CAMERA_LOCK_VERTICALITY_OUTSIDECAMP, cameraDistance_input);
 
+            // // free verticality
+            // if(GameManager.GAME_SETINGS_ROTATIONALINPUTMODE == RotationalInputMode.Mouse)
+            // {
+            //     verticalityModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.deltaTime;
+            // }
+            // else if(GameManager.GAME_SETINGS_ROTATIONALINPUTMODE == RotationalInputMode.ArrowKeys)
+            // {
+            //     float up = Convert.ToSingle(Input.GetKey(KeyCode.UpArrow)) * -1f;
+            //     float down = Convert.ToSingle(Input.GetKey(KeyCode.DownArrow));
+            //     verticalityModifier += (up + down) * sensitivity_rotation * .25f * Time.deltaTime;
+            // }
+        }
+        ZoomInput();
+        
 
-            if(!UIController.UImode){
-                posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
-                ZoomInput();
-            }
+        float max = .48f;
+        float min = 0f;
 
-            Vector3 targetPos = playerTransform.position + (Vector3.forward * -6f) + (Vector3.up * 4f);
-            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPos, 50f * Time.deltaTime);
-            Camera.main.transform.rotation = Quaternion.Euler(new Vector3(30f, 0f, 0f));
+        // cap verticality from above
+        if (verticalityModifier > max)
+        {
+            verticalityModifier = max;
         }
 
-        // dynamic camera
-        else if (mode == 1)
+        // cap verticality from below
+        if (verticalityModifier < min)
         {
-
-            float pi = Mathf.PI;
-
-            if(!UIController.UImode)
-            {
-                if(lockVerticalCameraMovement)
-                {
-                    posModifier = Mathf.Lerp(posModifier, lockVerticalCameraMovement_verticality, CAMERA_ZOOM_SPEED_CAMPTRANSITION * Time.deltaTime);
-                }
-                else
-                {
-
-                    // verticality from zoom
-                    //posModifier = Mathf.Lerp(CAMERA_LOCK_VERTICALITY_INSIDECAMP, CAMERA_LOCK_VERTICALITY_OUTSIDECAMP, cameraDistance_input);
-
-
-                    // free verticality
-                    posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.deltaTime;
-                }
-                ZoomInput();
-            }
-
-            float max = .48f;
-            float min = 0f;
-
-            // above
-            if (posModifier > max)
-            {
-                posModifier = max;
-            }
-
-            // below
-            if (posModifier < min)
-            {
-                posModifier = min;
-            }
-            cameraDistance_total = cameraDistance_baked * cameraDistance_input;
-
-            followT.position = Vector3.Lerp(followT.position, playerTransform.position + Vector3.up * 1f, 22f * Time.deltaTime);
-            targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(posModifier * pi) * playerTransform.forward * -1f * Mathf.Pow(cameraDistance_total, 1f)) + (Mathf.Sin(posModifier * pi)) * Vector3.up * 1f * cameraDistance_total, 50f * Time.deltaTime);
-            Camera.main.transform.position = targetPos;
-            targetLookAt = Vector3.Lerp(targetLookAt, followT.position, 50f * Time.deltaTime);
-            Camera.main.transform.LookAt(targetLookAt);
-
-            //ApplyOffset();
-
-        
-        
+            verticalityModifier = min;
         }
+        float newTotalD = cameraDistance_baked * cameraDistance_input;
+        if(newTotalD != cameraDistance_total)
+        {
+            float magnitude = Mathf.Lerp(ShaderController.DISTANCE_DROP_MAX, ShaderController.DISTANCE_DROP_MIN, Mathf.InverseLerp(0f, 60f, newTotalD));
+            ShaderController.instance.SetDistanceDrop(magnitude);
+        }
+        cameraDistance_total = newTotalD;
+
+        followT.position = Vector3.Lerp(followT.position, playerTransform.position + Vector3.up * 1f, 22f * Time.deltaTime);
+        targetPos = Vector3.Lerp(targetPos, followT.position + (Mathf.Cos(verticalityModifier * pi) * playerTransform.forward * -1f * Mathf.Pow(cameraDistance_total, 1f)) + (Mathf.Sin(verticalityModifier * pi)) * Vector3.up * 1f * cameraDistance_total, 50f * Time.deltaTime);
+        
+        // stay above terrain
+        RaycastHit hit;
+        float minHeightAboveGround = 2f;
+        if(Physics.Raycast(targetPos + (Vector3.up * 1000f), Vector3.down, out hit, 1000f + minHeightAboveGround, LayerMaskController.TERRAIN))
+        {
+            Debug.Log("hit");
+            Vector3 adjustedPos = hit.point + (Vector3.up * minHeightAboveGround);
+            if(adjustedPos.y > targetPos.y)
+            {
+                targetPos = adjustedPos;
+            }
+        }
+        
+        Camera.main.transform.position = targetPos;
+        targetLookAt = Vector3.Lerp(targetLookAt, followT.position, 50f * Time.deltaTime);
+        Camera.main.transform.LookAt(targetLookAt);
+
+        //ApplyOffset();
     }
 
     void ApplyOffset(){
@@ -167,8 +171,24 @@ public class CameraController : MonoBehaviour
 
     void ZoomInput()
     {
-        float zoomDelta = Input.mouseScrollDelta.y * sensitivity_zoom;
-        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .2f, 1f);
+
+        float zoomDelta;
+        if (GameManager.GAME_SETINGS_ROTATIONALINPUTMODE == RotationalInputMode.Mouse)
+        {
+            zoomDelta = Input.mouseScrollDelta.y * sensitivity_zoom;
+        }
+        else if (GameManager.GAME_SETINGS_ROTATIONALINPUTMODE == RotationalInputMode.ArrowKeys)
+        {
+            float z_in = Convert.ToSingle(Input.GetKey(KeyCode.UpArrow));
+            float z_out = Convert.ToSingle(Input.GetKey(KeyCode.DownArrow)) * -1f;
+            zoomDelta = (z_in + z_out) * sensitivity_zoom * .2f;
+        }
+        else
+        {
+            zoomDelta = 0;
+        }
+
+        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .075f, 1f);
         cameraDistance_input = Mathf.Lerp(cameraDistance_input, targetZoom, CAMERA_ZOOM_INPUT_SPEED * Time.deltaTime);
     }
 
@@ -222,8 +242,9 @@ public class CameraController : MonoBehaviour
     void Update()
     {
 
-        if(playerTransform != null){
-            AdjustCamera(GameManager.GAME_SETTINGS_CAMERA_MODE);
+        if(playerTransform != null)
+        {
+            UpdateCamera();
         }
 
         distanceFromPlayer = Vector3.Distance(Camera.main.transform.position, playerTransform.position);

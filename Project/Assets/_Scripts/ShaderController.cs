@@ -6,8 +6,9 @@ public class ShaderController : MonoBehaviour
 {
     
     public static ShaderController instance;
-    [SerializeField] float distanceDropMagnitude;
-
+    public static float DISTANCE_DROP_STATIC = 0f;
+    public static float DISTANCE_DROP_MIN = .5f;
+    public static float DISTANCE_DROP_MAX = .5f;
 
     void Awake()
     {
@@ -24,8 +25,7 @@ public class ShaderController : MonoBehaviour
         UpdateGrassNormalSensitiveMaterials();
         UpdateWaterSensitiveMaterials();
         UpdateSnowSensitiveMaterials();
-        UpdateDistanceDrop();
-
+        SetDistanceDrop(DISTANCE_DROP_STATIC);
     }
 
 
@@ -82,11 +82,11 @@ public class ShaderController : MonoBehaviour
         //Shader.SetGlobalVector("_CameraDistance", playerPos);
     }
 
-    void UpdateDistanceDrop()
+    public void SetDistanceDrop(float magnitude)
     {
-        //float magnitude = Mathf.Lerp(.25f, 1f, 1f - Mathf.InverseLerp(0f, 40f, CameraController.instance.distanceFromPlayer));
-        Shader.SetGlobalFloat("_DistanceDropMagnitude", distanceDropMagnitude);
+        Shader.SetGlobalFloat("_DistanceDropMagnitude", magnitude);
     }
+
 
     void Update()
     {
@@ -95,5 +95,6 @@ public class ShaderController : MonoBehaviour
         //UpdateGrassNormalSensitiveMaterials();
         UpdatePlayerPositionSensitiveMaterials();
         //UpdateDistanceDrop();
+
     }
 }

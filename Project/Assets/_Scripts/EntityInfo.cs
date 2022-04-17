@@ -109,11 +109,12 @@ public class SpeciesInfo : ScriptableObject{
         {
             Species.Bear, SpeciesInfo.InstantiateSpeciesInfo(
                 Faction.InstantiateFaction(Species.Bear.ToString()),
-                new ItemCollection(
-                    new Dictionary<Item, int>{
-                        {Item.CarcassBear, 1},
-                    }
-                ),
+                // new ItemCollection(
+                //     new Dictionary<Item, int>{
+                //         {Item.CarcassBear, 1},
+                //     }
+                // ),
+                new ItemCollection(new Dictionary<Item, int>(){{Item.PeltBear, 1}, {Item.BonePiece, 4}, {Item.Meat, 2}}),
                 Stats.InstantiateStats(2f, .5f, 6f, .5f, .4f, 1f, .25f, 1f, 1f, 1f, 1f, 10f),
                 IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end", "leg_lower_left_end", "", "", "arm_lower_right_end", "arm_lower_left_end", "", "", false, true, false, 3f, 10f, 1f, .75f),
                 BehaviorProfile.InstantiateBehaviorProfile(
@@ -133,12 +134,13 @@ public class SpeciesInfo : ScriptableObject{
         {
             Species.Deer, SpeciesInfo.InstantiateSpeciesInfo(
                 Faction.InstantiateFaction(Species.Deer.ToString()),
-                new ItemCollection(
-                    new Dictionary<Item, int>{
-                        // todo: deer carcass
-                        {Item.CarcassBear, 1},
-                    }
-                ),
+                // new ItemCollection(
+                //     new Dictionary<Item, int>{
+                //         // todo: deer carcass
+                //         {Item.CarcassBear, 1},
+                //     }
+                // ),
+                new ItemCollection(new Dictionary<Item, int>(){{Item.PeltDeer, 1}, {Item.BonePiece, 2}, {Item.Meat, 1}}),
                 Stats.InstantiateStats(.01f, .75f, .1f, .5f, .35f, 1f, .25f, 1f, 1f, 1f, 1f, 10f),
                 IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end_end", "leg_lower_left_end_end", "", "", "arm_lower_right_end_end_end", "arm_lower_left_end_end_end", "", "", false, true, false, 3f, 10f, 8f, .7f),
                 BehaviorProfile.InstantiateBehaviorProfile(

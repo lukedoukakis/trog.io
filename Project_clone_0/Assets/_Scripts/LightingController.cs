@@ -12,8 +12,8 @@ public class LightingController : MonoBehaviour
     //public PostProcessVolume volume;
     //public ColorGrading colorGrading;
 
-    public static float RENDER_SETTINGS_FOG_DISTANCE_START = 40f;
-    public static float RENDER_SETTINGS_FOG_DISTANCE_END = 70f;
+    public static float RENDER_SETTINGS_FOG_DISTANCE_START = 20f;
+    public static float RENDER_SETTINGS_FOG_DISTANCE_END = 40f;
 
     public static float FOG_DISTANCE_START_BASE = 60f;
     public static float FOG_THICKNESS_STEP = .001f;
@@ -29,7 +29,7 @@ public class LightingController : MonoBehaviour
     public Color fogColor_day, fogColor_night;
 
     // time in seconds for a full day
-    public static float SECONDS_PER_DAY = 60f;
+    public static float SECONDS_PER_DAY = 90f;
 
 
     private void Awake()
@@ -64,7 +64,7 @@ public class LightingController : MonoBehaviour
         UpdateRenderFog();
 
         // pause time of day: comment out this line
-        //time += Time.deltaTime;
+        time += Time.deltaTime;
     }
 
     void InitFog()
@@ -129,7 +129,7 @@ public class LightingController : MonoBehaviour
         darkness = (Mathf.Cos(time / SECONDS_PER_DAY) + 1f) / 2f;
         timeOfDay = (Mathf.Sin(time / SECONDS_PER_DAY) + 1f) / 2f;
         PolyverseSkies.timeOfDay = darkness;
-        //RenderSettings.fogColor = Color.Lerp(fogColor_day, fogColor_night, darkness);
+        RenderSettings.fogColor = Color.Lerp(fogColor_day, fogColor_night, darkness);
 
         float sunset = Mathf.Max(0f, Mathf.Pow((((1f - timeOfDay) - .5f) * 2f), 15f));
         float sunrise = Mathf.Max(0f, Mathf.Pow((((timeOfDay) - .5f) * 2f), 5f));

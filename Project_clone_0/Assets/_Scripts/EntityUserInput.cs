@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System;
 
 public class EntityUserInput : EntityComponent
 {
@@ -22,7 +23,8 @@ public class EntityUserInput : EntityComponent
     public bool pressForwardDown, pressBackDown, pressLeftDown, pressRightDown;
     public float timeOffForward, timeOffBack, timeOffLeft, timeOffRight;
     public bool pressToggleAttackRanged;
-    public float mouseX, mouseY, mouseZ;
+    public float rotationY;
+    float leftSpeedFromKey, rightSpeedFromKey;
 
     Transform selectionOrigin;
     Quaternion targetRot;
@@ -58,31 +60,47 @@ public class EntityUserInput : EntityComponent
         timeOffForward = timeOffBack = timeOffLeft = timeOffRight = 0f;
     }
 
-    
 
-    void ApplyMouseInput(){
-
-        float sensitivity = 3f;
-        float smoothing = 100f * Time.deltaTime;
-
-        if(GameManager.GAME_SETTINGS_CAMERA_MODE == 0){
-            
-        }
-        else if(GameManager.GAME_SETTINGS_CAMERA_MODE == 1){
-
+    void ApplyRotationalInput()
+    {
+        if(GameManager.GAME_SETINGS_ROTATIONALINPUTMODE == RotationalInputMode.Mouse)
+        {
+            float sensitivity = 3f;
+            float smoothing = 100f * Time.deltaTime;
             float deltaY = Input.GetAxis("Mouse X") * sensitivity * smoothing;
-            mouseY = Mathf.Clamp(Mathf.Lerp(mouseY, deltaY, 1f / smoothing), mouseY - 2f, mouseY + 2f);
-
-            mouseX = 0f;
-            mouseZ = 0f;
-
-            //Log(mouseY.ToString());
-
-            targetRot = Quaternion.Slerp(transform.rotation, transform.rotation * Quaternion.Euler(new Vector3(mouseX, mouseY, mouseZ)), 1f / smoothing);
-            transform.rotation = targetRot;
-           
+            rotationY = Mathf.Clamp(Mathf.Lerp(rotationY, deltaY, 1f / smoothing), rotationY - 2f, rotationY + 2f);
+            targetRot = Quaternion.Slerp(transform.rotation, transform.rotation * Quaternion.Euler(new Vector3(0, rotationY, 0)), 1f / smoothing);
+        }
+        else if(GameManager.GAME_SETINGS_ROTATIONALINPUTMODE == RotationalInputMode.ArrowKeys)
+        {
+            float sensitivity = 130f;
+            float acceleration = .02f;
+            bool left = Input.GetKey(KeyCode.LeftArrow);
+            bool right = Input.GetKey(KeyCode.RightArrow);
+            if(left)
+            {
+                leftSpeedFromKey += acceleration;
+            }
+            else
+            {
+                leftSpeedFromKey -= acceleration;
+            }
+            if(right)
+            {
+                rightSpeedFromKey += acceleration;
+            }
+            else
+            {
+                rightSpeedFromKey -= acceleration;
+            }
+            leftSpeedFromKey = Mathf.Clamp01(leftSpeedFromKey);
+            rightSpeedFromKey = Mathf.Clamp01(rightSpeedFromKey);
+            float deltaY = ((leftSpeedFromKey * -1f) + rightSpeedFromKey) * sensitivity;
+            rotationY = deltaY;
+            targetRot = Quaternion.Slerp(transform.rotation, transform.rotation * Quaternion.Euler(new Vector3(0, rotationY, 0)), Time.deltaTime);
         }
         
+        transform.rotation = targetRot;
     }
 
     void HandleMovement()
@@ -189,8 +207,9 @@ public class EntityUserInput : EntityComponent
 
     }
 
-    void HandleRotation(){
-        ApplyMouseInput();
+    void HandleRotation()
+    {
+        ApplyRotationalInput();
     }
 
     void HandleManualAttack(){

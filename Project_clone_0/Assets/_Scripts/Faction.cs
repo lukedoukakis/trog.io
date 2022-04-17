@@ -369,7 +369,7 @@ public class Faction : MonoBehaviour
         {
             case FactionStartingItemsTier.PlayerTest :
                 memberCount = 0;
-                itemCount = 6;
+                itemCount = 0;
                 break;
             case FactionStartingItemsTier.Nothing :
                 memberCount = 2;

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
+
+public enum RotationalInputMode { Mouse, ArrowKeys }
+
 public class GameManager : MonoBehaviour
 {
 
@@ -12,8 +15,8 @@ public class GameManager : MonoBehaviour
 
 
     // options
-    public static int GAME_SETTINGS_CAMERA_MODE = 1;
     public static bool GAME_SETTINGS_AUTO_ATTACK = true;
+    public static RotationalInputMode GAME_SETINGS_ROTATIONALINPUTMODE = RotationalInputMode.ArrowKeys;
 
 
 
