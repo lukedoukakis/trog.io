@@ -96,18 +96,21 @@ public class EntityComponent : NetworkBehaviour
             {
                 if (entityInfo.IsFactionLeader())
                 {
+
+                    // remove this member from the faction
+                    fac.RemoveMember(entityHandle);
+
                     // if faction leader, assign a new leader
-                    EntityHandle[] otherMembers = fac.memberHandles.Where(h => !ReferenceEquals(h, entityHandle)).ToArray();
-                    EntityHandle newLeaderHandle = otherMembers.Length > 0 ? otherMembers[0] : null;
-                    if (newLeaderHandle != null)
+                    if(fac.memberHandles.Count > 0)
                     {
                         // set leader status to the oldest faction member
+                        EntityHandle newLeaderHandle = fac.memberHandles[0];
                         fac.SetLeader(newLeaderHandle);
 
                         // if this is the player, transfer player status to the new leader
                         if (IsClientPlayerCharacter())
                         {
-                            ClientCommand.instance.SetAsPlayer(newLeaderHandle.gameObject);
+                            ClientCommand.instance.SetPlayerCharacter(newLeaderHandle.gameObject);
                         }
                     }
                     else
@@ -116,10 +119,6 @@ public class EntityComponent : NetworkBehaviour
                         //fac.DestroyFaction();
                     }
                 }
-
-                // remove this memberm from the faction
-                fac.RemoveMember(entityHandle);
-
             }
         }
 

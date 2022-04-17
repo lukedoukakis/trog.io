@@ -30,57 +30,54 @@ public class ClientCommand : NetworkBehaviour
         Debug.Log("OnStartLocalPlayer()");
 
         base.OnStartLocalPlayer();
-        StartCoroutine(SpawnPlayerCharacterWhenReady(this.gameObject));
-        StartCoroutine(SetAsPlayerWhenReady());
+        StartCoroutine(SpawnPlayerCharacterWhenReady());
     }
 
 
-    IEnumerator SpawnPlayerCharacterWhenReady(GameObject playerClientObject)
+    IEnumerator SpawnPlayerCharacterWhenReady()
     {
         yield return new WaitUntil(() => NetworkClient.ready);
-        CmdSpawnPlayerCharacter(playerClientObject);
+        CmdSpawnPlayerCharacter();
     }
 
     [Command]
-    void CmdSpawnPlayerCharacter(GameObject playerClientObject)
+    void CmdSpawnPlayerCharacter()
     {
 
         GameObject p = GameObject.Instantiate(characterPrefab);
         EntityHandle pHandle = p.GetComponent<EntityHandle>();
         p.transform.position = new Vector3(0f, ChunkGenerator.ElevationAmplitude + 50f, 0f);
 
-        ClientCommand pcc = playerClientObject.GetComponent<ClientCommand>();
         //Debug.Log(pcc);
-        pcc.clientPlayerCharacter = p;
-        pcc.clientPlayerCharacterHandle = pHandle;
+        clientPlayerCharacter = p;
+        clientPlayerCharacterHandle = pHandle;
 
         StartCoroutine(SetNewFactionWhenReady(p.GetComponent<EntityHandle>(), false, FactionStartingItemsTier.PlayerTest));
         NetworkServer.Spawn(clientPlayerCharacter);
+
+        SetPlayerCharacter(clientPlayerCharacter);
 
         Debug.Log("spawn done");
     }
 
 
-    public IEnumerator SetAsPlayerWhenReady()
+    public void SetPlayerCharacter(GameObject character)
     {
-        yield return new WaitUntil(() => NetworkClient.ready && clientPlayerCharacter != null);
-        SetAsPlayer(clientPlayerCharacter);
-    }
-    public void SetAsPlayer(GameObject newPlayer)
-    {
+        clientPlayerCharacterHandle.entityUserInput.enabled = false;
+        Utility.FindDeepChild(clientPlayerCharacter.transform, "HoverTrigger").gameObject.SetActive(true);
 
-        clientPlayerCharacter = newPlayer;
+        clientPlayerCharacter = character;
         clientPlayerCharacterHandle = clientPlayerCharacter.GetComponent<EntityHandle>();
         clientPlayerCharacterHandle.entityUserInput.enabled = true;
         Utility.FindDeepChild(clientPlayerCharacter.transform, "HoverTrigger").gameObject.SetActive(false);
   
          // update global game variables
         Testing.instance.playerHandle = clientPlayerCharacterHandle;
-        ChunkGenerator.instance.SetPlayerTransform(newPlayer.transform);
-        CameraController.instance.SetPlayerTransform(newPlayer.transform);
+        ChunkGenerator.instance.SetPlayerTransform(character.transform);
+        CameraController.instance.SetPlayerTransform(character.transform);
         //CameraController.instance.SetPlayerTransform(clientPlayerCharacterHandle.entityOrientation.body);
 
-        UIController.current.SetUIMode(false);
+        UIController.instance.SetUIMode(false);
     }
 
 

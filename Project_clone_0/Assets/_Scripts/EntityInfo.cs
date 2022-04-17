@@ -96,7 +96,7 @@ public class SpeciesInfo : ScriptableObject{
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Aggressive,
                     new List<AttackType>(){AttackType.Weapon},
-                    new List<ActionType>(){ ActionType.StepSide },
+                    new List<ActionType>(){ ActionType.StepBack },
                     .5f,
                     true,
                     false,

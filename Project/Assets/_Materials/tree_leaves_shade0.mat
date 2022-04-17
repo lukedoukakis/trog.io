@@ -79,11 +79,11 @@ Material:
     - _Cull: 2
     - _Desertness: 0
     - _DstBlend: 0
-    - _NumberOfShades: 1
+    - _NumberOfShades: 4
     - _QueueControl: 0
     - _QueueOffset: -3
     - _ReceiveShadows: 1
-    - _ShadingAttenuation: 0.5
+    - _ShadingAttenuation: -0.09
     - _SnowDepth: 0.1
     - _SnowHeightCap: 4703.4
     - _SnowHeightStart: 4001.4
@@ -99,7 +99,7 @@ Material:
     - Color_1DD039A2: {r: 0.99056596, g: 0.9086226, b: 0.6588199, a: 0}
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
-    - Color_962802DE: {r: 0.3019758, g: 0.735849, b: 0.41767532, a: 1}
+    - Color_962802DE: {r: 0.28662333, g: 0.5377358, b: 0.3544916, a: 1}
     - Color_B9FC0D65: {r: 1, g: 1, b: 1, a: 0}
     - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
     - _TargetVector: {r: -448.9995, g: 4591.3877, b: -230.05148, a: 0}

@@ -11,16 +11,16 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 3;
-    public static float Scale = 250f * .5f;
-    public static float ElevationAmplitude = 300f * 1f;
-    public static float MountainMapScale = 312f * .75f;
-    public static float ElevationMapScale = 1000f * .25f;
+    public static float Scale = 250f * 2f;
+    public static float ElevationAmplitude = 300f * 2f;
+    public static float MountainMapScale = 312f * 3f;
+    public static float ElevationMapScale = 1000f * .5f;
     public static int TemperatureMapScale = 300;
     public static int HumidityMapScale = 300;
     public static float meter = 1f / ElevationAmplitude;
     public static float FlatLevel = .85f;
     public static float SeaLevel = .8495f;
-    public static float SnowLevel = .86f;
+    public static float SnowLevel = .885f;
     //public static float SnowLevel = float.MaxValue;
     public static float GrassNormal = .8f;
     public static float SnowNormalMin = .8f;
@@ -380,7 +380,7 @@ public class ChunkGenerator : MonoBehaviour
             
                     //mountainValue = Mathf.InverseLerp(.25f, .75f, mountainValue);
 
-                    //mountainValue = Mathf.Pow(mountainValue, 1.25f);
+                    mountainValue = Mathf.Pow(mountainValue, 1.25f);
                     //mountainValue *= 1f - CalculateDesertness(temperatureValue, humidityValue);
 
                     //mountainValue *= Mathf.InverseLerp(0f, .35f, elevationValue);
@@ -406,9 +406,10 @@ public class ChunkGenerator : MonoBehaviour
                 // FreshWaterMap [0, 1]
 
                 float freshWaterElev = 0f;
-                if (true)
+                freshWaterValue = 0f;
+                if (false)
                 {
-                    float riverScale = 500f;
+                    float riverScale = 900f;
 
                     // main river path
                     freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
@@ -548,38 +549,38 @@ public class ChunkGenerator : MonoBehaviour
                 if (heightValue >= FlatLevel)
                 {
 
-                    // // badland effect in deserts
-                    // float desertness = CalculateDesertness(temperatureValue, humidityValue);
-                    // if (desertness > 0f && false)
-                    // {
-                    //     if (heightValue > FlatLevel)
-                    //     {
-                    //         float postHeight = Posterize(FlatLevel + meter, 1f, heightValue, 500);
-                    //         heightValue = Mathf.Lerp(heightValue, postHeight, desertness);
-                    //     }
-                    // }
+                    // badland effect in deserts
+                    float desertness = CalculateDesertness(temperatureValue, humidityValue);
+                    if (desertness > 0f && false)
+                    {
+                        if (heightValue > FlatLevel)
+                        {
+                            float postHeight = Posterize(FlatLevel + meter, 1f, heightValue, 500);
+                            heightValue = Mathf.Lerp(heightValue, postHeight, desertness);
+                        }
+                    }
 
-                    // // non desert posterize
-                    // else
-                    // {
+                    // non desert posterize
+                    else
+                    {
 
-                    //     float postVariance = 16f;
-                    //     int stepsMin = 4;
-                    //     int stepsMax = 6;
-                    //     int stepSteps = 6;
+                        // float postVariance = 50f;
+                        // int stepsMin = 3;
+                        // int stepsMax = 6;
+                        // int stepSteps = 6;
 
-                    //     float perlin = (Perlin.Noise((x + xOffset + .01f) / postVariance, (heightValue * ElevationAmplitude / postVariance), (z + zOffset - Seed + .01f) / postVariance) + 1f) / 2f;
-                    //     //perlin += ((Mathf.PerlinNoise((x + xOffset + .01f) / 5f, (z + zOffset - Seed + .01f) / postVariance) * 2f - 1f) * .1f);
+                        // float perlin = (Perlin.Noise((x + xOffset + .01f) / postVariance, (heightValue * ElevationAmplitude / postVariance), (z + zOffset - Seed + .01f) / postVariance) + 1f) / 2f;
+                        // //float perlin += ((Mathf.PerlinNoise((x + xOffset + .01f) / 5f, (z + zOffset - Seed + .01f) / postVariance) * 2f - 1f) * .1f);
 
-                    //     int posterizeSteps = (int)Mathf.Lerp(stepsMin, stepsMax, Mathf.InverseLerp(0f, 1f, perlin));
-                    //     //posterizeSteps = (int)Posterize(stepsMin, stepsMax, posterizeSteps, stepSteps);
+                        // int posterizeSteps = (int)Mathf.Lerp(stepsMin, stepsMax, Mathf.InverseLerp(0f, 1f, perlin));
+                        // //posterizeSteps = (int)Posterize(stepsMin, stepsMax, posterizeSteps, stepSteps);
 
-                    //     heightValue = PosterizeSoft(FlatLevel, 1f, heightValue, 6);
+                        heightValue = PosterizeSoft(FlatLevel, .9f, heightValue, 3);
 
 
-                    //     // consistent posterize
-                    //     //heightValue = PosterizeSoft(FlatLevel, 1f, heightValue, 5);
-                    // }
+                        // consistent posterize
+                        //heightValue = PosterizeSoft(FlatLevel, 1f, heightValue, 5);
+                    }
 
                 }
                 else
@@ -620,7 +621,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // completely flatten terrain
-                heightValue = FlatLevel + .001f;
+                //heightValue = FlatLevel + .001f;
 
 
 
@@ -654,14 +655,13 @@ public class ChunkGenerator : MonoBehaviour
 
     float PosterizeSoft(float min, float max, float val, int steps)
     {
-
         if(val < min)
         {
             return min;
         }
         if(val > max)
         {
-            return max;
+            return val;
         }
 
         float stepHeight = (max - min) / steps;

@@ -1451,17 +1451,17 @@ public class EntityPhysics : EntityComponent
             }
 
             // apply fixed weapon position effect if applicable
-            if(IsClientPlayerCharacter())
-            {
-                if (entityItems != null)
-                {
-                    StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
-                }
-            }
+            // if(IsClientPlayerCharacter())
+            // {
+            //     if (entityItems != null)
+            //     {
+            //         StartCoroutine(FixWeaponPosition(entityItems.weaponEquipped_object, collider.transform, .45f));
+            //     }
+            // }
         
 
             StopMeleeAttackHitTime();
-            AssertWeaponChargedStatus(false);
+            //AssertWeaponChargedStatus(false);
         }
        
         // if faction leader and hit object is still not destroyed, call members to attack the same object

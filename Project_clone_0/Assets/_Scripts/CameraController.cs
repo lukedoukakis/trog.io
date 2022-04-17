@@ -9,10 +9,12 @@ public class CameraController : MonoBehaviour
     public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset renderPipelineAsset;
 
     public static float CAMERA_DISTANCE_OUTSIDECAMP = 60f;
-    public static float CAMERA_DISTANCE_INSIDECAMP = 30f;
+    public static float CAMERA_DISTANCE_INSIDECAMP = 60f;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
-    public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .2f;
-    public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .1f;
+    public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .07f;
+    public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .07f;
+    public static float CAMERA_TARGET_FOV = 75f;
+    public static float CAMERA_ZOOM_INPUT_SPEED = 15f;
 
 
     public Transform playerTransform;
@@ -50,6 +52,7 @@ public class CameraController : MonoBehaviour
         //renderPipelineAsset = GetComponent<UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset>();
         SetBakedCameraDistance(CAMERA_DISTANCE_OUTSIDECAMP);
         SetLockVerticalCameraMovement(false, CAMERA_LOCK_VERTICALITY_OUTSIDECAMP);
+        Camera.main.fieldOfView = CAMERA_TARGET_FOV;
 
         followT = GameObject.Instantiate(new GameObject()).transform;
         Application.targetFrameRate = -1;
@@ -111,11 +114,11 @@ public class CameraController : MonoBehaviour
                 {
 
                     // verticality from zoom
-                    posModifier = Mathf.Lerp(CAMERA_LOCK_VERTICALITY_INSIDECAMP, CAMERA_LOCK_VERTICALITY_OUTSIDECAMP, cameraDistance_input);
+                    //posModifier = Mathf.Lerp(CAMERA_LOCK_VERTICALITY_INSIDECAMP, CAMERA_LOCK_VERTICALITY_OUTSIDECAMP, cameraDistance_input);
 
 
                     // free verticality
-                    // posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.fixedDeltaTime;
+                    posModifier += Input.GetAxis("Mouse Y") * -1f * sensitivity_rotation * Time.deltaTime;
                 }
                 ZoomInput();
             }
@@ -166,7 +169,7 @@ public class CameraController : MonoBehaviour
     {
         float zoomDelta = Input.mouseScrollDelta.y * sensitivity_zoom;
         float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .2f, 1f);
-        cameraDistance_input = Mathf.Lerp(cameraDistance_input, targetZoom, 40f * Time.deltaTime);
+        cameraDistance_input = Mathf.Lerp(cameraDistance_input, targetZoom, CAMERA_ZOOM_INPUT_SPEED * Time.deltaTime);
     }
 
     public void SetTargetOffset(Vector3 offset){

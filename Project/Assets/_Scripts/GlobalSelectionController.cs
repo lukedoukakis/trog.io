@@ -33,7 +33,7 @@ public class GlobalSelectionController : MonoBehaviour
             handle.SetSelected(true);
             SelectedHandles.Add(handle);
         }
-        UIController.current.UpdateSelectionMenu();
+        UIController.instance.UpdateSelectionMenu();
         SelectingHandles.Clear();
     }
 
@@ -47,7 +47,7 @@ public class GlobalSelectionController : MonoBehaviour
             handle.SetSelected(false);
         }
         SelectedHandles.Clear();
-        UIController.current.UpdateSelectionMenu();
+        UIController.instance.UpdateSelectionMenu();
     }
 
     public bool SelectionIsEmpty(){

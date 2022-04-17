@@ -467,14 +467,14 @@ public class Faction : MonoBehaviour
     public void DestroyFaction()
     {
 
-        // destroy camp and all items in it
-        RemoveAllItemsOwnedFromWorld();
+        // // destroy camp and all items in it
+        // RemoveAllItemsOwnedFromWorld();
 
-        // pack up camp
-        if(camp != null)
-        {
-            PackUp();
-        }
+        // // pack up camp
+        // if(camp != null)
+        // {
+        //     PackUp();
+        // }
 
         // remove all members from the world
         foreach(EntityHandle memberHandle in memberHandles.ToArray())

@@ -8,10 +8,10 @@ public class UIController : MonoBehaviour
     public static bool cursorActive;
 
 
-    public static UIController current;
+    public static UIController instance;
     void Awake()
     {
-        current = this;
+        instance = this;
         SetUIMode(true);
     }
 
@@ -54,7 +54,7 @@ public class UIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        //SetUIMode(false);
     }
 
     // Update is called once per frame
