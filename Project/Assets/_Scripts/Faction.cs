@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 
 public enum FactionRole{ Leader, Follower }
@@ -220,6 +221,25 @@ public class Faction : MonoBehaviour
 
     
         itemLogisticsHappening = false;
+    }
+
+
+    public void RemoveObjectOwnedOfType(ItemType itemType, int count, ObjectRack rackToRemoveFrom, bool moveToAnotherPlace, object destination)
+    {
+        Item[] itemsOfType = Item.Items.Values.Where(item => item.type == itemType).ToArray();
+
+        int countToRemove = count;
+        int countOfItem;
+        foreach(Item item in itemsOfType)
+        {
+            countOfItem = this.GetItemCount(item);
+            if(countOfItem > 0)
+            {
+                int r = Math.Min(countOfItem, countToRemove);
+                this.RemoveItemOwned(item, r, rackToRemoveFrom, moveToAnotherPlace, destination);
+                countToRemove -= r;
+            }
+        }
     }
     
 

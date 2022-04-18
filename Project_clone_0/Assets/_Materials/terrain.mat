@@ -105,7 +105,7 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _RockToGrassPosterizationSteps: 2
-    - _ShadingAttenuation: 0.5
+    - _ShadingAttenuation: 0
     - _SnowCapHeight: 0
     - _SnowDepth: 0.2
     - _SnowHeight: 4645.04
@@ -124,16 +124,16 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
-    - Color_1DD039A2: {r: 0.9150943, g: 0.8925799, b: 0.6949537, a: 0}
+    - Color_1DD039A2: {r: 1, g: 0.9805528, b: 0.7783019, a: 0}
     - Color_20D74E1E: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
     - Color_54E7F5BD: {r: 1, g: 0.70598435, b: 0.6179246, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.7169812, g: 0.6669386, b: 0.65272343, a: 0}
     - Color_9C158BA5: {r: 0.3773585, g: 0.13349947, b: 0.13349947, a: 0}
-    - Color_B9FC0D65: {r: 0.5754717, g: 0.44496378, b: 0.31216627, a: 0}
+    - Color_B9FC0D65: {r: 1, g: 0.7463312, b: 0.5330188, a: 0}
     - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
     - Color_EB41B935: {r: 0.735849, g: 0.67390525, b: 0.6351904, a: 1}
-    - _GrassColor: {r: 0.53786933, g: 0.745283, b: 0.57120365, a: 0}
+    - _GrassColor: {r: 0.2804379, g: 0.4339623, b: 0.30650806, a: 0}
     - _PlayerPosition: {r: -63.85839, g: 4589.878, b: -42.378468, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &2664279794138996905

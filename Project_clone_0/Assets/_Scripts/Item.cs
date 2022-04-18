@@ -104,7 +104,7 @@ public class Item : ScriptableObject
 
     public int id;
     public string nme;
-    public Enum type;
+    public ItemType type;
     public bool isRackable;
     public Stats baseStats;
     public Stats wielderStatsModifier;
@@ -117,7 +117,7 @@ public class Item : ScriptableObject
     public Image image;
 
 
-    public static Item InitiailizeItem(string _nme, Enum _type, bool _isRackable, Stats _stats, Stats _wielderStatsModifier, Enum _holdStyle, ItemDamageType _damageType, ItemCollection _drops, CraftingRecipe _craftingRecipe, GameObject _hitParticlesPrefab, GameObject _worldObjectPrefab, Image _image){
+    public static Item InitiailizeItem(string _nme, ItemType _type, bool _isRackable, Stats _stats, Stats _wielderStatsModifier, Enum _holdStyle, ItemDamageType _damageType, ItemCollection _drops, CraftingRecipe _craftingRecipe, GameObject _hitParticlesPrefab, GameObject _worldObjectPrefab, Image _image){
         Item item = ScriptableObject.CreateInstance<Item>();
         item.id = SetItemID(item);
         item.nme = _nme;
