@@ -49,7 +49,7 @@ public class LightingController : MonoBehaviour
         //volume.profile.TryGetSettings(out colorGrading);
         
 
-        time = 200f;
+        time = 220f;
         //time = 0f;
     }
 
@@ -64,7 +64,7 @@ public class LightingController : MonoBehaviour
         UpdateRenderFog();
 
         // pause time of day: comment out this line
-        time += Time.deltaTime;
+        //time += Time.deltaTime;
     }
 
     void InitFog()

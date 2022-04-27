@@ -12,8 +12,8 @@ public class CameraController : MonoBehaviour
     public static float CAMERA_DISTANCE_OUTSIDECAMP = 60f;
     public static float CAMERA_DISTANCE_INSIDECAMP = 60f;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
-    public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .07f;
-    public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .07f;
+    public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .1f;
+    public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .1f;
     public static float CAMERA_TARGET_FOV = 75f;
     public static float CAMERA_ZOOM_INPUT_SPEED = 15f;
 
