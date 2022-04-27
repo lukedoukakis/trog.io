@@ -138,10 +138,9 @@ public class CameraController : MonoBehaviour
         
         // stay above terrain
         RaycastHit hit;
-        float minHeightAboveGround = 2f;
+        float minHeightAboveGround = 1f;
         if(Physics.Raycast(targetPos + (Vector3.up * 1000f), Vector3.down, out hit, 1000f + minHeightAboveGround, LayerMaskController.TERRAIN))
         {
-            Debug.Log("hit");
             Vector3 adjustedPos = hit.point + (Vector3.up * minHeightAboveGround);
             if(adjustedPos.y > targetPos.y)
             {

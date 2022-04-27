@@ -10,14 +10,15 @@ Material:
   m_Name: outline_selection
   m_Shader: {fileID: -6465566751694194690, guid: 6edccd9982a33a44db93b8e2be9d82b1,
     type: 3}
-  m_ShaderKeywords: _SPECULAR_SETUP
+  m_ShaderKeywords: _RECEIVE_SHADOWS_OFF _SPECULAR_SETUP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 1990
   stringTagMap:
     RenderType: Opaque
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - SHADOWCASTER
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -105,10 +106,10 @@ Material:
     - _CameraFadingEnabled: 0
     - _CameraFarFadeDistance: 2
     - _CameraNearFadeDistance: 1
-    - _CastShadows: 1
+    - _CastShadows: 0
     - _ColorMode: 0
     - _ColorNoise: 0
-    - _Cull: 0
+    - _Cull: 1
     - _CutOff: 0.5
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -133,7 +134,7 @@ Material:
     - _Parallax: 0.02
     - _QueueControl: 0
     - _QueueOffset: -10
-    - _ReceiveShadows: 1
+    - _ReceiveShadows: 0
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
     - _SnowDepth: 0.1
@@ -149,12 +150,12 @@ Material:
     - _Thickness: 0
     - _UVSec: 0
     - _WorkflowMode: 0
-    - _ZTest: 4
+    - _ZTest: 8
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
-    - Color_5241E242: {r: 1, g: 1, b: 1, a: 0}
+    - Color_5241E242: {r: 0, g: 0, b: 0, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_81DCE527: {r: 0.7264151, g: 0.58228475, b: 0.39404595, a: 0}
     - Color_962802DE: {r: 0.735849, g: 0.57518464, b: 0.37833747, a: 0}

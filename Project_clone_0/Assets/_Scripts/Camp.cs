@@ -20,7 +20,8 @@ public class Camp : MonoBehaviour
         Rack_Pelt,
         Rack_Wood,
         Rack_Bone,
-        Rack_Stone
+        Rack_Stone,
+        Rack_Fruit
     }
 
 
@@ -38,12 +39,7 @@ public class Camp : MonoBehaviour
     public Bonfire bonfire;
     public Workbench workbench;
     public List<Tent> tents;
-    public List<ObjectRack> racks_food;
-    public List<ObjectRack> racks_weapons;
-    public List<ObjectRack> racks_pelt;
-    public List<ObjectRack> racks_wood;
-    public List<ObjectRack> racks_bone;
-    public List<ObjectRack> racks_stone;
+    public List<ObjectRack> racks_food, racks_weapons, racks_pelt, racks_wood, racks_bone, racks_stone, racks_fruit;
     public List<List<ObjectRack>> racks_all;
 
 
@@ -136,6 +132,7 @@ public class Camp : MonoBehaviour
         camp.racks_wood = new List<ObjectRack>();
         camp.racks_bone = new List<ObjectRack>();
         camp.racks_stone = new List<ObjectRack>();
+        camp.racks_fruit = new List<ObjectRack>();
         camp.tents = new List<Tent>();
         if(!featuresBlockPlacement)
         {
@@ -147,7 +144,7 @@ public class Camp : MonoBehaviour
         camp.SetCampLayout(campPlacementPos, originT.rotation);
         camp.PlaceCampComponents(originT);
         camp.SetTribeMemberStandingPositions();
-        camp.racks_all = new List<List<ObjectRack>>(){ camp.racks_food, camp.racks_weapons, camp.racks_pelt, camp.racks_wood, camp.racks_bone, camp.racks_stone, new List<ObjectRack>(){camp.workbench} };
+        camp.racks_all = new List<List<ObjectRack>>(){ camp.racks_food, camp.racks_weapons, camp.racks_pelt, camp.racks_wood, camp.racks_bone, camp.racks_stone, camp.racks_fruit, new List<ObjectRack>(){camp.workbench} };
 
         // todo: update all memnbers in camp status from checking distance to origin
         camp.faction.leaderHandle.entityPhysics.isInsideCamp = true;
@@ -323,6 +320,9 @@ public class Camp : MonoBehaviour
             case ComponentType.Rack_Stone :
                 search = "OrientationStoneRack" + racks_stone.Count;
                 break;
+            case ComponentType.Rack_Fruit :
+                search = "OrientationFruitRack" + racks_fruit.Count;
+                break;
             case ComponentType.Tent :
                 search = "OrientationTent" + tents.Count;
                 break;
@@ -439,6 +439,9 @@ public class Camp : MonoBehaviour
                 break;
             case ItemType.Stone:
                 componentType = ComponentType.Rack_Stone;
+                break;
+            case ItemType.Fruit:
+                componentType = ComponentType.Rack_Fruit;
                 break;
             default:
                 componentType = ComponentType.Rack_Food;
@@ -626,6 +629,9 @@ public class Camp : MonoBehaviour
                 break;
             case ItemType.Stone :
                 rackList = racks_stone;
+                break;
+            case ItemType.Fruit :
+                rackList = racks_fruit;
                 break;
             default:
                 Debug.Log("Unrecognized item type");

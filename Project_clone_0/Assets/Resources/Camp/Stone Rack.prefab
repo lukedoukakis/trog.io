@@ -2551,7 +2551,7 @@ PrefabInstance:
     - target: {fileID: 826085294577908561, guid: 3e42510a837d40647b69864f82bbc44e,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2017334643807455255, guid: 3e42510a837d40647b69864f82bbc44e,
         type: 3}
@@ -2633,10 +2633,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4315691463025906319, guid: 3e42510a837d40647b69864f82bbc44e,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: -98.56979
+      objectReference: {fileID: 0}
+    - target: {fileID: 4315691463025906319, guid: 3e42510a837d40647b69864f82bbc44e,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: -98.56979
+      objectReference: {fileID: 0}
+    - target: {fileID: 4315691463025906319, guid: 3e42510a837d40647b69864f82bbc44e,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: -12.380663
+      objectReference: {fileID: 0}
     - target: {fileID: 4837293038663034878, guid: 3e42510a837d40647b69864f82bbc44e,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4867055894904472869, guid: 3e42510a837d40647b69864f82bbc44e,
         type: 3}
@@ -2651,7 +2666,7 @@ PrefabInstance:
     - target: {fileID: 5279752032698876054, guid: 3e42510a837d40647b69864f82bbc44e,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5688008419416345916, guid: 3e42510a837d40647b69864f82bbc44e,
         type: 3}
@@ -2671,7 +2686,7 @@ PrefabInstance:
     - target: {fileID: 7956434671415471678, guid: 3e42510a837d40647b69864f82bbc44e,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8650255651465368681, guid: 3e42510a837d40647b69864f82bbc44e,
         type: 3}

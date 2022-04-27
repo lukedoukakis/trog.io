@@ -345,6 +345,8 @@ public class EntityUserInput : EntityComponent
     void OnInteractInput()
     {
 
+        Transform hoveredInteractableObjectTransform = hoveredInteractableObject.transform;
+
         //Log("Hovered object: " + hoveredInteractableObject.name);
 
         // if hovering over something, interact with it
@@ -413,9 +415,30 @@ public class EntityUserInput : EntityComponent
                     // }    
                     entityInfo.faction.RemoveItemOwned(Item.StoneSmall, 1, rack, true, entityItems);
                 }
+                else if (t == "ObjectRack_Fruit")
+                {
+                    // GameObject[] rackObjectsThatAreItem = rack.GetObjectsOnRackThatAreItem(Item.StoneSmall);
+                    // if(rackObjectsThatAreItem.Length > 0)
+                    // {
+                    //     GameObject foundObject = rackObjectsThatAreItem[rackObjectsThatAreItem.Length - 1];
+                    //     entityItems.OnObjectTake(foundObject, rack);
+                    // }    
+                    entityInfo.faction.RemoveItemOwnedOfType(ItemType.Fruit, 1, rack, true, entityItems);
+                }
                 else{
 
                 }    
+            }
+            else if(t == "Feature")
+            {
+                Item featureItem = Item.GetItemByName(hoveredInteractableObject.name.Split(' ')[0]);
+                Debug.Log(featureItem.nme);
+                GameObject worldObject;
+                foreach(Item item in featureItem.drops.GetFlattenedItemList())
+                {
+                    worldObject = Utility.InstantiateSameName(item.worldObjectPrefab, hoveredInteractableObjectTransform.position, Quaternion.identity);
+                    entityItems.OnObjectTake(worldObject, worldObject.GetComponent<ObjectReference>().GetObjectReference());
+                }
             }
             else if(t == "Workbench"){
                 entityItems.DropHolding((Workbench)hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
@@ -641,6 +664,9 @@ public class EntityUserInput : EntityComponent
                 case "ObjectRack_Stone" :
                     txt += "Stones (" + entityInfo.faction.GetItemCount(Item.StoneSmall) + ")";
                     break;
+                 case "ObjectRack_Fruit" :
+                    txt += "Fruits (" + entityInfo.faction.GetItemCount(ItemType.Fruit) + ")";
+                    break;
 
                 case "Workbench" :
                     txt += "Worktable";
@@ -648,6 +674,9 @@ public class EntityUserInput : EntityComponent
                 case "WorkbenchHammer" :
                     Workbench wb = (Workbench)(Utility.FindScriptableObjectReference(hoveredInteractableObject.transform).GetObjectReference());
                     txt += !wb.IsEmpty() && wb.currentCraftableItem != null ? "Craft: " + wb.currentCraftableItem.nme : "";
+                    break;
+                case "Feature" :
+                    txt += hoveredInteractableObject.name;
                     break;
                 // todo: handle other types of objects
                 default:

@@ -143,7 +143,7 @@ public class ChunkGenerator : MonoBehaviour
         Creatures = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Creatures"));
         Humans = new List<GameObject>(Resources.LoadAll<GameObject>("Terrain/Humans"));
         Items = Item.Items.Values.Select(item => item.worldObjectPrefab).Where(o => o != null).ToList();
-        Features = Features.OrderBy(feature => SpawnParameters.GetSpawnParameters(feature.name).loadOrder).ToList();
+        //Features = Features.OrderBy(feature => SpawnParameters.GetSpawnParameters(feature.name).loadOrder).ToList();
 
         activeCPUCreatures = new List<GameObject>();
 

@@ -224,7 +224,7 @@ public class Faction : MonoBehaviour
     }
 
 
-    public void RemoveObjectOwnedOfType(ItemType itemType, int count, ObjectRack rackToRemoveFrom, bool moveToAnotherPlace, object destination)
+    public void RemoveItemOwnedOfType(ItemType itemType, int count, ObjectRack rackToRemoveFrom, bool moveToAnotherPlace, object destination)
     {
         Item[] itemsOfType = Item.Items.Values.Where(item => item.type == itemType).ToArray();
 

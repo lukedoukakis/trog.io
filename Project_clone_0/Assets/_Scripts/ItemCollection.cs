@@ -73,6 +73,23 @@ public class ItemCollection
 
     }
 
+    public Item[] GetFlattenedItemList()
+    {
+        List<Item> list = new List<Item>();
+
+        Item item;
+        int count;
+        foreach(KeyValuePair<Item, int> kvp in items)
+        {
+            item = kvp.Key;
+            count = kvp.Value;
+            for(int i = 0; i < count; ++i)
+            {
+                list.Add(item);
+            }
+        }
+        return list.ToArray();
+    }
 
     // returns in format... iron:1_wood:4_leather:4
     public override string ToString()
