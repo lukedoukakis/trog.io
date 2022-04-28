@@ -14,15 +14,15 @@ public class ChunkGenerator : MonoBehaviour
     public static float Scale = 250f * 1f;
     public static float ElevationAmplitude = 300f * 2f;
     public static float MountainMapScale = 300f;
-    public static float ElevationMapScale = 1000f * .5f;
+    public static float ElevationMapScale = 1000f * .75f;
     public static int TemperatureMapScale = 300;
     public static int HumidityMapScale = 300;
     public static float meter = 1f / ElevationAmplitude;
     public static float FlatLevel = .85f;
     public static float SeaLevel = .8495f;
-    public static float SnowLevel = .93f;
+    public static float SnowLevel = .89f;
     //public static float SnowLevel = float.MaxValue;
-    public static float GrassNormal = .96f;
+    public static float GrassNormal = .8f;
     public static float SnowNormalMin = .8f;
     public static float SnowNormalMax = 1f;
     public static float CaveNormal = .4f;
@@ -579,7 +579,7 @@ public class ChunkGenerator : MonoBehaviour
                             // int posterizeSteps = (int)Mathf.Lerp(stepsMin, stepsMax, Mathf.InverseLerp(0f, 1f, perlin));
                             // //posterizeSteps = (int)Posterize(stepsMin, stepsMax, posterizeSteps, stepSteps);
 
-                            heightValue = PosterizeSoft(FlatLevel, .9f, heightValue, 3);
+                            heightValue = PosterizeSoft(FlatLevel, .9f, heightValue, 2);
 
 
                             // consistent posterize
@@ -836,7 +836,8 @@ public class ChunkGenerator : MonoBehaviour
                                                         worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
                                                         if(worldObject.transform.GetComponent<Rigidbody>() != null)
                                                         {
-                                                            Utility.ToggleObjectPhysics(worldObject, true, true, false, false);
+                                                            worldObject.transform.position = worldObject.transform.position + Vector3.up;
+                                                            //Utility.ToggleObjectPhysics(worldObject, true, true, false, false);
                                                         }
                                                         //instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
                                                     }

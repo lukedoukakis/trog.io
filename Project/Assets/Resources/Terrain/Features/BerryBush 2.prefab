@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5294664947025184020}
-  m_RootOrder: 5
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &7206775372361642459
 BoxCollider:
@@ -75,7 +75,7 @@ Transform:
   m_LocalScale: {x: 0.20449999, y: 0.20449999, z: 0.20449999}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5294664947025184020}
+  m_Father: {fileID: 6649142129183991126}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4585675708915220645
@@ -158,7 +158,7 @@ Transform:
   m_LocalScale: {x: 0.20449999, y: 0.20449999, z: 0.20449999}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5294664947025184020}
+  m_Father: {fileID: 6649142129183991126}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1923706153751914153
@@ -211,6 +211,42 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &3370947253017254605
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6649142129183991126}
+  m_Layer: 0
+  m_Name: Berries
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6649142129183991126
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3370947253017254605}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1977277818282786804}
+  - {fileID: 8756858790856794554}
+  - {fileID: 7794578444662651185}
+  - {fileID: 9076476073981062160}
+  - {fileID: 7672977786953305979}
+  m_Father: {fileID: 5294664947025184020}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5294664947025184025
 GameObject:
   m_ObjectHideFlags: 0
@@ -223,6 +259,7 @@ GameObject:
   - component: {fileID: 5294664947025184027}
   - component: {fileID: 5294664947025184026}
   - component: {fileID: -1574677644516157728}
+  - component: {fileID: 5850351005298417788}
   m_Layer: 11
   m_Name: BerryBush 2
   m_TagString: Feature
@@ -242,11 +279,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1977277818282786804}
-  - {fileID: 8756858790856794554}
-  - {fileID: 7794578444662651185}
-  - {fileID: 9076476073981062160}
-  - {fileID: 7672977786953305979}
+  - {fileID: 6649142129183991126}
   - {fileID: 886480516115783151}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -315,6 +348,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.6287446, y: 1.2701031, z: 1.6402332}
   m_Center: {x: -0.025169104, y: 0.509942, z: 0.007459104}
+--- !u!114 &5850351005298417788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5294664947025184025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c24661ece50901d4e82710db340f61e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  remainingInteractionsAllowed: 1
 --- !u!1 &6161539795255636710
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,7 +391,7 @@ Transform:
   m_LocalScale: {x: 0.20449999, y: 0.20449999, z: 0.20449999}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5294664947025184020}
+  m_Father: {fileID: 6649142129183991126}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &878205998031315665
@@ -428,7 +474,7 @@ Transform:
   m_LocalScale: {x: 0.20449999, y: 0.20449999, z: 0.20449999}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5294664947025184020}
+  m_Father: {fileID: 6649142129183991126}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &957496134402541570
@@ -511,7 +557,7 @@ Transform:
   m_LocalScale: {x: 0.20449999, y: 0.20449999, z: 0.20449999}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5294664947025184020}
+  m_Father: {fileID: 6649142129183991126}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8976002651872234274

@@ -345,6 +345,12 @@ public class EntityUserInput : EntityComponent
     void OnInteractInput()
     {
 
+        InteractionCountLimiter icl = hoveredInteractableObject.GetComponent<InteractionCountLimiter>();
+        if(icl != null)
+        {
+            icl.OnInteract();
+        }
+
         Transform hoveredInteractableObjectTransform = hoveredInteractableObject.transform;
 
         //Log("Hovered object: " + hoveredInteractableObject.name);
@@ -432,12 +438,22 @@ public class EntityUserInput : EntityComponent
             else if(t == "Feature")
             {
                 Item featureItem = Item.GetItemByName(hoveredInteractableObject.name.Split(' ')[0]);
-                Debug.Log(featureItem.nme);
-                GameObject worldObject;
+                GameObject dropWorldObject;
                 foreach(Item item in featureItem.drops.GetFlattenedItemList())
                 {
-                    worldObject = Utility.InstantiateSameName(item.worldObjectPrefab, hoveredInteractableObjectTransform.position, Quaternion.identity);
-                    entityItems.OnObjectTake(worldObject, worldObject.GetComponent<ObjectReference>().GetObjectReference());
+                    dropWorldObject = Utility.InstantiateSameName(item.worldObjectPrefab, hoveredInteractableObjectTransform.position, Quaternion.identity);
+                    entityItems.OnObjectTake(dropWorldObject, dropWorldObject.GetComponent<ObjectReference>().GetObjectReference());
+                }
+                if(featureItem == Item.BerryBush)
+                {
+                    foreach(Transform childT in hoveredInteractableObjectTransform.GetComponentsInChildren<Transform>())
+                    {
+                        if(childT.name.Split(" ")[0] == "Berries")
+                        {
+                            GameObject.Destroy(childT.gameObject);
+                            break;
+                        }
+                    }
                 }
             }
             else if(t == "Workbench"){

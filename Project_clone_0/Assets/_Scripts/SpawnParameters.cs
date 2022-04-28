@@ -126,7 +126,7 @@ public class SpawnParameters
 
         // // items
         {"StoneSmall", new SpawnParameters(2f, hgtBankAndDry, all, all, new Vector2(.8f, 1f), new Vector2(.01f, .05f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 3, 0, LoadOrder.Tirtiary)},
-        {"WoodPiece", new SpawnParameters(1f, hgtDry, h1, h2, new Vector2(ChunkGenerator.GrassNormal, .96f), new Vector2(.1f, .2f), DensityCalculationType.Binary, DensityCalculationType.DenserAtMaximum, DensityCalculationType.DenserAtMaximum, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Tirtiary)},
+        {"WoodPiece", new SpawnParameters(1f, hgtDry, all, h2, new Vector2(.8f, 1f), new Vector2(.1f, .2f), DensityCalculationType.Binary, DensityCalculationType.DenserAtMaximum, DensityCalculationType.DenserAtMaximum, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Tirtiary)},
     
     
         // AI faction leader

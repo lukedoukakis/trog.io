@@ -65,6 +65,7 @@ MonoBehaviour:
   itemNme: Tree
   item: {fileID: 0}
   stats: {fileID: 0}
+  isInitialized: 0
 --- !u!114 &2759087112540832154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,6 +145,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: c86ae5a7f25697c489259615ee6e8d76, type: 2}
+  - {fileID: 2100000, guid: 7dd68dce44e9fda458b7ed7f6e6f379e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -227,6 +229,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 3c3553c187c9f634180083232f09af42, type: 2}
+  - {fileID: 2100000, guid: 7dd68dce44e9fda458b7ed7f6e6f379e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
