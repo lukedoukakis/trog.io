@@ -10,6 +10,8 @@ public class ShaderController : MonoBehaviour
     public static float DISTANCE_DROP_MIN = .5f;
     public static float DISTANCE_DROP_MAX = .5f;
 
+    [SerializeField] Material realisticGrassMaterial;
+
     void Awake()
     {
 
@@ -37,7 +39,7 @@ public class ShaderController : MonoBehaviour
 
     void UpdateWaterSensitiveMaterials()
     {
-        Shader.SetGlobalFloat("_WaterHeight", ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude - 100f);
+        Shader.SetGlobalFloat("_WaterHeight", ChunkGenerator.SeaLevel * ChunkGenerator.Amplitude - 100f);
     }
 
     void UpdateGrassNormalSensitiveMaterials()
@@ -47,8 +49,8 @@ public class ShaderController : MonoBehaviour
 
     void UpdateSnowSensitiveMaterials()
     {
-        Shader.SetGlobalFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel) * ChunkGenerator.ElevationAmplitude);
-        Shader.SetGlobalFloat("_SnowHeightCap", 1f * ChunkGenerator.ElevationAmplitude);
+        Shader.SetGlobalFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel) * ChunkGenerator.Amplitude);
+        Shader.SetGlobalFloat("_SnowHeightCap", 1f * ChunkGenerator.Amplitude);
         Shader.SetGlobalFloat("_SnowMinimumSurfaceNormal", ChunkGenerator.SnowNormalMin);
         Shader.SetGlobalFloat("_SnowMaximumSurfaceNormal", ChunkGenerator.SnowNormalMax);
     }

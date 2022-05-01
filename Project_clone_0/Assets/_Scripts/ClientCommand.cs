@@ -46,7 +46,7 @@ public class ClientCommand : NetworkBehaviour
 
         GameObject p = GameObject.Instantiate(characterPrefab);
         EntityHandle pHandle = p.GetComponent<EntityHandle>();
-        p.transform.position = new Vector3(0f, ChunkGenerator.ElevationAmplitude + 50f, 0f);
+        p.transform.position = new Vector3(0f, ChunkGenerator.Amplitude + 50f, 0f);
 
         //Debug.Log(pcc);
         clientPlayerCharacter = p;

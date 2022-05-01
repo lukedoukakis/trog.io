@@ -151,11 +151,11 @@ public class Utility : MonoBehaviour
         if(mustBeOnLand)
         {
             if(Physics.Raycast(v, Vector3.down, out hit, float.MaxValue, LayerMask.GetMask("Terrain"))){
-                if(hit.point.y > ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude){
+                if(hit.point.y > ChunkGenerator.SeaLevel * ChunkGenerator.Amplitude){
                     v.y = hit.point.y;
                 }
                 else{
-                    v.y = ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude;
+                    v.y = ChunkGenerator.SeaLevel * ChunkGenerator.Amplitude;
                 }
             }
         }

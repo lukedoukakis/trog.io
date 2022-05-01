@@ -30,7 +30,7 @@ public class InteractionCountLimiter : MonoBehaviour
 
     void OnInteractionCountZero()
     {
-        Debug.Log("interactions 0 -> disabling hover trigger");
+        //Debug.Log("interactions 0 -> disabling hover trigger");
         Utility.FindDeepChild(transform, "HoverTrigger").GetComponent<Collider>().enabled = false;
     }
 

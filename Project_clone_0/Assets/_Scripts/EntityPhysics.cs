@@ -1638,7 +1638,7 @@ public class EntityPhysics : EntityComponent
     void CheckWater()
     {
         float y = transform.position.y;
-        float waterY = ChunkGenerator.SeaLevel * ChunkGenerator.ElevationAmplitude;
+        float waterY = ChunkGenerator.SeaLevel * ChunkGenerator.Amplitude;
         bool w = y <= waterY - .2f;
         if (w)
         {

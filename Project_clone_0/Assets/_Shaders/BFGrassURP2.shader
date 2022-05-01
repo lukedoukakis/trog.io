@@ -69,28 +69,28 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 		[Space]
 		_LightIntensity("Additional Lights Intensity", Range(0.00, 2)) = 1
 
-		// EDIT 1
-		[Header(Added Parameters)]
-		[Space]
-		_ColorNoise("Color Noise", 2D) = "white" {}
-		_ColorGradient("Color Gradient", 2D) = "white" {}
-		_ColorTiling("Color Tiling", Float) = .1
-		_WaterHeight("Water Height", Float) = 0
-		_GrassNormal("Grass Normal", Float) = .95
-		_SnowHeightStart("Snow Height Start", Float) = 0
-		_SnowHeightStart("Snow Height Cap", Float) = 0
-		_CampOrigin("Camp Origin", Vector) = (0,0,0,0)
-		_CampRadius("Camp Radius", Float) = 0
-		_Desertness("Desertness", Float) = 0
+		// EDIT 1: expose properties (comment to unexpose them)
+		// [Header(Added Parameters)]
+		// [Space]
+		// _ColorNoise("Color Noise", 2D) = "white" {}
+		// _ColorGradient("Color Gradient", 2D) = "white" {}
+		// _ColorTiling("Color Tiling", Float) = .1
+		// _WaterHeight("Water Height", Float) = 0
+		// _GrassNormal("Grass Normal", Float) = .95
+		// _SnowHeightStart("Snow Height Start", Float) = 0
+		// _SnowHeightStart("Snow Height Cap", Float) = 0
+		// _CampOrigin("Camp Origin", Vector) = (0,0,0,0)
+		// _CampRadius("Camp Radius", Float) = 0
+		// _Desertness("Desertness", Float) = 0
 	}
 		SubShader
 		{
 			Tags{"DisableBatching" = "true" "RenderType"="Transparent"}
-			//Blend SrcAlpha OneMinusSrcAlpha
+			Blend SrcAlpha OneMinusSrcAlpha
 			pass
 			{
 			Tags{"RenderPipeline" = "UniversalPipeline" "RenderType"="Transparent"}
-			//Blend SrcAlpha OneMinusSrcAlpha
+			Blend SrcAlpha OneMinusSrcAlpha
 			LOD 100
 
 
@@ -136,6 +136,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				// EDIT 2
 				// get normal from vertex passed in
 				float3 normal : NORMAL;
+				float4 color : COLOR;
 
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 #ifdef LIGHTMAP_ON
@@ -151,6 +152,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				float3 normal : TEXCOORD2;
 				float4 shadowCoord : TEXCOORD4;
 				float fogCoord : TEXCOORD5;
+				float4 color : COLOR;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 #ifdef LIGHTMAP_ON
 					float2 lmap : TEXCOORD6;
@@ -212,9 +214,11 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 			half _GrassNormal;
 			half _SnowHeightStart;
 			half _SnowHeightCap;
+			float4 _PlayerPosition;
 			float4 _CampOrigin;
 			half _CampRadius;
 			half _Desertness;
+			half _DistanceDropMagnitude;
 
 			float2 hash2D2D(float2 s)
 			{
@@ -247,9 +251,28 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 					mul(tex2D(tex, UV + hash2D2D(BW_vx[2].xy), dx, dy), BW_vx[3].z);
 			}
 
-			// EDIT
+			// EDIT: inverse lerp function
 			float invLerp(float from, float to, float value) {
   				return (value - from) / (to - from);
+			}
+
+			#define UnityObjectToWorld(o) mul(unity_ObjectToWorld, float4(o.xyz,1.0))
+
+			// EDIT: distance drop function
+			float3 distanceDrop(float3 pos, float3 playerWorldPos, float magnitude)
+			{
+
+				float3 worldPos = UnityObjectToWorld(pos);
+				float drop = magnitude * .01 * -1;
+				float3 sub = pos - playerWorldPos;
+				float newY = (pow(sub.x, 2) * drop) + (pow(sub.z, 2) * drop);
+				float3 newWorldPos = worldPos + float3(0, newY, 0);
+
+				float diff = worldPos.y - newWorldPos.y;
+
+				float3 newPos = float3(pos.x, pos.y - diff, pos.z);
+
+				return newPos;
 			}
 
 			v2g vert(appdata v)
@@ -259,11 +282,16 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				VertexPositionInputs vertexInput = GetVertexPositionInputs(v.vertex.xyz);
 				o.fogCoord = ComputeFogFactor(vertexInput.positionCS.z);
-				o.objPos = v.vertex;
+				//o.objPos = v.vertex;
+				float3 dd = distanceDrop(v.vertex, _PlayerPosition, _DistanceDropMagnitude);
+				float ddDiff = dd.y - v.vertex.y;
+				o.objPos = float4(dd.x, dd.y, dd.z, v.vertex.w);
 				o.pos = GetVertexPositionInputs(v.vertex).positionCS;
+				o.pos.y -= ddDiff;
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.shadowCoord = GetShadowCoord(vertexInput);
 				o.normal = v.normal;
+				o.color = v.color;
 #ifdef LIGHTMAP_ON
 				o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
 #endif
@@ -293,7 +321,7 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 					o.lmap = input[i].lmap.xy;
 #endif
 					// EDIT 2
-					// only show vert if the normal is greater than _GrassNormal
+					// only add triangle if the normal is greater than _GrassNormal
 					if(input[i].normal.y >= _GrassNormal){
 						tristream.Append(o);
 					}
@@ -323,17 +351,17 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 							float4 NewNormal = float4(input[ii].normal,0);
 
 							// EDIT 3
-							// change geometry height based on proximity to water and player's campsite
 							float awayFromWaterModifier = clamp(0, 1, invLerp(_WaterHeight, _WaterHeight + 1, UnityObjectToWorld(input[ii].objPos).y));
 							float awayFromCampModifier = clamp(0, 1, invLerp(_CampRadius, _CampRadius + 1, distance(UnityObjectToWorld(input[ii].objPos), _CampOrigin)));
 							float awayFromSnowModifier = clamp(0, 1, invLerp(_SnowHeightCap - 30, _SnowHeightCap, UnityObjectToWorld(input[ii].objPos).y));
+							float awayFromDesertnessModifier = clamp(0, 1, 1 - invLerp(.7, .75, input[ii].color.r));
 							awayFromSnowModifier = 1;
 							awayFromWaterModifier = 1;
-							//awayFromCampModifier = 1;
-							float awayFromDesertnessModifier = clamp(0, 1, 1 - invLerp(.7, .75, _Desertness));
+							awayFromCampModifier = 1;
+							//awayFromDesertnessModifier = 1;
 							float heightMod = min(min(min(awayFromWaterModifier, awayFromCampModifier), awayFromSnowModifier), awayFromDesertnessModifier);
 
-							objSpace = float4(input[ii].objPos + NewNormal * _OffsetValue*i*heightMod + (offsetNormal*heightMod));
+							objSpace = float4(input[ii].objPos + NewNormal * _OffsetValue * i * heightMod + (offsetNormal*heightMod));
 							o.color = (i / (_NumberOfStacks - _GrassCut));
 							o.uv = input[ii].uv;
 							o.pos = GetVertexPositionInputs(objSpace).positionCS;
@@ -487,10 +515,6 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				half3 shadowmapColor = lerp(_ProjectedShadowColor, 1, mainLight.shadowAttenuation);
 #ifdef LIGHTMAP_ON
 				lm = SampleLightmap(i.lmap, normalDir);
-
-				// change alpha
-				//col.a = .1f;
-
 				col.rgb *= saturate(lm + 0.1);
 #else
 				col.xyz = col.xyz * saturate(shadowmapColor);
@@ -511,6 +535,9 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 					col.xyz += (light.color * light.distanceAttenuation* light.distanceAttenuation)* (_LightIntensity * 0.5);
 				}
 				col.xyz = MixFog(col.xyz, i.fogCoord);
+
+				// change alpha
+				col.a = .1f;
 
 				return col;
 				}

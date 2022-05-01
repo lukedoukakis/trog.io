@@ -57,7 +57,7 @@ public class AreaConditions
         OriginChunk = chunk;
         OriginX = x; 
         OriginZ = z;
-        OriginHeight = position.y / ChunkGenerator.ElevationAmplitude;
+        OriginHeight = position.y / ChunkGenerator.Amplitude;
 
         Height = chunk.HeightMap[x, z];
         Elevation = chunk.ElevationMap[x, z];

@@ -245,9 +245,9 @@ public class Camp : MonoBehaviour
         foreach(Transform orientation in layout.transform){
             //Debug.Log("AdjustCampLayout(): adjusting orientation: " + orientation.name);
             Vector3 pos = orientation.position;
-            pos.y = ChunkGenerator.ElevationAmplitude;
+            pos.y = ChunkGenerator.Amplitude;
             RaycastHit hit;
-            if(Physics.Raycast(pos, Vector3.down, out hit, ChunkGenerator.ElevationAmplitude, LayerMaskController.TERRAIN)){
+            if(Physics.Raycast(pos, Vector3.down, out hit, ChunkGenerator.Amplitude, LayerMaskController.TERRAIN)){
                 orientation.position = hit.point + Vector3.up * 0f;
             }
             else{
