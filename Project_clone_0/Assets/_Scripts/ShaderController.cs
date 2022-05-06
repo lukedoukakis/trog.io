@@ -7,8 +7,8 @@ public class ShaderController : MonoBehaviour
     
     public static ShaderController instance;
     public static float DISTANCE_DROP_STATIC = 0f;
-    public static float DISTANCE_DROP_MIN = .5f;
-    public static float DISTANCE_DROP_MAX = .5f;
+    public static float DISTANCE_DROP_MIN = -.12f;
+    public static float DISTANCE_DROP_MAX = -.12f;
 
     [SerializeField] Material realisticGrassMaterial;
 

@@ -11,9 +11,9 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 3;
-    public static float Scale = 300f;
+    public static float Scale = 100f;
     public static float Amplitude = 125f;
-    public static float MountainMapScale = 200f;
+    public static float MountainMapScale = 500f;
     public static float ElevationMapScale = 1000f * 2f;
     public static int TemperatureMapScale = 300;
     public static int HumidityMapScale = 300;
@@ -351,16 +351,16 @@ public class ChunkGenerator : MonoBehaviour
                 // MountainMap [0, 1]
                 float mountainElev = 0f;
                 float mtn0 = Mathf.PerlinNoise((x + xOffset - Seed + 5000.01f) / MountainMapScale, (z + zOffset - Seed + 5000.01f) / MountainMapScale);
-                float mtn1 = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / MountainMapScale, (z + zOffset - Seed + 100000.01f) / MountainMapScale);
-                float mtn2 = Mathf.PerlinNoise((x + xOffset - Seed + 200000.01f) / MountainMapScale, (z + zOffset - Seed + 200000.01f) / MountainMapScale);
+                //float mtn1 = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / MountainMapScale, (z + zOffset - Seed + 100000.01f) / MountainMapScale);
+                //float mtn2 = Mathf.PerlinNoise((x + xOffset - Seed + 200000.01f) / MountainMapScale, (z + zOffset - Seed + 200000.01f) / MountainMapScale);
 
-                mountainValue = Mathf.Min(mtn0, mtn1);
-                mountainValue *= Mathf.Lerp(.015f, 1f, Mathf.InverseLerp(0f, .35f, elevationValueWithRoughness));
-                mountainValue *= Mathf.Lerp(.02f, 1f, Mathf.InverseLerp(.25f, .5f, 1f - temperatureValue));
+                mountainValue = Mathf.Min(mtn0, 1);
+                //mountainValue *= Mathf.Lerp(.015f, 1f, Mathf.InverseLerp(0f, .1f, elevationValueWithRoughness));
+                //mountainValue *= Mathf.Lerp(.02f, 1f, Mathf.InverseLerp(.25f, .5f, 1f - temperatureValue));
                 mountainElev = mountainValue;
 
 
-                //mountainValue = Mathf.InverseLerp(.25f, .75f, mountainValue);
+                mountainValue = Mathf.InverseLerp(.3f, .7f, mountainValue);
 
                 //mountainValue = Mathf.Pow(mountainValue, 1.5f);
                 //mountainValue *= 1f - CalculateDesertness(temperatureValue, humidityValue);
@@ -463,10 +463,15 @@ public class ChunkGenerator : MonoBehaviour
                 float heightFromMtn;
                 float p0, p1, p2, pTotal;
                 p0 = Mathf.PerlinNoise((x + xOffset) / Scale + Seed, (z + zOffset) / Scale + Seed);
-                p1 = Mathf.PerlinNoise((x + xOffset) / (Scale*.1f) + Seed, (z + zOffset) / (Scale*.1f) + Seed) * .1f;
-                p2 = Mathf.PerlinNoise((x + xOffset) / (Scale*.005f) + Seed, (z + zOffset) / (Scale*.005f) + Seed) * .005f;
-                pTotal = p0 + p1 + p2;
-                heightFromMtn = Mathf.Clamp01((pTotal * 2f - 1f) * mountainValue);
+                p1 = Mathf.PerlinNoise((x + xOffset) / (Scale*.1f) + Seed, (z + zOffset) / (Scale*.1f) + Seed) * .05f;
+                p2 = Mathf.PerlinNoise((x + xOffset) / (Scale*.05f) + Seed, (z + zOffset) / (Scale*.005f) + Seed) * .005f;
+                p2 = 0;
+                pTotal = Mathf.Clamp01(p0 + p1 + p2);
+                heightFromMtn = (pTotal * 2f - 1f) * mountainValue;
+                if(heightFromMtn > -100)
+                {
+                    heightFromMtn += mountainElev * .2f;
+                }
 
 
 
@@ -492,7 +497,7 @@ public class ChunkGenerator : MonoBehaviour
                 float seaFloorHeight = SeaLevel - (meter * 1f);
                 if (heightValue >= shoreHeight)
                 {
-                    bool posterize = false;
+                    bool posterize = true;
                     if (posterize)
                     {
 
@@ -514,7 +519,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
                         //
-                        heightValue = PosterizeSoft(shoreHeight, .9f, heightValue, 8);
+                        heightValue = PosterizeSoft(shoreHeight, .9f, heightValue, 4, .05f, x + xOffset, z + zOffset);
 
                     }
                 }
@@ -579,8 +584,9 @@ public class ChunkGenerator : MonoBehaviour
         return desertness;
     }
 
-    float PosterizeSoft(float min, float max, float val, int steps)
+    float PosterizeSoft(float min, float max, float val, int steps, float strength, float x, float z)
     {
+
         if(val < min)
         {
             return min;
@@ -603,7 +609,7 @@ public class ChunkGenerator : MonoBehaviour
                 float midpt = Mathf.Lerp(level, nextLevel, 1f);
                 //float compliance = 1f - (Mathf.Pow(Mathf.Abs(midpt - val) / (stepHeight / 2f), Mathf.Lerp(0f, 20f, rigidity)));
                 float compliance = 1f - Mathf.InverseLerp(level, midpt, val);
-                compliance = Mathf.Pow(compliance, .5f);
+                compliance = Mathf.Pow(compliance, 1f - strength);
                 val = Mathf.Lerp(val, level, compliance);
 
 
@@ -759,6 +765,8 @@ public class ChunkGenerator : MonoBehaviour
                                                             //Utility.ToggleObjectPhysics(worldObject, true, true, false, false);
                                                         }
                                                         //instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
+
+                                                        worldObject.transform.SetParent(cd.chunk.transform);
                                                     }
                                                 }
                                                 
@@ -804,6 +812,8 @@ public class ChunkGenerator : MonoBehaviour
                                     //worldObject.transform.position = spawnPosition;
                                     worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
                                     AddActiveCPUCreature(worldObject);
+
+                                    worldObject.transform.SetParent(cd.chunk.transform);
                                 }
                             }
                         }
@@ -841,6 +851,7 @@ public class ChunkGenerator : MonoBehaviour
                                     //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
 
                                     //humanSpawned = true;
+
                                 }
                             }
                         }

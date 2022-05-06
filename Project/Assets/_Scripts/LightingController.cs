@@ -12,8 +12,8 @@ public class LightingController : MonoBehaviour
     //public PostProcessVolume volume;
     //public ColorGrading colorGrading;
 
-    public static float RENDER_SETTINGS_FOG_DISTANCE_START = 200000f;
-    public static float RENDER_SETTINGS_FOG_DISTANCE_END = 400000f;
+    public static float RENDER_SETTINGS_FOG_DISTANCE_START = 30f;
+    public static float RENDER_SETTINGS_FOG_DISTANCE_END = 40f;
 
     public static float FOG_DISTANCE_START_BASE = 60f;
     public static float FOG_THICKNESS_STEP = .001f;
@@ -61,7 +61,7 @@ public class LightingController : MonoBehaviour
         SetFog(time);
         SetCelestialBodies(time);
         SetColors(time);
-        UpdateRenderFog();
+        //UpdateRenderFog();
 
         // pause time of day: comment out this line
         //time += Time.deltaTime;

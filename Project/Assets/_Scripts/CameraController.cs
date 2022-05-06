@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour
     
     public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset renderPipelineAsset;
 
-    public static float CAMERA_DISTANCE_OUTSIDECAMP = 60f;
+    public static float CAMERA_DISTANCE_OUTSIDECAMP = 100f;
     public static float CAMERA_DISTANCE_INSIDECAMP = 60f;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
     public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .1f;
@@ -138,7 +138,7 @@ public class CameraController : MonoBehaviour
         
         // stay above terrain
         RaycastHit hit;
-        float minHeightAboveGround = 1f;
+        float minHeightAboveGround = 10f;
         if(Physics.Raycast(targetPos + (Vector3.up * 1000f), Vector3.down, out hit, 1000f + minHeightAboveGround, LayerMaskController.TERRAIN))
         {
             Vector3 adjustedPos = hit.point + (Vector3.up * minHeightAboveGround);

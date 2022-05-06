@@ -37,6 +37,8 @@ public class EntityBehavior : EntityComponent
     public static float STAMINA_LOSS_RATE = 1f;
     public static float STAMINA_GAIN_RATE = 4f;
     public static float HEALTH_GAIN_RATE = STAMINA_GAIN_RATE;
+
+    public static float CHASE_TARGET_SNAPPINESS = 3f;
     
 
     Vector3 randomOffset;
@@ -398,6 +400,7 @@ public class EntityBehavior : EntityComponent
                     {
                         //Debug.Log(timer.ElapsedMilliseconds / 1000f);
                         move = GetNavigationDirection(targetPos, false);
+                        move = Vector3.Lerp(entityPhysics.moveDir, move, CHASE_TARGET_SNAPPINESS * Time.deltaTime);
                         entityPhysics.moveDir = move;
                     }
                     yield return null;
@@ -469,6 +472,7 @@ public class EntityBehavior : EntityComponent
                 else
                 {
                     move = GetNavigationDirection(targetPos, reverse);
+                    move = Vector3.Lerp(entityPhysics.moveDir, move, CHASE_TARGET_SNAPPINESS * Time.deltaTime);
                     entityPhysics.moveDir = move;
                 }
             }
@@ -499,6 +503,7 @@ public class EntityBehavior : EntityComponent
                 else
                 {
                     move = GetNavigationDirection(targetPos, reverse);
+                    move = Vector3.Lerp(entityPhysics.moveDir, move, CHASE_TARGET_SNAPPINESS * Time.deltaTime);
                     entityPhysics.moveDir = move;
                 }
             }
@@ -828,7 +833,11 @@ public class EntityBehavior : EntityComponent
 
         // set direction to face
         targetPos.y = transform.position.y;
-        Vector3 targetDirection = reverse ? (transform.position - targetPos) : (targetPos - transform.position);
+        Vector3 targetDirection = (targetPos - transform.position);
+        if(reverse)
+        {
+            targetDirection *= -1f;
+        }
         Transform gyro = entityPhysics.gyro;
         gyro.LookAt(targetPos);
         if(reverse){ gyro.Rotate(Vector3.up * 180f); } // if reverse (running away from target), turn in y axis
