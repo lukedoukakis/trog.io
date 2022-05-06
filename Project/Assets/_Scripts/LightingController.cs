@@ -12,11 +12,11 @@ public class LightingController : MonoBehaviour
     //public PostProcessVolume volume;
     //public ColorGrading colorGrading;
 
-    public static float RENDER_SETTINGS_FOG_DISTANCE_START = 30f;
-    public static float RENDER_SETTINGS_FOG_DISTANCE_END = 40f;
+    public static float RENDER_SETTINGS_FOG_DISTANCE_START = 3000000f;
+    public static float RENDER_SETTINGS_FOG_DISTANCE_END = 4000000f;
 
-    public static float FOG_DISTANCE_START_BASE = 60f;
-    public static float FOG_THICKNESS_STEP = .001f;
+    public static float FOG_DISTANCE_START_BASE = 30f;
+    public static float FOG_THICKNESS_STEP = .0001f;
 
     public GameObject fog;
     public GameObject sun, moon;
@@ -61,7 +61,7 @@ public class LightingController : MonoBehaviour
         SetFog(time);
         SetCelestialBodies(time);
         SetColors(time);
-        //UpdateRenderFog();
+        UpdateRenderFog();
 
         // pause time of day: comment out this line
         //time += Time.deltaTime;
@@ -100,6 +100,8 @@ public class LightingController : MonoBehaviour
         Vector3 cameraPos = Camera.main.transform.position;
         if(fog != null)
         {
+            // float scale = Mathf.Lerp(1f, 3f, Mathf.InverseLerp(20f, 60f, Vector3.Distance(cameraPos, playerPos)));
+            // fog.transform.localScale = Vector3.one * scale;
             fog.transform.position = playerPos;
         }
 

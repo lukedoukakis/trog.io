@@ -332,7 +332,7 @@ public class ChunkGenerator : MonoBehaviour
 
                 // ElevationMap
                 elevationValue = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / ElevationMapScale, (z + zOffset - Seed + 100000.01f) / ElevationMapScale) * 2f - 1f;
-                float elevationValueWithRoughness = elevationValue + (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 15f, (z + zOffset - Seed + .01f) / 15f) * 2f - 1f) * .03f;
+                float elevationValueWithRoughness = elevationValue + (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 15f, (z + zOffset - Seed + .01f) / 15f) * 2f - 1f) * .01f;
                 
 
                 // HumidityMap [0, 1]
@@ -527,6 +527,8 @@ public class ChunkGenerator : MonoBehaviour
                 {
                     heightValue = Mathf.Lerp(heightValue, seaFloorHeight, Mathf.Clamp(((shoreHeight - heightValue) / (shoreHeight - seaFloorHeight)) * 100f, 0f, 1f));
                 }
+
+                heightValue += (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 1, (z + zOffset - Seed + .01f) / 1) * 2f - 1f) * .01f;
 
                
 

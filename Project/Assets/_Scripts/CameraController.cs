@@ -9,8 +9,8 @@ public class CameraController : MonoBehaviour
     
     public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset renderPipelineAsset;
 
-    public static float CAMERA_DISTANCE_OUTSIDECAMP = 100f;
-    public static float CAMERA_DISTANCE_INSIDECAMP = 60f;
+    public static float CAMERA_DISTANCE_OUTSIDECAMP = 10f;
+    public static float CAMERA_DISTANCE_INSIDECAMP = 5f;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
     public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .1f;
     public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .1f;
@@ -108,7 +108,7 @@ public class CameraController : MonoBehaviour
             //     verticalityModifier += (up + down) * sensitivity_rotation * .25f * Time.deltaTime;
             // }
         }
-        ZoomInput();
+        //ZoomInput();
         
 
         float max = .48f;
@@ -138,7 +138,7 @@ public class CameraController : MonoBehaviour
         
         // stay above terrain
         RaycastHit hit;
-        float minHeightAboveGround = 10f;
+        float minHeightAboveGround = 1f;
         if(Physics.Raycast(targetPos + (Vector3.up * 1000f), Vector3.down, out hit, 1000f + minHeightAboveGround, LayerMaskController.TERRAIN))
         {
             Vector3 adjustedPos = hit.point + (Vector3.up * minHeightAboveGround);
