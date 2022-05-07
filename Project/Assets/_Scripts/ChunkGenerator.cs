@@ -11,15 +11,15 @@ public class ChunkGenerator : MonoBehaviour
     public static int Seed = 75675;
     public static int ChunkSize = 30;
     public static int ChunkRenderDistance = 3;
-    public static float Scale = 100f;
+    public static float Scale = 70f;
     public static float Amplitude = 125f;
-    public static float MountainMapScale = 500f;
+    public static float MountainMapScale = 300f;
     public static float ElevationMapScale = 1000f * 2f;
     public static int TemperatureMapScale = 300;
     public static int HumidityMapScale = 300;
     public static float meter = 1f / Amplitude;
     public static float SeaLevel = .1f;
-    public static float SnowLevel = .5f;
+    public static float SnowLevel = .45f;
     //public static float SnowLevel = float.MaxValue;
     public static float GrassNormal = .83f;
     public static float SnowNormalMin = .8f;
@@ -350,19 +350,13 @@ public class ChunkGenerator : MonoBehaviour
 
                 // MountainMap [0, 1]
                 float mountainElev = 0f;
-                float mtn0 = Mathf.PerlinNoise((x + xOffset - Seed + 5000.01f) / MountainMapScale, (z + zOffset - Seed + 5000.01f) / MountainMapScale);
-                //float mtn1 = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / MountainMapScale, (z + zOffset - Seed + 100000.01f) / MountainMapScale);
-                //float mtn2 = Mathf.PerlinNoise((x + xOffset - Seed + 200000.01f) / MountainMapScale, (z + zOffset - Seed + 200000.01f) / MountainMapScale);
-
-                mountainValue = Mathf.Min(mtn0, 1);
+                mountainValue = Mathf.PerlinNoise((x + xOffset - Seed + 5000.01f) / MountainMapScale, (z + zOffset - Seed + 5000.01f) / MountainMapScale);
                 //mountainValue *= Mathf.Lerp(.015f, 1f, Mathf.InverseLerp(0f, .1f, elevationValueWithRoughness));
                 //mountainValue *= Mathf.Lerp(.02f, 1f, Mathf.InverseLerp(.25f, .5f, 1f - temperatureValue));
+        
+                mountainValue = Mathf.InverseLerp(.25f, .75f, mountainValue);
+                mountainValue = Mathf.Pow(mountainValue, 1.5f);
                 mountainElev = mountainValue;
-
-
-                mountainValue = Mathf.InverseLerp(.3f, .7f, mountainValue);
-
-                //mountainValue = Mathf.Pow(mountainValue, 1.5f);
                 //mountainValue *= 1f - CalculateDesertness(temperatureValue, humidityValue);
 
                 //mountainValue *= Mathf.InverseLerp(0f, .35f, elevationValue);
@@ -463,15 +457,12 @@ public class ChunkGenerator : MonoBehaviour
                 float heightFromMtn;
                 float p0, p1, p2, pTotal;
                 p0 = Mathf.PerlinNoise((x + xOffset) / Scale + Seed, (z + zOffset) / Scale + Seed);
-                p1 = Mathf.PerlinNoise((x + xOffset) / (Scale*.1f) + Seed, (z + zOffset) / (Scale*.1f) + Seed) * .05f;
-                p2 = Mathf.PerlinNoise((x + xOffset) / (Scale*.05f) + Seed, (z + zOffset) / (Scale*.005f) + Seed) * .005f;
+                p1 = Mathf.PerlinNoise((x + xOffset) / 10f, (z + zOffset) / 10f) * .12f;
                 p2 = 0;
-                pTotal = Mathf.Clamp01(p0 + p1 + p2);
-                heightFromMtn = (pTotal * 2f - 1f) * mountainValue;
-                if(heightFromMtn > -100)
-                {
-                    heightFromMtn += mountainElev * .2f;
-                }
+                pTotal = Mathf.Clamp01(p0 + p1 + p2) * .6f;
+                heightFromMtn = (pTotal) * mountainValue;
+                heightFromMtn += mountainElev * .4f;
+                
 
 
 
@@ -500,26 +491,11 @@ public class ChunkGenerator : MonoBehaviour
                     bool posterize = true;
                     if (posterize)
                     {
-
-
-                        // float postVariance = 100f;
-                        // int stepsMin = 3;
-                        // int stepsMax = 8;
-                        // int stepSteps = 6;
-
-                        // float perlin = Perlin.Noise((x + xOffset + .01f) / postVariance, (heightValue * Amplitude / postVariance), (z + zOffset - Seed + .01f) / postVariance);
-                        // //float perlin += ((Mathf.PerlinNoise((x + xOffset + .01f) / 5f, (z + zOffset - Seed + .01f) / postVariance) * 2f - 1f) * .1f);
-
-                        // int posterizeSteps = (int)Mathf.Lerp(stepsMin, stepsMax, Mathf.InverseLerp(0f, 1f, perlin));
-                        // //posterizeSteps = (int)Posterize(stepsMin, stepsMax, posterizeSteps, stepSteps);
-
-                        // heightValue = PosterizeSoft(shoreHeight, .9f, heightValue, posterizeSteps);
-
-
-
-
-                        //
-                        heightValue = PosterizeSoft(shoreHeight, .9f, heightValue, 4, .05f, x + xOffset, z + zOffset);
+                        float postVariance = 100f;
+                        float posterizeStrength = Perlin.Noise((x + xOffset + .01f) / postVariance, (heightValue * Amplitude / postVariance), (z + zOffset - Seed + .01f) / postVariance);
+                        posterizeStrength = Mathf.InverseLerp(.4f, .6f, posterizeStrength);
+                        posterizeStrength = Mathf.Lerp(0f, .4f, posterizeStrength);
+                        heightValue = PosterizeSoft(shoreHeight, .7f, heightValue, 4, .05f, x + xOffset, z + zOffset);
 
                     }
                 }
@@ -528,28 +504,32 @@ public class ChunkGenerator : MonoBehaviour
                     heightValue = Mathf.Lerp(heightValue, seaFloorHeight, Mathf.Clamp(((shoreHeight - heightValue) / (shoreHeight - seaFloorHeight)) * 100f, 0f, 1f));
                 }
 
-                //heightValue += (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 1, (z + zOffset - Seed + .01f) / 1) * 2f - 1f) * .05f;
+
+                // bumpiness
+                heightValue += (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 1, (z + zOffset - Seed + .01f) / 1) * 2f - 1f) * .05f;
 
                
 
-                // TreeMap
-                float t;
-                float tScale = 500f;
-                t = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / tScale, (z + zOffset - Seed + .01f) / tScale) * 2f - 1f;
+                // // TreeMap
+                // float t;
+                // float tScale = 500f;
+                // t = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / tScale, (z + zOffset - Seed + .01f) / tScale) * 2f - 1f;
 
-                // character
-                float c = .25f;
-                rough = Mathf.PerlinNoise((x + xOffset + .01f) / 100f, (z + zOffset + .01f) / 100f);
-                t += Mathf.Max(0f, rough) * c;
+                // // character
+                // float c = .25f;
+                // rough = Mathf.PerlinNoise((x + xOffset + .01f) / 100f, (z + zOffset + .01f) / 100f);
+                // t += Mathf.Max(0f, rough) * c;
 
-                // ridgify
-                t = Mathf.Abs(t);
-                t *= -1f;
-                t += 1f;
+                // // ridgify
+                // t = Mathf.Abs(t);
+                // t *= -1f;
+                // t += 1f;
 
-                t = Mathf.Clamp01(t);
-                //Debug.Log(t);
-                treeValue = t >= .985f;
+                // t = Mathf.Clamp01(t);
+                // //Debug.Log(t);
+                // treeValue = t >= .985f;
+
+                treeValue = false;
 
 
 
