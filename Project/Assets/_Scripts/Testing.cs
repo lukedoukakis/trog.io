@@ -50,7 +50,7 @@ public class Testing : MonoBehaviour
             }
             if (Input.GetKeyUp(KeyCode.X))
             {
-                playerHandle.entityInfo.faction.PackUp();
+                playerHandle.entityInfo.faction.OnPackup();
             }
             if (Input.GetKeyUp(KeyCode.R))
             {

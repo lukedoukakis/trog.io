@@ -210,15 +210,18 @@ public class Camp : MonoBehaviour
     }
     public GameObject GetOpenTribeMemberStandPosition()
     {
-        foreach(Transform standPosition in Utility.Shuffle(tribeMemberStandPositions))
+        List<Transform> shuffledStandPositions = Utility.Shuffle(tribeMemberStandPositions);
+        foreach(Transform standPosition in shuffledStandPositions)
         {
             if(standPosition.childCount < 1)
             {
                 return standPosition.gameObject;
             }
         }
-        Debug.Log("No open standing position");
-        return null;
+
+        // if no open position, return a random position
+        //Debug.Log("No open standing position");
+        return shuffledStandPositions[0].gameObject;
     }
 
 

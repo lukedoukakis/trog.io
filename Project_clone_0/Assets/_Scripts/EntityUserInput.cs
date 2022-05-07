@@ -344,6 +344,8 @@ public class EntityUserInput : EntityComponent
    
     void OnInteractInput()
     {
+        
+        if(hoveredInteractableObject == null){ return; }
 
         InteractionCountLimiter icl = hoveredInteractableObject.GetComponent<InteractionCountLimiter>();
         if(icl != null)

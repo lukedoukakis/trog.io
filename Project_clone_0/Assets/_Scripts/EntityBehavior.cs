@@ -996,7 +996,7 @@ public class EntityBehavior : EntityComponent
 	}
 
 
-    public List<GameObject> SenseSurroundingItems(Item targetItem, float senseDistance, bool senseSameType)
+    public List<GameObject> SenseSurroundingItems(Item targetItem, float senseDistance, bool sameTypeIsOk)
     {
         //Collider[] colliders = Physics.OverlapSphere(transform.position, senseDistance, LayerMaskController.ITEM).Where(col => col.gameObject.tag == "Item").ToArray();
         Collider[] colliders = Physics.OverlapSphere(transform.position, senseDistance, LayerMaskController.ITEM, QueryTriggerInteraction.Ignore);
@@ -1008,18 +1008,18 @@ public class EntityBehavior : EntityComponent
         {
             foundObject = col.gameObject;
             foundItem = Item.GetItemByName(foundObject.name);
+            ObjectReference foundObjectObjectReference = foundObject.GetComponent<ObjectReference>();
+            Faction foundObjectOwningFaction = foundObjectObjectReference.GetOwningFaction();
 
-            bool matchesParameters = senseSameType ? (foundItem.type.Equals(targetItem.type)) : foundItem.Equals(targetItem);
-            if (matchesParameters)
+            bool itemMatch = sameTypeIsOk ? (foundItem.type.Equals(targetItem.type)) : foundItem.Equals(targetItem);
+            bool notTargetedByThisFaction = !entityInfo.faction.ItemIsTargetedByThisFaction(foundObject);
+            bool objectIsNotOwnedByRivalFaction = ReferenceEquals(foundObjectOwningFaction, entityInfo.faction) || foundObjectOwningFaction == null;
+            bool objectIsNotHeldByAnotherEntity = !(foundObjectObjectReference.GetObjectReference() is EntityItems);
+            bool passesRequirements = itemMatch && notTargetedByThisFaction && objectIsNotOwnedByRivalFaction && objectIsNotHeldByAnotherEntity;
+            if (passesRequirements)
             {
                 //Debug.Log(foundObject.name);
-                if (!entityInfo.faction.ItemIsTargetedByThisFaction(foundObject))
-                {
-                    if(!(foundObject.GetComponent<ObjectReference>().GetObjectReference() is EntityItems))
-                    {
-                        foundObjects.Add(foundObject);
-                    }
-                }
+                foundObjects.Add(foundObject);
             }
             
         }
@@ -1029,13 +1029,13 @@ public class EntityBehavior : EntityComponent
         
     }
 
-    public GameObject FindClosestObject(Item targetItem, float searchDistance, bool senseSameType)
+    public GameObject FindClosestObject(Item targetItem, float searchDistance, bool sameTypeIsOk)
     {
-        List<GameObject> foundObjects = SenseSurroundingItems(targetItem, searchDistance, senseSameType);
+        // if sameTypeIsOk, finds the closest object that is the same type as the target item, otherwise the same item
+        List<GameObject> foundObjects = SenseSurroundingItems(targetItem, searchDistance, sameTypeIsOk);
         if(foundObjects.Count > 0)
         {
-            foundObjects = foundObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToList();
-            return foundObjects[0];
+            return foundObjects.OrderBy(c => Vector3.Distance(transform.position, c.transform.position)).ToArray()[0];
         }
         else
         {

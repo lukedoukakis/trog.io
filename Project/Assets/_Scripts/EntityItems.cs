@@ -252,7 +252,9 @@ public class EntityItems : EntityComponent
         Utility.ToggleObjectPhysics(holding_object, false, false, true, false);
 
         // update object's ObjectReference
-        holding_object.GetComponent<ObjectReference>().SetObjectReference(this);
+        ObjectReference or = worldObject.GetComponent<ObjectReference>();
+        or.SetObjectReference(this);
+        or.SetOwningFaction(entityInfo.faction);
     }
 
     public void DropHolding(object targetAttachedObject)
@@ -328,7 +330,9 @@ public class EntityItems : EntityComponent
                 Utility.ToggleObjectPhysics(holding_object, true, true, true, true);
 
                 // update object's ObjectReference
-                holding_object.GetComponent<ObjectReference>().SetObjectReference(this);
+                ObjectReference or = holding_object.GetComponent<ObjectReference>();
+                or.SetObjectReference(null);
+                or.SetOwningFaction(null);
 
                 holding_item = null;
                 holding_object = null;
@@ -456,7 +460,9 @@ public class EntityItems : EntityComponent
                 Utility.ToggleObjectPhysics(weaponEquipped_object, true, true, true, true);
 
                 // update object's ObjectReference
-                weaponEquipped_object.GetComponent<ObjectReference>().SetObjectReference(this);
+                ObjectReference or = weaponEquipped_object.GetComponent<ObjectReference>();
+                or.SetObjectReference(null);
+                or.SetOwningFaction(null);
 
                 weaponEquipped_item = null;
                 weaponEquipped_object = null;
@@ -490,7 +496,9 @@ public class EntityItems : EntityComponent
         Utility.ToggleObjectPhysics(weaponEquipped_object, false, false, false, false);
 
         // update object's ObjectReference
-        weaponEquipped_object.GetComponent<ObjectReference>().SetObjectReference(this);
+        ObjectReference or = worldObject.GetComponent<ObjectReference>();
+        or.SetObjectReference(this);
+        or.SetOwningFaction(entityInfo.faction);
 
         // set weapon hit detection owner
         AttackCollisionDetector acd = weaponEquipped_object.transform.Find("HitZone").GetComponent<AttackCollisionDetector>();

@@ -146,8 +146,9 @@ public class ObjectRack : CampComponent
                 orientation.rotation = Utility.GetRandomRotation(360f);
             }
         }
-        ObjectReference reference = this.worldObject.AddComponent<ObjectReference>();
-        reference.SetObjectReference(this);
+        ObjectReference or = this.worldObject.AddComponent<ObjectReference>();
+        or.SetObjectReference(this);
+        or.SetOwningFaction(this.camp.faction);
         objectsOnRack = new List<GameObject>();
         itemsOnRack = new List<Item>();
     }
@@ -165,7 +166,9 @@ public class ObjectRack : CampComponent
 
                 // if room in the rack, add the item to it
                 GameObject newWorldObject = Utility.InstantiateSameName(item.worldObjectPrefab);
-                newWorldObject.GetComponent<ObjectReference>().SetObjectReference(this);
+                ObjectReference or = newWorldObject.GetComponent<ObjectReference>();
+                or.SetObjectReference(this);
+                or.SetOwningFaction(this.camp.faction);
                 SetObjectOrientation(newWorldObject, originT, (OBJECT_PLACEMENT_DELAY_TIMESTEP * countAdded) + (Camp.CAMP_COMPONENT_PLACING_TIME_GAP * newRacksCount), !physical);
                 if(physical)
                 {

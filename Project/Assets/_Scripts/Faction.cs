@@ -478,10 +478,13 @@ public class Faction : MonoBehaviour
 
 
     // pack up all faction items from camp and (todo: add to backpack)
-    public void PackUp()
+    public void OnPackup()
     {
-        camp.Dismantle();
-        UpdateLeaderCampStatus();
+        if(camp != null)
+        {
+            camp.Dismantle();
+            UpdateLeaderCampStatus();
+        }
     }
 
     public void DestroyFaction()
