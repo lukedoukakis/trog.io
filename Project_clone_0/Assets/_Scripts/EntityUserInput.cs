@@ -16,7 +16,7 @@ public class EntityUserInput : EntityComponent
     static float AUTO_SENSE_DISTANCE_FEATURE = 1f;
     static float AUTO_SENSE_DISTANCE_CREATURE = 15f;
     static float AUTO_ATTACK_DISTANCE_FEATURE = 1f;
-    static float AUTO_ATTACK_DISTANCE_CREATURE = 5f;
+    static float AUTO_ATTACK_DISTANCE_CREATURE = 2f;
 
 
     public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressWalk, pressDodge;
@@ -228,17 +228,24 @@ public class EntityUserInput : EntityComponent
 
     void HandleAutoAttack()
     {
+
+        if(entityItems.weaponEquipped_item == null)
+        {
+            return;
+        }
+
         Transform targetAutoAttackTransform = GetAutoAttackTransform();
         if(targetAutoAttackTransform != null)
         {
             entityOrientation.SetBodyRotationMode(BodyRotationMode.Target, targetAutoAttackTransform);
-            if(entityItems.weaponEquipped_item != null)
+            if (entityItems.weaponEquipped_item != null)
             {
                 entityPhysics.TryAttack(AttackType.Weapon, targetAutoAttackTransform, .25f);
                 //entityPhysics.TryAttack(AttackType.Weapon, null);
             }
             //Debug.Log(targetAutoAttackTransform.name);
         }
+        
         else
         {
             entityOrientation.SetBodyRotationMode(BodyRotationMode.Normal, null);

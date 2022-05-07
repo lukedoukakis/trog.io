@@ -21,7 +21,7 @@ public class EntityBehavior : EntityComponent
 
     public static float RANDOM_OFFSET_RANGE = 1f;
     public static float DISTANCE_THRESHOLD_NONE = -1f;
-    public static float DISTANCE_THRESHOLD_SAME_POINT = .3f;
+    public static float DISTANCE_THRESHOLD_SAME_POINT = .75f;
     public static float DISTANCE_THRESHOLD_SAME_SPOT = 2f;
     public static float DISTANCE_THRESHOLD_MELEE_ATTACK = 1f;
     public static float DISTANCE_THRESHOLD_LUNGEATTACK = 10f;
@@ -83,7 +83,6 @@ public class EntityBehavior : EntityComponent
 
         base.Awake();
 
-        isPlayer = tag == "Player";
         followPositionTransform = new GameObject().transform;
         SetRestingTent(null);
         followOffset = Utility.GetHorizontalVector(Utility.GetRandomVectorHorizontal(2.5f));
@@ -115,7 +114,7 @@ public class EntityBehavior : EntityComponent
         timeSince_creatureSense = 0f;
         behaviorProfile = entityInfo.speciesInfo.behaviorProfile;
 
-        if(!isPlayer)
+        if(!IsClientPlayerCharacter())
         {
             NextAction();
         }
@@ -1357,7 +1356,7 @@ public class EntityBehavior : EntityComponent
 
         entityPhysics.moveDir = move;
 
-        if (!isPlayer)
+        if (IsClientPlayerCharacter())
         {
             UpdateBehavior();
             UpdateStaminaLoss();
