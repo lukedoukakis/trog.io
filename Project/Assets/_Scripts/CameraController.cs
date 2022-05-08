@@ -108,7 +108,7 @@ public class CameraController : MonoBehaviour
             //     verticalityModifier += (up + down) * sensitivity_rotation * .25f * Time.deltaTime;
             // }
         }
-        //ZoomInput();
+        ZoomInput();
         
 
         float max = .48f;
@@ -187,7 +187,7 @@ public class CameraController : MonoBehaviour
             zoomDelta = 0;
         }
 
-        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .075f, 1f);
+        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .5f, 1f);
         cameraDistance_input = Mathf.Lerp(cameraDistance_input, targetZoom, CAMERA_ZOOM_INPUT_SPEED * Time.deltaTime);
     }
 

@@ -103,7 +103,7 @@ public class SpawnParameters
 
         // trees
         {"TreeAcacia", new SpawnParameters(.5f, hgtDry, q3, q3, new Vector2(.8f, 1f), new Vector2(.03f, .06f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 1f, 1, 0, LoadOrder.Secondary)},
-        {"TreeFir", new SpawnParameters(.8f, hgtDry, h1, h2, new Vector2(.75f, 1f), new Vector2(.2f, .35f * 2.5f), DensityCalculationType.Binary, DensityCalculationType.DenserAtMaximum, DensityCalculationType.DenserAtMaximum, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Secondary)},
+        {"TreeFir", new SpawnParameters(.8f, hgtDry, h1, h2, new Vector2(.75f, 1f), new Vector2(.2f, .52f), DensityCalculationType.Binary, DensityCalculationType.DenserAtMaximum, DensityCalculationType.DenserAtMaximum, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Secondary)},
         {"TreeBamboo", new SpawnParameters(.65f, hgtWaterAndAbove, q4, q4, new Vector2(.96f, 1f), new Vector2(.29f, .3f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 5, 0, LoadOrder.Secondary)},
         {"TreeBanana", new SpawnParameters(.65f, hgtBankAndDry, q4, q4, new Vector2(.96f, 1f), new Vector2(.19f, .2f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, .25f, 3, 0, LoadOrder.Secondary)},
         {"TreeCoconut", new SpawnParameters(.65f, hgtBankAndDry, q4, h2, new Vector2(.96f, 1f), new Vector2(.12f, .13f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, .25f, 3, 0, LoadOrder.Secondary)},
@@ -121,9 +121,9 @@ public class SpawnParameters
         
 
         // // creatures
-        //{"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Primary)},
-        //{"WildDeer", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Primary)},
-        {"WildHorse", new SpawnParameters(1f, hgtDry, all, all, all, new Vector2(.05f, .07f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Primary)},
+        {"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.005f, .005f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Primary)},
+        {"WildDeer", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 2, 0, LoadOrder.Primary)},
+        {"WildHorse", new SpawnParameters(1f, hgtDry, all, h1, normGrass, new Vector2(.05f, .07f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 3, 0, LoadOrder.Primary)},
 
 
         // // items
@@ -132,7 +132,7 @@ public class SpawnParameters
     
     
         // AI faction leader
-        //{"Character", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.002f, .002f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, -1f, LoadOrder.Tirtiary)},
+        {"Character", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.002f, .002f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, -1f, LoadOrder.Tirtiary)},
 
 
     

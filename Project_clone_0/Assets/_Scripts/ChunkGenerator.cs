@@ -748,7 +748,6 @@ public class ChunkGenerator : MonoBehaviour
                                                         }
                                                         //instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
 
-                                                        worldObject.transform.SetParent(cd.chunk.transform);
                                                     }
                                                 }
                                                 
@@ -794,8 +793,6 @@ public class ChunkGenerator : MonoBehaviour
                                     //worldObject.transform.position = spawnPosition;
                                     worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
                                     AddActiveCPUCreature(worldObject);
-
-                                    worldObject.transform.SetParent(cd.chunk.transform);
                                 }
                             }
                         }

@@ -94,7 +94,7 @@ public class SpeciesInfo : ScriptableObject{
                 Stats.InstantiateStats(1f,1f,1f,.7f,.38f,1f,.7f,1f,1f,1f,1f,1f),
                 IkProfile.InstantiateIkProfile("B-head", "B-hips", "B-foot_R", "B-foot_L", "B-toe_R", "B-toe_L", "B-palm_01_R", "B-palm_01_L", "B-f_index_01_R", "B-f_index_01_L", true, false, true, 3f, 8f, 2f, .5f),
                 BehaviorProfile.InstantiateBehaviorProfile(
-                    BehaviorType.Aggressive,
+                    BehaviorType.Steadfast,
                     new List<AttackType>(){AttackType.Weapon},
                     new List<ActionType>(){ ActionType.StepBack },
                     .5f,
@@ -142,7 +142,7 @@ public class SpeciesInfo : ScriptableObject{
                 // ),
                 new ItemCollection(new Dictionary<Item, int>(){{Item.PeltDeer, 1}, {Item.BonePiece, 2}, {Item.Meat, 1}}),
                 Stats.InstantiateStats(.01f, .75f, .1f, .5f, .6f, 1f, .5f, 1f, 1f, 1f, 1f, 10f),
-                IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end_end", "leg_lower_left_end_end", "", "", "arm_lower_right_end_end_end", "arm_lower_left_end_end_end", "", "", false, true, false, 3f, 10f, 8f, .7f),
+                IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end_end", "leg_lower_left_end_end", "", "", "arm_lower_right_end_end_end", "arm_lower_left_end_end_end", "", "", false, true, false, 2.5f, 10f, 8f, .7f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Timid,
                     new List<AttackType>(){ AttackType.Swipe },
