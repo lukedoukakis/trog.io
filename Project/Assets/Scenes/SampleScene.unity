@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 1407280018}
+  m_SkyboxMaterial: {fileID: 1411215147}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -7808,7 +7808,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1402622340}
   m_Mesh: {fileID: 0}
---- !u!21 &1407280018
+--- !u!21 &1411215147
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
