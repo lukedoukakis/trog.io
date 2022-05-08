@@ -9,7 +9,7 @@ public class ChunkGenerator : MonoBehaviour
 {
     public static ChunkGenerator instance;
     public static int Seed = 75675;
-    public static int ChunkSize = 30;
+    public static int ChunkSize = 20;
     public static int ChunkRenderDistance = 3;
     public static float Scale = 70f;
     public static float Amplitude = 125f;
@@ -184,13 +184,16 @@ public class ChunkGenerator : MonoBehaviour
         // get neighbor chunk coordinates
         Vector2 halfVec = Vector3.one / 2f;
         List<Vector2> neighborChunkCoords = new List<Vector2>();
-        int i = 0;
+        Vector2 neighborChunkCoord;
         for (int z = (int)(currentChunkCoord.y - ChunkRenderDistance); z < (int)(currentChunkCoord.y + ChunkRenderDistance); ++z)
         {
             for (int x = (int)(currentChunkCoord.x - ChunkRenderDistance); x < (int)(currentChunkCoord.x + ChunkRenderDistance); ++x)
             {
-                neighborChunkCoords.Add(new Vector2(x, z));
-                ++i;
+                neighborChunkCoord = new Vector2(x, z);
+                if(Vector2.Distance(neighborChunkCoord, currentChunkCoord) <= ChunkRenderDistance)
+                {
+                    neighborChunkCoords.Add(neighborChunkCoord);
+                }
             }
         }
 
@@ -552,7 +555,7 @@ public class ChunkGenerator : MonoBehaviour
 
             }
 
-            yield return new WaitForSecondsRealtime(.0000001f);
+            yield return new WaitForSecondsRealtime(.01f);
             
         }
 

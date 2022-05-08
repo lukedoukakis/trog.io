@@ -33,7 +33,7 @@ public class PoolHelper : MonoBehaviour
     public static ObjectPool<GameObject> CreateObjectPoolForPrefab(GameObject _prefab)
     {
         prefab = _prefab;
-        return new ObjectPool<GameObject>(CreateFunction, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, defaultCapacity:200);
+        return new ObjectPool<GameObject>(CreateFunction, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, defaultCapacity:500);
     }
 
     static GameObject CreateFunction()
