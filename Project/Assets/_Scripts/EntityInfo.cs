@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Linq;
 
 
-public enum Species{ Any, Human, Bear, Deer
+public enum Species{ Any, Human, Bear, Deer, Horse
 }
 public enum BehaviorType{ None, Aggressive, Timid, Steadfast }
 
@@ -141,8 +141,34 @@ public class SpeciesInfo : ScriptableObject{
                 //     }
                 // ),
                 new ItemCollection(new Dictionary<Item, int>(){{Item.PeltDeer, 1}, {Item.BonePiece, 2}, {Item.Meat, 1}}),
-                Stats.InstantiateStats(.01f, .75f, .1f, .5f, .35f, 1f, .25f, 1f, 1f, 1f, 1f, 10f),
+                Stats.InstantiateStats(.01f, .75f, .1f, .5f, .6f, 1f, .5f, 1f, 1f, 1f, 1f, 10f),
                 IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end_end", "leg_lower_left_end_end", "", "", "arm_lower_right_end_end_end", "arm_lower_left_end_end_end", "", "", false, true, false, 3f, 10f, 8f, .7f),
+                BehaviorProfile.InstantiateBehaviorProfile(
+                    BehaviorType.Timid,
+                    new List<AttackType>(){ AttackType.Swipe },
+                    new List<ActionType>(){ },
+                    .75f,
+                    false,
+                    false,
+                    false
+                ),
+                ParticleController.instance.BloodSpatter
+            )
+
+        },
+
+        {
+            Species.Horse, SpeciesInfo.InstantiateSpeciesInfo(
+                Faction.InstantiateFaction(Species.Horse.ToString()),
+                // new ItemCollection(
+                //     new Dictionary<Item, int>{
+                //         // todo: deer carcass
+                //         {Item.CarcassBear, 1},
+                //     }
+                // ),
+                new ItemCollection(new Dictionary<Item, int>(){{Item.PeltDeer, 1}, {Item.BonePiece, 2}, {Item.Meat, 1}}),
+                Stats.InstantiateStats(.01f, .75f, .1f, .5f, .8f, 1f, .25f, 1f, 1f, 1f, 1f, 10f),
+                IkProfile.InstantiateIkProfile("head", "spine_lower", "leg_lower_right_end_end", "leg_lower_left_end_end", "", "", "arm_lower_right_end_end_end", "arm_lower_left_end_end_end", "", "", false, true, false, 2.25f, 10f, 8f, .7f),
                 BehaviorProfile.InstantiateBehaviorProfile(
                     BehaviorType.Timid,
                     new List<AttackType>(){ AttackType.Swipe },

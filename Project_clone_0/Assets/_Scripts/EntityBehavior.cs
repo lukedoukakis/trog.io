@@ -1356,7 +1356,7 @@ public class EntityBehavior : EntityComponent
 
         entityPhysics.moveDir = move;
 
-        if (IsClientPlayerCharacter())
+        if (!IsClientPlayerCharacter())
         {
             UpdateBehavior();
             UpdateStaminaLoss();

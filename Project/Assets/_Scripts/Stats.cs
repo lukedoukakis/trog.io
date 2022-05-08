@@ -198,20 +198,28 @@ public class Stats : ScriptableObject
     public static float GetArmorFromWeaponType(Stats receiverStats, Item attackingWeapon)
     {
         Enum armorStatType;
-        switch (attackingWeapon.damageType)
+
+        if (attackingWeapon == null)
         {
-            case ItemDamageType.Blunt:
-                armorStatType = Stats.StatType.ArmorBlunt;
-                break;
-            case ItemDamageType.Slash:
-                armorStatType = Stats.StatType.ArmorSlash;
-                break;
-            case ItemDamageType.Pierce:
-                armorStatType = Stats.StatType.ArmorPierce;
-                break;
-            default:
-                armorStatType = Stats.StatType.ArmorBase;
-                break;
+            armorStatType = armorStatType = Stats.StatType.ArmorSlash;
+        }
+        else
+        {
+            switch (attackingWeapon.damageType)
+            {
+                case ItemDamageType.Blunt:
+                    armorStatType = Stats.StatType.ArmorBlunt;
+                    break;
+                case ItemDamageType.Slash:
+                    armorStatType = Stats.StatType.ArmorSlash;
+                    break;
+                case ItemDamageType.Pierce:
+                    armorStatType = Stats.StatType.ArmorPierce;
+                    break;
+                default:
+                    armorStatType = Stats.StatType.ArmorBase;
+                    break;
+            }
         }
 
         return Stats.GetStatValue(receiverStats, armorStatType);

@@ -55,7 +55,7 @@ Material:
     - _AlphaClip: 0
     - _Blend: 0
     - _CastShadows: 1
-    - _ColorNoise: 0
+    - _ColorNoise: 1
     - _Cull: 2
     - _DstBlend: 0
     - _NumberOfShades: 2
@@ -75,7 +75,7 @@ Material:
     - _ZWriteControl: 0
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
-    - Color_962802DE: {r: 0.90588236, g: 0.90588236, b: 0.90588236, a: 1}
+    - Color_962802DE: {r: 1, g: 1, b: 1, a: 1}
     - _TargetVector: {r: -448.9995, g: 4591.3877, b: -230.05148, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &3736427111272692503

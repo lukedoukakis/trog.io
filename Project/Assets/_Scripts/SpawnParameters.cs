@@ -121,8 +121,10 @@ public class SpawnParameters
         
 
         // // creatures
-        {"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Primary)},
-        {"WildDeer", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Primary)},
+        //{"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Primary)},
+        //{"WildDeer", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Primary)},
+        {"WildHorse", new SpawnParameters(1f, hgtDry, all, all, all, new Vector2(.05f, .07f), DensityCalculationType.Binary, DensityCalculationType.DenserAtAverage, DensityCalculationType.DenserAtAverage, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Primary)},
+
 
         // // items
         {"StoneSmall", new SpawnParameters(2f, hgtBankAndDry, all, all, new Vector2(.8f, 1f), new Vector2(.005f, .005f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 3, 0, LoadOrder.Tirtiary)},
@@ -130,7 +132,7 @@ public class SpawnParameters
     
     
         // AI faction leader
-        {"Character", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.002f, .002f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, -1f, LoadOrder.Tirtiary)},
+        //{"Character", new SpawnParameters(1f, hgtDry, all, all, new Vector2(.96f, 1f), new Vector2(.002f, .002f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, -1f, LoadOrder.Tirtiary)},
 
 
     
