@@ -380,9 +380,9 @@ public class ChunkGenerator : MonoBehaviour
 
                 // FreshWaterMap [0, 1]
                 freshWaterValue = 0f;
-                if (false)
+                if (true)
                 {
-                    float riverScale = 900f;
+                    float riverScale = 600f;
 
                     // main river path
                     freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
@@ -399,7 +399,6 @@ public class ChunkGenerator : MonoBehaviour
                     freshWaterValue = Mathf.Abs(freshWaterValue);
                     freshWaterValue *= -1f;
                     freshWaterValue += 1f;
-
                     freshWaterValue = Mathf.Clamp01(freshWaterValue);
 
     
@@ -408,10 +407,8 @@ public class ChunkGenerator : MonoBehaviour
                     roughValue = roughElev = Mathf.PerlinNoise((x + xOffset + .01f) / 3f, (z + zOffset + .01f) / 3f);
                     roughValue = roughValue * 2f - 1f;
                     roughElev *= -1f;
-                    
-
                     freshWaterValue += roughValue * .01f;
-                    freshWaterValue = Mathf.Pow(freshWaterValue, Mathf.Lerp(100f, 200f, riverWidthFactor));
+                    freshWaterValue = Mathf.Pow(freshWaterValue, Mathf.Lerp(1.5f, 3f, riverWidthFactor));
                     //Debug.Log(freshWaterValue)
 
                     //freshWaterValue = Posterize(0f, 1f, freshWaterValue, 4);
@@ -476,10 +473,10 @@ public class ChunkGenerator : MonoBehaviour
 
             
 
-                // // create ocean and rivers
-                // float seaFloorHeight = SeaLevel - (meter * 1f);
-                // float riverFloorHeight = SeaLevel - (meter * 1f);
-                // heightValue = Mathf.Lerp(heightValue, riverFloorHeight, freshWaterValue);
+                // create ocean and rivers
+                float seaFloorHeight = SeaLevel - (meter * 1f);
+                float riverFloorHeight = SeaLevel - (meter * 1f);
+                heightValue = Mathf.Lerp(heightValue, riverFloorHeight, freshWaterValue);
 
 
                 // heightValue = Mathf.Clamp(seaFloorHeight, 1f, heightValue);
@@ -488,7 +485,6 @@ public class ChunkGenerator : MonoBehaviour
 
                 //posterize all land
                 float shoreHeight = SeaLevel + (meter * 1f);
-                float seaFloorHeight = SeaLevel - (meter * 1f);
                 if (heightValue >= shoreHeight)
                 {
                     bool posterize = true;
@@ -555,7 +551,7 @@ public class ChunkGenerator : MonoBehaviour
 
             }
 
-            yield return new WaitForSecondsRealtime(.01f);
+            yield return new WaitForSecondsRealtime(.000000001f);
             
         }
 
