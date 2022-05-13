@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.UI;
 
 public class ChunkData
 {
@@ -93,9 +94,8 @@ public class ChunkData
 
     void SetupTerrainMaps()
     {
-        Texture2D sourceTex = new Texture2D(ChunkGenerator.ChunkSize, ChunkGenerator.ChunkSize); 
-        Material mat;
-        RenderTexture tempRenderTexture;
+
+        ChunkGenerator.instance.mapRendererT.position = coordinate * (ChunkGenerator.ChunkSize);
 
         tex_height = tex_humidity = tex_temperature = tex_elevation = tex_mountain = tex_freshWater = tex_wetness = tex_tree = new Texture2D(ChunkGenerator.ChunkSize, ChunkGenerator.ChunkSize);
         List<Texture2D> mapTextures = new List<Texture2D>(){ tex_height, tex_temperature, tex_humidity, tex_elevation, tex_mountain, tex_freshWater, tex_wetness, tex_tree };
@@ -108,24 +108,18 @@ public class ChunkData
             mapTexture = mapTextures[i];
             mapShader = mapShaders[i];
 
-            //Get a temporary RenderTexture and draw our source texture into it using our shader
-            tempRenderTexture = RenderTexture.GetTemporary(sourceTex.width, sourceTex.height, 0);
-            mat = new Material(mapShader);
-            Graphics.Blit(null, tempRenderTexture, mat);
-
             //Store the last active RT and set our new one as active
             RenderTexture lastActive = RenderTexture.active;
-            RenderTexture.active = tempRenderTexture;
+            RenderTexture.active = ChunkGenerator.instance.mapRenderTexture;
 
-    
             //Read the shaded texture into the target Texture2D
-            mapTexture.ReadPixels(new Rect(0, 0, tempRenderTexture.width, tempRenderTexture.height), 0, 0);
+            mapTexture.ReadPixels(new Rect(0, 0, ChunkGenerator.instance.mapRenderTexture.width, ChunkGenerator.instance.mapRenderTexture.height), 0, 0);
             mapTexture.Apply();
-            Debug.Log(mapTexture.GetPixelData<Color32>(0)[130]);
+            //Debug.Log(mapTexture.GetPixelData<Color32>(0)[130]);
 
-            //Restore the last active RT and release our temp tex
+            //Restore the last active RT
             RenderTexture.active = lastActive;
-            RenderTexture.ReleaseTemporary(tempRenderTexture);
+
 
             break;
         }

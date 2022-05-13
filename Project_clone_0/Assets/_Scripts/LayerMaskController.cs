@@ -16,4 +16,6 @@ public class LayerMaskController : MonoBehaviour
     public static LayerMask CREATURE = LayerMask.GetMask("Creature");
     public static LayerMask ITEM = LayerMask.GetMask("Item");
     public static LayerMask CLEAR_ON_CAMP_PLACEMENT = LayerMask.GetMask("Feature", "SmallFeature");
+
+    public static LayerMask HIDDEN_CAMERA_RENDER_TEXTURE = LayerMask.GetMask("HiddenCameraRenderTexture");
 }

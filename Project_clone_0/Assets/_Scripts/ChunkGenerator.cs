@@ -8,8 +8,15 @@ using UnityEngine.Pool;
 public class ChunkGenerator : MonoBehaviour
 {
     public static ChunkGenerator instance;
+
+    public Transform mapRendererT;
+    public Camera mapTextureCamera;
+    public RenderTexture mapRenderTexture;
+
+
+
     public static int Seed = 75675;
-    public static int ChunkSize = 20;
+    public static int ChunkSize = 32;
     public static int ChunkRenderDistance = 3;
     public static float Scale = 70f;
     public static float Amplitude = 125f;
