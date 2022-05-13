@@ -917,6 +917,12 @@ public class ChunkGenerator : MonoBehaviour
             for (int x = 0; x < ChunkSize + 2; x++)
             {
                 height = HeightMap[x, z] * Amplitude;
+
+                // override
+                Texture2D tex = cd.tex_height;
+                height = tex.GetPixel(x, z).r * Amplitude;
+                //Debug.Log(height);
+
                 temperature = TemperatureMap[x, z];
                 humidity = HumidityMap[x, z];
                 rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 50f, (z + zOffset) / 50f), .5f);

@@ -10,6 +10,15 @@ public class ShaderController : MonoBehaviour
     public static float DISTANCE_DROP_MIN = -.12f;
     public static float DISTANCE_DROP_MAX = -.12f;
 
+    [SerializeField] public Shader terrainMapShader_height;
+    [SerializeField] public Shader terrainMapShader_temperature;
+    [SerializeField] public Shader terrainMapShader_humidity;
+    [SerializeField] public Shader terrainMapShader_elevation;
+    [SerializeField] public Shader terrainMapShader_mountain;
+    [SerializeField] public Shader terrainMapShader_freshWater;
+    [SerializeField] public Shader terrainMapShader_wetness;
+    [SerializeField] public Shader terrainMapShader_tree;
+
     [SerializeField] Material realisticGrassMaterial;
 
     void Awake()

@@ -35,6 +35,9 @@ public class ChunkData
 
     public Dictionary<Vector2, ChunkData> neighbors;
 
+
+    public Texture2D tex_height, tex_temperature, tex_humidity, tex_elevation, tex_mountain, tex_freshWater, tex_wetness, tex_tree;
+
     // ----
 
     public static Vector2 up = Vector2.up;
@@ -81,7 +84,51 @@ public class ChunkData
         neighbors.Add(downLeft, null);
         FetchAllNeighbors();
 
+        SetupTerrainMaps();
+
         loaded = true;
+
+    }
+
+
+    void SetupTerrainMaps()
+    {
+        Texture2D sourceTex = new Texture2D(ChunkGenerator.ChunkSize, ChunkGenerator.ChunkSize); 
+        Material mat;
+        RenderTexture tempRenderTexture;
+
+        tex_height = tex_humidity = tex_temperature = tex_elevation = tex_mountain = tex_freshWater = tex_wetness = tex_tree = new Texture2D(ChunkGenerator.ChunkSize, ChunkGenerator.ChunkSize);
+        List<Texture2D> mapTextures = new List<Texture2D>(){ tex_height, tex_temperature, tex_humidity, tex_elevation, tex_mountain, tex_freshWater, tex_wetness, tex_tree };
+        List<Shader> mapShaders = new List<Shader>(){ ShaderController.instance.terrainMapShader_height, ShaderController.instance.terrainMapShader_temperature, ShaderController.instance.terrainMapShader_humidity, ShaderController.instance.terrainMapShader_elevation, ShaderController.instance.terrainMapShader_mountain, ShaderController.instance.terrainMapShader_freshWater, ShaderController.instance.terrainMapShader_wetness, ShaderController.instance.terrainMapShader_tree};
+
+        Texture2D mapTexture;
+        Shader mapShader;
+        for(int i = 0; i < mapTextures.Count; ++i)
+        {
+            mapTexture = mapTextures[i];
+            mapShader = mapShaders[i];
+
+            //Get a temporary RenderTexture and draw our source texture into it using our shader
+            tempRenderTexture = RenderTexture.GetTemporary(sourceTex.width, sourceTex.height, 0);
+            mat = new Material(mapShader);
+            Graphics.Blit(null, tempRenderTexture, mat);
+
+            //Store the last active RT and set our new one as active
+            RenderTexture lastActive = RenderTexture.active;
+            RenderTexture.active = tempRenderTexture;
+
+    
+            //Read the shaded texture into the target Texture2D
+            mapTexture.ReadPixels(new Rect(0, 0, tempRenderTexture.width, tempRenderTexture.height), 0, 0);
+            mapTexture.Apply();
+            Debug.Log(mapTexture.GetPixelData<Color32>(0)[130]);
+
+            //Restore the last active RT and release our temp tex
+            RenderTexture.active = lastActive;
+            RenderTexture.ReleaseTemporary(tempRenderTexture);
+
+            break;
+        }
     }
 
 
