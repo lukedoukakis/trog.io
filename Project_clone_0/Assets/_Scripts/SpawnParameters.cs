@@ -123,7 +123,7 @@ public class SpawnParameters
         // // creatures
         {"WildBear", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.005f, .005f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 1, 0, LoadOrder.Primary)},
         {"WildDeer", new SpawnParameters(1f, hgtDry, h1, h2, normGrass, new Vector2(.007f, .007f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 2, 0, LoadOrder.Primary)},
-        {"WildHorse", new SpawnParameters(1f, hgtDry, all, h1, normGrass, new Vector2(.05f, .07f), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 3, 0, LoadOrder.Primary)},
+        {"WildHorse", new SpawnParameters(1f, hgtDry, all, h1, normGrass, new Vector2(.05f * 5, .07f * 5), DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, DensityCalculationType.Binary, 0f, 3, 0, LoadOrder.Primary)},
 
 
         // // items

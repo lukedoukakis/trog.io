@@ -129,6 +129,17 @@ public class ActionParameters : ScriptableObject
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
+            case "Follow Player Expectantly" :
+
+                ap.type = ActionType.Follow;
+                ap.targetedWorldObject = ClientCommand.instance.clientPlayerCharacter;
+                ap.offset = ap.doerHandle.entityBehavior.followOffset;
+                ap.distanceThreshold = .5f;
+                ap.maxTime = 1f;
+                ap.urgent = false;
+                ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
+                break;
+
             case "Run From Player" :
 
                 ap.type = ActionType.RunFrom;

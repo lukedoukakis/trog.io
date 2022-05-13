@@ -175,7 +175,7 @@ public class SpeciesInfo : ScriptableObject{
                     new List<ActionType>(){ },
                     .75f,
                     false,
-                    false,
+                    true,
                     false
                 ),
                 ParticleController.instance.BloodSpatter

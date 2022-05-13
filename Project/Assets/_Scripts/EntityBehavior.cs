@@ -38,7 +38,7 @@ public class EntityBehavior : EntityComponent
     public static float STAMINA_GAIN_RATE = 4f;
     public static float HEALTH_GAIN_RATE = STAMINA_GAIN_RATE;
 
-    public static float CHASE_TARGET_SNAPPINESS = 3f;
+    public static float CHASE_TARGET_SNAPPINESS = 10f;
     
 
     Vector3 randomOffset;
@@ -74,6 +74,10 @@ public class EntityBehavior : EntityComponent
 
     public System.Diagnostics.Stopwatch homeResetTimer;
     public float homeResetTime;
+
+
+    // domesticating
+    bool halfDomesticated;
 
 
     protected override void Awake()
@@ -1062,55 +1066,80 @@ public class EntityBehavior : EntityComponent
         }
         sensedCreatureHandles = sensedCreatureHandles.OrderBy(handle => Vector3.Distance(transform.position, handle.transform.position)).ToList();
 
-        float distanceAway;
-        BehaviorType behaviorTypeOther;
-
-        // timid nibbas
-        if (behaviorProfile.behaviorType.Equals(BehaviorType.Timid))
+        // if entity not half domesticated, check whether it should be
+        if (!IsHalfDomesticated())
         {
-            foreach (EntityHandle handleOther in sensedCreatureHandles)
+            if (entityInfo.speciesInfo.behaviorProfile.domesticatable)
             {
-                behaviorTypeOther = handleOther.entityInfo.speciesInfo.behaviorProfile.behaviorType;
-                if (behaviorTypeOther.Equals(BehaviorType.Aggressive) || behaviorTypeOther.Equals(BehaviorType.Steadfast))
+                if (sensedCreatureHandles.Contains(ClientCommand.instance.clientPlayerCharacterHandle))
                 {
-                    distanceAway = Vector3.Distance(transform.position, handleOther.transform.position);
-                    if(distanceAway < DISTANCE_THRESHOLD_FLEE){
-                        reacting = true;
-                        InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.RunFrom, handleOther.gameObject, Vector3.zero, -1, null, null, CalculateFleeTime(), DISTANCE_THRESHOLD_CHASE, BodyRotationMode.Normal, InterruptionTier.SenseDanger, true, null, entityActionSequence_AssertStanding, null), true);
+                    if (CheckConditionsForHalfDomesticated())
+                    {
+                        // should be half domesticated, so flag behavior as such and exit method
+                        SetHalfDomesticated(true);
+                        return;
                     }
                 }
             }
-        }
 
-        // steadfast
-        else if (behaviorProfile.behaviorType.Equals(BehaviorType.Steadfast))
-        {
-            foreach (EntityHandle handleOther in sensedCreatureHandles)
+
+            float distanceAway;
+            BehaviorType behaviorTypeOther;
+
+            // timid nibbas
+            if (behaviorProfile.behaviorType.Equals(BehaviorType.Timid))
             {
-                behaviorTypeOther = handleOther.entityInfo.speciesInfo.behaviorProfile.behaviorType;
-                if (behaviorTypeOther.Equals(BehaviorType.Aggressive) || behaviorTypeOther.Equals(BehaviorType.Steadfast))
+                foreach (EntityHandle handleOther in sensedCreatureHandles)
                 {
-                    distanceAway = Vector3.Distance(transform.position, handleOther.transform.position);
-                    if(distanceAway < DISTANCE_THRESHOLD_STANDGROUND){
-                        reacting = true;
-                        // if(entityInfo.faction != null && entityInfo.faction != entityInfo.speciesInfo.baseFaction)
-                        // {
-                        //     foreach(EntityHandle handle in entityInfo.faction.partyHandles)
-                        //     {
-                        //         handle.entityBehavior.InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(handle, ActionType.Chase, sensedCreatureHandles[0].gameObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, entityActionSequence_AssertStanding, null), true);
-                        //     }
-                        // }
-                        InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.Chase, sensedCreatureHandles[0].gameObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, entityActionSequence_AssertStanding, null), true);
+                    behaviorTypeOther = handleOther.entityInfo.speciesInfo.behaviorProfile.behaviorType;
+                    if (behaviorTypeOther.Equals(BehaviorType.Aggressive) || behaviorTypeOther.Equals(BehaviorType.Steadfast))
+                    {
+                        distanceAway = Vector3.Distance(transform.position, handleOther.transform.position);
+                        if (distanceAway < DISTANCE_THRESHOLD_FLEE)
+                        {
+                            reacting = true;
+                            InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.RunFrom, handleOther.gameObject, Vector3.zero, -1, null, null, CalculateFleeTime(), DISTANCE_THRESHOLD_CHASE, BodyRotationMode.Normal, InterruptionTier.SenseDanger, true, null, entityActionSequence_AssertStanding, null), true);
+                            break;
+                        }
                     }
                 }
             }
-        }
 
-        // aggressive
-        else if (behaviorProfile.behaviorType.Equals(BehaviorType.Aggressive)){
-            reacting = true;
-            InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.Chase, sensedCreatureHandles[0].gameObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, entityActionSequence_AssertStanding, null), true);
+            // steadfast
+            else if (behaviorProfile.behaviorType.Equals(BehaviorType.Steadfast))
+            {
+                foreach (EntityHandle handleOther in sensedCreatureHandles)
+                {
+                    behaviorTypeOther = handleOther.entityInfo.speciesInfo.behaviorProfile.behaviorType;
+                    if (behaviorTypeOther.Equals(BehaviorType.Aggressive) || behaviorTypeOther.Equals(BehaviorType.Steadfast))
+                    {
+                        distanceAway = Vector3.Distance(transform.position, handleOther.transform.position);
+                        if (distanceAway < DISTANCE_THRESHOLD_STANDGROUND)
+                        {
+                            reacting = true;
+                            // if(entityInfo.faction != null && entityInfo.faction != entityInfo.speciesInfo.baseFaction)
+                            // {
+                            //     foreach(EntityHandle handle in entityInfo.faction.partyHandles)
+                            //     {
+                            //         handle.entityBehavior.InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(handle, ActionType.Chase, sensedCreatureHandles[0].gameObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, entityActionSequence_AssertStanding, null), true);
+                            //     }
+                            // }
+                            InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.Chase, sensedCreatureHandles[0].gameObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, entityActionSequence_AssertStanding, null), true);
+                        }
+                    }
+                }
+            }
+
+            // aggressive
+            else if (behaviorProfile.behaviorType.Equals(BehaviorType.Aggressive))
+            {
+                reacting = true;
+                InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters(entityHandle, ActionType.Chase, sensedCreatureHandles[0].gameObject, Vector3.zero, -1, null, null, CalculateChaseTime(), DISTANCE_THRESHOLD_LUNGEATTACK, BodyRotationMode.Target, InterruptionTier.BeenHit, true, null, entityActionSequence_AssertStanding, null), true);
+            }
         }
+    
+
+        
 
     }
 
@@ -1177,7 +1206,7 @@ public class EntityBehavior : EntityComponent
         return BASE_TIME_FLEE * entityStats.combinedStats.stamina;
     }
 
-    bool WithinActiveDistance(){
+    bool WithinDistanceOfActivity(){
         return Vector3.Distance(ClientCommand.instance.clientPlayerCharacter.transform.position, transform.position) <= DISTANCE_THRESHOLD_ACTIVE;
     }
 
@@ -1230,8 +1259,21 @@ public class EntityBehavior : EntityComponent
     {
         if(!activeAction.interruptionTier.Equals(InterruptionTier.SenseDanger))
         {
-            bool reactingToSensedCreature;
-            HandleCreatureSense(out reactingToSensedCreature);
+
+            if(IsHalfDomesticated())
+            {
+                // half domesticated, so behave accordingly
+                HandleHalfDomesticatedBehavior();
+
+                // update whether entity is half domesticated
+                SetHalfDomesticated(CheckConditionsForHalfDomesticated());
+            }
+            else
+            {
+                // wild nibba
+                bool reactingToSensedCreature;
+                HandleCreatureSense(out reactingToSensedCreature);
+            }
         }
     }
 
@@ -1251,7 +1293,7 @@ public class EntityBehavior : EntityComponent
         sensed = false;
         if (timeSince_creatureSense >= BASE_TIMESTEP_CREATURESENSE)
         {
-            if (WithinActiveDistance())
+            if (WithinDistanceOfActivity())
             {
                 //Debug.Log("Boutta sense creatures");
                 sensed = true;
@@ -1261,6 +1303,54 @@ public class EntityBehavior : EntityComponent
             timeSince_creatureSense = 0;
         }
 
+    }
+
+
+    public bool CheckConditionsForHalfDomesticated()
+    {
+
+        bool satisfied;
+        switch (entityInfo.species)
+        {
+            case Species.Horse :
+                Item playerHoldingItem =  ClientCommand.instance.clientPlayerCharacterHandle.entityItems.holding_item;
+                if(playerHoldingItem != null)
+                {
+                    satisfied = playerHoldingItem.type == ItemType.Fruit;
+                }
+                else
+                {
+                    satisfied = false;
+                }
+                break;
+            default:
+                satisfied = false;
+                break;
+        }
+
+        return satisfied;
+    }
+
+
+    void HandleHalfDomesticatedBehavior()
+    {
+        switch (entityInfo.species)
+        {
+            case Species.Horse :
+                InsertActionAndExecuteAsap(ActionParameters.GenerateActionParameters("Follow Player Expectantly", entityHandle), true);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void SetHalfDomesticated(bool value)
+    {
+        halfDomesticated = value;
+    }
+    public bool IsHalfDomesticated()
+    {
+        return halfDomesticated;
     }
 
 
