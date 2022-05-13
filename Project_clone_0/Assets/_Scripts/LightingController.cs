@@ -15,8 +15,7 @@ public class LightingController : MonoBehaviour
     public static float RENDER_SETTINGS_FOG_DISTANCE_START = 3000000f;
     public static float RENDER_SETTINGS_FOG_DISTANCE_END = 4000000f;
 
-    public static float FOG_DISTANCE_START_BASE = 30f;
-    public static float FOG_THICKNESS_STEP = .0001f;
+    public static float FOG_DISTANCE_START_BASE = 10f;
 
     public GameObject fog;
     public GameObject sun, moon;
@@ -86,7 +85,7 @@ public class LightingController : MonoBehaviour
 
                 // set material and material properties
                 Material newFogMat = Material.Instantiate(MaterialController.instance.baseFogMaterial);
-                newFogMat.SetFloat("_FogThickness", (i + 1) + FOG_THICKNESS_STEP);
+                //newFogMat.SetFloat("_FogThickness", .01f);
                 t.GetComponent<MeshRenderer>().sharedMaterial = newFogMat;
 
                 ++i;

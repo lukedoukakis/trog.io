@@ -486,6 +486,20 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
+                    "m_Id": "7de44f47a37e4fa190253208a2c7891c"
+                },
+                "m_SlotId": 2
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "66eaf15eb1604a15be5cf19f2085d194"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
                     "m_Id": "8fd691a549f11e8abb84005eb17598ff"
                 },
                 "m_SlotId": 0
@@ -495,20 +509,6 @@
                     "m_Id": "4b212ac15f32778b924506d2678255e3"
                 },
                 "m_SlotId": 1
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
-                    "m_Id": "90f69074a861463e9655dcb7cd253273"
-                },
-                "m_SlotId": 2
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "66eaf15eb1604a15be5cf19f2085d194"
-                },
-                "m_SlotId": 0
             }
         },
         {
@@ -3200,7 +3200,7 @@
     "m_Hidden": false,
     "m_ShaderOutputName": "Power",
     "m_StageCapability": 3,
-    "m_Value": 0.10000000149011612,
+    "m_Value": 0.009999999776482582,
     "m_DefaultValue": 1.0,
     "m_Labels": []
 }
@@ -4108,7 +4108,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": 0.5,
+    "m_Value": 0.00009999999747378752,
     "m_FloatType": 0,
     "m_RangeValues": {
         "x": 0.0,
