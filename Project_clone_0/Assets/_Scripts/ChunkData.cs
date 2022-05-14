@@ -28,10 +28,7 @@ public class ChunkData
     public float[,] FreshWaterMap;
     public float[,] WetnessMap;
     public float[,] HeightMap;
-    public bool[,] TreeMap;
-
-    public Vector3[,] YNormalsMap;
-    public float[,] SkewHorizMap;
+    public float[,] YNormalsMap;
 
     public Dictionary<Vector2, ChunkData> neighbors;
 

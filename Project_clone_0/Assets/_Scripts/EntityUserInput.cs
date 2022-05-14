@@ -73,6 +73,7 @@ public class EntityUserInput : EntityComponent
         }
         else if(GameManager.GAME_SETINGS_ROTATIONALINPUTMODE == RotationalInputMode.ArrowKeys)
         {
+
             float sensitivity = 130f;
             float acceleration = .02f;
             bool left = Input.GetKey(KeyCode.LeftArrow);

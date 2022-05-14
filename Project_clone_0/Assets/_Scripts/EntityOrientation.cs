@@ -113,7 +113,7 @@ public class EntityOrientation : EntityComponent
                     if(dirCombined.magnitude > 0f)
                     {
                         Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
-                        body.rotation = Quaternion.Slerp(body.rotation, rot, .035f);
+                        body.rotation = Quaternion.Slerp(body.rotation, rot, 30f * Time.deltaTime);
                         itemOrientationTarget.rotation = rot;
                     }
                 }
@@ -140,7 +140,7 @@ public class EntityOrientation : EntityComponent
                 if(dirCombined.magnitude > 0f)
                 {
                     Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
-                    body.rotation = Quaternion.Slerp(body.rotation, rot, .1f);
+                    body.rotation = Quaternion.Slerp(body.rotation, rot, 100f * Time.deltaTime);
                     itemOrientationTarget.rotation = rot;
                 }
             }
@@ -192,14 +192,11 @@ public class EntityOrientation : EntityComponent
     
 
 
-    void FixedUpdate(){
+    void Update()
+    {
         UpdateBodyRotation();
         bodyRotationLast = body.rotation;
-        angularVelocityY_last = angularVelocityY;
-    }
-
-    void Update(){
-        
+        angularVelocityY_last = angularVelocityY;   
     }
 
 

@@ -57,7 +57,7 @@ public class LightingController : MonoBehaviour
     void Update()
     {
        
-        SetFog(time);
+        UpdateFog(time);
         SetCelestialBodies(time);
         SetColors(time);
         UpdateRenderFog();
@@ -93,7 +93,7 @@ public class LightingController : MonoBehaviour
         }
     }
 
-    void SetFog(float time)
+    void UpdateFog(float time)
     {
         Vector3 playerPos = ClientCommand.instance.clientPlayerCharacter.transform.position;
         Vector3 cameraPos = Camera.main.transform.position;
@@ -130,7 +130,9 @@ public class LightingController : MonoBehaviour
         darkness = (Mathf.Cos(time / SECONDS_PER_DAY) + 1f) / 2f;
         timeOfDay = (Mathf.Sin(time / SECONDS_PER_DAY) + 1f) / 2f;
         PolyverseSkies.timeOfDay = darkness;
-        RenderSettings.fogColor = Color.Lerp(fogColor_day, fogColor_night, darkness);
+        Color fogColor = Color.Lerp(fogColor_day, fogColor_night, darkness);
+        RenderSettings.fogColor = fogColor;
+        Shader.SetGlobalColor("_FogColor", fogColor);
 
         float sunset = Mathf.Max(0f, Mathf.Pow((((1f - timeOfDay) - .5f) * 2f), 15f));
         float sunrise = Mathf.Max(0f, Mathf.Pow((((timeOfDay) - .5f) * 2f), 5f));

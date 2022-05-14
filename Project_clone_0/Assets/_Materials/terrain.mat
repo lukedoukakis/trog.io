@@ -82,7 +82,7 @@ Material:
     m_Floats:
     - Vector1_116F49B0: 0
     - Vector1_124AF345: 0
-    - Vector1_49092716: 1.5
+    - Vector1_49092716: 1
     - Vector1_61F46C5F: 200
     - Vector1_6756ADD4: 1
     - Vector1_6A3D0673: 0
@@ -100,12 +100,12 @@ Material:
     - _Cull: 2
     - _Desertness: 0
     - _DstBlend: 0
-    - _NumberOfShades: 8
+    - _NumberOfShades: 4
     - _QueueControl: 1
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _RockToGrassPosterizationSteps: 12
-    - _ShadingAttenuation: 0.6
+    - _RockToGrassPosterizationSteps: 4
+    - _ShadingAttenuation: 1
     - _SnowCapHeight: 0
     - _SnowDepth: 0.2
     - _SnowHeight: 4645.04
@@ -130,7 +130,7 @@ Material:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.7169812, g: 0.6669386, b: 0.65272343, a: 0}
     - Color_9C158BA5: {r: 0.3773585, g: 0.13349947, b: 0.13349947, a: 0}
-    - Color_B9FC0D65: {r: 0.3764706, g: 0.27489316, b: 0.0039215763, a: 0}
+    - Color_B9FC0D65: {r: 0.7264151, g: 0.58856213, b: 0.22272162, a: 0}
     - Color_C36BA253: {r: 1, g: 1, b: 1, a: 0}
     - Color_EB41B935: {r: 0.735849, g: 0.67390525, b: 0.6351904, a: 1}
     - _GrassColor: {r: 0.69399697, g: 0.8773585, b: 0.6000801, a: 0}

@@ -13,7 +13,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2001
+  m_CustomRenderQueue: 4000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -49,7 +49,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 0.1, y: 0.1}
+        m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _NoGrassTex:
         m_Texture: {fileID: 0}
@@ -67,20 +67,20 @@ Material:
     - _ColorNoise: 0
     - _ColorTiling: 0.005
     - _Desertness: 0
-    - _FadeDistanceEnd: 100
-    - _FadeDistanceStart: 50
+    - _FadeDistanceEnd: 101
+    - _FadeDistanceStart: 100
     - _GrassCut: 1
     - _GrassNormal: 0.8
     - _GrassSaturation: 0.45
     - _GrassShading: 0
-    - _GrassThinness: 1
-    - _GrassThinnessIntersection: 0.43
+    - _GrassThinness: 1.25
+    - _GrassThinnessIntersection: 0.976
     - _LightIntensity: 0.02
     - _MinimumNormal: 0.8
     - _MinimumNumberStacks: 17
     - _NoisePower: 2
     - _NumberOfStacks: 17
-    - _OffsetValue: 1.4
+    - _OffsetValue: 3.53
     - _ProceduralDistance: 5.5
     - _ProceduralStrength: 1.5
     - _RimMax: 0
@@ -90,27 +90,27 @@ Material:
     - _SnowHeightCap: 4703.4
     - _SnowHeightStart: 4001.4
     - _SnowMinimumSurfaceNormal: 3
-    - _TilingN1: 33.2
+    - _TilingN1: 1
     - _TilingN2: 0.05
-    - _TilingN3: 50000
+    - _TilingN3: 10
     - _UsePR: 0
     - _UseRT: 0
     - _UseShadow: 1
     - _UseShadowCast: 0
     - _UseWC: 0
     - _WaterHeight: 4489.5005
-    - _WindForce: 0.6
-    - _WindMovement: 5000
+    - _WindForce: 0.5
+    - _WindMovement: 1
     - _WorldRotation: 0
     - _WorldScale: 10
     m_Colors:
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}
     - Color_962802DE: {r: 0.9677934, g: 1, b: 0.8066038, a: 0}
     - _CampOrigin: {r: -485.052, g: 4590, b: -220.09868, a: 0}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _GroundColor: {r: 1, g: 1, b: 1, a: 1}
-    - _OffsetVector: {r: 2, g: 1, b: 2, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 0}
+    - _GroundColor: {r: 1, g: 1, b: 1, a: 0}
+    - _OffsetVector: {r: 1, g: 1, b: 1, a: 0}
     - _ProjectedShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SelfShadowColor: {r: 0.85578406, g: 1, b: 0.5518868, a: 1}
+    - _SelfShadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []

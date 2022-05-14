@@ -10,7 +10,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator instance;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 7;
+    public static int ChunkRenderDistance = 4;
     public static float Scale = 100f;
     public static float Amplitude = 160f;
     public static float MountainMapScale = 500f;
@@ -19,10 +19,10 @@ public class ChunkGenerator : MonoBehaviour
     public static int HumidityMapScale = 300;
     public static float meter = 1f / Amplitude;
     public static float SeaLevel = .1f;
-    public static float SnowLevel = .4f;
+    public static float SnowLevel = .35f;
     //public static float SnowLevel = float.MaxValue;
-    public static float GrassNormal = .83f;
-    public static float SnowNormalMin = .8f;
+    public static float GrassNormal = .9f;
+    public static float SnowNormalMin = .9f;
     public static float SnowNormalMax = 1f;
     public static float CaveNormal = .4f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -67,7 +67,6 @@ public class ChunkGenerator : MonoBehaviour
     float[,] FreshWaterMap;
     float[,] WetnessMap;
     float[,] HeightMap;
-    bool[,] TreeMap;
 
     [Range(0, 1)] public float RockProtrusion;
 
@@ -103,7 +102,7 @@ public class ChunkGenerator : MonoBehaviour
             if(!LoadingChunks && !DeloadingChunks){
                 LoadingChunks = true;
                 DeloadingChunks = true;
-                //StartCoroutine(CallForSpawnGeneration());
+                StartCoroutine(CallForSpawnGeneration());
                 UpdateChunksToLoad();
                 StartCoroutine(LoadChunks());
                 StartCoroutine(DeloadChunks());
@@ -258,7 +257,7 @@ public class ChunkGenerator : MonoBehaviour
         zOffset = zIndex * ChunkSize;
 
 
-        yield return StartCoroutine(GenerateTerrainMaps());
+        GenerateTerrainMaps();
         cd.TemperatureMap = TemperatureMap;
         cd.HumidityMap = HumidityMap;
         cd.ElevationMap = ElevationMap;
@@ -266,9 +265,9 @@ public class ChunkGenerator : MonoBehaviour
         cd.FreshWaterMap = FreshWaterMap;
         cd.WetnessMap = WetnessMap;
         cd.HeightMap = HeightMap;
-        cd.TreeMap = TreeMap;
 
         PlaceTerrainAndWater(cd);
+        yield return null;
 
     }
 
@@ -290,7 +289,7 @@ public class ChunkGenerator : MonoBehaviour
     }
 
 
-    IEnumerator GenerateTerrainMaps()
+    void GenerateTerrainMaps()
     {
 
         TemperatureMap = new float[ChunkSize + 2, ChunkSize + 2];
@@ -300,10 +299,8 @@ public class ChunkGenerator : MonoBehaviour
         FreshWaterMap = new float[ChunkSize + 2, ChunkSize + 2];
         WetnessMap = new float[ChunkSize + 2, ChunkSize + 2];
         HeightMap = new float[ChunkSize + 2, ChunkSize + 2];
-        TreeMap = new bool[ChunkSize + 2, ChunkSize + 2];
 
         float temperatureValue, humidityValue, elevationValue, mountainValue, freshWaterValue, wetnessValue, heightValue, heightValue_water;
-        bool treeValue;
         float rough;
 
         // loop start
@@ -312,18 +309,13 @@ public class ChunkGenerator : MonoBehaviour
             for (int x = 0; x < ChunkSize + 2; x++)
             {
 
-
-
-                 
-
                 // ElevationMap
                 elevationValue = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / ElevationMapScale, (z + zOffset - Seed + 100000.01f) / ElevationMapScale) * 2f - 1f;
                 float elevationValueWithRoughness = elevationValue + (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 15f, (z + zOffset - Seed + .01f) / 15f) * 2f - 1f) * .01f;
+
+
+                // -------------------------------------------------------
                 
-
-    
-
-
                 // MountainMap [0, 1]
                 float mountainElev = 0f;
                 mountainValue = Mathf.PerlinNoise((x + xOffset - Seed + 5000.01f) / MountainMapScale, (z + zOffset - Seed + 5000.01f) / MountainMapScale);
@@ -345,9 +337,6 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 //mountainValue = .99f;
-
-
-
 
 
                 // -------------------------------------------------------
@@ -515,27 +504,6 @@ public class ChunkGenerator : MonoBehaviour
 
                
 
-                // // TreeMap
-                // float t;
-                // float tScale = 500f;
-                // t = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / tScale, (z + zOffset - Seed + .01f) / tScale) * 2f - 1f;
-
-                // // character
-                // float c = .25f;
-                // rough = Mathf.PerlinNoise((x + xOffset + .01f) / 100f, (z + zOffset + .01f) / 100f);
-                // t += Mathf.Max(0f, rough) * c;
-
-                // // ridgify
-                // t = Mathf.Abs(t);
-                // t *= -1f;
-                // t += 1f;
-
-                // t = Mathf.Clamp01(t);
-                // //Debug.Log(t);
-                // treeValue = t >= .985f;
-
-                treeValue = false;
-
 
 
                 // completely flatten terrain
@@ -553,11 +521,11 @@ public class ChunkGenerator : MonoBehaviour
                 FreshWaterMap[x, z] = freshWaterValue;
                 WetnessMap[x, z] = wetnessValue;
                 HeightMap[x, z] = heightValue;
-                TreeMap[x, z] = treeValue;
+
 
             }
 
-            yield return new WaitForSecondsRealtime(.000000001f);
+            //yield return new WaitForSecondsRealtime(.000000001f);
             
         }
 
@@ -647,7 +615,7 @@ public class ChunkGenerator : MonoBehaviour
 
 
 
-    Color SetVertexColor(int x, int z, float height, float mountain, float temperature, float humidity, float wetness, float fw, float rockiness)
+    Color SetVertexColor(int x, int z, float height, float mountain, float temperature, float humidity, float wetness, float fw)
     {
 
         Color c = new Color();
@@ -679,174 +647,183 @@ public class ChunkGenerator : MonoBehaviour
             for (int x = 0; x < ChunkSize + 2; x++)
             {
 
-                if (!cd.TreeMap[x, z])
+                float yNormal = cd.YNormalsMap[x, z];
+                float height = cd.HeightMap[x, z];
+                float temp = cd.TemperatureMap[x, z];
+                float humid = cd.HumidityMap[x, z];
+
+                SpawnParameters spawnParameters;
+                float placementDensity;
+                float randomDivisorOffset;
+                Vector3 randomPositionOffset, spawnPosition, spawnScale;
+                GameObject worldObject;
+                ObjectPool<GameObject> pool;
+
+
+                //foreach (GameObject feature in Features.Concat(Items))
+                foreach (GameObject feature in Features)
                 {
-                    Vector3 normal = cd.YNormalsMap[x, z];
-                    float skewHoriz = cd.SkewHorizMap[x, z];
-                    float height = cd.HeightMap[x, z];
-                    float temp = cd.TemperatureMap[x, z];
-                    float humid = cd.HumidityMap[x, z];
 
-                    SpawnParameters spawnParameters;
-                    float placementDensity;
-                    float randomDivisorOffset;
-                    Vector3 randomPositionOffset, spawnPosition, spawnScale;
-                    GameObject worldObject;
-                    ObjectPool<GameObject> pool;
 
-                    //yield return new WaitUntil(() => !cd.IsEdgeChunk());
-                    //yield return new WaitForSecondsRealtime(2f);
+                    // if(x % 3 == 0 && z % 3 == 0)
+                    // {
 
-                    foreach (GameObject feature in Features.Concat(Items))
+                    //     Vector3 spawnPosition = new Vector3(x + _xOffset, cd.HeightMap[x, z] * Amplitude, z + _zOffset);
+
+
+
+                    //     pool = PoolHelper.GetPool(feature);
+                    //     worldObject = pool.Get();
+                    //     worldObject.transform.position = spawnPosition;
+                    //     worldObject.transform.SetParent(cd.featuresParent);
+                    // }
+
+
+                    // break if chunk not loaded
+                    if (cd == null || (cd.featuresParent == null)) { break; }
+
+                    spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
+                    if (spawnParameters != null)
                     {
-
-                        // break if chunk not loaded
-                        if (cd == null || (cd.featuresParent == null)) { break; }
-
-                        spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
-                        if (spawnParameters != null)
+                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                        if (placementDensity > 0)
                         {
-                            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, normal.y);
-                            if (placementDensity > 0)
+                            randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + _xOffset + .01f) / 2f, (z + _zOffset + .01f) / 2f) * 2f - 1f);
+                            int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - placementDensity) + randomDivisorOffset);
+                            if (divisor < 1)
                             {
-                                randomDivisorOffset = 15f * (Mathf.PerlinNoise((x + _xOffset + .01f) / 2f, (z + _zOffset + .01f) / 2f) * 2f - 1f);
-                                int divisor = (int)(Mathf.Lerp(1f, 20f, 1f - placementDensity) + randomDivisorOffset);
-                                if (divisor < 1)
+                                divisor = 1;
+                            }
+                            if ((x + _xOffset) % divisor == 0 && (z + _zOffset) % divisor == 0)
+                            {
+                                for (int i = 0; i < spawnParameters.numberToSpawn; ++i)
                                 {
-                                    divisor = 1;
-                                }
-                                if ((x + _xOffset) % divisor == 0 && (z + _zOffset) % divisor == 0)
-                                {
-                                    for (int i = 0; i < spawnParameters.numberToSpawn; ++i)
+                                    randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
+                                    Vector3 rawHorizontalPosition = new Vector3(x + _xOffset + randomPositionOffset.x, 0f, z + _zOffset + randomPositionOffset.z);
+                                    Vector2 rawHorizontalPositionV2 = new Vector2(rawHorizontalPosition.x, rawHorizontalPosition.z);
+                                    //if (!instance.fillMap.MapFilled(rawHorizontalPositionV2))
+                                    if (true)
                                     {
-                                        randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
-                                        Vector3 rawHorizontalPosition = new Vector3(x + _xOffset + skewHoriz + randomPositionOffset.x, 0f, z + _zOffset + skewHoriz + randomPositionOffset.z);
-                                        Vector2 rawHorizontalPositionV2 = new Vector2(rawHorizontalPosition.x, rawHorizontalPosition.z);
-                                        //if (!instance.fillMap.MapFilled(rawHorizontalPositionV2))
-                                        if (true)
+                                        ChunkData chunkAtPosition = GetChunkFromRawPosition(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.z));
+                                        if (chunkAtPosition != null)
                                         {
-                                            ChunkData chunkAtPosition = GetChunkFromRawPosition(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.z));
-                                            if (chunkAtPosition != null)
+                                            Vector2 coordinatesInChunk = GetCoordinatesInChunk(rawHorizontalPosition);
+                                            int posChunkX = (int)coordinatesInChunk.x;
+                                            int posChunkZ = (int)coordinatesInChunk.y;
+
+                                            float posChunkHeight = chunkAtPosition.HeightMap[posChunkX, posChunkZ];   
+                                            float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ];
+                                            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, posChunkHeight, posChunkYNormal);
+                                            if (placementDensity > 0)
                                             {
-                                                Vector2 coordinatesInChunk = GetCoordinatesInChunk(rawHorizontalPosition);
-                                                int posChunkX = (int)coordinatesInChunk.x;
-                                                int posChunkZ = (int)coordinatesInChunk.y;
-                                                if (!cd.TreeMap[posChunkX, posChunkZ])
+                                                spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.Amplitude);
+                                                spawnScale = Vector3.one * spawnParameters.scale;
+                                                pool = PoolHelper.GetPool(feature);
+                                                worldObject = pool.Get();
+                                                worldObject.transform.position = spawnPosition + (Vector3.up * spawnParameters.heightOffset);
+                                                worldObject.transform.SetParent(cd.featuresParent);
+                                                worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
+                                                if (spawnParameters.slantMagnitude > 0f)
                                                 {
-                                                    float posChunkHeight = chunkAtPosition.HeightMap[posChunkX, posChunkZ];
-                                                    float posChunkSkewHoriz = chunkAtPosition.SkewHorizMap[posChunkX, posChunkZ];
-                                                    float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ].y;
-                                                    placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, posChunkHeight, posChunkYNormal);
-                                                    if (placementDensity > 0)
-                                                    {
-                                                        spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.Amplitude) + Vector3.right * posChunkSkewHoriz + Vector3.forward * posChunkSkewHoriz;
-                                                        spawnScale = Vector3.one * spawnParameters.scale;
-                                                        pool = PoolHelper.GetPool(feature);
-                                                        worldObject = pool.Get();
-                                                        worldObject.transform.position = spawnPosition + (Vector3.up * spawnParameters.heightOffset);
-                                                        worldObject.transform.SetParent(cd.featuresParent);
-                                                        worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
-                                                        if (spawnParameters.slantMagnitude > 0f)
-                                                        {
-                                                            worldObject.transform.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(Vector3.up, cd.YNormalsMap[x, z]), spawnParameters.slantMagnitude);
-                                                        }
-                                                        worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
-                                                        if(worldObject.transform.GetComponent<Rigidbody>() != null)
-                                                        {
-                                                            worldObject.transform.position = worldObject.transform.position + Vector3.up;
-                                                            //Utility.ToggleObjectPhysics(worldObject, true, true, false, false);
-                                                        }
-                                                        //instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
-
-                                                    }
+                                                    worldObject.transform.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(Vector3.up, Vector3.up * cd.YNormalsMap[x, z]), spawnParameters.slantMagnitude);
                                                 }
-                                                
+                                                worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
+                                                if (worldObject.transform.GetComponent<Rigidbody>() != null)
+                                                {
+                                                    worldObject.transform.position = worldObject.transform.position + Vector3.up;
+                                                    //Utility.ToggleObjectPhysics(worldObject, true, true, false, false);
+                                                }
+                                                //instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
+
                                             }
+                                            
+
                                         }
-
-
                                     }
 
 
-
-
                                 }
+
+
+
+
                             }
                         }
-
                     }
 
-                    foreach (GameObject creature in Creatures)
-                    {
-
-                        // break if chunk not loaded
-                        if (cd == null) { break; }
-
-                        spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
-                        if (spawnParameters != null)
-                        {
-                            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, normal.y);
-                            int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, creature.name.GetHashCode()) * 2f - 1f) * 50f);
-                            int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (creature.name + "_").GetHashCode()) * 2f - 1f) * 50f);
-                            if (placementDensity > 0f)
-                            {
-                                randomDivisorOffset = 0;
-                                int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
-                                if (divisor < 1) { divisor = 1; }
-                                if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
-                                {
-                                    spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
-                                    spawnScale = Vector3.one * spawnParameters.scale;
-                                    worldObject = Utility.InstantiateSameName(creature, spawnPosition, Quaternion.identity);
-                                    //pool = PoolHelper.GetPool(creature);
-                                    //worldObject = pool.Get();
-                                    //worldObject.transform.position = spawnPosition;
-                                    worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-                                    AddActiveCPUCreature(worldObject);
-                                }
-                            }
-                        }
-
-                    }
-
-                    foreach (GameObject human in Humans)
-                    {
-
-                        // break if chunk not loaded
-                        if (cd == null) { break; }
-
-                        if (humanSpawned) { break; }
-
-                        spawnParameters = SpawnParameters.GetSpawnParameters(human.name);
-                        if (spawnParameters != null)
-                        {
-                            placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, normal.y);
-                            int placementOffsetX = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, human.name.GetHashCode()) * 2f - 1f) * 50f);
-                            int placementOffsetZ = (int)((Mathf.InverseLerp(Int32.MinValue, Int32.MaxValue, (human.name + "_").GetHashCode()) * 2f - 1f) * 50f);
-                            if (placementDensity > 0f)
-                            {
-                                randomDivisorOffset = 0;
-                                int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
-                                if (divisor < 1) { divisor = 1; }
-                                if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
-                                {
-                                    spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
-                                    spawnScale = Vector3.one * spawnParameters.scale;
-
-                                    //Debug.Log("WILD NPC");
-                                    instance.StartCoroutine(ClientCommand.instance.SpawnCharacterAsLeaderWhenReady(spawnPosition, true, FactionStartingItemsTier.One));
-
-
-                                    //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-
-                                    //humanSpawned = true;
-
-                                }
-                            }
-                        }
-
-                    }
                 }
+
+                // foreach (GameObject creature in Creatures)
+                // {
+
+                //     // break if chunk not loaded
+                //     if (cd == null) { break; }
+
+                //     spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
+                //     if (spawnParameters != null)
+                //     {
+                //         placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                //         float placementOffsetX = ((UnityEngine.Random.value) * 2f - 1f) * 50f;
+                //         float placementOffsetZ = ((UnityEngine.Random.value) * 2f - 1f) * 50f;
+                //         if (placementDensity > 0f)
+                //         {
+                //             randomDivisorOffset = 0;
+                //             int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
+                //             if (divisor < 1) { divisor = 1; }
+                //             if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
+                //             {
+                //                 spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
+                //                 spawnScale = Vector3.one * spawnParameters.scale;
+                //                 worldObject = Utility.InstantiateSameName(creature, spawnPosition, Quaternion.identity);
+                //                 //pool = PoolHelper.GetPool(creature);
+                //                 //worldObject = pool.Get();
+                //                 //worldObject.transform.position = spawnPosition;
+                //                 worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                //                 AddActiveCPUCreature(worldObject);
+                //             }
+                //         }
+                //     }
+
+                // }
+
+                // foreach (GameObject human in Humans)
+                // {
+
+                //     // break if chunk not loaded
+                //     if (cd == null) { break; }
+
+                //     if (humanSpawned) { break; }
+
+                //     spawnParameters = SpawnParameters.GetSpawnParameters(human.name);
+                //     if (spawnParameters != null)
+                //     {
+                //         placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                //         float placementOffsetX = ((UnityEngine.Random.value) * 2f - 1f) * 50f;
+                //         float placementOffsetZ = ((UnityEngine.Random.value) * 2f - 1f) * 50f;
+                //         if (placementDensity > 0f)
+                //         {
+                //             randomDivisorOffset = 0;
+                //             int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
+                //             if (divisor < 1) { divisor = 1; }
+                //             if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
+                //             {
+                //                 spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
+                //                 spawnScale = Vector3.one * spawnParameters.scale;
+
+                //                 //Debug.Log("WILD NPC");
+                //                 instance.StartCoroutine(ClientCommand.instance.SpawnCharacterAsLeaderWhenReady(spawnPosition, true, FactionStartingItemsTier.One));
+
+
+                //                 //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+
+                //                 //humanSpawned = true;
+
+                //             }
+                //         }
+                //     }
+
+                // }
+
 
 
 
@@ -920,9 +897,6 @@ public class ChunkGenerator : MonoBehaviour
         float height;
         float temperature;
         float humidity;
-        float rockiness;
-        float skewHoriz;
-        float[,] skewHorizMap = new float[ChunkSize + 2, ChunkSize + 2];
         for (int i = 0, z = 0; z < ChunkSize + 2; z++)
         {
             for (int x = 0; x < ChunkSize + 2; x++)
@@ -930,17 +904,9 @@ public class ChunkGenerator : MonoBehaviour
                 height = HeightMap[x, z] * Amplitude;
                 temperature = TemperatureMap[x, z];
                 humidity = HumidityMap[x, z];
-                rockiness = Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 50f, (z + zOffset) / 50f), .5f);
-                //rockiness *= Mathf.PerlinNoise(((height) / 50f), 0f);
-                rockiness += (Mathf.PerlinNoise((x + xOffset) / 2f, (z + zOffset) / 2f) * 2f - 1f) * .01f;
-                //rockiness *= Mathf.InverseLerp(0f, .1f, MountainMap[x, z]);
-                rockiness *= 1f - (CalculateDesertness(temperature, humidity));
-                skewHoriz = ((rockiness + .5f) * 2f - 1f) * 18f * RockProtrusion;
-                //skewHoriz = 0f;
-                skewHorizMap[x, z] = skewHoriz;
-                TerrainVertices[i] = new Vector3(x + xOffset + skewHoriz, height, z + zOffset + skewHoriz);
+                TerrainVertices[i] = new Vector3(x + xOffset, height, z + zOffset);
                 //TerrainVertices[i] = new Vector3(x + xOffset, height, z + zOffset);
-                TerrainColors[i] = SetVertexColor(x + xOffset, z + zOffset, HeightMap[x, z], MountainMap[x, z], temperature, humidity, WetnessMap[x, z], FreshWaterMap[x, z], rockiness);
+                TerrainColors[i] = SetVertexColor(x + xOffset, z + zOffset, HeightMap[x, z], MountainMap[x, z], temperature, humidity, WetnessMap[x, z], FreshWaterMap[x, z]);
                 i++;
             }
         }
@@ -974,9 +940,8 @@ public class ChunkGenerator : MonoBehaviour
 
         // set up UVs, and place features based on normal value
         int normalIndex;
-        Vector3 normal;
         Vector3[] normals = TerrainMesh.normals;
-        Vector3[,] normalsMap = new Vector3[ChunkSize + 2, ChunkSize + 2];
+        float[,] yNormals = new float[ChunkSize + 2, ChunkSize + 2];
 
         for (int i = 0, z = 0; z < ChunkSize + 2; z++)
         {
@@ -984,17 +949,16 @@ public class ChunkGenerator : MonoBehaviour
             {
 
                 // uv
-                TerrainUvs[i] = new Vector2((float)x + xOffset, (float)z + zOffset);
+                TerrainUvs[i] = new Vector2(x + xOffset, z + zOffset);
 
                 // features
                 if(z > 0 && x > 0){
                     normalIndex = (z * (ChunkSize + 2)) + x;
-                    normal = normals[normalIndex];
-                    normalsMap[x, z] = normal;
+                    yNormals[x, z] = normals[normalIndex].y;
                 }
                 
                 
-                i++;
+                ++i;
             }
         }
         TerrainMesh.uv = TerrainUvs;
@@ -1002,8 +966,7 @@ public class ChunkGenerator : MonoBehaviour
         MeshCollider mc = Terrain.AddComponent<MeshCollider>();
         mc.sharedMaterial = physicMaterial;
 
-        cd.YNormalsMap = normalsMap;
-        cd.SkewHorizMap = skewHorizMap;
+        cd.YNormalsMap = yNormals;
 
     }
 

@@ -89,6 +89,7 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _ShadingAmount: 1
+    - _ShadingAttenuation: 0.5
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SnowDepth: 0

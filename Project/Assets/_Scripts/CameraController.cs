@@ -84,6 +84,8 @@ public class CameraController : MonoBehaviour
 
     public void UpdateCamera()
     {
+
+
         float pi = Mathf.PI;
 
 
@@ -129,7 +131,7 @@ public class CameraController : MonoBehaviour
         if(newTotalD != cameraDistance_total)
         {
             float magnitude = Mathf.Lerp(ShaderController.DISTANCE_DROP_MAX, ShaderController.DISTANCE_DROP_MIN, Mathf.InverseLerp(0f, 60f, newTotalD));
-            ShaderController.instance.SetDistanceDrop(magnitude);
+            //ShaderController.instance.SetDistanceDrop(magnitude);
         }
         cameraDistance_total = newTotalD;
 

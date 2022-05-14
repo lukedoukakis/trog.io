@@ -10,7 +10,7 @@ Material:
   m_Name: tree_leaves_shade1
   m_Shader: {fileID: -6465566751694194690, guid: 209b8cc76d98c744594a4e3b1f3f8cda,
     type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: _RECEIVE_SHADOWS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -79,10 +79,10 @@ Material:
     - _Cull: 2
     - _Desertness: 0
     - _DstBlend: 0
-    - _NumberOfShades: 2
+    - _NumberOfShades: 4
     - _QueueControl: 0
     - _QueueOffset: -3
-    - _ReceiveShadows: 1
+    - _ReceiveShadows: 0
     - _ShadingAttenuation: 0.5
     - _SnowDepth: 0.1
     - _SnowHeightCap: 4703.4

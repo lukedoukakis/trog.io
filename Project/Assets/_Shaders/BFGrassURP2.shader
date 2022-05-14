@@ -536,8 +536,8 @@ Shader "BruteForceURP/InteractiveGrassURP2"
 				}
 				col.xyz = MixFog(col.xyz, i.fogCoord);
 
-				// change alpha
-				col.a = .1f;
+				// EDIT: change alpha
+				col.a = .05f;
 
 				return col;
 				}
