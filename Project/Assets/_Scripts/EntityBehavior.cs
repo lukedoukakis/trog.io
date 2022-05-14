@@ -77,7 +77,7 @@ public class EntityBehavior : EntityComponent
 
 
     // domesticating
-    bool halfDomesticated;
+    bool halfDomesticated, domesticated;
 
 
     protected override void Awake()
@@ -1073,7 +1073,7 @@ public class EntityBehavior : EntityComponent
             {
                 if (sensedCreatureHandles.Contains(ClientCommand.instance.clientPlayerCharacterHandle))
                 {
-                    if (CheckConditionsForHalfDomesticated())
+                    if (DomesticationProfiler.CheckConditionsForHalfDomesticated(entityHandle))
                     {
                         // should be half domesticated, so flag behavior as such and exit method
                         SetHalfDomesticated(true);
@@ -1266,7 +1266,7 @@ public class EntityBehavior : EntityComponent
                 HandleHalfDomesticatedBehavior();
 
                 // update whether entity is half domesticated
-                SetHalfDomesticated(CheckConditionsForHalfDomesticated());
+                SetHalfDomesticated(DomesticationProfiler.CheckConditionsForHalfDomesticated(entityHandle));
             }
             else
             {
@@ -1306,32 +1306,6 @@ public class EntityBehavior : EntityComponent
     }
 
 
-    public bool CheckConditionsForHalfDomesticated()
-    {
-
-        bool satisfied;
-        switch (entityInfo.species)
-        {
-            case Species.Horse :
-                Item playerHoldingItem =  ClientCommand.instance.clientPlayerCharacterHandle.entityItems.holding_item;
-                if(playerHoldingItem != null)
-                {
-                    satisfied = playerHoldingItem.type == ItemType.Fruit;
-                }
-                else
-                {
-                    satisfied = false;
-                }
-                break;
-            default:
-                satisfied = false;
-                break;
-        }
-
-        return satisfied;
-    }
-
-
     void HandleHalfDomesticatedBehavior()
     {
         switch (entityInfo.species)
@@ -1351,6 +1325,19 @@ public class EntityBehavior : EntityComponent
     public bool IsHalfDomesticated()
     {
         return halfDomesticated;
+    }
+    public void SetDomesticated(bool value)
+    {
+        domesticated = value;
+        if(domesticated)
+        {
+            SetHalfDomesticated(false);
+            DomesticationProfiler.OnDomestication(entityHandle);
+        }
+    }
+    public bool IsDomesticated()
+    {
+        return domesticated;
     }
 
 
@@ -1458,6 +1445,65 @@ public class EntityBehavior : EntityComponent
         
     }
 
+
+
+
+}
+
+
+static class DomesticationProfiler
+{
+
+    // return whether conditions are such that the given entity should be half domesticated (ready to be domesticated)
+    public static bool CheckConditionsForHalfDomesticated(EntityHandle handle)
+    {
+
+        bool satisfied;
+        switch (handle.entityInfo.species)
+        {
+            case Species.Horse :
+                Item playerHoldingItem =  ClientCommand.instance.clientPlayerCharacterHandle.entityItems.holding_item;
+                if(playerHoldingItem != null)
+                {
+                    satisfied = playerHoldingItem.type == ItemType.Fruit;
+                }
+                else
+                {
+                    satisfied = false;
+                }
+                break;
+            default:
+                satisfied = false;
+                break;
+        }
+
+        return satisfied;
+    }
+
+
+    // define what happens when a creature is first domesticated
+    public static void OnDomestication(EntityHandle handle)
+    {
+        switch (handle.entityInfo.species)
+        {
+            case Species.Horse :
+                Item playerHoldingItem =  ClientCommand.instance.clientPlayerCharacterHandle.entityItems.holding_item;
+                if(playerHoldingItem != null)
+                {
+                    if(playerHoldingItem.type == ItemType.Fruit)
+                    {
+                        ClientCommand.instance.clientPlayerCharacterHandle.entityItems.DropHolding(EntityItems.TARGET_OBJECT_FOR_REMOVAL);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+    }
+
+
+    
 
 
 

@@ -472,6 +472,15 @@ public class EntityUserInput : EntityComponent
                 Workbench wb = (Workbench)(Utility.FindScriptableObjectReference(hoveredInteractableObject.transform).GetObjectReference());
                 wb.OnCraft();
             }
+            else if(t == "Creature")
+            {
+                EntityHandle hoveredEntityHandle = hoveredInteractableObject.GetComponentInParent<EntityHandle>();
+                if(hoveredEntityHandle.entityBehavior.IsHalfDomesticated())
+                {
+                    entityInfo.faction.AddDomesticatedCreature(hoveredEntityHandle, true);
+                    hoveredEntityHandle.entityBehavior.SetDomesticated(true);
+                }
+            }
         }
         
     }
@@ -617,7 +626,7 @@ public class EntityUserInput : EntityComponent
             string txt = "";
             switch (hoveredInteractableObject.tag){
                 case "Item" : 
-                    txt += hoveredInteractableObject.name + " (" + entityInfo.faction.GetItemCount(Item.GetItemByName(hoveredInteractableObject.name)) + ")";
+                    txt += hoveredInteractableObject.name;
                     break;
                 case "Npc" :
                     EntityHandle hoveredEntityHandle = hoveredInteractableObject.GetComponentInParent<EntityHandle>();
@@ -681,18 +690,17 @@ public class EntityUserInput : EntityComponent
                     txt += "";
                     break;
                 case "ObjectRack_Wood" :
-                    txt += "Wood (" + entityInfo.faction.GetItemCount(Item.WoodPiece) + ")";
+                    txt += "Wood";
                     break;
                 case "ObjectRack_Bone" :
-                    txt += "Animal bones (" + entityInfo.faction.GetItemCount(Item.BonePiece) + ")";
+                    txt += "Bones";
                     break;
                 case "ObjectRack_Stone" :
-                    txt += "Stones (" + entityInfo.faction.GetItemCount(Item.StoneSmall) + ")";
+                    txt += "Stones";
                     break;
                  case "ObjectRack_Fruit" :
-                    txt += "Fruits (" + entityInfo.faction.GetItemCount(ItemType.Fruit) + ")";
+                    txt += "Fruits";
                     break;
-
                 case "Workbench" :
                     txt += "Worktable";
                     break;
@@ -701,6 +709,14 @@ public class EntityUserInput : EntityComponent
                     txt += !wb.IsEmpty() && wb.currentCraftableItem != null ? "Craft: " + wb.currentCraftableItem.nme : "";
                     break;
                 case "Feature" :
+                    txt += hoveredInteractableObject.name;
+                    break;
+                case "Creature" :
+                    EntityBehavior eb = hoveredInteractableObject.GetComponent<EntityBehavior>();
+                    if(eb.IsHalfDomesticated())
+                    {
+                        txt += "Tame ";
+                    }
                     txt += hoveredInteractableObject.name;
                     break;
                 // todo: handle other types of objects

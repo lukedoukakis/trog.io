@@ -14,6 +14,7 @@ public class Faction : MonoBehaviour
     public string factionName;
     public EntityHandle leaderHandle;
     public List<EntityHandle> memberHandles;
+    public List<EntityHandle> domesticatedCreatureHandles;
     public List<EntityHandle> partyHandles;
     public ItemCollection ownedItems;
     public Camp camp;
@@ -81,7 +82,7 @@ public class Faction : MonoBehaviour
     }
 
 
-    public void AddMember(EntityHandle newMemberHandle, FactionRole factionRole, bool addToparty)
+    public void AddMember(EntityHandle newMemberHandle, FactionRole factionRole, bool addToParty)
     {
 
         EntityInfo newMemberInfo = newMemberHandle.entityInfo;
@@ -89,7 +90,7 @@ public class Faction : MonoBehaviour
         newMemberInfo.faction = this;
         newMemberInfo.SetFactionRole(factionRole);
         memberHandles.Add(newMemberHandle);
-        if(addToparty)
+        if(addToParty)
         {
             AddToParty(newMemberHandle);
         }
@@ -99,6 +100,25 @@ public class Faction : MonoBehaviour
         removedMemberHandle.entityInfo.faction = null;
         memberHandles.Remove(removedMemberHandle);
         RemoveFromParty(removedMemberHandle);
+    }
+    public void AddDomesticatedCreature(EntityHandle newDomesticatedCreatureHandle, bool addToParty)
+    {
+        EntityInfo domesticatedCreatureInfo = newDomesticatedCreatureHandle.entityInfo;
+
+        domesticatedCreatureInfo.faction = this;
+        domesticatedCreatureInfo.SetFactionRole(FactionRole.Follower);
+        domesticatedCreatureHandles.Add(newDomesticatedCreatureHandle);
+        if(addToParty)
+        {
+            AddToParty(newDomesticatedCreatureHandle);
+        }
+        Debug.Log("Added " + newDomesticatedCreatureHandle.gameObject.name + " to faction");
+    }
+    public void RemoveDomesticatedCreature(EntityHandle removedCreatureHandle)
+    {
+        removedCreatureHandle.entityInfo.faction = null;
+        domesticatedCreatureHandles.Remove(removedCreatureHandle);
+        RemoveFromParty(removedCreatureHandle);
     }
 
     public void AddToParty(EntityHandle newPartyMemberHandle){
@@ -504,6 +524,10 @@ public class Faction : MonoBehaviour
         {
             memberHandle.RemoveFromWorld();
         }
+        foreach(EntityHandle creatureHandle in domesticatedCreatureHandles.ToArray())
+        {
+            creatureHandle.RemoveFromWorld();
+        }
 
         // destroy this
         Destroy(this);
@@ -527,6 +551,7 @@ public class Faction : MonoBehaviour
         f.factionName = _factionName;
         f.leaderHandle = null;
         f.memberHandles = new List<EntityHandle>();
+        f.domesticatedCreatureHandles = new List<EntityHandle>();
         f.partyHandles = new List<EntityHandle>();
         f.ownedItems = new ItemCollection();
         f.targetedObjects = new List<GameObject>();

@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 7768159146827163568}
   m_Layer: 12
   m_Name: WildDeer
-  m_TagString: Npc
+  m_TagString: Creature
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -39,6 +39,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2664209710742146106}
   m_Father: {fileID: 0}
@@ -85,12 +86,12 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   hovering: 0
   selecting: 0
   selected: 0
   tooltip: 0
   localP: 0
+  entityHealthDisplayController: {fileID: 0}
 --- !u!114 &7223609859536449622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,13 +117,12 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   id: 0
   nickname: Deeana
+  isAPlayer: 0
   species: 3
   faction: {fileID: 0}
-  isFactionLeader: 0
-  isFactionFollower: 0
+  factionRole: 0
   speciesInfo: {fileID: 0}
 --- !u!114 &7223609859536449621
 MonoBehaviour:
@@ -149,12 +149,12 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
-  statsModifiers: []
-  statsCombined: {fileID: 0}
+  combinedStats: {fileID: 0}
   BASE_AMOUNT_STAMINA: 100
-  hp: 0
+  health: 0
+  maxHealth: 0
   stamina: 0
+  maxStamina: 0
 --- !u!114 &7223609859536449620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,17 +180,20 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   behaviorProfile: {fileID: 0}
-  homeT: {fileID: 0}
+  followPositionTransform: {fileID: 0}
+  restingTent: {fileID: 0}
   isPlayer: 0
   isAtHome: 0
   move: {x: 0, y: 0, z: 0}
   urgent: 0
+  followOffset: {x: 0, y: 0, z: 0}
   timeSince_creatureSense: 0
-  timeSince_attack: 0
   activeAction: {fileID: 0}
   actionQueue: []
+  entityActionSequence_AssertStanding: {fileID: 0}
+  entityActionSequence_AssertSquatting: {fileID: 0}
+  homeResetTime: 0
 --- !u!114 &7223609859536449627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,9 +219,9 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
-  rb: {fileID: 0}
   body: {fileID: 0}
+  itemOrientationTarget: {fileID: 0}
+  model: {fileID: 0}
   head: {fileID: 0}
   bodyRotationTarget: {fileID: 0}
   bodyLean: 0
@@ -250,7 +253,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   worldCollider: {fileID: 0}
   highFrictionMat: {fileID: 0}
   noFrictionMat: {fileID: 0}
@@ -283,7 +285,12 @@ MonoBehaviour:
   isJumping: 0
   jumpOffLeft: 0
   jumpOffRight: 0
-  sprinting: 0
+  isSprinting: 0
+  isWalking: 0
+  isSquatting: 0
+  animFlag_jump: 0
+  animFlag_jumpMirror: 0
+  isDodging: 0
   offWallTime: 0
   offWaterTime: 0
   jumpTime: 0
@@ -294,13 +301,18 @@ MonoBehaviour:
   maxSpeed_sprint: 0
   maxSpeed_climb: 0
   maxSpeed_swim: 0
+  maxSpeed_dodge: 0
+  maxSpeed_walk: 0
   landScrunch: 0
-  crouch: 0
+  squatMagnitude: 0
   handFree_right: 0
   handFree_left: 0
   isMoving: 0
+  isMoving_last: 0
   isGrounded: 0
+  isGrounded_last: 0
   isGroundedStrict: 0
+  isGroundedStrict_last: 0
   isInsideCamp: 0
   isHandGrab: 0
   speedLimitModifier_launch: 0
@@ -367,8 +379,10 @@ MonoBehaviour:
   weaponChargeTime: 0
   weaponCharging: 0
   weaponChargeAmount: 0
-  meleeAttackCanHit: 0
+  attackCanHit: 0
+  timeSince_attack: 0
   attackHit: 0
+  dodgeTime: 0
 --- !u!114 &7223609859536449625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -394,7 +408,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   hp: 0
   alive: 0
 --- !u!114 &167955425329109663
@@ -422,7 +435,6 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
-  entityCommandServer: {fileID: 0}
   species: 3
 --- !u!114 &4761202945426959485
 MonoBehaviour:
@@ -439,7 +451,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   visible: 0
-  m_AssetId: 
+  m_AssetId: 783583ddcb6966b4faf1da061664db29
   hasSpawned: 0
 --- !u!114 &5942197906885696531
 MonoBehaviour:
@@ -456,12 +468,20 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   clientAuthority: 0
-  localPositionSensitivity: 0.01
-  localRotationSensitivity: 0.01
-  localScaleSensitivity: 0.01
-  compressRotation: 0
-  interpolateScale: 1
+  sendInterval: 0.05
+  syncPosition: 1
+  syncRotation: 1
   syncScale: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  bufferTimeMultiplier: 1
+  bufferSizeLimit: 64
+  catchupThreshold: 4
+  catchupMultiplier: 0.1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
 --- !u!114 &6257372575738916933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -477,12 +497,20 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   clientAuthority: 0
-  localPositionSensitivity: 0.01
-  localRotationSensitivity: 0.01
-  localScaleSensitivity: 0.01
-  compressRotation: 0
-  interpolateScale: 1
+  sendInterval: 0.05
+  syncPosition: 1
+  syncRotation: 1
   syncScale: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  bufferTimeMultiplier: 1
+  bufferSizeLimit: 64
+  catchupThreshold: 4
+  catchupMultiplier: 0.1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   target: {fileID: 0}
 --- !u!114 &7768159146827163568
 MonoBehaviour:

@@ -45,7 +45,7 @@ public class EntityItems : EntityComponent
     public static float FOLLOW_SPEED_WEAPON_TRANSLATION = 65f;
     public static float FOLLOW_SPEED_WEAPON_ROTATION = 20f;
 
-
+    public static object TARGET_OBJECT_FOR_REMOVAL = new object();
 
     
 
@@ -338,9 +338,11 @@ public class EntityItems : EntityComponent
                 holding_object = null;
             }
         }
-        else
+        else if (targetAttachedObject == TARGET_OBJECT_FOR_REMOVAL)
         {
-            // todo: case human
+            GameObject.Destroy(holding_object);
+                holding_item = null;
+                holding_object = null;
         }
 
     }
@@ -689,6 +691,7 @@ public class EntityItems : EntityComponent
         if(weaponEquipped_object != null){
             //Utility.IgnorePhysicsCollisions(transform, weaponEquipped_object.transform);
             Utility.IgnorePhysicsCollisions(weaponEquipped_object.transform, entityInfo.faction.memberHandles.Where(handle => handle != null).Select(handle => handle.transform).ToArray());
+            Utility.IgnorePhysicsCollisions(weaponEquipped_object.transform, entityInfo.faction.domesticatedCreatureHandles.Where(handle => handle != null).Select(handle => handle.transform).ToArray());
             weaponEquipped_object.transform.Find("HoverTrigger").GetComponent<BoxCollider>().enabled = false;
             entityStats.SetStatsSlot(StatsSlot.Weapon, weaponEquipped_item.wielderStatsModifier);
         }
