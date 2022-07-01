@@ -10,7 +10,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkGenerator instance;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 4;
+    public static int ChunkRenderDistance = 3;
     public static float Scale = 100f;
     public static float Amplitude = 160f;
     public static float MountainMapScale = 500f;
@@ -661,7 +661,7 @@ public class ChunkGenerator : MonoBehaviour
                 //foreach (GameObject feature in Features.Concat(Items))
                 foreach (GameObject feature in Features)
                 {
-                    break;
+                    //break;
 
                     // break if chunk not loaded
                     if (cd == null || (cd.featuresParent == null)) { break; }
