@@ -100,14 +100,14 @@ Material:
     m_Floats:
     - Vector1_12B2078F: 0.05
     - Vector1_58E2BA8: 100
-    - Vector1_711670F7: -0.01
+    - Vector1_711670F7: -0.1
     - Vector1_B4C692DF: 0.01
     - Vector1_DCE2159D: -0.55
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
     - _CastShadows: 0
-    - _Cull: 0
+    - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 10

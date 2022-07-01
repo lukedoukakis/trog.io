@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: 1_BFGrass02
   m_Shader: {fileID: 4800000, guid: 7cd5d6fe2c6238e469561875c01946f3, type: 3}
-  m_ShaderKeywords: USE_S USE_SC
+  m_ShaderKeywords: USE_RT USE_S USE_SC
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -79,6 +79,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _BumpScale: 1
     - _Cutoff: 0.5
@@ -124,8 +125,11 @@ Material:
     - _UseRT: 1
     - _UseShadow: 1
     - _UseShadowCast: 1
+    - _UseWC: 0
     - _WindForce: 0.22
     - _WindMovement: 0.2
+    - _WorldRotation: 0
+    - _WorldScale: 10
     - _ZWrite: 1
     - __NumberOfStacks: 17
     m_Colors:
@@ -137,3 +141,4 @@ Material:
     - _ProjectedShadowColor: {r: 0.4528302, g: 0.42296267, b: 0.044855822, a: 1}
     - _RimColor: {r: 0.14566667, g: 0.184, b: 0.09008333, a: 1}
     - _SelfShadowColor: {r: 0.3026154, g: 0.46226418, b: 0, a: 1}
+  m_BuildTextureStacks: []

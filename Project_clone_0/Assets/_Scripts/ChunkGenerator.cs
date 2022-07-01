@@ -22,7 +22,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float SnowLevel = .35f;
     //public static float SnowLevel = float.MaxValue;
     public static float GrassNormal = .9f;
-    public static float SnowNormalMin = .9f;
+    public static float SnowNormalMin = .95f;
     public static float SnowNormalMax = 1f;
     public static float CaveNormal = .4f;
     public static bool LoadingChunks, DeloadingChunks;
