@@ -49,20 +49,23 @@ Material:
     m_Floats:
     - Vector1_1F8742C5: 0.1
     - Vector1_2A6BBFA: 10
-    - Vector1_7AC129F: 7.15
-    - Vector1_8EF4EB24: 1
+    - Vector1_7AC129F: 28.79
+    - Vector1_8EF4EB24: 0.2
     - Vector1_C50B20A7: 0.5
-    - Vector1_CCC10C7A: 1
-    - Vector1_CD9E60A1: 0.7
+    - Vector1_CCC10C7A: 0.02
+    - Vector1_CD9E60A1: 1
     - Vector1_F3FCB1E6: 5
     - _AlphaClip: 0
     - _Blend: 0
     - _CastShadows: 1
     - _Cull: 2
     - _DstBlend: 10
+    - _NumberOfShades: 100
     - _QueueControl: 1
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _ShadingAmount: 1.12
+    - _ShadingAttenuation: 0.5
     - _SrcBlend: 5
     - _Surface: 1
     - _WorkflowMode: 1

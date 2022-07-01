@@ -15,7 +15,8 @@ Material:
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -64,7 +65,7 @@ Material:
     m_Floats:
     - Vector1_116F49B0: 0
     - Vector1_124AF345: 0
-    - Vector1_25E0AF6F: 0.5
+    - Vector1_25E0AF6F: 1.2
     - Vector1_61F46C5F: 20
     - Vector1_656083AD: 1
     - Vector1_7528B216: 0.3
@@ -78,6 +79,7 @@ Material:
     - _CameraFadingEnabled: 0
     - _CameraFarFadeDistance: 2
     - _CameraNearFadeDistance: 1
+    - _CastShadows: 1
     - _ColorMode: 0
     - _ColorNoise: 0
     - _Cull: 2
@@ -92,9 +94,11 @@ Material:
     - _Glossiness: 0
     - _Metallic: 0
     - _Mode: 0
+    - _NumberOfShades: 2
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _ShadingAttenuation: 0.5
     - _Smoothness: 0.5
     - _SnowDepth: 0.5
     - _SnowHeightCap: 4703.4
@@ -105,7 +109,10 @@ Material:
     - _SoftParticlesNearFadeDistance: 0
     - _SrcBlend: 1
     - _Surface: 0
+    - _WorkflowMode: 1
+    - _ZTest: 4
     - _ZWrite: 1
+    - _ZWriteControl: 0
     m_Colors:
     - Color_20D74E1E: {r: 0, g: 0, b: 0, a: 0}
     - Color_5E42A16F: {r: 1, g: 1, b: 1, a: 0}

@@ -1,34 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using UnityEngine.Rendering.PostProcessing;
 
 public class LightingController : MonoBehaviour
 {
 
     public static LightingController current;
-    
-    // post-processing
-    //public PostProcessVolume volume;
-    //public ColorGrading colorGrading;
 
-    public static float RENDER_SETTINGS_FOG_DISTANCE_START = 3000000f;
-    public static float RENDER_SETTINGS_FOG_DISTANCE_END = 4000000f;
+    public static float RENDER_SETTINGS_FOG_DISTANCE_START = 50f;
+    public static float RENDER_SETTINGS_FOG_DISTANCE_END = 100f;
 
     public static float FOG_DISTANCE_START_BASE = 10f;
+    public static float PI = Mathf.PI;
 
     public GameObject fog;
     public GameObject sun, moon;
     public Light sunLight, moonLight;
-    public Color sunLightColor_base, sunLightColor_sunrise, sunLightColor_sunset;
-    public Color ambientColorDay, ambientColorNight;
-    public float time;
-    public float darkness;
-    public float timeOfDay;
-    public Color fogColor_day, fogColor_night;
+    public Color atmosphereColor;
+    [SerializeField] Gradient  atmosphereColorGradient_timeOfDay, atmosphereColorGradient_temperature;
+    [SerializeField] Gradient fogAmountGradient;
+    public float time, timeOfDay;
+
 
     // time in seconds for a full day
-    public static float SECONDS_PER_DAY = 9f;
+    public static float SECONDS_PER_DAY = 60f;
 
 
     private void Awake()
@@ -43,27 +38,23 @@ public class LightingController : MonoBehaviour
 
         InitFog();
 
-        // initialize pp
-        //volume = GetComponent<PostProcessVolume>();
-        //volume.profile.TryGetSettings(out colorGrading);
-        
-
         time = 264f;
         //time = 0f;
+
     }
 
 
     // Update is called once per frame
     void Update()
     {
-       
-        UpdateFog(time);
-        SetCelestialBodies(time);
-        SetColors(time);
+        
+        UpdateTime();
+        UpdateAtmosphereColor();
+        UpdateCelestialBodies();
+        UpdateCamera();
         UpdateRenderFog();
+        //UpdateFog(time);
 
-        // pause time of day: comment out this line
-        //time += Time.deltaTime;
     }
 
     void InitFog()
@@ -93,6 +84,45 @@ public class LightingController : MonoBehaviour
         }
     }
 
+
+    void UpdateTime()
+    {
+        time += Time.deltaTime;
+        time = 0;
+        timeOfDay = (time % SECONDS_PER_DAY) / SECONDS_PER_DAY; // 0 is midnight, 1 is 11:59pm
+        //Debug.Log("timeOfDay: " + timeOfDay);
+    }
+
+    void UpdateAtmosphereColor()
+    {
+        atmosphereColor = atmosphereColorGradient_timeOfDay.Evaluate(timeOfDay);
+        //atmosphereColor = Color.Lerp(atmosphereColor, atmosphereColorGradient_temperature.Evaluate(timeOfDay), .25f);
+    }
+
+    void UpdateCelestialBodies()
+    {
+        float sunX = Mathf.Sin(time / SECONDS_PER_DAY * 2f * PI);
+        float sunY = Mathf.Cos(time / SECONDS_PER_DAY * 2f * PI);
+        Vector3 sunRot = new Vector3(sunX, sunY, 0);
+        Vector3 moonRot = new Vector3(-sunX, -sunY, 0);
+        sun.transform.rotation = Quaternion.LookRotation(sunRot, Vector3.up);
+        moon.transform.rotation = Quaternion.LookRotation(moonRot, Vector3.up);
+        sunLight.color = atmosphereColor;
+    }
+
+    void UpdateCamera()
+    {
+        Camera.main.backgroundColor = atmosphereColor;
+    }
+
+    void UpdateRenderFog()
+    {
+        float environmentModifier = Mathf.Lerp(1f, 2f, 1f - fogAmountGradient.Evaluate(timeOfDay).r);
+        RenderSettings.fogStartDistance = RENDER_SETTINGS_FOG_DISTANCE_START * environmentModifier;
+        RenderSettings.fogEndDistance = RENDER_SETTINGS_FOG_DISTANCE_END * environmentModifier;
+        RenderSettings.fogColor = atmosphereColor;
+    }
+
     void UpdateFog(float time)
     {
         Vector3 playerPos = ClientCommand.instance.clientPlayerCharacter.transform.position;
@@ -102,50 +132,10 @@ public class LightingController : MonoBehaviour
             // float scale = Mathf.Lerp(1f, 3f, Mathf.InverseLerp(20f, 60f, Vector3.Distance(cameraPos, playerPos)));
             // fog.transform.localScale = Vector3.one * scale;
             fog.transform.position = playerPos;
+            Shader.SetGlobalColor("_FogColor", atmosphereColor);
         }
-
     }
 
-    void UpdateRenderFog()
-    {
-
-        float distanceModifier = Mathf.Lerp(1f, 2f, Mathf.InverseLerp(0f, 40f, CameraController.instance.distanceFromPlayer));
-
-        RenderSettings.fogStartDistance = RENDER_SETTINGS_FOG_DISTANCE_START * distanceModifier;
-        RenderSettings.fogEndDistance = RENDER_SETTINGS_FOG_DISTANCE_END * distanceModifier;
-    }
-
-    void SetCelestialBodies(float time)
-    {
-        float sunX = Mathf.Sin(time / SECONDS_PER_DAY);
-        float sunY = Mathf.Cos(time / SECONDS_PER_DAY);
-        Vector3 sunRot = new Vector3(sunX, sunY, 0f);
-        Vector3 moonRot = new Vector3(sunX * -1f, sunY * -1f, 0f);
-        sun.transform.rotation = Quaternion.LookRotation(sunRot, Vector3.up);
-        moon.transform.rotation = Quaternion.LookRotation(moonRot, Vector3.up);
-    }
-
-    void SetColors(float time){
-
-        darkness = (Mathf.Cos(time / SECONDS_PER_DAY) + 1f) / 2f;
-        timeOfDay = (Mathf.Sin(time / SECONDS_PER_DAY) + 1f) / 2f;
-        PolyverseSkies.timeOfDay = darkness;
-        Color fogColor = Color.Lerp(fogColor_day, fogColor_night, darkness);
-        RenderSettings.fogColor = fogColor;
-        Shader.SetGlobalColor("_FogColor", fogColor);
-
-        float sunset = Mathf.Max(0f, Mathf.Pow((((1f - timeOfDay) - .5f) * 2f), 15f));
-        float sunrise = Mathf.Max(0f, Mathf.Pow((((timeOfDay) - .5f) * 2f), 5f));
-        //Debug.Log(sunrise);
-
-        Color color = Color.white;
-        color *= Color.Lerp(sunLightColor_base, sunLightColor_sunrise, sunrise);
-        color *= Color.Lerp(sunLightColor_base, sunLightColor_sunset, sunset);
-        sunLight.color = color;
-
-        //colorGrading.colorFilter.value = Color.Lerp(ambientColorDay, ambientColorNight, darkness);
-
-    }
 
 
 }

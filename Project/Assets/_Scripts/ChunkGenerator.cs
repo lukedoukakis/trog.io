@@ -753,76 +753,78 @@ public class ChunkGenerator : MonoBehaviour
 
                 }
 
-                // foreach (GameObject creature in Creatures)
-                // {
+                foreach (GameObject creature in Creatures)
+                {
+                    
 
-                //     // break if chunk not loaded
-                //     if (cd == null) { break; }
+                    // break if chunk not loaded
+                    if (cd == null) { break; }
 
-                //     spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
-                //     if (spawnParameters != null)
-                //     {
-                //         placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
-                //         float placementOffsetX = ((UnityEngine.Random.value) * 2f - 1f) * 50f;
-                //         float placementOffsetZ = ((UnityEngine.Random.value) * 2f - 1f) * 50f;
-                //         if (placementDensity > 0f)
-                //         {
-                //             randomDivisorOffset = 0;
-                //             int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
-                //             if (divisor < 1) { divisor = 1; }
-                //             if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
-                //             {
-                //                 spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
-                //                 spawnScale = Vector3.one * spawnParameters.scale;
-                //                 worldObject = Utility.InstantiateSameName(creature, spawnPosition, Quaternion.identity);
-                //                 //pool = PoolHelper.GetPool(creature);
-                //                 //worldObject = pool.Get();
-                //                 //worldObject.transform.position = spawnPosition;
-                //                 worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-                //                 AddActiveCPUCreature(worldObject);
-                //             }
-                //         }
-                //     }
+                    spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
+                    if (spawnParameters != null)
+                    {
+                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                        float placementOffsetX = ((UnityEngine.Random.value) * 2f - 1f) * 50f;
+                        float placementOffsetZ = ((UnityEngine.Random.value) * 2f - 1f) * 50f;
+                        if (placementDensity > 0f)
+                        {
+                            randomDivisorOffset = 0;
+                            int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
+                            if (divisor < 1) { divisor = 1; }
+                            if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
+                            {
+                                Debug.Log(creature.name);
+                                spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
+                                spawnScale = Vector3.one * spawnParameters.scale;
+                                worldObject = Utility.InstantiateSameName(creature, spawnPosition, Quaternion.identity);
+                                //pool = PoolHelper.GetPool(creature);
+                                //worldObject = pool.Get();
+                                //worldObject.transform.position = spawnPosition;
+                                worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                                AddActiveCPUCreature(worldObject);
+                            }
+                        }
+                    }
 
-                // }
+                }
 
-                // foreach (GameObject human in Humans)
-                // {
+                foreach (GameObject human in Humans)
+                {
 
-                //     // break if chunk not loaded
-                //     if (cd == null) { break; }
+                    // break if chunk not loaded
+                    if (cd == null) { break; }
 
-                //     if (humanSpawned) { break; }
+                    if (humanSpawned) { break; }
 
-                //     spawnParameters = SpawnParameters.GetSpawnParameters(human.name);
-                //     if (spawnParameters != null)
-                //     {
-                //         placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
-                //         float placementOffsetX = ((UnityEngine.Random.value) * 2f - 1f) * 50f;
-                //         float placementOffsetZ = ((UnityEngine.Random.value) * 2f - 1f) * 50f;
-                //         if (placementDensity > 0f)
-                //         {
-                //             randomDivisorOffset = 0;
-                //             int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
-                //             if (divisor < 1) { divisor = 1; }
-                //             if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
-                //             {
-                //                 spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
-                //                 spawnScale = Vector3.one * spawnParameters.scale;
+                    spawnParameters = SpawnParameters.GetSpawnParameters(human.name);
+                    if (spawnParameters != null)
+                    {
+                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                        float placementOffsetX = ((UnityEngine.Random.value) * 2f - 1f) * 50f;
+                        float placementOffsetZ = ((UnityEngine.Random.value) * 2f - 1f) * 50f;
+                        if (placementDensity > 0f)
+                        {
+                            randomDivisorOffset = 0;
+                            int divisor = (int)(Mathf.Lerp(5f, 100f, 1f - placementDensity) + randomDivisorOffset);
+                            if (divisor < 1) { divisor = 1; }
+                            if ((x + _xOffset + placementOffsetX) % divisor == 0 && (z + _zOffset + placementOffsetZ) % divisor == 0)
+                            {
+                                spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
+                                spawnScale = Vector3.one * spawnParameters.scale;
 
-                //                 //Debug.Log("WILD NPC");
-                //                 instance.StartCoroutine(ClientCommand.instance.SpawnCharacterAsLeaderWhenReady(spawnPosition, true, FactionStartingItemsTier.One));
+                                //Debug.Log("WILD NPC");
+                                instance.StartCoroutine(ClientCommand.instance.SpawnCharacterAsLeaderWhenReady(spawnPosition, true, FactionStartingItemsTier.One));
 
 
-                //                 //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                                //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
 
-                //                 //humanSpawned = true;
+                                //humanSpawned = true;
 
-                //             }
-                //         }
-                //     }
+                            }
+                        }
+                    }
 
-                // }
+                }
 
 
 

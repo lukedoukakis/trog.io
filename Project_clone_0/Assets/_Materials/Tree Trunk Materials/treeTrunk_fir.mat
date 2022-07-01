@@ -66,7 +66,7 @@ Material:
     m_Floats:
     - Vector1_116F49B0: 0
     - Vector1_124AF345: 0
-    - Vector1_25E0AF6F: 0.5
+    - Vector1_25E0AF6F: 1.2
     - Vector1_61F46C5F: 20
     - Vector1_656083AD: 1
     - Vector1_7528B216: 0.3
@@ -95,7 +95,7 @@ Material:
     - _Glossiness: 0
     - _Metallic: 0
     - _Mode: 0
-    - _NumberOfShades: 4
+    - _NumberOfShades: 2
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 0
