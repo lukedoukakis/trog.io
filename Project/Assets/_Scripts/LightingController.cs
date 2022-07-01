@@ -7,8 +7,8 @@ public class LightingController : MonoBehaviour
 
     public static LightingController current;
 
-    public static float RENDER_SETTINGS_FOG_DISTANCE_START = 50f;
-    public static float RENDER_SETTINGS_FOG_DISTANCE_END = 100f;
+    public static float RENDER_SETTINGS_FOG_DISTANCE_START = 250f;
+    public static float RENDER_SETTINGS_FOG_DISTANCE_END = 500f;
 
     public static float FOG_DISTANCE_START_BASE = 10f;
     public static float PI = Mathf.PI;

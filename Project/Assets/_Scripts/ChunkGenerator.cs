@@ -7,10 +7,11 @@ using UnityEngine.Pool;
 
 public class ChunkGenerator : MonoBehaviour
 {
+    public static float terrainScaleModifier = 3f;
     public static ChunkGenerator instance;
     public static int Seed = 75675;
-    public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 3;
+    public static int ChunkSize = 20;
+    public static int ChunkRenderDistance = 4;
     public static float Scale = 100f;
     public static float Amplitude = 160f;
     public static float MountainMapScale = 500f;
@@ -174,7 +175,7 @@ public class ChunkGenerator : MonoBehaviour
     {
 
 
-        playerRawPosition = playerTransform.position;
+        playerRawPosition = playerTransform.position / terrainScaleModifier;
         playerChunkCoordinate = GetChunkCoordinate(playerRawPosition);
         Vector2 currentChunkCoord = new Vector2((int)playerChunkCoordinate.x, (int)playerChunkCoordinate.y);
 
@@ -224,7 +225,7 @@ public class ChunkGenerator : MonoBehaviour
     {
 
         IEnumerator load;
-        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(GetChunkCoordinate(playerTransform.position), c.coordinate)).ToArray())
+        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(GetChunkCoordinate(playerTransform.position / terrainScaleModifier), c.coordinate)).ToArray())
         {
             if (!cd.loaded)
             {
@@ -232,7 +233,7 @@ public class ChunkGenerator : MonoBehaviour
                 yield return StartCoroutine(load);
                 ChunkDataLoaded.Add(cd);
             }
-            if(GetChunkCoordinate(playerTransform.position) != playerChunkCoordinate){
+            if(GetChunkCoordinate(playerTransform.position / terrainScaleModifier) != playerChunkCoordinate){
                 break;
             }
         }
@@ -693,7 +694,7 @@ public class ChunkGenerator : MonoBehaviour
                                         spawnScale = Vector3.one * spawnParameters.scale;
                                         pool = PoolHelper.GetPool(feature);
                                         worldObject = pool.Get();
-                                        worldObject.transform.position = spawnPosition + (Vector3.up * spawnParameters.heightOffset);
+                                        worldObject.transform.position = (spawnPosition + (Vector3.up * spawnParameters.heightOffset)) * terrainScaleModifier;
                                         worldObject.transform.SetParent(cd.featuresParent);
                                         worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
                                         if (spawnParameters.slantMagnitude > 0f)
@@ -703,7 +704,7 @@ public class ChunkGenerator : MonoBehaviour
                                         worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
                                         if (worldObject.transform.GetComponent<Rigidbody>() != null)
                                         {
-                                            worldObject.transform.position = worldObject.transform.position + Vector3.up;
+                                            worldObject.transform.position = (worldObject.transform.position + Vector3.up) * terrainScaleModifier;
                                             //Utility.ToggleObjectPhysics(worldObject, true, true, false, false);
                                         }
                                         //instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
@@ -919,7 +920,7 @@ public class ChunkGenerator : MonoBehaviour
 
     void UpdateWaterPosition(){
         Vector3 pos = playerTransform.position;
-        pos.y = SeaLevel * Amplitude;
+        pos.y = SeaLevel * Amplitude * terrainScaleModifier;
         Water.transform.position = pos;
     }
 
