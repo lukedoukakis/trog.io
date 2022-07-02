@@ -88,7 +88,7 @@ public class LightingController : MonoBehaviour
     void UpdateTime()
     {
         time += Time.deltaTime;
-        //time = SECONDS_PER_DAY * .75f;
+        time = SECONDS_PER_DAY * .5f;
         timeOfDay = (time % SECONDS_PER_DAY) / SECONDS_PER_DAY; // 0 is midnight, 1 is 11:59pm
         //Debug.Log("timeOfDay: " + timeOfDay);
     }

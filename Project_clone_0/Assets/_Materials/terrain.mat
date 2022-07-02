@@ -100,14 +100,14 @@ Material:
     - _Cull: 2
     - _Desertness: 0
     - _DstBlend: 0
-    - _NumberOfShades: 2
+    - _NumberOfShades: 4
     - _QueueControl: 1
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _RockToGrassPosterizationSteps: 2
+    - _RockToGrassPosterizationSteps: 4
     - _ShadingAttenuation: 1
     - _SnowCapHeight: 0
-    - _SnowDepth: 0.2
+    - _SnowDepth: 0.06666667
     - _SnowHeight: 4645.04
     - _SnowHeightCap: 4703.4
     - _SnowHeightStart: 4001.4

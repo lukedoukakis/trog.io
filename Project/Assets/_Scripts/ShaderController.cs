@@ -6,7 +6,7 @@ public class ShaderController : MonoBehaviour
 {
     
     public static ShaderController instance;
-    public static float DISTANCE_DROP_STATIC = .12f;
+    public static float DISTANCE_DROP_STATIC = .08f;
     public static float DISTANCE_DROP_MIN = 0f;
     public static float DISTANCE_DROP_MAX = 0f;
     public static float DISTANCE_DROP_SHARPNESS = 0f;
@@ -50,8 +50,8 @@ public class ShaderController : MonoBehaviour
 
     void UpdateSnowSensitiveMaterials()
     {
-        Shader.SetGlobalFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel) * ChunkGenerator.Amplitude);
-        Shader.SetGlobalFloat("_SnowHeightCap", 1f * ChunkGenerator.Amplitude);
+        Shader.SetGlobalFloat("_SnowHeightStart", (ChunkGenerator.SnowLevel) * ChunkGenerator.Amplitude * ChunkGenerator.TerrainScaleModifier);
+        Shader.SetGlobalFloat("_SnowHeightCap", 1f * ChunkGenerator.Amplitude * ChunkGenerator.TerrainScaleModifier);
         Shader.SetGlobalFloat("_SnowMinimumSurfaceNormal", ChunkGenerator.SnowNormalMin);
         Shader.SetGlobalFloat("_SnowMaximumSurfaceNormal", ChunkGenerator.SnowNormalMax);
     }

@@ -172,7 +172,7 @@ public class SpawnParameters
         // combined
         float dCombined = Mathf.Min(dHeight, dTemp, dHumid, dYNorm);
 
-        return Mathf.Lerp(sp.densityMin, sp.densityMax, dCombined) * ChunkGenerator.terrainScaleModifier;
+        return Mathf.Lerp(sp.densityMin, sp.densityMax, dCombined) * ChunkGenerator.TerrainScaleModifier;
 
     }
 

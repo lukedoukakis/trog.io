@@ -7,7 +7,7 @@ using UnityEngine.Pool;
 
 public class ChunkGenerator : MonoBehaviour
 {
-    public static float terrainScaleModifier = 3f;
+    public static float TerrainScaleModifier = 5f;
     public static ChunkGenerator instance;
     public static int Seed = 75675;
     public static int ChunkSize = 20;
@@ -15,7 +15,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float Scale = 100f;
     public static float Amplitude = 160f;
     public static float MountainMapScale = 500f;
-    public static float ElevationMapScale = 1000f * 2f;
+    public static float ElevationMapScale = 2000f;
     public static int TemperatureMapScale = 300;
     public static int HumidityMapScale = 300;
     public static float meter = 1f / Amplitude;
@@ -23,7 +23,7 @@ public class ChunkGenerator : MonoBehaviour
     public static float SnowLevel = .35f;
     //public static float SnowLevel = float.MaxValue;
     public static float GrassNormal = .9f;
-    public static float SnowNormalMin = .95f;
+    public static float SnowNormalMin = .87f;
     public static float SnowNormalMax = 1f;
     public static float CaveNormal = .4f;
     public static bool LoadingChunks, DeloadingChunks;
@@ -175,7 +175,7 @@ public class ChunkGenerator : MonoBehaviour
     {
 
 
-        playerRawPosition = playerTransform.position / terrainScaleModifier;
+        playerRawPosition = playerTransform.position / TerrainScaleModifier;
         playerChunkCoordinate = GetChunkCoordinate(playerRawPosition);
         Vector2 currentChunkCoord = new Vector2((int)playerChunkCoordinate.x, (int)playerChunkCoordinate.y);
 
@@ -225,7 +225,7 @@ public class ChunkGenerator : MonoBehaviour
     {
 
         IEnumerator load;
-        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(GetChunkCoordinate(playerTransform.position / terrainScaleModifier), c.coordinate)).ToArray())
+        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(GetChunkCoordinate(playerTransform.position / TerrainScaleModifier), c.coordinate)).ToArray())
         {
             if (!cd.loaded)
             {
@@ -233,7 +233,7 @@ public class ChunkGenerator : MonoBehaviour
                 yield return StartCoroutine(load);
                 ChunkDataLoaded.Add(cd);
             }
-            if(GetChunkCoordinate(playerTransform.position / terrainScaleModifier) != playerChunkCoordinate){
+            if(GetChunkCoordinate(playerTransform.position / TerrainScaleModifier) != playerChunkCoordinate){
                 break;
             }
         }
@@ -373,53 +373,6 @@ public class ChunkGenerator : MonoBehaviour
                 // -------------------------------------------------------
 
 
-                // FreshWaterMap [0, 1]
-                freshWaterValue = 0f;
-                if (false)
-                {
-                    float riverScale = 600f;
-
-                    // main river path
-                    freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
-
-                    // give rivers character
-                    float character = .5f;
-                    rough = Mathf.PerlinNoise((x + xOffset + .01f) / 75f, (z + zOffset + .01f) / 75f);
-                    freshWaterValue += Mathf.Max(0f, rough) * character;
-
-                    float riverWidthFactor = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 200f, (z + zOffset - Seed + .01f) / 200f);
-
-
-                    // ridgify
-                    freshWaterValue = Mathf.Abs(freshWaterValue);
-                    freshWaterValue *= -1f;
-                    freshWaterValue += 1f;
-                    freshWaterValue = Mathf.Clamp01(freshWaterValue);
-
-    
-                    // give rivers roughness
-                    float roughValue, roughElev;
-                    roughValue = roughElev = Mathf.PerlinNoise((x + xOffset + .01f) / 3f, (z + zOffset + .01f) / 3f);
-                    roughValue = roughValue * 2f - 1f;
-                    roughElev *= -1f;
-                    freshWaterValue += roughValue * .01f;
-                    freshWaterValue = Mathf.Pow(freshWaterValue, Mathf.Lerp(1.5f, 3f, riverWidthFactor));
-                    //Debug.Log(freshWaterValue)
-
-                    //freshWaterValue = Posterize(0f, 1f, freshWaterValue, 4);
-
-
-                }
-                
-
-
-                
-                
-
-
-                // -------------------------------------------------------
-
-
 
                 // WetnessMap [0, 1]
                 // wetnessValue = freshWaterValue;
@@ -442,28 +395,61 @@ public class ChunkGenerator : MonoBehaviour
                 // -------------------------------------------------------
 
                 // HeightMap
-
-                // heightValue = Mathf.PerlinNoise((x + xOffset + .01f) / Scale, (z + zOffset - Seed + .01f) / Scale);
-                // heightValue = Mathf.Lerp(FlatLevel, 1f, heightValue);
-                
-
                 float heightFromElevation = elevationValueWithRoughness * .01f;
-
                 float heightFromMtn;
-                float p0, p1, p2, pTotal;
-                p0 = mountainValue;
-                p1 = Mathf.InverseLerp(0f, .2f, mountainValue) * Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 55f, (z + zOffset) / 55f), 3.5f) * .8f;
-                p1 += Mathf.PerlinNoise((x + xOffset) / 5f, (z + zOffset) / 5f) * .1f * Mathf.InverseLerp(0, .1f, p1);
-                p2 = 0f;
-                pTotal = p0 + p1 + p2;
-                heightFromMtn = (pTotal) * mountainValue * .5f;
-                
-
-
-
+                float mtn0, mtn1, mtn2, mtnTotal;
+                mtn0 = mountainValue;
+                mtn1 = Mathf.InverseLerp(0f, .2f, mountainValue) * Mathf.Pow(Mathf.PerlinNoise((x + xOffset) / 55f, (z + zOffset) / 55f), 3.5f) * .8f;
+                mtn1 += Mathf.PerlinNoise((x + xOffset) / 5f, (z + zOffset) / 5f) * .1f * Mathf.InverseLerp(0, .1f, mtn1);
+                mtn2 = 0f;
+                mtnTotal = mtn0 + mtn1 + mtn2;
+                heightFromMtn = (mtnTotal) * mountainValue * .5f;
                 heightValue = SeaLevel;
                 heightValue += heightFromElevation;
                 heightValue += heightFromMtn;
+
+                // -------------------------------------------------------
+
+
+                // FreshWaterMap [0, 1]
+                freshWaterValue = 0f;
+                float riverScale = 600f;
+                float riverWidthFactor = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 200f, (z + zOffset - Seed + .01f) / 200f);
+                // --------------
+                // main river path
+                freshWaterValue = Mathf.PerlinNoise((x + xOffset - Seed + .01f) / riverScale, (z + zOffset - Seed + .01f) / riverScale) * 2f - 1f;
+                // --------------
+                // give rivers character
+                float character = .5f;
+                rough = Mathf.PerlinNoise((x + xOffset + .01f) / 75f, (z + zOffset + .01f) / 75f);
+                freshWaterValue += Mathf.Max(0f, rough) * character;
+                // --------------
+                // ridgify
+                freshWaterValue = Mathf.Abs(freshWaterValue);
+                freshWaterValue *= -1f;
+                freshWaterValue += 1f;
+                freshWaterValue = Mathf.Clamp01(freshWaterValue);
+                // --------------
+                // give rivers roughness
+                float roughValue, roughElev;
+                roughValue = roughElev = Mathf.PerlinNoise((x + xOffset + .01f) / 3f, (z + zOffset + .01f) / 3f);
+                roughValue = roughValue * 2f - 1f;
+                roughElev *= -1f;
+                freshWaterValue += roughValue * .01f;
+                freshWaterValue = Mathf.Pow(freshWaterValue, Mathf.Lerp(50f, 100f, riverWidthFactor));
+                // --------------
+                // only on smooth slopes
+                freshWaterValue *= 1 - Mathf.InverseLerp(0f, .1f, mtn1);
+
+                if(freshWaterValue > .2f){ freshWaterValue = 1f; } else { freshWaterValue = 0f; }
+
+
+                //Debug.Log(freshWaterValue)
+
+                //freshWaterValue = Posterize(0f, 1f, freshWaterValue, 4);
+
+
+                
                       
 
             
@@ -471,7 +457,8 @@ public class ChunkGenerator : MonoBehaviour
                 // create ocean and rivers
                 float seaFloorHeight = SeaLevel - (meter * 1f);
                 float riverFloorHeight = SeaLevel - (meter * 1f);
-                heightValue = Mathf.Lerp(heightValue, riverFloorHeight, freshWaterValue);
+                float fw = 0;
+                heightValue = Mathf.Lerp(heightValue, riverFloorHeight, fw);
 
 
                 // heightValue = Mathf.Clamp(seaFloorHeight, 1f, heightValue);
@@ -482,14 +469,19 @@ public class ChunkGenerator : MonoBehaviour
                 float shoreHeight = SeaLevel + (meter * 1f);
                 if (heightValue >= shoreHeight)
                 {
-                    bool posterize = false;
+                    bool posterize = true;
                     if (posterize)
                     {
-                        float postVariance = 100f;
-                        float posterizeStrength = Perlin.Noise((x + xOffset + .01f) / postVariance, (heightValue * Amplitude / postVariance), (z + zOffset - Seed + .01f) / postVariance);
-                        posterizeStrength = Mathf.InverseLerp(.4f, .6f, posterizeStrength);
-                        posterizeStrength = Mathf.Lerp(0f, .4f, posterizeStrength);
-                        heightValue = PosterizeSoft(shoreHeight, 1f, heightValue, 15, .05f, x + xOffset, z + zOffset);
+                        // float postVariance = 100f;
+                        // float posterizeStrength = Perlin.Noise((x + xOffset + .01f) / postVariance, (heightValue * Amplitude / postVariance), (z + zOffset - Seed + .01f) / postVariance);
+                        // posterizeStrength = Mathf.InverseLerp(.4f, .6f, posterizeStrength);
+                        // posterizeStrength = Mathf.Lerp(0f, .4f, posterizeStrength);
+
+                        if(freshWaterValue > 0)
+                        {
+                            //heightValue = PosterizeSoft(shoreHeight, 1f, heightValue, (int)(5 * TerrainScaleModifier), 1f, x + xOffset, z + zOffset);
+                            heightValue = Posterize(shoreHeight, 1f, heightValue, (int)(20 * TerrainScaleModifier));
+                        }
 
                     }
                 }
@@ -626,6 +618,8 @@ public class ChunkGenerator : MonoBehaviour
         // mountainness (c.g)
         c.g = mountain;
 
+        c.b = fw;
+
 
         //Debug.Log(c.r);
 
@@ -694,7 +688,7 @@ public class ChunkGenerator : MonoBehaviour
                                         spawnScale = Vector3.one * spawnParameters.scale;
                                         pool = PoolHelper.GetPool(feature);
                                         worldObject = pool.Get();
-                                        worldObject.transform.position = (spawnPosition + (Vector3.up * spawnParameters.heightOffset)) * terrainScaleModifier;
+                                        worldObject.transform.position = (spawnPosition + (Vector3.up * spawnParameters.heightOffset)) * TerrainScaleModifier;
                                         worldObject.transform.SetParent(cd.featuresParent);
                                         worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
                                         if (spawnParameters.slantMagnitude > 0f)
@@ -704,7 +698,7 @@ public class ChunkGenerator : MonoBehaviour
                                         worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
                                         if (worldObject.transform.GetComponent<Rigidbody>() != null)
                                         {
-                                            worldObject.transform.position = (worldObject.transform.position + Vector3.up) * terrainScaleModifier;
+                                            worldObject.transform.position = (worldObject.transform.position + Vector3.up) * TerrainScaleModifier;
                                             //Utility.ToggleObjectPhysics(worldObject, true, true, false, false);
                                         }
                                         //instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
@@ -920,7 +914,7 @@ public class ChunkGenerator : MonoBehaviour
 
     void UpdateWaterPosition(){
         Vector3 pos = playerTransform.position;
-        pos.y = SeaLevel * Amplitude * terrainScaleModifier;
+        pos.y = SeaLevel * Amplitude * TerrainScaleModifier;
         Water.transform.position = pos;
     }
 

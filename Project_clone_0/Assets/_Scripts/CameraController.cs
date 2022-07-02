@@ -9,8 +9,8 @@ public class CameraController : MonoBehaviour
     
     public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset renderPipelineAsset;
 
-    public static float CAMERA_DISTANCE_OUTSIDECAMP = 30f;
-    public static float CAMERA_DISTANCE_INSIDECAMP = 5f;
+    public static float CAMERA_DISTANCE_OUTSIDECAMP = 30f * 3;
+    public static float CAMERA_DISTANCE_INSIDECAMP = 30f * 3;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
     public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .1f;
     public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .1f;
@@ -128,11 +128,11 @@ public class CameraController : MonoBehaviour
             verticalityModifier = min;
         }
         float newTotalD = cameraDistance_baked * cameraDistance_input;
-        if(newTotalD != cameraDistance_total)
-        {
-            float magnitude = Mathf.Lerp(ShaderController.DISTANCE_DROP_MAX, ShaderController.DISTANCE_DROP_MIN, Mathf.InverseLerp(0f, 60f, newTotalD));
-            //ShaderController.instance.SetDistanceDrop(magnitude);
-        }
+        // if(newTotalD != cameraDistance_total)
+        // {
+        //     float magnitude = Mathf.Lerp(ShaderController.DISTANCE_DROP_MAX, ShaderController.DISTANCE_DROP_MIN, Mathf.InverseLerp(0f, 60f, newTotalD));
+        //     ShaderController.instance.SetDistanceDrop(magnitude);
+        // }
         cameraDistance_total = newTotalD;
 
         followT.position = Vector3.Lerp(followT.position, playerTransform.position + Vector3.up * 1f, 22f * Time.deltaTime);
@@ -189,7 +189,7 @@ public class CameraController : MonoBehaviour
             zoomDelta = 0;
         }
 
-        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .5f, 1f);
+        float targetZoom = Mathf.Clamp(cameraDistance_input - zoomDelta, .01f, 1f);
         cameraDistance_input = Mathf.Lerp(cameraDistance_input, targetZoom, CAMERA_ZOOM_INPUT_SPEED * Time.deltaTime);
     }
 
