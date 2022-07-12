@@ -9,11 +9,11 @@ public class CameraController : MonoBehaviour
     
     public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset renderPipelineAsset;
 
-    public static float CAMERA_DISTANCE_OUTSIDECAMP = 30f * 3;
-    public static float CAMERA_DISTANCE_INSIDECAMP = 30f * 3;
+    public static float CAMERA_DISTANCE_OUTSIDECAMP = 30f * ChunkGenerator.TerrainScaleModifier;
+    public static float CAMERA_DISTANCE_INSIDECAMP = 5f;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
-    public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .1f;
-    public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .1f;
+    public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .15f;
+    public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .15f;
     public static float CAMERA_TARGET_FOV = 75f;
     public static float CAMERA_ZOOM_INPUT_SPEED = 15f;
 
@@ -57,8 +57,9 @@ public class CameraController : MonoBehaviour
         Camera.main.fieldOfView = CAMERA_TARGET_FOV;
 
         followT = GameObject.Instantiate(new GameObject()).transform;
-        Application.targetFrameRate = -1;
-        QualitySettings.vSyncCount = 1;
+        Time.timeScale = 3f;
+        Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0;
         float[] cullDistances = new float[32];
         cullDistances[10] = cullDistance_feature;
         cullDistances[11] = cullDistance_smallFeature;
@@ -110,7 +111,7 @@ public class CameraController : MonoBehaviour
             //     verticalityModifier += (up + down) * sensitivity_rotation * .25f * Time.deltaTime;
             // }
         }
-        ZoomInput();
+        //ZoomInput();
         
 
         float max = .48f;

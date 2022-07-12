@@ -7,8 +7,8 @@ public class LightingController : MonoBehaviour
 
     public static LightingController current;
 
-    public static float RENDER_SETTINGS_FOG_DISTANCE_START = 250f;
-    public static float RENDER_SETTINGS_FOG_DISTANCE_END = 500f;
+    public static float RENDER_SETTINGS_FOG_DISTANCE_START = 70f;
+    public static float RENDER_SETTINGS_FOG_DISTANCE_END = 160f;
 
     public static float FOG_DISTANCE_START_BASE = 10f;
     public static float PI = Mathf.PI;
@@ -23,7 +23,7 @@ public class LightingController : MonoBehaviour
 
 
     // time in seconds for a full day
-    public static float SECONDS_PER_DAY = 60f;
+    public static float SECONDS_PER_DAY = 60f * 5;
 
 
     private void Awake()
@@ -53,7 +53,7 @@ public class LightingController : MonoBehaviour
         UpdateCelestialBodies();
         UpdateCamera();
         UpdateRenderFog();
-        //UpdateFog(time);
+        //UpdateFog();
 
     }
 
@@ -117,20 +117,22 @@ public class LightingController : MonoBehaviour
 
     void UpdateRenderFog()
     {
-        float environmentModifier = Mathf.Lerp(1f, 2f, 1f - fogAmountGradient.Evaluate(timeOfDay).r);
-        RenderSettings.fogStartDistance = RENDER_SETTINGS_FOG_DISTANCE_START * environmentModifier;
-        RenderSettings.fogEndDistance = RENDER_SETTINGS_FOG_DISTANCE_END * environmentModifier;
+        float environmentModifier = Mathf.Lerp(.5f, 1f, 1f - fogAmountGradient.Evaluate(timeOfDay).r);
+        environmentModifier = 1f;
+        RenderSettings.fogStartDistance = RENDER_SETTINGS_FOG_DISTANCE_START * environmentModifier + CameraController.instance.distanceFromPlayer;
+        RenderSettings.fogEndDistance = RENDER_SETTINGS_FOG_DISTANCE_END * environmentModifier + CameraController.instance.distanceFromPlayer;
         RenderSettings.fogColor = atmosphereColor;
     }
 
-    void UpdateFog(float time)
+    void UpdateFog()
     {
         Vector3 playerPos = ClientCommand.instance.clientPlayerCharacter.transform.position;
         Vector3 cameraPos = Camera.main.transform.position;
         if(fog != null)
         {
-            // float scale = Mathf.Lerp(1f, 3f, Mathf.InverseLerp(20f, 60f, Vector3.Distance(cameraPos, playerPos)));
+            // float scale = Mathf.Lerp(1f, 30f, Mathf.InverseLerp(20f, 150f, Vector3.Distance(cameraPos, playerPos)));
             // fog.transform.localScale = Vector3.one * scale;
+            fog.transform.localScale = Vector3.one * 5f;
             fog.transform.position = playerPos;
             Shader.SetGlobalColor("_FogColor", atmosphereColor);
         }

@@ -15,11 +15,15 @@ public class ChunkData
 
     public GameObject chunk;
     public GameObject terrain;
+    public GameObject water;
     public Transform featuresParent;
 
     public MeshFilter terrainMeshFilter;
     public MeshRenderer terrainMeshRenderer;
     public Mesh terrainMesh;
+    public MeshFilter waterMeshFilter;
+    public MeshRenderer waterMeshRenderer;
+    public Mesh waterMesh;
 
     public float[,] TemperatureMap;
     public float[,] HumidityMap;
@@ -28,6 +32,7 @@ public class ChunkData
     public float[,] FreshWaterMap;
     public float[,] WetnessMap;
     public float[,] HeightMap;
+    public float[,] HeightMapWater;
     public float[,] YNormalsMap;
 
     public Dictionary<Vector2, ChunkData> neighbors;
@@ -58,6 +63,7 @@ public class ChunkData
         chunk.transform.localScale = Vector3.one * ChunkGenerator.TerrainScaleModifier;
         chunk.transform.SetParent(GameObject.Find("Chunk Generator").transform);
         terrain = chunk.transform.Find("Terrain").gameObject;
+        water = chunk.transform.Find("Water").gameObject;
         chunk.transform.position = Vector3.zero;
         featuresParent = new GameObject().transform;
         featuresParent.SetParent(chunk.transform);
@@ -67,6 +73,11 @@ public class ChunkData
         terrainMesh = new Mesh();
         terrainMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         terrainMeshFilter.mesh = terrainMesh;
+        waterMeshRenderer = water.GetComponent<MeshRenderer>();
+        waterMeshFilter = water.GetComponent<MeshFilter>();
+        waterMesh = new Mesh();
+        waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        waterMeshFilter.mesh = waterMesh;
 
         neighbors = new Dictionary<Vector2, ChunkData>();
         neighbors.Add(up, null);
@@ -158,6 +169,7 @@ public class ChunkData
         ReleaseFeatures();
         ChunkGenerator.instance.fillMap.RemoveFillPoints(this);
         Component.Destroy(terrainMesh);
+        Component.Destroy(waterMesh);
         GameObject.Destroy(chunk);
         GameObject.Destroy(featuresParent);
         loaded = false;

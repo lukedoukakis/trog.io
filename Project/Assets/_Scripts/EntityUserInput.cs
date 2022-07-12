@@ -74,28 +74,11 @@ public class EntityUserInput : EntityComponent
         else if(GameManager.GAME_SETINGS_ROTATIONALINPUTMODE == RotationalInputMode.ArrowKeys)
         {
 
-            float sensitivity = 130f;
-            float acceleration = .02f;
+            float sensitivity = 70f;
             bool left = Input.GetKey(KeyCode.LeftArrow);
             bool right = Input.GetKey(KeyCode.RightArrow);
-            if(left)
-            {
-                leftSpeedFromKey += acceleration;
-            }
-            else
-            {
-                leftSpeedFromKey -= acceleration;
-            }
-            if(right)
-            {
-                rightSpeedFromKey += acceleration;
-            }
-            else
-            {
-                rightSpeedFromKey -= acceleration;
-            }
-            leftSpeedFromKey = Mathf.Clamp01(leftSpeedFromKey);
-            rightSpeedFromKey = Mathf.Clamp01(rightSpeedFromKey);
+            leftSpeedFromKey = Convert.ToSingle(left);
+            rightSpeedFromKey = Convert.ToSingle(right);
             float deltaY = ((leftSpeedFromKey * -1f) + rightSpeedFromKey) * sensitivity;
             rotationY = deltaY;
             targetRot = Quaternion.Slerp(transform.rotation, transform.rotation * Quaternion.Euler(new Vector3(0, rotationY, 0)), Time.deltaTime);
