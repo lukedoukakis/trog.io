@@ -56,7 +56,6 @@ public class ClientCommand : NetworkBehaviour
         NetworkServer.Spawn(clientPlayerCharacter);
 
         SetPlayerCharacter(clientPlayerCharacter);
-
         Debug.Log("spawn done");
     }
 

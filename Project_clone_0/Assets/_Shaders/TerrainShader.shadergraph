@@ -2480,10 +2480,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 2121.599853515625,
-            "y": -253.60000610351563,
-            "width": 149.60009765625,
-            "height": 33.600006103515628
+            "x": 2122.0,
+            "y": -254.0000457763672,
+            "width": 150.0,
+            "height": 34.0
         }
     },
     "m_Slots": [
@@ -6702,7 +6702,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": 0.0,
+    "m_Value": 1.0,
     "m_FloatType": 0,
     "m_RangeValues": {
         "x": 0.0,
@@ -8855,7 +8855,7 @@
     "m_ShaderOutputName": "B",
     "m_StageCapability": 3,
     "m_Value": {
-        "e00": 4.0,
+        "e00": 60.0,
         "e01": 2.0,
         "e02": 2.0,
         "e03": 2.0,
