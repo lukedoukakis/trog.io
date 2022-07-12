@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour
     
     public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset renderPipelineAsset;
 
-    public static float CAMERA_DISTANCE_OUTSIDECAMP = 30f * ChunkGenerator.TerrainScaleModifier;
+    public static float CAMERA_DISTANCE_OUTSIDECAMP = 30f * ChunkGenerator.TerrainScaleModifier * 5;
     public static float CAMERA_DISTANCE_INSIDECAMP = 5f;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
     public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .15f;

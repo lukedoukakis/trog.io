@@ -7,12 +7,12 @@ using UnityEngine.Pool;
 
 public class ChunkGenerator : MonoBehaviour
 {
-    public static float TerrainScaleModifier = 5f;
+    public static float TerrainScaleModifier = 1f;
     public static float IslandDiameter = 2000f;
     public static ChunkGenerator instance;
     public static int Seed = 75675;
     public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 4;
+    public static int ChunkRenderDistance = 3;
     public static float Scale = 100f;
     public static float Amplitude = 160f;
     public static float MountainMapScale = 500f;
@@ -53,7 +53,9 @@ public class ChunkGenerator : MonoBehaviour
     int xOffset;
     int zOffset;
 
-    static List<ChunkData> ChunkDataToLoad;
+
+    public static bool AllChunksLoaded;
+    static List<Vector2> ChunkCoordsToBeActive;
     static List<ChunkData> ChunkDataLoaded;
 
     static Vector3[] TerrainVertices, WaterVertices;
@@ -105,9 +107,9 @@ public class ChunkGenerator : MonoBehaviour
                 LoadingChunks = true;
                 DeloadingChunks = true;
                 StartCoroutine(CallForSpawnGeneration());
-                UpdateChunksToLoad();
-                StartCoroutine(LoadChunks());
-                StartCoroutine(DeloadChunks());
+                UpdateChunksToBeActive();
+                StartCoroutine(ActivateChunks());
+                StartCoroutine(FreezeChunks());
             }
 
             cpuCreatureDespawnTime += Time.deltaTime;
@@ -128,7 +130,7 @@ public class ChunkGenerator : MonoBehaviour
 
         //RiverGenerator.Generate();
 
-        ChunkDataToLoad = new List<ChunkData>();
+        ChunkCoordsToBeActive = new List<Vector2>();
         ChunkDataLoaded = new List<ChunkData>();
         TerrainMesh = new Mesh();
         TerrainMeshFilter.mesh = TerrainMesh;
@@ -172,14 +174,14 @@ public class ChunkGenerator : MonoBehaviour
     }
 
 
-    void UpdateChunksToLoad()
+    void UpdateChunksToBeActive()
     {
 
 
+        float maxCoordinateDistanceFromCenter = ((int)IslandDiameter / 2) / ChunkSize + 1;
         playerRawPosition = playerTransform.position / TerrainScaleModifier;
         playerChunkCoordinate = GetChunkCoordinate(playerRawPosition);
         Vector2 currentChunkCoord = new Vector2((int)playerChunkCoordinate.x, (int)playerChunkCoordinate.y);
-
 
         // get neighbor chunk coordinates
         Vector2 halfVec = Vector3.one / 2f;
@@ -190,7 +192,7 @@ public class ChunkGenerator : MonoBehaviour
             for (int x = (int)(currentChunkCoord.x - ChunkRenderDistance); x < (int)(currentChunkCoord.x + ChunkRenderDistance); ++x)
             {
                 neighborChunkCoord = new Vector2(x, z);
-                if(Vector2.Distance(neighborChunkCoord, currentChunkCoord) <= ChunkRenderDistance)
+                if(Vector2.Distance(neighborChunkCoord, currentChunkCoord) <= ChunkRenderDistance && neighborChunkCoord.magnitude < maxCoordinateDistanceFromCenter)
                 {
                     neighborChunkCoords.Add(neighborChunkCoord);
                 }
@@ -199,11 +201,11 @@ public class ChunkGenerator : MonoBehaviour
 
 
         // remove chunks out of rendering range from ChunksToLoad
-        foreach (ChunkData cd in ChunkDataToLoad.ToArray())
+        foreach (Vector2 coordinate in ChunkCoordsToBeActive.ToArray())
         {
-            if (Vector2.Distance(playerChunkCoordinate, cd.coordinate + halfVec) >= ChunkRenderDistance)
+            if (Vector2.Distance(playerChunkCoordinate, coordinate + halfVec) >= ChunkRenderDistance)
             {
-                ChunkDataToLoad.Remove(cd);
+                ChunkCoordsToBeActive.Remove(coordinate);
             }
         }
 
@@ -211,32 +213,45 @@ public class ChunkGenerator : MonoBehaviour
         foreach (Vector2 chunkCoord in neighborChunkCoords)
         {
             if (Vector2.Distance(playerChunkCoordinate, chunkCoord + halfVec) < ChunkRenderDistance)
-            {
-                int index = ChunkDataToLoad.FindIndex(cd => cd.coordinate.Equals(chunkCoord));
-                if (index < 0)
+            {  
+                if (!ChunkCoordsToBeActive.Contains(chunkCoord))
                 {
-                    ChunkDataToLoad.Add(new ChunkData(chunkCoord));
+                    ChunkCoordsToBeActive.Add(chunkCoord);
                 }
             }
         }
 
     }
 
-    IEnumerator LoadChunks()
+    // for each chunk to be active, load it if it isn't loaded and unfreeze it if it's frozen
+    IEnumerator ActivateChunks()
     {
 
         IEnumerator load;
-        foreach (ChunkData cd in ChunkDataToLoad.OrderBy(c => Vector3.Distance(GetChunkCoordinate(playerTransform.position / TerrainScaleModifier), c.coordinate)).ToArray())
+        ChunkData cd;
+        int index;
+        foreach (Vector2 coordinate in ChunkCoordsToBeActive.OrderBy(c => Vector3.Distance(GetChunkCoordinate(playerTransform.position / TerrainScaleModifier), c)).ToArray())
         {
-            if (!cd.loaded)
+            index = ChunkDataLoaded.FindIndex(cd => cd.coordinate == coordinate);
+            if(index < 0)
             {
+                cd = new ChunkData(coordinate);
                 load = LoadChunk(cd);
-                yield return StartCoroutine(load);
                 ChunkDataLoaded.Add(cd);
+                yield return StartCoroutine(load);
             }
-            if(GetChunkCoordinate(playerTransform.position / TerrainScaleModifier) != playerChunkCoordinate){
-                break;
+            else
+            {
+                cd = ChunkDataLoaded[index];
+                if(cd.frozen)
+                {
+                    cd.SetFrozen(false);
+                }
             }
+            
+            // if(GetChunkCoordinate(playerTransform.position / TerrainScaleModifier) != playerChunkCoordinate){
+            //     break;
+            // }
         }
         LoadingChunks = false;
     }
@@ -245,6 +260,10 @@ public class ChunkGenerator : MonoBehaviour
 
     IEnumerator LoadChunk(ChunkData cd)
     {
+        if(cd.coordinate == new Vector2(0f, 0f))
+        {
+            Debug.Log("LoadChunk(): " + cd.coordinate);
+        }
 
         cd.Init(chunkPrefab);
         UnityEngine.Random.InitState(cd.randomState);
@@ -275,17 +294,19 @@ public class ChunkGenerator : MonoBehaviour
 
     }
 
-    IEnumerator DeloadChunks()
-    {
 
+    // for all currently loaded and unfrozen chunks, freeze them if they are not included in the chunks that should be active
+    IEnumerator FreezeChunks()
+    {
         foreach (ChunkData loadedCd in ChunkDataLoaded.ToArray())
         {
-            int index = ChunkDataToLoad.FindIndex(cd => cd.coordinate == loadedCd.coordinate);
-            if (index < 0)
+            if(!loadedCd.frozen)
             {
-                loadedCd.Deload();
-                ChunkDataLoaded.Remove(loadedCd);
-                yield return null;
+                if (!ChunkCoordsToBeActive.Contains(loadedCd.coordinate))
+                {
+                    loadedCd.SetFrozen(true);
+                    yield return null;
+                }
             }
         }
         DeloadingChunks = false;
@@ -319,10 +340,6 @@ public class ChunkGenerator : MonoBehaviour
                 elevationValue = 1 - Mathf.InverseLerp(0, IslandDiameter / 2, new Vector2(x + xOffset, z + zOffset).magnitude);
                 //elevationValue = Mathf.PerlinNoise((x + xOffset - Seed + 100000.01f) / ElevationMapScale, (z + zOffset - Seed + 100000.01f) / ElevationMapScale) * 2f - 1f;
                 float elevationValueWithRoughness = elevationValue + (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 15f, (z + zOffset - Seed + .01f) / 15f) * 2f - 1f) * .01f;
-                if(x == 0 && z == 0)
-                {
-                    Debug.Log(elevationValue);
-                }
 
 
                 // -------------------------------------------------------

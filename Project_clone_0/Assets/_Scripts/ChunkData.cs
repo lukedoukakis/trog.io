@@ -10,6 +10,7 @@ public class ChunkData
  
     public Vector2 coordinate;
     public bool loaded;
+    public bool frozen;
     public bool spawnsPlaced;
     public int randomState;
 
@@ -51,8 +52,6 @@ public class ChunkData
     public ChunkData(Vector2 _coord)
     {
         coordinate = _coord;
-        loaded = false;
-        spawnsPlaced = false;
     }
 
     public void Init(GameObject chunkPrefab)
@@ -174,6 +173,16 @@ public class ChunkData
         GameObject.Destroy(featuresParent);
         loaded = false;
     }
+
+    public void SetFrozen(bool state)
+    {
+        chunk.SetActive(!state);
+        // featuresParent.gameObject.SetActive(!state);
+        // terrain.SetActive(!state);
+        // water.SetActive(!state);
+        frozen = state;
+    }
+
 
 }
 
