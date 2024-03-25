@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 8832917353157146673}
   - component: {fileID: 8832917353157146672}
   - component: {fileID: 6170307933171692937}
-  - component: {fileID: 4844609756739077931}
   - component: {fileID: -1281300251005281186}
   m_Layer: 10
   m_Name: Cactus 0
@@ -29,13 +28,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8832917353157146679}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2208464344554266178
 MonoBehaviour:
@@ -49,8 +48,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15fbd0e55bac06d48ac6e6c193042235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
   entityHandle: {fileID: 0}
   entityInfo: {fileID: 0}
   entityStats: {fileID: 0}
@@ -121,29 +118,21 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8832917353157146679}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
+  serializedVersion: 2
   m_Radius: 0.19522484
   m_Height: 2.2337084
   m_Direction: 1
   m_Center: {x: 0.0047798604, y: 0.91495514, z: -0.0018119663}
---- !u!114 &4844609756739077931
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8832917353157146679}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneId: 0
-  serverOnly: 0
-  visible: 0
-  m_AssetId: e35c52c522be7d64d8ef45ea9daf1d63
-  hasSpawned: 0
 --- !u!65 &-1281300251005281186
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -152,8 +141,16 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8832917353157146679}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Size: {x: 1.3656511, y: 2.0263236, z: 0.77469087}
   m_Center: {x: 0.009172618, y: 0.81126267, z: 0.06847279}

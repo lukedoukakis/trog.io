@@ -1,13 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
 
 
 // class to hold commands sent from client to server
 
 
-public class ClientCommand : NetworkBehaviour
+public class ClientCommand : MonoBehaviour
 {
 
 
@@ -15,47 +14,46 @@ public class ClientCommand : NetworkBehaviour
     public GameObject clientPlayerCharacter;
     public EntityHandle clientPlayerCharacterHandle;
 
-    GameObject characterPrefab;
+    [SerializeField] GameObject characterPrefab;
 
     void Awake()
     {
         instance = this;
-        characterPrefab = Resources.Load<GameObject>("Terrain/Humans/Character");
+    }
+
+    void Start()
+    {
+        OnGameStart();
     }
 
 
-    public override void OnStartLocalPlayer()
+    public void OnGameStart()
     {
 
-        Debug.Log("OnStartLocalPlayer()");
-
-        base.OnStartLocalPlayer();
-        StartCoroutine(SpawnPlayerCharacterWhenReady());
+        Debug.Log("OnGameStart()");
+        SpawnPlayerCharacter();
     }
 
 
-    IEnumerator SpawnPlayerCharacterWhenReady()
-    {
-        yield return new WaitUntil(() => NetworkClient.ready);
-        CmdSpawnPlayerCharacter();
-    }
 
-    [Command]
-    void CmdSpawnPlayerCharacter()
+
+    void SpawnPlayerCharacter()
     {
 
-        GameObject p = GameObject.Instantiate(characterPrefab);
-        EntityHandle pHandle = p.GetComponent<EntityHandle>();
-        p.transform.position = new Vector3(0f, ChunkGenerator.Amplitude + 50f, 0f);
+        GameObject playerCharacter = GameObject.Instantiate(characterPrefab);
+        playerCharacter.name = "player";
+        EntityHandle playerHandle = playerCharacter.GetComponent<EntityHandle>();
+        playerCharacter.transform.position = new Vector3(0f, ChunkGenerator.Amplitude + 200f, 0f);
+        playerHandle.entityPhysics.rb.position = new Vector3(0f, ChunkGenerator.Amplitude + 200f, 0f);
+        clientPlayerCharacter = playerCharacter;
+        clientPlayerCharacterHandle = playerHandle;
 
-        //Debug.Log(pcc);
-        clientPlayerCharacter = p;
-        clientPlayerCharacterHandle = pHandle;
-
-        StartCoroutine(SetNewFactionWhenReady(p.GetComponent<EntityHandle>(), false, FactionStartingItemsTier.PlayerTest));
-        NetworkServer.Spawn(clientPlayerCharacter);
-
+        CreateNewFaction(playerHandle, false, FactionStartingItemsTier.PlayerTest);
         SetPlayerCharacter(clientPlayerCharacter);
+
+
+        //Testing.instance.OnFactionCreation();
+        
         Debug.Log("spawn done");
     }
 
@@ -80,22 +78,20 @@ public class ClientCommand : NetworkBehaviour
     }
 
 
-    public IEnumerator SpawnCharacterAsFollowerWhenReady(EntityHandle leaderHandle, Vector3 position, bool spawnWithGear)
+    public void SpawnCharacterAsFollower(EntityHandle leaderHandle, Vector3 position, bool spawnWithGear)
     {
-        yield return new WaitUntil(() => NetworkClient.ready);
-        CmdSpawnCharacterAsFollower(leaderHandle, position, spawnWithGear);
-    }
-    [Command]
-    public void CmdSpawnCharacterAsFollower(EntityHandle leaderHandle, Vector3 position, bool spawnWithGear)
-    {
+
+        Debug.Log("spawning follower");
+
         GameObject character = GameObject.Instantiate(characterPrefab, position, Quaternion.identity);
         EntityHandle characterHandle = character.GetComponent<EntityHandle>();
+        characterHandle.entityPhysics.rb.position = position;
         Faction faction = leaderHandle.entityInfo.faction;
         EntityInfo characterInfo = characterHandle.entityInfo;
         characterInfo.name = "tribemember";
         characterInfo.faction = faction;
         characterHandle.entityBehavior.ResetFollowPosition();
-        NetworkServer.Spawn(character);
+        //NetworkServer.Spawn(character);
 
         //npcHandle.entityItems.EquipClothing(Item.ClothingTest);
 
@@ -114,55 +110,35 @@ public class ClientCommand : NetworkBehaviour
         }
 
         ChunkGenerator.AddActiveCPUCreature(character);
+
+        Debug.Log("spawned follower");
     }
 
 
-    public IEnumerator SpawnCharacterAsLeaderWhenReady(Vector3 position, bool createCamp, FactionStartingItemsTier factionTier)
-    {
-        yield return new WaitUntil(() => NetworkClient.ready);
-        CmdSpawnCharacterAsLeader(position, createCamp, factionTier);
-    }
-    [Command]
-    public void CmdSpawnCharacterAsLeader(Vector3 position, bool createCamp, FactionStartingItemsTier factionTier)
+    public void SpawnCharacterAsLeader(Vector3 position, bool createCamp, FactionStartingItemsTier factionTier)
     {
         GameObject character = GameObject.Instantiate(characterPrefab, position, Quaternion.identity);
         EntityHandle characterHandle = character.GetComponent<EntityHandle>();
-        NetworkServer.Spawn(character);
-        StartCoroutine(SetNewFactionWhenReady(characterHandle, createCamp, factionTier));
+        CreateNewFaction(characterHandle, createCamp, factionTier);
 
         ChunkGenerator.AddActiveCPUCreature(character);
     }
 
 
-    public IEnumerator SetNewFactionWhenReady(EntityHandle founderHandle, bool createCamp, FactionStartingItemsTier tier)
-    {
-
-        yield return new WaitUntil(() => NetworkClient.ready && founderHandle != null);
-
-        CmdInstantiateNewFaction(founderHandle, tier);
-
-        if(createCamp)
-        {
-            Camp.TryPlaceCamp(founderHandle.entityInfo.faction, founderHandle.transform);
-        }
-    }
-
-    [Command]
-    public void CmdInstantiateNewFaction(EntityHandle founderHandle, FactionStartingItemsTier tier)
+    public void CreateNewFaction(EntityHandle founderHandle, bool createCamp, FactionStartingItemsTier tier)
     {
         //Debug.Log("SETTING FACTION");
         Faction faction = Faction.InstantiateFaction("Faction " + (Random.Range(0, int.MaxValue)).ToString());
         faction.leaderHandle = founderHandle;
         faction.AddMember(founderHandle, FactionRole.Leader, false);
         founderHandle.entityInfo.faction = faction;
-
         faction.AddStartingResources(tier);
-
-        // if(ReferenceEquals(founderHandle, GameManager.instance.localPlayerHandle))
-        // {
-        //     Testing.instance.OnFactionCreation();
-        // }
+        if(createCamp)
+        {
+            Camp.TryPlaceCamp(founderHandle.entityInfo.faction, founderHandle.transform);
+        }
     }
+
 
 
 }

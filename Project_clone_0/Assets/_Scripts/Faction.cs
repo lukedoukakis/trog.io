@@ -408,8 +408,8 @@ public class Faction : MonoBehaviour
         switch (tier)
         {
             case FactionStartingItemsTier.PlayerTest :
-                memberCount = 0;
-                itemCount = 0;
+                memberCount = 2;
+                itemCount = 10;
                 break;
             case FactionStartingItemsTier.Nothing :
                 memberCount = 2;
@@ -457,7 +457,7 @@ public class Faction : MonoBehaviour
         //spawnWithGear = false;
         for(int i = 0; i < memberCount; ++i)
         {
-            StartCoroutine(ClientCommand.instance.SpawnCharacterAsFollowerWhenReady(leaderHandle, leaderHandle.transform.position, spawnWithGear));
+            ClientCommand.instance.SpawnCharacterAsFollower(leaderHandle, leaderHandle.transform.position + Vector3.up * 1f, spawnWithGear);
         }
     }
 

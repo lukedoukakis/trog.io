@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using Mirror;
 using System.Reflection;
 using System.Linq;
 
-public class EntityComponent : NetworkBehaviour
+public class EntityComponent : MonoBehaviour
 {
 
     protected string fieldName;
@@ -58,7 +57,7 @@ public class EntityComponent : NetworkBehaviour
     public void RemoveFromWorld()
     {
 
-        //Debug.Log("RemoveFromWorld()");
+        Debug.Log("RemoveFromWorld(): " + this.name);
 
         // destroy any items the entity is carrying
         if(entityItems != null)

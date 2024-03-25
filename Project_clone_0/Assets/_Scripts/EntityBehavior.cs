@@ -1387,6 +1387,11 @@ public class EntityBehavior : EntityComponent
             // homeT.SetParent(directionalT);
             // homeT.position = directionalT.position;
 
+            if(followPositionTransform == null)
+            {
+                Debug.Log(name + " followPositionTransform null");
+            }
+
             followPositionTransform.SetParent(entityInfo.faction.leaderHandle.transform);
             followPositionTransform.position = entityInfo.faction.leaderHandle.transform.position;
             

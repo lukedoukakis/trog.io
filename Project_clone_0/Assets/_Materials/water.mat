@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 5
+  version: 7
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -23,13 +23,18 @@ Material:
   m_Name: water
   m_Shader: {fileID: -6465566751694194690, guid: ced00bbbfb8fdc3499cb61c6e8f41ded,
     type: 3}
-  m_ShaderKeywords: _SURFACE_TYPE_TRANSPARENT
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _SURFACE_TYPE_TRANSPARENT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -74,7 +79,7 @@ Material:
     - _ZWriteControl: 0
     m_Colors:
     - Color_2127F07A: {r: 0.8726415, g: 0.95101595, b: 1, a: 1}
-    - Color_2459B9F0: {r: 1, g: 1, b: 1, a: 1}
+    - Color_2459B9F0: {r: 0.9292453, g: 0.9823113, b: 1, a: 1}
     - Color_39A062A3: {r: 0.7737629, g: 0.86391765, b: 0.8679245, a: 1}
     - Color_A14ACFAE: {r: 0.7971698, g: 0.94770926, b: 1, a: 0}
     - _PlayerPosition: {r: -63.85839, g: 4589.878, b: -42.378468, a: 0}

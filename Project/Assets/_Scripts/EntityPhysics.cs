@@ -174,6 +174,9 @@ public class EntityPhysics : EntityComponent
         }
 
         ikEnabled = isQuadripedal;
+
+        ikEnabled = true; //wait
+
         ikParent = Utility.FindDeepChild(transform, "IKTargets");
         basePositionHips = ikParent.Find("BasePositionHips");
         basePositionFootRight = ikParent.Find("BasePositionFootRight");
@@ -754,6 +757,10 @@ public class EntityPhysics : EntityComponent
         //Debug.Log("updating weapon pole target");
 
         Item weapon = entityItems.weaponEquipped_item;
+        if(weapon == null)
+        {
+            return;
+        }
         if (weapon.holdStyle.Equals(Item.ItemHoldStyle.Spear))
         {
             if (entityItems.rangedMode)
@@ -951,20 +958,24 @@ public class EntityPhysics : EntityComponent
         if(IsClientPlayerCharacter())
         {
 
-            isSprinting = false;
+            //isSprinting = false;
 
-            //isSprinting = entityUserInput.pressSprint;
+            isSprinting = entityUserInput.pressSprint;
         }
         else
         {
 
-            isSprinting = false;
+            //isSprinting = false;
 
-            // isSprinting = entityBehavior.urgent;
-            // if(entityInfo.isFactionFollower)
-            // {
-            //     isSprinting = isSprinting || entityInfo.faction.leaderHandle.entityPhysics.isSprinting;
-            // }
+
+            if(entityInfo.faction.leaderHandle != null)
+            {
+                isSprinting = entityInfo.faction.leaderHandle.entityPhysics.isSprinting;
+            }
+            else
+            {
+                isSprinting = entityBehavior.urgent;
+            }
         }
     }
 

@@ -10,7 +10,7 @@ public class EntityUserInput : EntityComponent
     //public enum InteractionType{ TakeItem, PlaceItem, }
 
     public static float DISTANCE_INTERACTABLE = 2f;
-    public static float DODGE_INPUT_TIMESTEP = .2f;
+    public float DODGE_COOLDOWN_TIME = 1f;
 
 
     static float AUTO_SENSE_DISTANCE_FEATURE = 1f;
@@ -22,6 +22,7 @@ public class EntityUserInput : EntityComponent
     public bool pressForward, pressBack, pressLeft, pressRight, pressSprint, pressJump, pressWalk, pressDodge;
     public bool pressForwardDown, pressBackDown, pressLeftDown, pressRightDown;
     public float timeOffForward, timeOffBack, timeOffLeft, timeOffRight;
+    public float timeSinceDodge = 0f;
     public bool pressToggleAttackRanged;
     public float rotationY;
     float leftSpeedFromKey, rightSpeedFromKey;
@@ -85,6 +86,7 @@ public class EntityUserInput : EntityComponent
         }
         
         transform.rotation = targetRot;
+        entityPhysics.rb.rotation = targetRot;
     }
 
     void HandleMovement()
@@ -102,42 +104,50 @@ public class EntityUserInput : EntityComponent
         pressBack = Input.GetKey(KeyCode.S);
         pressLeft = Input.GetKey(KeyCode.A);
         pressRight = Input.GetKey(KeyCode.D);
-        pressSprint = Input.GetKey(KeyCode.LeftShift) && false;
+        pressSprint = Input.GetKey(KeyCode.LeftShift);
         pressJump = Input.GetKey(KeyCode.Space);
-        pressWalk = Input.GetKey(KeyCode.LeftShift);
+        //pressWalk = Input.GetKey(KeyCode.LeftShift);
         pressToggleAttackRanged = Input.GetKeyDown(KeyCode.LeftControl);
 
         pressDodge = false;
         if(pressForwardDown)
         {
-            if(timeOffForward < DODGE_INPUT_TIMESTEP && pressSprint)
-            {
-                pressDodge = true;
-            }
+            // if(timeSinceDodge >= DODGE_COOLDOWN_TIME && pressSprint)
+            // {
+            //     pressDodge = true;
+            //     timeSinceDodge = 0f;
+            //     Debug.Log("pressDodge");
+            // }
             timeOffForward = 0f;
         }
         if(pressBackDown)
         {
-            if(timeOffBack < DODGE_INPUT_TIMESTEP && pressSprint)
-            {
-                pressDodge = true;
-            }
+            // if(timeSinceDodge >= DODGE_COOLDOWN_TIME && pressSprint)
+            // {
+            //     pressDodge = true;
+            //     timeSinceDodge = 0f;
+            //     Debug.Log("pressDodge");
+            // }
             timeOffBack = 0f;
         }
         if(pressLeftDown)
         {
-            if(timeOffLeft < DODGE_INPUT_TIMESTEP && pressSprint)
-            {
-                pressDodge = true;
-            }
+            // if(timeSinceDodge >= DODGE_COOLDOWN_TIME && pressSprint)
+            // {
+            //     pressDodge = true;
+            //     timeSinceDodge = 0f;
+            //     Debug.Log("pressDodge");
+            // }
             timeOffLeft = 0f;
         }
         if(pressRightDown)
         {
-            if(timeOffRight < DODGE_INPUT_TIMESTEP && pressSprint)
-            {
-                pressDodge = true;
-            }
+            // if(timeSinceDodge >= DODGE_COOLDOWN_TIME && pressSprint)
+            // {
+            //     pressDodge = true;
+            //     timeSinceDodge = 0f;
+            //     Debug.Log("pressDodge");
+            // }
             timeOffRight = 0f;
         }
 
@@ -336,24 +346,25 @@ public class EntityUserInput : EntityComponent
     void OnInteractInput()
     {
         
-        if(hoveredInteractableObject == null){ return; }
-
-        InteractionCountLimiter icl = hoveredInteractableObject.GetComponent<InteractionCountLimiter>();
-        if(icl != null)
-        {
-            icl.OnInteract();
-        }
-
-        Transform hoveredInteractableObjectTransform = hoveredInteractableObject.transform;
-
-        //Log("Hovered object: " + hoveredInteractableObject.name);
-
-        // if hovering over something, interact with it
         if(hoveredInteractableObject == null || Vector3.Distance(hoveredInteractableObject.transform.position, selectionOrigin.position) > DISTANCE_INTERACTABLE){
-            entityItems.OnEmptyInteract();
+            OnUseInput();
+            //entityItems.OnEmptyInteract();
         }
+        else
+        {
+            // if hovering over something, interact with it
+        
+            InteractionCountLimiter icl = hoveredInteractableObject.GetComponent<InteractionCountLimiter>();
+            if(icl != null)
+            {
+                icl.OnInteract();
+            }
 
-        else{
+            Transform hoveredInteractableObjectTransform = hoveredInteractableObject.transform;
+
+            //Log("Hovered object: " + hoveredInteractableObject.name);
+
+            
             string t = hoveredInteractableObject.tag;
             if(t == "Item"){
                 entityItems.OnObjectTake(hoveredInteractableObject, hoveredInteractableObject.GetComponent<ObjectReference>().GetObjectReference());
@@ -742,6 +753,7 @@ public class EntityUserInput : EntityComponent
             timeOffBack += dTime;
             timeOffLeft += dTime;
             timeOffRight += dTime;
+            timeSinceDodge += dTime;
         
         }
 

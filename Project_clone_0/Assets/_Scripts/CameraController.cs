@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
 using System;
 
 public class CameraController : MonoBehaviour
@@ -9,8 +8,8 @@ public class CameraController : MonoBehaviour
     
     public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset renderPipelineAsset;
 
-    public static float CAMERA_DISTANCE_OUTSIDECAMP = 30f * ChunkGenerator.TerrainScaleModifier * 5;
-    public static float CAMERA_DISTANCE_INSIDECAMP = 5f;
+    public static float CAMERA_DISTANCE_OUTSIDECAMP = 20f;
+    public static float CAMERA_DISTANCE_INSIDECAMP = 20f;
     public static float CAMERA_ZOOM_SPEED_CAMPTRANSITION = 4f;
     public static float CAMERA_LOCK_VERTICALITY_OUTSIDECAMP = .15f;
     public static float CAMERA_LOCK_VERTICALITY_INSIDECAMP = .15f;
@@ -111,7 +110,7 @@ public class CameraController : MonoBehaviour
             //     verticalityModifier += (up + down) * sensitivity_rotation * .25f * Time.deltaTime;
             // }
         }
-        //ZoomInput();
+        ZoomInput();
         
 
         float max = .48f;
@@ -247,9 +246,9 @@ public class CameraController : MonoBehaviour
         if(playerTransform != null)
         {
             UpdateCamera();
+            distanceFromPlayer = Vector3.Distance(Camera.main.transform.position, playerTransform.position);
         }
 
-        distanceFromPlayer = Vector3.Distance(Camera.main.transform.position, playerTransform.position);
 
         //UpdateRenderScale();
         

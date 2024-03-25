@@ -7,7 +7,7 @@ using System.Linq;
 public class Camp : MonoBehaviour
 {
 
-    public static float PLACEMENT_MAXIMUM_TERRAIN_HEIGHT_VARIANCE = 4f;
+    public static float PLACEMENT_MAXIMUM_TERRAIN_HEIGHT_VARIANCE = 8f;
     public static float BASE_CAMP_RADIUS = 8f;
     public static float CAMP_COMPONENT_PLACING_TIME_GAP = .1f;
 
@@ -683,8 +683,8 @@ public class Camp : MonoBehaviour
 
     void OnFoodCast(EntityHandle casterHandle, Item foodItem)
     {
-        //Debug.Log("OnFoodCast()");
-        StartCoroutine(ClientCommand.instance.SpawnCharacterAsFollowerWhenReady(casterHandle.entityInfo.faction.leaderHandle, GetOpenTribeMemberStandPosition().transform.position, false));
+        Debug.Log("OnFoodCast()");
+        ClientCommand.instance.SpawnCharacterAsFollower(casterHandle.entityInfo.faction.leaderHandle, GetOpenTribeMemberStandPosition().transform.position + Vector3.up * 5f, false);
         if(casterHandle.entityInfo.faction.GetItemCount(foodItem) > 0)
         {
             casterHandle.entityInfo.faction.RemoveItemOwned(foodItem, 1, null, true, casterHandle.entityItems);

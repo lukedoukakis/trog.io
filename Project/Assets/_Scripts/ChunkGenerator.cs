@@ -8,11 +8,11 @@ using UnityEngine.Pool;
 public class ChunkGenerator : MonoBehaviour
 {
     public static float TerrainScaleModifier = 1f;
-    public static float IslandDiameter = 2000f;
+    public static float IslandDiameter = 100000f;
     public static ChunkGenerator instance;
     public static int Seed = 75675;
-    public static int ChunkSize = 30;
-    public static int ChunkRenderDistance = 3;
+    public static int ChunkSize = 10;
+    public static int ChunkRenderDistance = 8;
     public static float Scale = 100f;
     public static float Amplitude = 160f;
     public static float MountainMapScale = 500f;
@@ -260,10 +260,6 @@ public class ChunkGenerator : MonoBehaviour
 
     IEnumerator LoadChunk(ChunkData cd)
     {
-        if(cd.coordinate == new Vector2(0f, 0f))
-        {
-            Debug.Log("LoadChunk(): " + cd.coordinate);
-        }
 
         cd.Init(chunkPrefab);
         UnityEngine.Random.InitState(cd.randomState);
@@ -776,7 +772,7 @@ public class ChunkGenerator : MonoBehaviour
                             spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
                             spawnScale = Vector3.one * spawnParameters.scale;
                             //Debug.Log("WILD NPC");
-                            instance.StartCoroutine(ClientCommand.instance.SpawnCharacterAsLeaderWhenReady(spawnPosition, true, FactionStartingItemsTier.One));
+                            ClientCommand.instance.SpawnCharacterAsLeader(spawnPosition, true, FactionStartingItemsTier.One);
                             //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
 
                         }
@@ -809,31 +805,36 @@ public class ChunkGenerator : MonoBehaviour
                 cpuCreatureHandle = cpuCreature.GetComponent<EntityHandle>();
                 if(Vector3.Distance(playerRawPosition, activeCPUCreatures[i].transform.position) > despawnDistance)
                 {
-                    activeCPUCreatures.RemoveAt(i);
                     Faction creatureFaction = cpuCreature.GetComponent<EntityInfo>().faction;
-                    if (creatureFaction != null && !ReferenceEquals(creatureFaction, ClientCommand.instance.clientPlayerCharacterHandle.entityInfo.faction))
+                    bool isFromPlayerFaction = ReferenceEquals(creatureFaction, ClientCommand.instance.clientPlayerCharacterHandle.entityInfo.faction);
+                    if(!isFromPlayerFaction)
                     {
-                        // if creature's faction is a faction besides its species' base faction, and the faction is not already marked for destruction, destroy the whole faction
-                        if (!ReferenceEquals(creatureFaction, SpeciesInfo.GetSpeciesInfo(cpuCreatureHandle.entityInfo.species)) && !creatureFaction.IsMarkedForDestruction())
+                        activeCPUCreatures.RemoveAt(i);
+                        if (creatureFaction != null)
                         {
-                            creatureFaction.MarkForDestruction();
-                            creatureFaction.DestroyFaction();
+                            // if creature's faction is a faction besides its species' base faction, and the faction is not already marked for destruction, destroy the whole faction
+                            if (!ReferenceEquals(creatureFaction, SpeciesInfo.GetSpeciesInfo(cpuCreatureHandle.entityInfo.species)) && !creatureFaction.IsMarkedForDestruction())
+                            {
+                                creatureFaction.MarkForDestruction();
+                                creatureFaction.DestroyFaction();
+                            }
+                            // else, remove only the creature from the world
+                            else
+                            {
+                                
+                                cpuCreatureHandle.RemoveFromWorld();
+                            }
                         }
-                        // else, remove only the creature from the world
                         else
                         {
                             cpuCreatureHandle.RemoveFromWorld();
                         }
                     }
-                    else
-                    {
-                        cpuCreatureHandle.RemoveFromWorld();
-                    }
-
                     
                 }
             }
-            else{
+            else
+            {
                 activeCPUCreatures.RemoveAt(i);
             }
         }
@@ -983,6 +984,7 @@ public class ChunkGenerator : MonoBehaviour
     public static ChunkData GetChunkFromRawPosition(Vector3 rawPosition)
     {
         Vector2 chunkCoord = GetChunkCoordinate(rawPosition);
+        //Debug.Log("chunkCoord: " + chunkCoord);
         return GetChunkFromCoordinate(chunkCoord);
     }
 
