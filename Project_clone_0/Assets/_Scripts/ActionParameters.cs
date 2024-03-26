@@ -158,10 +158,10 @@ public class ActionParameters : ScriptableObject
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 
-            case "Idle For 5 Seconds" :
+            case "Idle For 15 Seconds" :
 
                 ap.type = ActionType.Idle;
-                ap.maxTime = 5f;
+                ap.maxTime = 15f;
                 ap.actionSequenceBeforeBeginning = doerHandle.entityBehavior.entityActionSequence_AssertStanding;
                 break;
 

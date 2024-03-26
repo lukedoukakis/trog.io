@@ -378,7 +378,7 @@ public class EntityUserInput : EntityComponent
                 }
             }
             else if(t == "Bonfire"){
-                entityInfo.faction.camp.CastFoodIntoBonfire(entityHandle);
+                entityInfo.faction.camp.OnCastFoodIntoBonfire(entityHandle);
             }
             else if (t.StartsWith("ObjectRack"))
             {

@@ -488,8 +488,9 @@ public class ChunkGenerator : MonoBehaviour
                     // float posterizeStrength = Perlin.Noise((x + xOffset + .01f) / postVariance, (heightValue * Amplitude / postVariance), (z + zOffset - Seed + .01f) / postVariance);
                     // posterizeStrength = Mathf.InverseLerp(.4f, .6f, posterizeStrength);
                     // posterizeStrength = Mathf.Lerp(0f, .4f, posterizeStrength);
-                    //heightValue = PosterizeSoft(shoreHeight, 1f, heightValue, 10, Mathf.InverseLerp(0, .05f, freshWaterValue), x + xOffset, z + zOffset);
-                    //heightValue = Posterize(shoreHeight, 1f, heightValue, 50);
+                    // posterizeStrength = .005f;
+                    // heightValue = PosterizeSoft(shoreHeight, 1f, heightValue, 10, .4f, x + xOffset, z + zOffset);
+                    // heightValue = Posterize(shoreHeight, 1f, heightValue, 50);
 
                 }
                 else
@@ -499,13 +500,13 @@ public class ChunkGenerator : MonoBehaviour
 
 
                 // create ocean and rivers
-                heightValue_water = Mathf.Lerp(SeaLevel, Mathf.Max(SeaLevel, heightValue - (meter * 1)), freshWaterValue);
-                heightValue = Mathf.Lerp(heightValue - (meter * 1), heightValue, 1 - freshWaterValue);
+                heightValue_water = SeaLevel;
+                heightValue = Mathf.Lerp(SeaLevel - meter, heightValue, 1 - freshWaterValue);
 
 
 
                 // bumpiness
-                heightValue += (mtn1 > 0 && freshWaterValue <= 0) ? (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 1, (z + zOffset - Seed + .01f) / 1) * 2f - 1f) * .05f : 0;
+                //heightValue += (mtn1 > 0 && freshWaterValue <= 0) ? (Mathf.PerlinNoise((x + xOffset - Seed + .01f) / 1, (z + zOffset - Seed + .01f) / 1) * 2f - 1f) * .05f : 0;
 
 
 
@@ -528,7 +529,7 @@ public class ChunkGenerator : MonoBehaviour
                 FreshWaterMap[x, z] = freshWaterValue;
                 WetnessMap[x, z] = wetnessValue;
                 HeightMap[x, z] = heightValue;
-                HeightMapWater[x, z] = SeaLevel;
+                HeightMapWater[x, z] = heightValue_water;
 
 
             }

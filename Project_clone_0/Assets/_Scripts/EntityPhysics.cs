@@ -212,7 +212,7 @@ public class EntityPhysics : EntityComponent
 
         acceleration = Stats.GetStatValue(entityStats.combinedStats, Stats.StatType.Agility) * BASE_ACCELERATION;
         maxSpeed_run = Stats.GetStatValue(entityStats.combinedStats, Stats.StatType.Speed) * BASE_MAX_SPEED;
-        maxSpeed_sprint = maxSpeed_run * 3f;
+        maxSpeed_sprint = maxSpeed_run * 2f;
         maxSpeed_climb = maxSpeed_run * .25f;
         maxSpeed_swim = maxSpeed_run * 1f;
         maxSpeed_dodge = maxSpeed_run * 4f;
@@ -949,6 +949,10 @@ public class EntityPhysics : EntityComponent
         SetIsSprinting();
         SetIsWalking();
         Vector3 move = transform.TransformDirection(direction).normalized * speedStat;
+
+        //float bodyDirectionModifier = Mathf.Lerp(.005f, 1f, 1f - Mathf.InverseLerp(0f, 180f, Vector3.Angle(move, Vector3.Scale(entityOrientation.body.forward, new Vector3(1f, 0f, 1f)))));
+
+
         rb.AddForce(move * speedStat, ForceMode.Force);
 
     }

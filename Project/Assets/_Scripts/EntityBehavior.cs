@@ -21,7 +21,7 @@ public class EntityBehavior : EntityComponent
 
     public static float RANDOM_OFFSET_RANGE = 1f;
     public static float DISTANCE_THRESHOLD_NONE = -1f;
-    public static float DISTANCE_THRESHOLD_SAME_POINT = .75f;
+    public static float DISTANCE_THRESHOLD_SAME_POINT = .2f;
     public static float DISTANCE_THRESHOLD_SAME_SPOT = 2f;
     public static float DISTANCE_THRESHOLD_MELEE_ATTACK = 1f;
     public static float DISTANCE_THRESHOLD_LUNGEATTACK = 10f;
@@ -236,7 +236,7 @@ public class EntityBehavior : EntityComponent
             else
             {
                 ActionParameters goTo = ActionParameters.GenerateActionParameters("Go To Random Nearby Spot", entityHandle);
-                ActionParameters idle = ActionParameters.GenerateActionParameters("Idle For 5 Seconds", entityHandle);
+                ActionParameters idle = ActionParameters.GenerateActionParameters("Idle For 15 Seconds", entityHandle);
                 InsertAction(goTo);
                 InsertAction(idle);
             }       
@@ -390,6 +390,11 @@ public class EntityBehavior : EntityComponent
                     targetPos = targetT.position + transform.TransformDirection(ap.offset);
                     if (IsAtPosition(targetPos, ap.distanceThreshold))
                     {
+                        if(ap.distanceThreshold == DISTANCE_THRESHOLD_SAME_POINT)
+                        {
+                            transform.position = targetPos;
+                            entityPhysics.rb.position = targetPos;
+                        }
                         timer.Stop();
                         break;
                     }

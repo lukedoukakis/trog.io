@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Callbacks;
 using UnityEngine;
 
 public class ObjectRack : CampComponent
@@ -379,6 +380,13 @@ public class ObjectRack : CampComponent
                     }
 
                     Utility.ToggleObjectPhysics(_o, allowItemPhysicalColliders, allowItemHoverTriggers, allowGravity, allowGravity);
+
+                    Rigidbody _rb = _o.GetComponent<Rigidbody>();
+                    if(_rb != null)
+                    {
+                        _rb.position = _o.transform.position;
+                        _rb.rotation = _o.transform.rotation;
+                    }
             
                     if(removeAfterMovingToTarget)
                     {

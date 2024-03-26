@@ -86,7 +86,8 @@ public class EntityOrientation : EntityComponent
 
         if (IsClientPlayerCharacter() && !entityPhysics.isInWater)
         {
-            bodyLean = Mathf.InverseLerp(leanBoundMin, leanBoundMax, Mathf.Sin(Camera.main.transform.rotation.eulerAngles.x * Mathf.Deg2Rad)) * 2f - 1f + .2f;
+            //bodyLean = Mathf.InverseLerp(leanBoundMin, leanBoundMax, Mathf.Sin(Camera.main.transform.rotation.eulerAngles.x * Mathf.Deg2Rad)) * 2f - 1f + .2f;
+            bodyLean = 0f;
         }
         else
         {
@@ -104,15 +105,17 @@ public class EntityOrientation : EntityComponent
                 Vector3 dirMovement = entityPhysics.isMoving ? entityPhysics.velHoriz_this : dirForwardBody;
                 dirMovement.y = 0f;
                 dirMovement = dirMovement.normalized;
-                Vector3 dirCombined = Vector3.Lerp(dirForwardBody, dirMovement, 1f);
 
-                dirCombined += (Vector3.up * bodyLean * -1f * (1f - (Vector3.Distance(dirForwardTransform, dirMovement) / 2f)));
+                float bodyDirectionDifferenceDegrees = Vector3.Angle(Utility.GetHorizontalVector(entityPhysics.rb.velocity), Vector3.Scale(entityOrientation.body.forward, new Vector3(1f, 0f, 1f)));
+                float lerpSpeed = Mathf.Clamp(Mathf.Pow(bodyDirectionDifferenceDegrees / 90f, 1f), .1f, 1f);
+                Vector3 directionToFace = Vector3.Lerp(Vector3.Scale(body.forward, new Vector3(1f, 0f, 1f)), dirMovement, 7f * Time.deltaTime);
 
+                directionToFace += (Vector3.up * bodyLean * -1f * (1f - (Vector3.Distance(dirForwardTransform, dirMovement) / 2f)));
                 if(!entityPhysics.isDodging)
                 {
-                    if(dirCombined.magnitude > 0f)
+                    if(directionToFace.magnitude > 0f)
                     {
-                        Quaternion rot = Quaternion.LookRotation(dirCombined, Vector3.up);
+                        Quaternion rot = Quaternion.LookRotation(directionToFace, Vector3.up);
                         body.rotation = Quaternion.Slerp(body.rotation, rot, 30f * Time.deltaTime);
                         itemOrientationTarget.rotation = rot;
                     }

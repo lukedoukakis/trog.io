@@ -474,6 +474,7 @@ MonoBehaviour:
   entityActionRecorder: {fileID: 0}
   entityHitDetection: {fileID: 0}
   entityUserInput: {fileID: 0}
+  DODGE_COOLDOWN_TIME: 1
   pressForward: 0
   pressBack: 0
   pressLeft: 0
@@ -490,6 +491,7 @@ MonoBehaviour:
   timeOffBack: 0
   timeOffLeft: 0
   timeOffRight: 0
+  timeSinceDodge: 0
   pressToggleAttackRanged: 0
   rotationY: 0
   hoveredInteractableObject: {fileID: 0}

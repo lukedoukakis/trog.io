@@ -645,53 +645,31 @@ public class Camp : MonoBehaviour
     }
 
 
-    public void CastFoodIntoBonfire(EntityHandle casterHandle)
+    public void OnCastFoodIntoBonfire(EntityHandle entityHandle_caster)
     {
-        EntityItems casterItems = casterHandle.entityItems;
+        Debug.Log("OnCastFoodIntoBonfire()");
+        EntityItems casterItems = entityHandle_caster.entityItems;
         Item foodItem = casterItems.holding_item;
         if (foodItem == null) {
             // todo: tell how you can make this happen tooltip
+            Debug.Log("  -> food item is null :/");
             return;
         }
         GameObject foodObject = casterItems.holding_object;
+
+        casterItems.holding_item = null;
+        casterItems.holding_object = null;
+        casterItems.OnItemsChange();
+
+        // todo: play particles for food casted into fire
+        Destroy(foodObject);
         
-        StartCoroutine(_CastFoodIntoBonfire());
-
-
-        IEnumerator _CastFoodIntoBonfire()
+        ClientCommand.instance.SpawnCharacterAsFollower(entityHandle_caster.entityInfo.faction.leaderHandle, GetOpenTribeMemberStandPosition().transform.position + Vector3.up * 5f, false);
+        if(entityHandle_caster.entityInfo.faction.GetItemCount(foodItem) > 0)
         {
-
-            casterItems.holding_item = null;
-            casterItems.holding_object = null;
-            casterItems.OnItemsChange();
-
-            Transform foodT = foodObject.transform;
-            Vector3 castTargetPosition = bonfire.transform.position;
-            float castSpeed = 10000f;
-            while(Vector3.Distance(foodT.position, castTargetPosition) > .1f)
-            {
-                foodT.position = Vector3.Lerp(foodT.position, castTargetPosition, castSpeed * Time.deltaTime);
-                yield return null;
-            }
-            // todo: play particles for food casted into fire
-            GameObject.Destroy(foodObject);
-            OnFoodCast(casterHandle, foodItem);
-
+            entityHandle_caster.entityInfo.faction.RemoveItemOwned(foodItem, 1, null, true, entityHandle_caster.entityItems);
         }
-    
     }
-
-    void OnFoodCast(EntityHandle casterHandle, Item foodItem)
-    {
-        Debug.Log("OnFoodCast()");
-        ClientCommand.instance.SpawnCharacterAsFollower(casterHandle.entityInfo.faction.leaderHandle, GetOpenTribeMemberStandPosition().transform.position + Vector3.up * 5f, false);
-        if(casterHandle.entityInfo.faction.GetItemCount(foodItem) > 0)
-        {
-            casterHandle.entityInfo.faction.RemoveItemOwned(foodItem, 1, null, true, casterHandle.entityItems);
-        }
-
-    }
-
 
 
     // removes all rack items and adds to (todo: backpack)
