@@ -21,9 +21,11 @@ public class LightingController : MonoBehaviour
     [SerializeField] Gradient fogAmountGradient;
     public float time, timeOfDay;
 
+    public Material skyboxMat;
+
 
     // time in seconds for a full day
-    public static float SECONDS_PER_DAY = 60f * 10;
+    public static float SECONDS_PER_DAY = 60f * 5;
 
 
     private void Awake()
@@ -41,6 +43,8 @@ public class LightingController : MonoBehaviour
         time = 264f;
         //time = 0f;
 
+        skyboxMat = RenderSettings.skybox;
+
     }
 
 
@@ -52,8 +56,9 @@ public class LightingController : MonoBehaviour
         UpdateAtmosphereColor();
         UpdateCelestialBodies();
         UpdateCamera();
-        //UpdateRenderFog();
+        UpdateRenderFog();
         //UpdateFog();
+        //UpdateSkybox();
 
     }
 
@@ -82,6 +87,11 @@ public class LightingController : MonoBehaviour
                 ++i;
             }
         }
+    }
+
+    void UpdateSkybox()
+    {
+        skyboxMat.SetColor("_SkyColor", Color.red);
     }
 
 
