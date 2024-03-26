@@ -16,17 +16,37 @@ public class ClientCommand : MonoBehaviour
 
     [SerializeField] GameObject characterPrefab;
 
+
+
+
+
+
+    public bool IsGameSimulating;
+
+
     void Awake()
     {
         instance = this;
     }
 
+    void Update()
+    {
+        if(IsGameSimulating)
+        {
+            ChunkGenerator.instance.CheckForChunksUpdate();
+        }
+    }
+
     public void OnGameStart()
     {
-
         Debug.Log("OnGameStart()");
+
         SpawnPlayerCharacter();
+        UIController.instance.SetScreen(UIController.instance.screen_hud);
+
+        IsGameSimulating = true;
     }
+
 
 
 
@@ -37,8 +57,9 @@ public class ClientCommand : MonoBehaviour
         GameObject playerCharacter = GameObject.Instantiate(characterPrefab);
         playerCharacter.name = "player";
         EntityHandle playerHandle = playerCharacter.GetComponent<EntityHandle>();
-        playerCharacter.transform.position = new Vector3(0f, ChunkGenerator.Amplitude + 200f, 0f);
-        playerHandle.entityPhysics.rb.position = new Vector3(0f, ChunkGenerator.Amplitude + 200f, 0f);
+        playerCharacter.transform.position = new Vector3(0f, ChunkGenerator.Amplitude + 30f, 0f);
+        playerHandle.entityPhysics.rb.position = new Vector3(0f, ChunkGenerator.Amplitude + 30f, 0f);
+        
         clientPlayerCharacter = playerCharacter;
         clientPlayerCharacterHandle = playerHandle;
 
@@ -64,7 +85,7 @@ public class ClientCommand : MonoBehaviour
   
          // update global game variables
         Testing.instance.playerHandle = clientPlayerCharacterHandle;
-        ChunkGenerator.instance.SetPlayerTransform(character.transform);
+        ChunkGenerator.instance.SetReferenceTransform(character.transform);
         CameraController.instance.SetPlayerTransform(character.transform);
         //CameraController.instance.SetPlayerTransform(clientPlayerCharacterHandle.entityOrientation.body);
 
@@ -74,8 +95,6 @@ public class ClientCommand : MonoBehaviour
 
     public void SpawnCharacterAsFollower(EntityHandle leaderHandle, Vector3 position, bool spawnWithGear)
     {
-
-        Debug.Log("spawning follower");
 
         GameObject character = GameObject.Instantiate(characterPrefab, position, Quaternion.identity);
         EntityHandle characterHandle = character.GetComponent<EntityHandle>();
@@ -105,7 +124,6 @@ public class ClientCommand : MonoBehaviour
 
         ChunkGenerator.AddActiveCPUCreature(character);
 
-        Debug.Log("spawned follower");
     }
 
 

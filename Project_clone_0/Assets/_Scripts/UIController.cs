@@ -10,7 +10,7 @@ public class UIController : MonoBehaviour
 
 
     public Transform canvas;
-    public GameObject screen_mainMenu, screen_hud;
+    public GameObject screen_mainMenu, screen_hud, screen_loadingIntoGame;
 
 
 
@@ -79,7 +79,7 @@ public class UIController : MonoBehaviour
 
     void StartGame()
     {
-        SetScreen(screen_hud);
+        SetScreen(screen_loadingIntoGame);
         ClientCommand.instance.OnGameStart();
     }
 

@@ -8,7 +8,7 @@ using UnityEngine.Pool;
 public class ChunkGenerator : MonoBehaviour
 {
     public static float TerrainScaleModifier = 1f;
-    public static float IslandDiameter = 100000f;
+    public static float IslandDiameter = 4000f;
     public static ChunkGenerator instance;
     public static int Seed = 75675;
     public static int ChunkSize = 10;
@@ -32,9 +32,9 @@ public class ChunkGenerator : MonoBehaviour
     public static GameObject Terrain;
     public static GameObject Water;
 
-    public Transform playerTransform;
-    public Vector3 playerRawPosition;
-    public Vector2 playerChunkCoordinate;
+    public Transform referenceTransform;
+    public Vector3 referenceRawPosition;
+    public Vector2 referenceChunkCoordinate;
 
 
     [SerializeField] MeshFilter TerrainMeshFilter;
@@ -99,9 +99,9 @@ public class ChunkGenerator : MonoBehaviour
 
     }
 
-    private void Update()
+    public void CheckForChunksUpdate()
     {
-        if (playerTransform != null)
+        if (referenceTransform != null)
         {
             if(!LoadingChunks && !DeloadingChunks){
                 LoadingChunks = true;
@@ -122,6 +122,54 @@ public class ChunkGenerator : MonoBehaviour
 
         }
     }
+
+
+    public IEnumerator LoadAllChunksInIslandRadius()
+    {
+
+        LoadingChunks = true;
+        DeloadingChunks = true;
+
+        float maxCoordinateDistanceFromCenter = ((int)IslandDiameter / 2) / ChunkSize + 1;
+        referenceRawPosition = Vector3.zero / TerrainScaleModifier;
+        referenceChunkCoordinate = GetChunkCoordinate(referenceRawPosition);
+        Vector2 currentChunkCoord = new Vector2((int)referenceChunkCoordinate.x, (int)referenceChunkCoordinate.y);
+
+        // get neighbor chunk coordinates
+        Vector2 halfVec = Vector3.one / 2f;
+        List<Vector2> neighborChunkCoords = new List<Vector2>();
+        Vector2 neighborChunkCoord;
+        for (int z = (int)(currentChunkCoord.y - maxCoordinateDistanceFromCenter); z < (int)(currentChunkCoord.y + maxCoordinateDistanceFromCenter); ++z)
+        {
+            for (int x = (int)(currentChunkCoord.x - maxCoordinateDistanceFromCenter); x < (int)(currentChunkCoord.x + maxCoordinateDistanceFromCenter); ++x)
+            {
+                neighborChunkCoord = new Vector2(x, z);
+                if(Vector2.Distance(neighborChunkCoord, currentChunkCoord) <= maxCoordinateDistanceFromCenter && neighborChunkCoord.magnitude < maxCoordinateDistanceFromCenter)
+                {
+                    neighborChunkCoords.Add(neighborChunkCoord);
+                }
+            }
+        }
+
+        // add chunks in rendering range to ChunksToLoad
+        foreach (Vector2 chunkCoord in neighborChunkCoords)
+        {
+            if (/*Vector2.Distance(referenceChunkCoordinate, chunkCoord + halfVec) < maxCoordinateDistanceFromCenter*/ true)
+            {  
+                if (!ChunkCoordsToBeActive.Contains(chunkCoord))
+                {
+                    ChunkCoordsToBeActive.Add(chunkCoord);
+                }
+            }
+        }
+
+        yield return StartCoroutine(ActivateChunks());
+        //yield return StartCoroutine(CallForSpawnGeneration());
+
+
+    }
+
+
 
     void Init()
     {
@@ -151,10 +199,10 @@ public class ChunkGenerator : MonoBehaviour
     }
 
 
-    public void SetPlayerTransform(Transform t)
+    public void SetReferenceTransform(Transform t)
     {
         Debug.Log("Setting playerTransform: " + t);
-        playerTransform = t;
+        referenceTransform = t;
     }
 
 
@@ -179,9 +227,9 @@ public class ChunkGenerator : MonoBehaviour
 
 
         float maxCoordinateDistanceFromCenter = ((int)IslandDiameter / 2) / ChunkSize + 1;
-        playerRawPosition = playerTransform.position / TerrainScaleModifier;
-        playerChunkCoordinate = GetChunkCoordinate(playerRawPosition);
-        Vector2 currentChunkCoord = new Vector2((int)playerChunkCoordinate.x, (int)playerChunkCoordinate.y);
+        referenceRawPosition = referenceTransform.position / TerrainScaleModifier;
+        referenceChunkCoordinate = GetChunkCoordinate(referenceRawPosition);
+        Vector2 currentChunkCoord = new Vector2((int)referenceChunkCoordinate.x, (int)referenceChunkCoordinate.y);
 
         // get neighbor chunk coordinates
         Vector2 halfVec = Vector3.one / 2f;
@@ -203,7 +251,7 @@ public class ChunkGenerator : MonoBehaviour
         // remove chunks out of rendering range from ChunksToLoad
         foreach (Vector2 coordinate in ChunkCoordsToBeActive.ToArray())
         {
-            if (Vector2.Distance(playerChunkCoordinate, coordinate + halfVec) >= ChunkRenderDistance)
+            if (Vector2.Distance(referenceChunkCoordinate, coordinate + halfVec) >= ChunkRenderDistance)
             {
                 ChunkCoordsToBeActive.Remove(coordinate);
             }
@@ -212,7 +260,7 @@ public class ChunkGenerator : MonoBehaviour
         // add chunks in rendering range to ChunksToLoad
         foreach (Vector2 chunkCoord in neighborChunkCoords)
         {
-            if (Vector2.Distance(playerChunkCoordinate, chunkCoord + halfVec) < ChunkRenderDistance)
+            if (Vector2.Distance(referenceChunkCoordinate, chunkCoord + halfVec) < ChunkRenderDistance)
             {  
                 if (!ChunkCoordsToBeActive.Contains(chunkCoord))
                 {
@@ -230,7 +278,7 @@ public class ChunkGenerator : MonoBehaviour
         IEnumerator load;
         ChunkData cd;
         int index;
-        foreach (Vector2 coordinate in ChunkCoordsToBeActive.OrderBy(c => Vector3.Distance(GetChunkCoordinate(playerTransform.position / TerrainScaleModifier), c)).ToArray())
+        foreach (Vector2 coordinate in ChunkCoordsToBeActive.OrderBy(c => Vector3.Distance(GetChunkCoordinate(referenceTransform.position / TerrainScaleModifier), c)).ToArray())
         {
             index = ChunkDataLoaded.FindIndex(cd => cd.coordinate == coordinate);
             if(index < 0)
@@ -658,130 +706,130 @@ public class ChunkGenerator : MonoBehaviour
             for (int x = 0; x < ChunkSize + 2; x++)
             {
 
-                if(cd.FreshWaterMap[x, z] <= 0)
+                if (cd.FreshWaterMap[x, z] <= 0)
                 {
                     float yNormal = cd.YNormalsMap[x, z];
-                float height = cd.HeightMap[x, z];
-                float temp = cd.TemperatureMap[x, z];
-                float humid = cd.HumidityMap[x, z];
+                    float height = cd.HeightMap[x, z];
+                    float temp = cd.TemperatureMap[x, z];
+                    float humid = cd.HumidityMap[x, z];
 
-                SpawnParameters spawnParameters;
-                float placementDensity;
-                Vector3 randomPositionOffset, spawnPosition, spawnScale;
-                GameObject worldObject;
-                ObjectPool<GameObject> pool;
+                    SpawnParameters spawnParameters;
+                    float placementDensity;
+                    Vector3 randomPositionOffset, spawnPosition, spawnScale;
+                    GameObject worldObject;
+                    ObjectPool<GameObject> pool;
 
 
-                //foreach (GameObject feature in Features.Concat(Items))
-                foreach (GameObject feature in Features)
-                {
-                    //break;
-
-                    // break if chunk not loaded
-                    if (cd == null || (cd.featuresParent == null)) { break; }
-
-                    spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
-                    placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
-                    if (placementDensity > 0)
+                    //foreach (GameObject feature in Features.Concat(Items))
+                    foreach (GameObject feature in Features)
                     {
-                        if (UnityEngine.Random.value < placementDensity)
-                        {
-                            for (int i = 0; i < spawnParameters.numberToSpawn; ++i)
-                            {
-                                randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
-                                Vector3 rawHorizontalPosition = new Vector3(x + _xOffset + randomPositionOffset.x, 0f, z + _zOffset + randomPositionOffset.z);
-                                Vector2 rawHorizontalPositionV2 = new Vector2(rawHorizontalPosition.x, rawHorizontalPosition.z);
-                                ChunkData chunkAtPosition = GetChunkFromRawPosition(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.z));
-                                if (chunkAtPosition != null)
-                                {
-                                    Vector2 coordinatesInChunk = GetCoordinatesInChunk(rawHorizontalPosition);
-                                    int posChunkX = (int)coordinatesInChunk.x;
-                                    int posChunkZ = (int)coordinatesInChunk.y;
+                        //break;
 
-                                    float posChunkHeight = chunkAtPosition.HeightMap[posChunkX, posChunkZ];
-                                    float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ];
-                                    placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, posChunkHeight, posChunkYNormal);
-                                    if (placementDensity > 0)
+                        // break if chunk not loaded
+                        if (cd == null || (cd.featuresParent == null)) { break; }
+
+                        spawnParameters = SpawnParameters.GetSpawnParameters(feature.name);
+                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                        if (placementDensity > 0)
+                        {
+                            if (UnityEngine.Random.value < placementDensity)
+                            {
+                                for (int i = 0; i < spawnParameters.numberToSpawn; ++i)
+                                {
+                                    randomPositionOffset = 2f * ((Vector3.right * (UnityEngine.Random.value * 2f - 1f)) + (Vector3.forward * (UnityEngine.Random.value * 2f - 1f)));
+                                    Vector3 rawHorizontalPosition = new Vector3(x + _xOffset + randomPositionOffset.x, 0f, z + _zOffset + randomPositionOffset.z);
+                                    Vector2 rawHorizontalPositionV2 = new Vector2(rawHorizontalPosition.x, rawHorizontalPosition.z);
+                                    ChunkData chunkAtPosition = GetChunkFromRawPosition(new Vector3(rawHorizontalPosition.x, 0f, rawHorizontalPosition.z));
+                                    if (chunkAtPosition != null)
                                     {
-                                        spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.Amplitude);
-                                        spawnScale = Vector3.one * spawnParameters.scale;
-                                        pool = PoolHelper.GetPool(feature);
-                                        worldObject = pool.Get();
-                                        worldObject.transform.position = (spawnPosition + (Vector3.up * spawnParameters.heightOffset)) * TerrainScaleModifier;
-                                        worldObject.transform.SetParent(cd.featuresParent);
-                                        worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
-                                        if (spawnParameters.slantMagnitude > 0f)
+                                        Vector2 coordinatesInChunk = GetCoordinatesInChunk(rawHorizontalPosition);
+                                        int posChunkX = (int)coordinatesInChunk.x;
+                                        int posChunkZ = (int)coordinatesInChunk.y;
+
+                                        float posChunkHeight = chunkAtPosition.HeightMap[posChunkX, posChunkZ];
+                                        float posChunkYNormal = chunkAtPosition.YNormalsMap[posChunkX, posChunkZ];
+                                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, posChunkHeight, posChunkYNormal);
+                                        if (placementDensity > 0)
                                         {
-                                            worldObject.transform.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(Vector3.up, Vector3.up * cd.YNormalsMap[x, z]), spawnParameters.slantMagnitude);
+                                            spawnPosition = rawHorizontalPosition + Vector3.up * (posChunkHeight * ChunkGenerator.Amplitude);
+                                            spawnScale = Vector3.one * spawnParameters.scale;
+                                            pool = PoolHelper.GetPool(feature);
+                                            worldObject = pool.Get();
+                                            worldObject.transform.position = (spawnPosition + (Vector3.up * spawnParameters.heightOffset)) * TerrainScaleModifier;
+                                            worldObject.transform.SetParent(cd.featuresParent);
+                                            worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.5f, 1.25f);
+                                            if (spawnParameters.slantMagnitude > 0f)
+                                            {
+                                                worldObject.transform.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(Vector3.up, Vector3.up * cd.YNormalsMap[x, z]), spawnParameters.slantMagnitude);
+                                            }
+                                            worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
+                                            if (worldObject.transform.GetComponent<Rigidbody>() != null)
+                                            {
+                                                worldObject.transform.position = (worldObject.transform.position + Vector3.up) * TerrainScaleModifier;
+                                                //Utility.ToggleObjectPhysics(worldObject, true, true, false, false);
+                                            }
+                                            //instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
+
                                         }
-                                        worldObject.transform.Rotate(worldObject.transform.up, UnityEngine.Random.Range(0, 360f));
-                                        if (worldObject.transform.GetComponent<Rigidbody>() != null)
-                                        {
-                                            worldObject.transform.position = (worldObject.transform.position + Vector3.up) * TerrainScaleModifier;
-                                            //Utility.ToggleObjectPhysics(worldObject, true, true, false, false);
-                                        }
-                                        //instance.fillMap.AddFillPoint(cd, rawHorizontalPositionV2, spawnParameters.fillRadius);
+
 
                                     }
 
-
                                 }
+                            }
+                        }
 
+                    }
+
+                    foreach (GameObject creature in Creatures)
+                    {
+
+
+                        // break if chunk not loaded
+                        if (cd == null) { break; }
+
+                        spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
+                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                        if (placementDensity > 0f)
+                        {
+                            if (UnityEngine.Random.value < placementDensity)
+                            {
+                                spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
+                                spawnScale = Vector3.one * spawnParameters.scale;
+                                worldObject = Utility.InstantiateSameName(creature, spawnPosition, Quaternion.identity);
+                                //pool = PoolHelper.GetPool(creature);
+                                //worldObject = pool.Get();
+                                //worldObject.transform.position = spawnPosition;
+                                worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+                                AddActiveCPUCreature(worldObject);
                             }
                         }
                     }
 
-                }
-
-                foreach (GameObject creature in Creatures)
-                {
-                    
-
-                    // break if chunk not loaded
-                    if (cd == null) { break; }
-
-                    spawnParameters = SpawnParameters.GetSpawnParameters(creature.name);
-                    placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
-                    if (placementDensity > 0f)
+                    foreach (GameObject human in Humans)
                     {
-                        if (UnityEngine.Random.value < placementDensity)
+
+                        // break if chunk not loaded
+                        if (cd == null) { break; }
+
+                        spawnParameters = SpawnParameters.GetSpawnParameters(human.name);
+                        placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
+                        if (placementDensity > 0f)
                         {
-                            spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
-                            spawnScale = Vector3.one * spawnParameters.scale;
-                            worldObject = Utility.InstantiateSameName(creature, spawnPosition, Quaternion.identity);
-                            //pool = PoolHelper.GetPool(creature);
-                            //worldObject = pool.Get();
-                            //worldObject.transform.position = spawnPosition;
-                            worldObject.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-                            AddActiveCPUCreature(worldObject);
+                            if (UnityEngine.Random.value < placementDensity)
+                            {
+                                spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
+                                spawnScale = Vector3.one * spawnParameters.scale;
+                                //Debug.Log("WILD NPC");
+                                ClientCommand.instance.SpawnCharacterAsLeader(spawnPosition, true, FactionStartingItemsTier.One);
+                                //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
+
+                            }
                         }
                     }
                 }
 
-                foreach (GameObject human in Humans)
-                {
 
-                    // break if chunk not loaded
-                    if (cd == null) { break; }
-
-                    spawnParameters = SpawnParameters.GetSpawnParameters(human.name);
-                    placementDensity = SpawnParameters.GetPlacementDensity(spawnParameters, temp, humid, height, yNormal);
-                    if (placementDensity > 0f)
-                    {
-                        if (UnityEngine.Random.value < placementDensity)
-                        {
-                            spawnPosition = new Vector3(x + _xOffset, height * Amplitude + 10f, z + _zOffset);
-                            spawnScale = Vector3.one * spawnParameters.scale;
-                            //Debug.Log("WILD NPC");
-                            ClientCommand.instance.SpawnCharacterAsLeader(spawnPosition, true, FactionStartingItemsTier.One);
-                            //o.transform.localScale = spawnScale * UnityEngine.Random.Range(.75f, 1.25f);
-
-                        }
-                    }
-                }
-                }
-
-                
 
             }
             yield return null;
@@ -804,7 +852,7 @@ public class ChunkGenerator : MonoBehaviour
             if(cpuCreature != null)
             {
                 cpuCreatureHandle = cpuCreature.GetComponent<EntityHandle>();
-                if(Vector3.Distance(playerRawPosition, activeCPUCreatures[i].transform.position) > despawnDistance)
+                if(Vector3.Distance(referenceRawPosition, activeCPUCreatures[i].transform.position) > despawnDistance)
                 {
                     Faction creatureFaction = cpuCreature.GetComponent<EntityInfo>().faction;
                     bool isFromPlayerFaction = ReferenceEquals(creatureFaction, ClientCommand.instance.clientPlayerCharacterHandle.entityInfo.faction);
