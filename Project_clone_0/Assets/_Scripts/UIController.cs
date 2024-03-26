@@ -8,12 +8,37 @@ public class UIController : MonoBehaviour
     public static bool cursorActive;
 
 
+
+    public Transform canvas;
+    public GameObject screen_mainMenu, screen_hud;
+
+
+
+
+
+
+
     public static UIController instance;
     void Awake()
     {
         instance = this;
         SetUIMode(true);
+        SetScreen(screen_mainMenu);
     }
+
+
+
+    public void SetScreen(GameObject screen)
+    {
+        foreach (Transform t in canvas)
+        {
+            t.gameObject.SetActive(false);
+        }
+        screen.SetActive(true);
+    }
+
+
+
 
     public void UpdateSelectionMenu(){
         UnitMenuController.current.ClearButtons();
@@ -44,6 +69,18 @@ public class UIController : MonoBehaviour
     public void ToggleUIMode(){
         SetUIMode(!UImode);
         CommandEveryoneController.current.OnHornPress();
+    }
+
+
+    public void OnButtonPress_StartGame()
+    {
+        StartGame();
+    }
+
+    void StartGame()
+    {
+        SetScreen(screen_hud);
+        ClientCommand.instance.OnGameStart();
     }
 
     

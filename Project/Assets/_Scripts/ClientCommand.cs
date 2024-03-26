@@ -21,12 +21,6 @@ public class ClientCommand : MonoBehaviour
         instance = this;
     }
 
-    void Start()
-    {
-        OnGameStart();
-    }
-
-
     public void OnGameStart()
     {
 
