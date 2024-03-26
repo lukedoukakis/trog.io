@@ -1347,7 +1347,7 @@
 }
 
 {
-    "m_SGVersion": 1,
+    "m_SGVersion": 2,
     "m_Type": "UnityEditor.ShaderGraph.TransformNode",
     "m_ObjectId": "624d613d0ca84581b8da8ca5166d2d1b",
     "m_Group": {
@@ -2188,7 +2188,7 @@
     "m_ShaderOutputName": "A",
     "m_StageCapability": 3,
     "m_Value": {
-        "e00": 0.009999999776482582,
+        "e00": 0.029999999329447748,
         "e01": 0.0,
         "e02": 0.0,
         "e03": 0.0,
@@ -2544,7 +2544,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 1,
     "m_Hidden": false,
-    "m_Value": 2.0,
+    "m_Value": 1.0,
     "m_FloatType": 0,
     "m_RangeValues": {
         "x": 0.0,

@@ -8,7 +8,7 @@ using UnityEngine.Pool;
 public class ChunkGenerator : MonoBehaviour
 {
     public static float TerrainScaleModifier = 1f;
-    public static float IslandDiameter = 4000f;
+    public static float IslandDiameter = 200f;
     public static ChunkGenerator instance;
     public static int Seed = 75675;
     public static int ChunkSize = 10;

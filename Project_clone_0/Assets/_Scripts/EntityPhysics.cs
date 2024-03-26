@@ -1729,6 +1729,10 @@ public class EntityPhysics : EntityComponent
                 max = maxSpeed_run;
             }
 
+            // decrease max speed from difference btween body orientation and movement direction
+            Vector3 move = transform.TransformDirection(moveDir).normalized;
+            max *= Mathf.Lerp(.005f, 1f, 1f - Mathf.InverseLerp(0f, 180f, Vector3.Angle(move, Vector3.Scale(entityOrientation.body.forward, new Vector3(1f, 0f, 1f)))));
+
             if(isDodging)
             {
                 max = Mathf.Lerp(max, maxSpeed_dodge, Mathf.Sin((dodgeTime / 60f * 100f) * Mathf.PI));
