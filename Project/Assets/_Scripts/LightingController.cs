@@ -23,7 +23,7 @@ public class LightingController : MonoBehaviour
 
 
     // time in seconds for a full day
-    public static float SECONDS_PER_DAY = 60f * 5;
+    public static float SECONDS_PER_DAY = 60f * 10;
 
 
     private void Awake()
@@ -36,7 +36,7 @@ public class LightingController : MonoBehaviour
         sunLight = sun.GetComponent<Light>();
         moonLight = moon.GetComponent<Light>();
 
-        InitFog();
+        //InitFog();
 
         time = 264f;
         //time = 0f;
@@ -52,7 +52,7 @@ public class LightingController : MonoBehaviour
         UpdateAtmosphereColor();
         UpdateCelestialBodies();
         UpdateCamera();
-        UpdateRenderFog();
+        //UpdateRenderFog();
         //UpdateFog();
 
     }
@@ -88,7 +88,7 @@ public class LightingController : MonoBehaviour
     void UpdateTime()
     {
         time += Time.deltaTime;
-        time = SECONDS_PER_DAY * .5f;
+        //time = SECONDS_PER_DAY * .5f;
         timeOfDay = (time % SECONDS_PER_DAY) / SECONDS_PER_DAY; // 0 is midnight, 1 is 11:59pm
         //Debug.Log("timeOfDay: " + timeOfDay);
     }
